@@ -15,6 +15,8 @@ class AgentState(TypedDict):
     # Intent classification
     intent: Optional[str]       # GREETING / OUT_OF_SCOPE / SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / 
 
+    clarification_ready: Optional[bool]  # True when clarification collected enough criteria
+
     # Extracted parameters
     tickers: Optional[list[str]]     # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
     year: Optional[str]         # e.g. "2025" or None for latest
@@ -65,6 +67,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
             "narrative": ""
         },
         "intent":      None,
+        "clarification_ready": False,
         "tickers":     [],
         "year":        None,
         "chunks":      [],

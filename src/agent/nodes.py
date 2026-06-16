@@ -61,6 +61,14 @@ Classify the user question into exactly one of these categories:
   - user mentions a DIFFERENT or NEW company not yet discussed in conversation history
   - user says "again" or "refresh" or "update"
   - there is NO conversation history
+- CLARIFICATION: user wants investment recommendations but hasn't provided enough 
+  criteria to make good suggestions. Classify as CLARIFICATION when the request is 
+  too vague (e.g. "Find me a good stock", "What should I buy?", "I have $1000 to invest",
+  "suggest some stocks", "recommend me something").
+  NEVER classify as CLARIFICATION if:
+  - user names a specific company → SPECIFIC_STOCK or COMPARISON
+  - user provides enough criteria (sector + risk or sector + time horizon) → DISCOVERY
+  - user is answering a clarification question with a new intent → classify by new intent
 
 CONVERSATION HISTORY (for context):
 
@@ -1234,3 +1242,106 @@ CONVERSATION HISTORY:
 
     print(f"  [handle_follow_up] Response generated ({len(answer)} chars)")
     return {"answer": answer, "messages": updated_messages}
+
+
+
+# ─────────────────────────────────────────────
+# Node: Handle Clarification
+# ─────────────────────────────────────────────
+def handle_clarification(state: AgentState) -> dict:
+    """
+    Multi-turn clarification for vague discovery requests.
+    Asks one question at a time until enough criteria collected.
+    When ready, builds enriched question and routes to DISCOVERY.
+    """
+    writer = get_stream_writer()
+    writer({"type": "progress", "node": "clarification", "message": NODE_PROGRESS["clarification"]})
+
+    question = state["question"]
+    messages = state.get("messages") or []
+
+    history_context = ""
+    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
+        role = msg.get("role", "")
+        content = msg.get("content", "")
+        history_context += f"{role.upper()}: {content}\n"
+
+    prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
+
+The user wants investment recommendations but hasn't provided enough criteria.
+Your job is to collect the necessary information through friendly conversation.
+
+Look at the conversation history below and decide:
+
+1. Do you have ENOUGH information to make good recommendations?
+   Minimum needed: at least ONE of these pairs:
+   - sector + risk tolerance
+   - sector + time horizon  
+   - budget + sector
+   - risk tolerance + time horizon
+
+2. Reply with ONLY valid JSON. No markdown, no code fences, no explanation.
+
+
+If NOT enough info:
+{{"ready": false, "message": "Your friendly question here"}}
+
+If ENOUGH info:
+{{"ready": true, "message": "Find me a good stock in tech sector, medium risk, long term investment"}}
+
+Where "message" is either:
+- The clarifying question to ask the user (if not ready)
+- The enriched question for DISCOVERY pipeline (if ready)
+
+USER QUESTION: {question}
+
+CONVERSATION HISTORY:
+{history_context}"""
+
+    queue = token_queue_var.get()
+
+    response = client.chat.completions.create(
+        model=LLM_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.7,
+        stream=False,
+    )
+
+    content = response.choices[0].message.content.strip()
+
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        print(f"  [handle_clarification] Invalid JSON: {content}")
+        data = {"ready": False, "message": "Could you tell me more about what you're looking for?"}
+
+    is_ready = data.get("ready", False)
+    message  = data.get("message", "")
+
+    # Stream message word by word to user
+    if queue:
+        for word in re.findall(r'\S+|\s+', message):
+            queue.put_nowait(word)
+            time.sleep(0.03)
+
+    updated_messages = messages + [
+        {"role": "user",      "content": question},
+        {"role": "assistant", "content": message},
+    ]
+
+    # Check if ready to route to DISCOVERY
+    if is_ready:
+        print(f"  [handle_clarification] Ready — enriched question: {message}")
+        return {
+            "answer":              message,
+            "question":            message,
+            "clarification_ready": True,
+            "messages":            updated_messages,
+        }
+    else:
+        print(f"  [handle_clarification] Asking clarification ({len(message)} chars)")
+        return {
+            "answer":              message,
+            "clarification_ready": False,
+            "messages":            updated_messages,
+        }

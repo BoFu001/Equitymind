@@ -16,6 +16,7 @@ from src.agent.nodes import (
     simple_report,
     handle_no_ticker,
     handle_follow_up,
+    handle_clarification,
 )
 
 @pytest.fixture(autouse=True)
@@ -86,7 +87,12 @@ def test_classify_intent_stock_market():
 def test_classify_intent_vague_sector():
     state = make_state(question="Analyse a tech company")
     result = classify_intent(state)
+
     assert result["intent"] == "DISCOVERY"
+def test_classify_intent_clarification():
+    state = make_state(question="Find me a good stock")
+    result = classify_intent(state)
+    assert result["intent"] == "CLARIFICATION"
 
 # ─────────────────────────────────────────────
 # Node: Extract Parameters
@@ -380,3 +386,42 @@ def test_handle_follow_up():
     assert len(result["answer"]) > 0
     assert "messages" in result
     assert len(result["messages"]) == 4  # 2 history + 2 new
+
+
+
+# ─────────────────────────────────────────────
+# Node: Clarification
+# ─────────────────────────────────────────────
+
+def test_handle_clarification_asks_question():
+    """With no criteria — should ask a question, not return READY."""
+    state = make_state(
+        question="Find me a good stock",
+        messages=[]
+    )
+    result = handle_clarification(state)
+    assert "answer" in result
+    assert len(result["answer"]) > 0
+    assert not result["answer"].strip().startswith("READY:")
+    assert "messages" in result
+    assert len(result["messages"]) == 2
+
+def test_handle_clarification_ready_with_enough_criteria():
+    """With enough criteria in history — should return clarification_ready=True."""
+    state = make_state(
+        question="long term",
+        messages=[
+            {"role": "user",      "content": "Find me a good stock"},
+            {"role": "assistant", "content": "Which sector interests you?"},
+            {"role": "user",      "content": "Technology"},
+            {"role": "assistant", "content": "What's your risk tolerance?"},
+            {"role": "user",      "content": "Medium risk"},
+            {"role": "assistant", "content": "Time horizon — short or long term?"},
+        ]
+    )
+    result = handle_clarification(state)
+    assert "answer" in result
+    assert len(result["answer"]) > 0
+    assert result.get("clarification_ready") == True
+    assert "question" in result
+    assert len(result["question"]) > 0

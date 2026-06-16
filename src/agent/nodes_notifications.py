@@ -32,4 +32,5 @@ NODE_PROGRESS = {
     "out_of_scope":       "Let me help you with that...",
     "no_ticker":          "Could not identify a stock ticker...",
     "follow_up":          "Looking up from our conversation...",
+    "clarification":      "Let me ask you a few questions...",
 }

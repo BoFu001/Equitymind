@@ -17,6 +17,7 @@ from src.agent.nodes import (
     #discovery_report,
     update_session_memory,
     handle_follow_up,
+    handle_clarification,
 )
 
 
@@ -32,6 +33,8 @@ def route_intent(state: AgentState) -> str:
         return "greeting"
     elif intent == "FOLLOW_UP":
         return "follow_up"
+    elif intent == "CLARIFICATION":
+        return "clarification"
     elif intent == "DISCOVERY":
         return "discovery_suggest"
     else:
@@ -39,7 +42,6 @@ def route_intent(state: AgentState) -> str:
 
 def route_after_extract(state: AgentState) -> str:
     """Routes after Node extract based on intent and ticker availability."""
-    intent = state.get("intent", "")
     tickers = state.get("tickers") or []
 
     if not tickers:
@@ -55,6 +57,13 @@ def route_after_extract(state: AgentState) -> str:
 #         return "comparison_report"
 #     else:
 #         return "specific_report"
+
+def route_after_clarification(state: AgentState) -> str:
+    answer = state.get("answer", "")
+    if answer.strip().startswith("READY:"):
+        return "discovery_suggest"
+    else:
+        return "update_session_memory"
     
 # ─────────────────────────────────────────────
 # Build the graph
@@ -79,6 +88,7 @@ def build_graph():
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
     graph.add_node("follow_up",              handle_follow_up)
+    graph.add_node("clarification",          handle_clarification)
 
     # Entry point
     graph.set_entry_point("classify")
@@ -91,6 +101,7 @@ def build_graph():
             "out_of_scope":      "out_of_scope",
             "greeting":          "greeting",
             "follow_up":         "follow_up",
+            "clarification":     "clarification",
             "discovery_suggest": "discovery_suggest",
             "extract":           "extract",
         }
@@ -115,6 +126,15 @@ def build_graph():
     #         "comparison_report":   "comparison_report",
     #     }
     # )
+
+    graph.add_conditional_edges(
+        "clarification",
+        route_after_clarification,
+        {
+            "discovery_suggest":  "discovery_suggest",
+            "update_session_memory": "update_session_memory",
+        }
+    )
 
     # Linear flow after market_data
     graph.add_edge("discovery_suggest",      "ensure_sec")
