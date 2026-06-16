@@ -25,7 +25,8 @@ from src.agent.nodes import (
 # Routing functions
 # ─────────────────────────────────────────────
 
-def route_intent(state: AgentState) -> str:
+def route_after_classify(state: AgentState) -> str:
+
     intent = state.get("intent", "")
     if intent == "OUT_OF_SCOPE":
         return "out_of_scope"
@@ -38,7 +39,7 @@ def route_intent(state: AgentState) -> str:
     elif intent == "DISCOVERY":
         return "discovery_suggest"
     else:
-        return "extract"  # simple_report
+        return "extract"
 
 def route_after_extract(state: AgentState) -> str:
     """Routes after Node extract based on intent and ticker availability."""
@@ -59,8 +60,7 @@ def route_after_extract(state: AgentState) -> str:
 #         return "specific_report"
 
 def route_after_clarification(state: AgentState) -> str:
-    answer = state.get("answer", "")
-    if answer.strip().startswith("READY:"):
+    if state.get("clarification_ready"):
         return "discovery_suggest"
     else:
         return "update_session_memory"
@@ -96,7 +96,7 @@ def build_graph():
     # Conditional edge after Node classify_intent
     graph.add_conditional_edges(
         "classify",
-        route_intent,
+        route_after_classify,
         {
             "out_of_scope":      "out_of_scope",
             "greeting":          "greeting",

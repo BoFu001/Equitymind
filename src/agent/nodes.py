@@ -34,6 +34,8 @@ def classify_intent(state: AgentState) -> dict:
 
     question = state["question"]
     messages = state.get("messages") or []
+    session_memory  = state.get("session_memory") or {}
+    in_clarification = (session_memory.get("structured") or {}).get("in_clarification", False)
 
     has_history = len(messages) > 0
 
@@ -75,6 +77,7 @@ CONVERSATION HISTORY (for context):
 {history_context if history_context else "NONE — this is the first message in this session."}
 
 {"⚠️ IMPORTANT: There is NO conversation history. FOLLOW_UP is impossible. Do NOT classify as FOLLOW_UP." if not has_history else "Conversation history exists above."}
+{"⚠️ IMPORTANT: User is currently in an active clarification flow — they are answering your questions to help find a good stock. Classify as CLARIFICATION unless they explicitly name a specific company or ask something completely unrelated." if in_clarification else ""}
 
 User question: {question}
 
@@ -984,6 +987,14 @@ def update_session_memory(state: AgentState) -> dict:
     # structured["top_recommendations"]                         future
     # structured["user_preferences"]                            future (separate LLM call)
 
+    # ── Update clarification state ──
+    if intent == "CLARIFICATION":
+        structured["in_clarification"] = not state.get("clarification_ready", False)
+    else:
+        structured["in_clarification"] = False
+
+    print(f"  [update_session_memory] in_clarification: {structured.get('in_clarification')}")
+
     # ── Build conversation context for narrative ──
     conversation_context = ""
     for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
@@ -1319,7 +1330,7 @@ CONVERSATION HISTORY:
     message  = data.get("message", "")
 
     # Stream message word by word to user
-    if queue:
+    if queue and not is_ready:
         for word in re.findall(r'\S+|\s+', message):
             queue.put_nowait(word)
             time.sleep(0.03)

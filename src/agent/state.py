@@ -57,8 +57,9 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
                 "tickers_discussed":    [],
                 "last_tickers":         [],
                 "last_intent":          "",
-                "top_recommendations":  [],
-                "user_preferences": {
+                "in_clarification":     False, 
+                "top_recommendations":  [],        # future
+                "user_preferences": {              # future
                     "sectors": [],
                     "risk":    "",
                     "style":   "",
