@@ -1,3 +1,5 @@
+from colors import yprint
+
 from langgraph.graph import StateGraph, END
 
 from src.agent.state import AgentState
@@ -28,6 +30,8 @@ from src.agent.nodes import (
 def route_after_classify(state: AgentState) -> str:
 
     intent = state.get("intent", "")
+    yprint(f"  [route_after_classify] intent={intent}")
+
     if intent == "OUT_OF_SCOPE":
         return "out_of_scope"
     elif intent == "GREETING":
@@ -44,6 +48,7 @@ def route_after_classify(state: AgentState) -> str:
 def route_after_extract(state: AgentState) -> str:
     """Routes after Node extract based on intent and ticker availability."""
     tickers = state.get("tickers") or []
+    yprint(f"  [route_after_extract] tickers={tickers}")
 
     if not tickers:
         return "no_ticker"
@@ -60,7 +65,9 @@ def route_after_extract(state: AgentState) -> str:
 #         return "specific_report"
 
 def route_after_clarification(state: AgentState) -> str:
-    if state.get("clarification_ready"):
+    ready = state.get("clarification_ready")
+    yprint(f"  [route_after_clarification] clarification_ready={ready}")
+    if ready:
         return "discovery_suggest"
     else:
         return "update_session_memory"

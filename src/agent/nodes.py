@@ -15,6 +15,8 @@ from src.tools.market_data import get_stock_data
 from src.tools.news_sentiment import get_news_and_sentiment
 from src.tools.sec_retrieval import retrieve, fetch_embed_store_retrieve
 
+from colors import gprint
+
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
@@ -90,7 +92,7 @@ Reply with ONLY the category name. Nothing else."""
     )
 
     intent = response.choices[0].message.content.strip()
-    print(f"  [classify_intent] Intent: {intent}")
+    gprint(f"  [classify_intent] Intent: {intent}")
     return {"intent": intent}
 
 
@@ -151,19 +153,19 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
     content = response.choices[0].message.content.strip()
 
     if not content:
-        print(f"  [extract_parameters] Empty response from {LLM_MODEL}, using defaults")
+        gprint(f"  [extract_parameters] Empty response from {LLM_MODEL}, using defaults")
         return {"tickers": [], "year": None}
 
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
-            print(f"  [extract_parameters] Invalid JSON: {content}")
+            gprint(f"  [extract_parameters] Invalid JSON: {content}")
             return {"tickers": [], "year": None}
 
     tickers = data.get("tickers", [])
     year    = str(data.get("year")) if data.get("year") else None
 
-    print(f"  [extract_parameters] Tickers: {tickers}, Year: {year}")
+    gprint(f"  [extract_parameters] Tickers: {tickers}, Year: {year}")
     return {"tickers": tickers, "year": year}
 
 
@@ -192,10 +194,10 @@ def ensure_sec_data(state: AgentState) -> dict:
                 writer({"type": "sub_progress", "node": "ensure_sec", "message": NODE_PROGRESS["fetch"].format(ticker=t)})
                 all_chunks[t] = fetch_embed_store_retrieve(question, t)
         except Exception as e:
-            print(f"  [ensure_sec_data] Could not fetch SEC data for {t}: {e}")
+            gprint(f"  [ensure_sec_data] Could not fetch SEC data for {t}: {e}")
             all_chunks[t] = []
 
-    print(f"  [ensure_sec_data] SEC data fetched for {list(all_chunks.keys())}")
+    gprint(f"  [ensure_sec_data] SEC data fetched for {list(all_chunks.keys())}")
     return {"chunks": all_chunks}
 
 # ─────────────────────────────────────────────
@@ -220,7 +222,7 @@ def get_market_data(state: AgentState) -> dict:
         data = get_stock_data(t)
         if data:
             all_market_data[t] = data
-        print(f"  [get_market_data] Market data fetched for {t}")
+        gprint(f"  [get_market_data] Market data fetched for {t}")
 
     return {"market_data": all_market_data}
 
@@ -246,7 +248,7 @@ def get_news(state: AgentState) -> dict:
         writer({"type": "sub_progress", "node": "news", "message": NODE_PROGRESS["news_sub"].format(ticker=t)})
         articles = get_news_and_sentiment(t)
         all_news[t] = articles
-        print(f"  [get_news] {len(articles)} articles fetched for {t}")
+        gprint(f"  [get_news] {len(articles)} articles fetched for {t}")
 
     return {"news": all_news}
 
@@ -443,7 +445,7 @@ def get_news(state: AgentState) -> dict:
 #         {"role": "assistant", "content": answer},
 #     ]
 
-#     print(f"  [specific_report] Report generated for {ticker} ({len(answer)} chars)")
+#     gprint(f"  [specific_report] Report generated for {ticker} ({len(answer)} chars)")
 #     return {"answer": answer, "messages": updated_messages}
 
 
@@ -489,7 +491,7 @@ What stock would you like me to research?"""
             queue.put_nowait(word)
             time.sleep(0.03)
 
-    print(f"  [handle_out_of_scope] Response generated ({len(answer)} chars)")
+    gprint(f"  [handle_out_of_scope] Response generated ({len(answer)} chars)")
     return {"answer": answer, "messages": updated_messages}
 
 
@@ -551,7 +553,7 @@ Keep the response concise and contextual. Use markdown and emojis where appropri
     ]
 
     
-    print(f"  [handle_greeting] Greeting generated ({len(answer)} chars)")
+    gprint(f"  [handle_greeting] Greeting generated ({len(answer)} chars)")
 
     return {"answer": answer, "messages": updated_messages}
 
@@ -597,10 +599,10 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
         ticker_data = json.loads(ticker_response.choices[0].message.content.strip())
         candidate_tickers = ticker_data.get("tickers", [])
     except Exception:
-        print(f"  [discovery_suggest] Could not parse candidate tickers")
+        gprint(f"  [discovery_suggest] Could not parse candidate tickers")
         candidate_tickers = []
 
-    print(f"  [discovery_suggest] Candidates: {candidate_tickers}")
+    gprint(f"  [discovery_suggest] Candidates: {candidate_tickers}")
     return {"tickers": candidate_tickers}
 
 
@@ -733,7 +735,7 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
 #         {"role": "assistant", "content": answer},
 #     ]
 
-#     print(f"  [discovery_report] Report generated for {tickers} ({len(answer)} chars)")
+#     gprint(f"  [discovery_report] Report generated for {tickers} ({len(answer)} chars)")
 #     return {"answer": answer, "messages": updated_messages}
 
 
@@ -881,7 +883,7 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
 #         {"role": "assistant", "content": answer},
 #     ]
 
-#     print(f"  [comparison_report] Report generated for {tickers} ({len(answer)} chars)")
+#     gprint(f"  [comparison_report] Report generated for {tickers} ({len(answer)} chars)")
 #     return {"answer": answer, "messages": updated_messages}
 
 # ─────────────────────────────────────────────
@@ -934,7 +936,7 @@ Note: Foreign companies like Airbus, Toyota, ASML, Alibaba are not yet supported
             queue.put_nowait(word)
             time.sleep(0.03)
 
-    print(f"  [handle_no_ticker] Response generated ({len(answer)} chars)")
+    gprint(f"  [handle_no_ticker] Response generated ({len(answer)} chars)")
     return {"answer": answer, "messages": updated_messages}
 
 
@@ -993,7 +995,7 @@ def update_session_memory(state: AgentState) -> dict:
     else:
         structured["in_clarification"] = False
 
-    print(f"  [update_session_memory] in_clarification: {structured.get('in_clarification')}")
+    gprint(f"  [update_session_memory] in_clarification: {structured.get('in_clarification')}")
 
     # ── Build conversation context for narrative ──
     conversation_context = ""
@@ -1033,8 +1035,8 @@ Write in third person. Do not include disclaimers or formatting."""
         "narrative":  narrative,
     }
 
-    print(f"  [update_session_memory] Session memory updated — tickers: {structured['tickers_discussed']}")
-    print(f"  [update_session_memory] Narrative: {narrative[:100]}...")
+    gprint(f"  [update_session_memory] Session memory updated — tickers: {structured['tickers_discussed']}")
+    gprint(f"  [update_session_memory] Narrative: {narrative[:100]}...")
 
     return {"session_memory": updated_session_memory}
 
@@ -1163,7 +1165,7 @@ NEWS & SENTIMENT:
         {"role": "assistant", "content": answer},
     ]
 
-    print(f"  [simple_report] Response generated for {tickers} ({len(answer)} chars)")
+    gprint(f"  [simple_report] Response generated for {tickers} ({len(answer)} chars)")
     return {"answer": answer, "messages": updated_messages}
 
 
@@ -1225,9 +1227,9 @@ CONVERSATION HISTORY:
 {history_context}"""
 
     # ── Debug: verify market data is available ──
-    print(f"  [handle_follow_up] last_market_data keys: {list(last_market_data.keys())}")
-    print(f"  [handle_follow_up] NVDA market_cap: {last_market_data.get('NVDA', {}).get('market_cap')}")
-    print(f"  [handle_follow_up] TSLA market_cap: {last_market_data.get('TSLA', {}).get('market_cap')}")
+    gprint(f"  [handle_follow_up] last_market_data keys: {list(last_market_data.keys())}")
+    gprint(f"  [handle_follow_up] NVDA market_cap: {last_market_data.get('NVDA', {}).get('market_cap')}")
+    gprint(f"  [handle_follow_up] TSLA market_cap: {last_market_data.get('TSLA', {}).get('market_cap')}")
 
     queue = token_queue_var.get()
     answer = ""
@@ -1251,7 +1253,7 @@ CONVERSATION HISTORY:
         {"role": "assistant", "content": answer},
     ]
 
-    print(f"  [handle_follow_up] Response generated ({len(answer)} chars)")
+    gprint(f"  [handle_follow_up] Response generated ({len(answer)} chars)")
     return {"answer": answer, "messages": updated_messages}
 
 
@@ -1323,7 +1325,7 @@ CONVERSATION HISTORY:
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
-        print(f"  [handle_clarification] Invalid JSON: {content}")
+        gprint(f"  [handle_clarification] Invalid JSON: {content}")
         data = {"ready": False, "message": "Could you tell me more about what you're looking for?"}
 
     is_ready = data.get("ready", False)
@@ -1342,7 +1344,7 @@ CONVERSATION HISTORY:
 
     # Check if ready to route to DISCOVERY
     if is_ready:
-        print(f"  [handle_clarification] Ready — enriched question: {message}")
+        gprint(f"  [handle_clarification] Ready — enriched question: {message}")
         return {
             "answer":              message,
             "question":            message,
@@ -1350,7 +1352,7 @@ CONVERSATION HISTORY:
             "messages":            updated_messages,
         }
     else:
-        print(f"  [handle_clarification] Asking clarification ({len(message)} chars)")
+        gprint(f"  [handle_clarification] Asking clarification ({len(message)} chars)")
         return {
             "answer":              message,
             "clarification_ready": False,
