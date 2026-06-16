@@ -25,10 +25,11 @@ NODE_PROGRESS = {
     "news_sub":           "Analysing news sentiment for {ticker}...",             # sub_progress
     # ──────────────────────────────────────────────────────────────
     "specific_report":    "Generating investment report...",
-    "comparison_report":  "Analysing and comparing companies...",
+    #"comparison_report":  "Analysing and comparing companies...",
     "discovery_suggest":  "Searching for the best stocks for you...",
-    "discovery_report":   "Ranking and selecting top stocks...",
+    #"discovery_report":   "Ranking and selecting top stocks...",
     "greeting":           "Welcome! Preparing your response...",
     "out_of_scope":       "Let me help you with that...",
     "no_ticker":          "Could not identify a stock ticker...",
+    "follow_up":          "Looking up from our conversation...",
 }

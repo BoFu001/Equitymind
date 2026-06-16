@@ -1,0 +1,231 @@
+================================================================================
+Questions Grouped by Intent Pattern
+================================================================================
+Total questions: 84
+Patterns identified: 8
+Source: Quora (public forums) + real user (friend)
+================================================================================
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 1 — BUY / HOLD / SELL DECISION
+User need: "Advise me on what action to take"
+Count: 32 questions | 38% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user wants a recommendation on whether to buy, hold, or sell a specific
+  stock. This is the most common pattern — users treat EquityMind as a financial
+  advisor, not a database. They want a considered opinion, not raw data.
+  Includes both pre-ownership ("should I buy?") and post-ownership
+  ("should I hold/sell?") questions — same underlying need: what action to take.
+
+Questions:
+  Should I buy Apple stock?
+  Is buying AAPL stock a good long-term investment?
+  Would now be a good time to buy Apple shares?
+  Should I short Apple on the next iPhone announcement?
+  I bought 78 shares of AAPL at $126, now it's at $91. Should I buy another $10,000 worth?
+  Is AAPL stock a buy yet?
+  Should I buy AAPL now or am I too late?
+  Is it too late to invest in Apple?
+  Is Apple stock a compelling investment?
+  Is it too late to buy stocks from Tesla?
+  Is Tesla a good investment?
+  Is it dangerous to buy TSLA right now?
+  Should I buy TSLA shares?
+  Is TSLA a bad investment?
+  Will Tesla stock cross $1000?
+  Should I invest in Tesla or will it be crushed by competitors?
+  Does the recent drop in TSLA represent a buying opportunity?
+  What is happening to $NVDA? Is it time to sell or buy more?
+  Should I invest in NVDA? If so, how much?
+  Is Nvidia worth investing in?
+  Is NVDA stock a good buy before the stock split?
+  Should we buy Nvidia stock today as it seems too cheap?
+  Is NVDA still a good investment in 2024?
+  Should investors wait until after Nvidia earnings to take a position?
+  After today's collapse, do you think NVDA is a very strong buy?
+  Are you bullish or bearish on NVDA after these recent announcements?
+  Is Amazon a good stock to hold for 10/20 years?
+  Is Amazon a good buy right now?
+  Would you buy Amazon stock for a long-time hold?
+  After the AMZN stock split, is it worth buying?
+  Should I continue to hold AMZN and NFLX?                               ##########
+  Should I cash out of my MSFT stock?
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 2 — VALUATION
+User need: "Tell me if this stock is cheap or expensive"
+Count: 15 questions | 18% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user wants a valuation judgement — is the stock priced fairly, too high,
+  or too low? They are not asking whether to buy (Pattern 1) but specifically
+  whether the current price is justified. Requires analysis of P/E, growth
+  prospects, and market sentiment relative to intrinsic value.
+
+Questions:
+  Is Apple overvalued?
+  Is AAPL too expensive to buy at over $300?
+  Is Apple a value stock now?
+  Is AAPL undervalued right now, and would it be a good investment for 2019?
+  Is Tesla overvalued?
+  Is Tesla undervalued?
+  Is NVDA overpriced? Is it worth it to buy in 2020?
+  Is NVDA overvalued?
+  What are your thoughts on NVIDIA stock long term?
+  Is MSFT a good buy in 2018?                                             ##########
+  What are your thoughts on the MSFT stock?
+  What is your long-term outlook for Microsoft stock?
+  Would you buy MSFT now?                                                 ##########
+  Is MSFT overvalued?
+  Is Tesla in terminal decline?
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 3 — COMPARISON
+User need: "Help me choose between two stocks"
+Count: 12 questions | 14% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user is deciding between two specific stocks and wants help choosing.
+  They have already narrowed their options and need a side-by-side analysis.
+  Requires comparing fundamentals, risk, growth, and fit for the user's goals.
+  Always involves exactly two named stocks.
+
+Questions:
+  Should I just invest in AAPL, or should I diversify?
+  Which stock should I buy for a 4yr old, AAPL or DIS?
+  If you had to spend $10,000 on AAPL or BAC, which would you pick?
+  Should I buy AMZN or AAPL?                    ##########
+  If you had to spend your last 100K on AAPL or TSLA, which would it be and why?
+  If you had to spend $10,000 on AAPL or TSLA, which would it be and why?
+  Which is a better 5-year buy, NVDA or MSFT?    ##########
+  Which stock would you rather invest in, Microsoft, Google, Apple, or NVDA?
+  Should I invest in AAPL stock or AMZN stock?
+  Which stock is better positioned, MSFT or AMZN?
+  Which company will make you more money in 3-5 years, Amazon or Google?
+  Which stock is better between MSFT and AAPL?
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 4 — RISK / SAFETY ASSESSMENT
+User need: "Assess the risk for me"
+Count: 6 questions | 7% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user is primarily concerned about losing money. They want a risk
+  assessment, not a buy/sell recommendation. These users are cautious and
+  need reassurance or a clear warning. Requires analysis of volatility,
+  downside scenarios, and company stability.
+
+Questions:
+  Is Apple a good starter stock?
+  Is Amazon a risky investment?
+  Is Apple or Microsoft a safer quality play in the 2026 tech cycle?
+  Would you buy Microsoft stock after its acquisition of Activision Blizzard?
+  Is it dangerous to buy TSLA right now?
+  I have $700K in AAPL and $200K in Betterment. Should I diversify now or wait?
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 5 — NEWS-DRIVEN
+User need: "Explain what just happened"
+Count: 5 questions | 6% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user saw a price move or news event and wants to understand the cause
+  and impact. They are reacting to something they just heard — on TV, social
+  media, or a friend. Often an incomplete statement rather than a clear question.
+  Requires real-time context awareness and news interpretation.
+
+Questions:
+  Why is AAPL falling?
+  Why is TSLA going down?
+  It is said that SpaceX went IPO today at Nasdaq
+  Is it a good time to buy AMZN?
+  Would it be smart to buy Microsoft stock right now?
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 6 — COMPANY OVERVIEW
+User need: "Give me an introduction to this company"
+Count: 5 questions | 6% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user has no specific question — they simply want to learn about a company.
+  Often used by beginners who heard a company name and want to understand what
+  it does, how it makes money, and what its investment story is. Requires a
+  narrative, readable overview rather than raw financial data.
+
+Questions:
+  What do you think about Tesla as a stock?
+  I would like to know something about SpaceX, particularly the financial and accounting information
+  Please introduce me the information about Google
+  I would like to know about Ford Motor company
+  Should I buy MSFT stocks now for a 3-year term?    ##########
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 7 — PORTFOLIO / INVESTMENT GUIDANCE
+User need: "Guide my investment decision"
+Count: 6 questions | 7% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user has money available and wants guidance on how to invest it. Unlike
+  Pattern 1 (which is about a specific stock), this pattern is broader — the
+  user does not yet know what to buy. Includes both beginners starting from
+  scratch and experienced investors rebalancing a portfolio. Requires a
+  personalised, guided approach.
+
+Questions:
+  How should I invest $1000?
+  I know nothing about investing and I have $1000. Where do I start?
+  I have $1000 and want to buy stocks. What stock should I buy?
+  I'm 27 and have never invested before. I have $1000 to start with. What are some options?
+  I have $1000 and want to start investing, where do I start?
+  I'm 18 and have $1000. Where do I invest it?
+
+
+────────────────────────────────────────────────────────────────────────────────
+PATTERN 8 — SPECIFIC FINANCIAL METRIC
+User need: "Give me a specific number or data point"
+Count: 3 questions | 4% of dataset
+────────────────────────────────────────────────────────────────────────────────
+Description:
+  The user wants a precise financial figure — a specific metric, ratio, or
+  data point. This is the most data-driven pattern — closer to a database query
+  than an advisory request. Requires accurate retrieval of financial data from
+  SEC filings or market data sources. No opinion needed, just the number.
+
+Questions:
+  Please let me know the EBITDA of Ford in 2023 fiscal year
+  Which is a better investment for the next 3-5 years, NIKE or MSFT?    ##########
+  Can Amazon stock reach $5,000 in the next 2 years?
+
+
+================================================================================
+SUMMARY
+================================================================================
+
+Pattern                    Need                      Count    %
+───────────────────────────────────────────────────────────────
+1. Buy/Hold/Sell decision  Advise me                 32       38%
+2. Valuation               Value it for me           15       18%
+3. Comparison              Help me choose            12       14%
+4. Risk/Safety             Assess the risk            6        7%
+5. News-driven             Explain what happened      5        6%
+6. Company overview        Give me an overview        5        6%
+7. Portfolio guidance      Guide my investment        6        7%
+8. Specific metric         Give me a number           3        4%
+───────────────────────────────────────────────────────────────
+TOTAL                                                84      100%
+
+Key insight:
+  Patterns 1-3 account for 70% of all real user questions.
+  These three patterns are the highest priority for graph redesign.
+  Patterns 4-8 cover the remaining 30% and represent important edge cases
+  that the current graph fails entirely (out_of_scope).
+
+================================================================================

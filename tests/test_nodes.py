@@ -10,10 +10,12 @@ from src.agent.nodes import (
     handle_out_of_scope,
     handle_greeting,
     discovery_suggest,
-    discovery_report,
-    comparison_report,
-    specific_report,
+    # discovery_report,
+    # comparison_report,
+    # specific_report,
+    simple_report,
     handle_no_ticker,
+    handle_follow_up,
 )
 
 @pytest.fixture(autouse=True)
@@ -286,7 +288,46 @@ def test_discovery_suggest():
 # ─────────────────────────────────────────────
 
 
-def test_specific_report():
+# def test_specific_report():
+#     state = make_state(
+#         question="Analyse Apple",
+#         tickers=["AAPL"],
+#         chunks={"AAPL": []},
+#         market_data={"AAPL": {}},
+#         news={"AAPL": []},
+#     )
+#     result = specific_report(state)
+#     assert "answer" in result
+#     assert len(result["answer"]) > 0
+#     assert "messages" in result
+
+# def test_comparison_report():
+#     state = make_state(
+#         question="Compare Apple and Microsoft",
+#         tickers=["AAPL", "MSFT"],
+#         chunks={"AAPL": [], "MSFT": []},
+#         market_data={"AAPL": {}, "MSFT": {}},
+#         news={"AAPL": [], "MSFT": []},
+#     )
+#     result = comparison_report(state)
+#     assert "answer" in result
+#     assert len(result["answer"]) > 0
+#     assert "messages" in result
+
+# def test_discovery_report():
+#     state = make_state(
+#         question="Find me a low risk stock",
+#         tickers=["JNJ", "PG", "KO"],
+#         chunks={"JNJ": [], "PG": [], "KO": []},
+#         market_data={"JNJ": {}, "PG": {}, "KO": {}},
+#         news={"JNJ": [], "PG": [], "KO": []},
+#     )
+#     result = discovery_report(state)
+#     assert "answer" in result
+#     assert len(result["answer"]) > 0
+#     assert "messages" in result
+
+def test_simple_report():
     state = make_state(
         question="Analyse Apple",
         tickers=["AAPL"],
@@ -294,38 +335,10 @@ def test_specific_report():
         market_data={"AAPL": {}},
         news={"AAPL": []},
     )
-    result = specific_report(state)
+    result = simple_report(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
     assert "messages" in result
-
-def test_comparison_report():
-    state = make_state(
-        question="Compare Apple and Microsoft",
-        tickers=["AAPL", "MSFT"],
-        chunks={"AAPL": [], "MSFT": []},
-        market_data={"AAPL": {}, "MSFT": {}},
-        news={"AAPL": [], "MSFT": []},
-    )
-    result = comparison_report(state)
-    assert "answer" in result
-    assert len(result["answer"]) > 0
-    assert "messages" in result
-
-def test_discovery_report():
-    state = make_state(
-        question="Find me a low risk stock",
-        tickers=["JNJ", "PG", "KO"],
-        chunks={"JNJ": [], "PG": [], "KO": []},
-        market_data={"JNJ": {}, "PG": {}, "KO": {}},
-        news={"JNJ": [], "PG": [], "KO": []},
-    )
-    result = discovery_report(state)
-    assert "answer" in result
-    assert len(result["answer"]) > 0
-    assert "messages" in result
-
-
 
 # ─────────────────────────────────────────────
 # Node: No Ticker
@@ -348,3 +361,22 @@ def test_handle_no_ticker_comparison():
     assert "compare" in result["answer"].lower()
     assert "messages" in result
     assert len(result["messages"]) == 2
+
+
+# ─────────────────────────────────────────────
+# Node: Handle Follow Up
+# ─────────────────────────────────────────────
+
+def test_handle_follow_up():
+    state = make_state(
+        question="What is their P/E ratio?",
+        messages=[
+            {"role": "user",      "content": "Analyse NVDA"},
+            {"role": "assistant", "content": "NVIDIA P/E ratio is 32.58, revenue $253.49B..."},
+        ]
+    )
+    result = handle_follow_up(state)
+    assert "answer" in result
+    assert len(result["answer"]) > 0
+    assert "messages" in result
+    assert len(result["messages"]) == 4  # 2 history + 2 new

@@ -1,14 +1,33 @@
 """
 test_websocket.py
 
-Multi-turn WebSocket test for EquityMind.
-Tests conversation history and session memory across multiple turns.
+Test multi-turn WebSocket test for EquityMind.
 
-Run with server already started:
-    uvicorn api.main:app --reload --port 8000
+Option 1 — Run in terminal (connects directly to core, bypasses proxy):
 
-Then in a second terminal:
-    python tests/test_websocket.py
+    Terminal 1 — Core agent:
+        cd equitymind-core
+        uvicorn api.main:app --reload --port 8000
+
+    Terminal 2 — Run this test:
+        cd equitymind-core
+        python tests/test_websocket.py
+
+
+Option 2 — Run in local browser (3 terminals required):
+
+    Terminal 1 — Core agent:
+        cd equitymind-core
+        uvicorn api.main:app --reload --port 8000
+
+    Terminal 2 — Web backend proxy:
+        cd equitymind-web-backend
+        uvicorn api.main:app --reload --port 8001
+
+    Terminal 3 — Frontend:
+        cd equitymind-web-frontend
+        npm run dev
+        → http://localhost:5173/
 """
 
 import asyncio

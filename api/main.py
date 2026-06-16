@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("%s API starting up...", APP_NAME)
+    logger.info("%s Core starting up...", APP_NAME)
 
     # Pre-load FinBERT so the first user request is not slow.
     try:
@@ -57,14 +57,14 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    logger.info("%s API shutting down.", APP_NAME)
+    logger.info("%s Core shutting down.", APP_NAME)
 
 
 # ─────────────────────────────────────────────
 # Application
 # ─────────────────────────────────────────────
 app = FastAPI(
-    title=f"{APP_NAME} API",
+    title=f"{APP_NAME} Core",
     description=(
         "Financial Agentic RAG System. "
         "Query any stock ticker and receive a structured equity research report "
