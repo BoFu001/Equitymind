@@ -394,7 +394,7 @@ def test_handle_follow_up():
 # ─────────────────────────────────────────────
 
 def test_handle_clarification_asks_question():
-    """With no criteria — should ask a question, not return READY."""
+    """With no criteria — should ask a question, complete should be False."""
     state = make_state(
         question="Find me a good stock",
         messages=[]
@@ -402,12 +402,12 @@ def test_handle_clarification_asks_question():
     result = handle_clarification(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
-    assert not result["answer"].strip().startswith("READY:")
+    assert result.get("clarification_complete") == False
     assert "messages" in result
     assert len(result["messages"]) == 2
 
-def test_handle_clarification_ready_with_enough_criteria():
-    """With enough criteria in history — should return clarification_ready=True."""
+def test_handle_clarification_complete_with_enough_criteria():
+    """With enough criteria in history — should return clarification_complete=True."""
     state = make_state(
         question="long term",
         messages=[
@@ -422,6 +422,6 @@ def test_handle_clarification_ready_with_enough_criteria():
     result = handle_clarification(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
-    assert result.get("clarification_ready") == True
+    assert result.get("clarification_complete") == True
     assert "question" in result
     assert len(result["question"]) > 0

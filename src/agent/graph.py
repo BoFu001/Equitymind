@@ -65,9 +65,9 @@ def route_after_extract(state: AgentState) -> str:
 #         return "specific_report"
 
 def route_after_clarification(state: AgentState) -> str:
-    ready = state.get("clarification_ready")
-    yprint(f"  [route_after_clarification] clarification_ready={ready}")
-    if ready:
+    complete = state.get("clarification_complete")
+    yprint(f"  [route_after_clarification] complete={complete}")
+    if complete:
         return "discovery_suggest"
     else:
         return "update_session_memory"

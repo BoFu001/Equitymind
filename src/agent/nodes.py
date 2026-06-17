@@ -991,7 +991,7 @@ def update_session_memory(state: AgentState) -> dict:
 
     # ── Update clarification state ──
     if intent == "CLARIFICATION":
-        structured["in_clarification"] = not state.get("clarification_ready", False)
+        structured["in_clarification"] = not state.get("clarification_complete", False) # TODO
     else:
         structured["in_clarification"] = False
 
@@ -1297,14 +1297,14 @@ Look at the conversation history below and decide:
 
 
 If NOT enough info:
-{{"ready": false, "message": "Your friendly question here"}}
+{{"complete": false, "message": "Your friendly question here"}}
 
 If ENOUGH info:
-{{"ready": true, "message": "Find me a good stock in tech sector, medium risk, long term investment"}}
+{{"complete": true, "message": "Find me a good stock in tech sector, medium risk, long term investment"}}
 
 Where "message" is either:
-- The clarifying question to ask the user (if not ready)
-- The enriched question for DISCOVERY pipeline (if ready)
+- The clarifying question to ask the user (if not complete)
+- The enriched question for DISCOVERY pipeline (if complete)
 
 USER QUESTION: {question}
 
@@ -1326,13 +1326,13 @@ CONVERSATION HISTORY:
         data = json.loads(content)
     except json.JSONDecodeError:
         gprint(f"  [handle_clarification] Invalid JSON: {content}")
-        data = {"ready": False, "message": "Could you tell me more about what you're looking for?"}
+        data = {"complete": False, "message": "Could you tell me more about what you're looking for?"}
 
-    is_ready = data.get("ready", False)
+    complete = data.get("complete", False)
     message  = data.get("message", "")
 
     # Stream message word by word to user
-    if queue and not is_ready:
+    if queue and not complete:
         for word in re.findall(r'\S+|\s+', message):
             queue.put_nowait(word)
             time.sleep(0.03)
@@ -1342,19 +1342,19 @@ CONVERSATION HISTORY:
         {"role": "assistant", "content": message},
     ]
 
-    # Check if ready to route to DISCOVERY
-    if is_ready:
-        gprint(f"  [handle_clarification] Ready — enriched question: {message}")
+    # Check if complete to route to DISCOVERY
+    if complete:
+        gprint(f"  [handle_clarification] Complete — enriched question: {message}")
         return {
-            "answer":              message,
-            "question":            message,
-            "clarification_ready": True,
-            "messages":            updated_messages,
+            "answer":                  message,
+            "question":                message,
+            "clarification_complete":  True,
+            "messages":                updated_messages,
         }
     else:
         gprint(f"  [handle_clarification] Asking clarification ({len(message)} chars)")
         return {
-            "answer":              message,
-            "clarification_ready": False,
-            "messages":            updated_messages,
+            "answer":                  message,
+            "clarification_complete":  False,
+            "messages":                updated_messages,
         }

@@ -32,11 +32,3 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # Batch sizes
 EMBEDDING_BATCH_SIZE = 100
 PGVECTOR_BATCH_SIZE  = 100
-
-
-
-
-# ── Colored print helpers ──
-def gprint(text): print(f"\033[92m[NODE]  {text}\033[0m")   # green  — node prints
-def rprint(text): print(f"\033[91m[ROUTE] {text}\033[0m")   # red    — graph/routing prints
-def yprint(text): print(f"\033[93m[DEBUG] {text}\033[0m")   # yellow — temporary debug
