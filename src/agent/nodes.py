@@ -465,10 +465,6 @@ def handle_out_of_scope(state: AgentState) -> dict:
     writer({"type": "progress", "node": "out_of_scope", "message": NODE_PROGRESS["out_of_scope"]})
 
 
-
-    messages = state.get("messages") or []
-    question = state["question"]
-
     answer = f"""I'm {APP_NAME}, an AI investment research assistant. I specialise in stock analysis, company research, and investment insights.
 
 I can help you with:
@@ -480,11 +476,6 @@ I can help you with:
 
 What stock would you like me to research?"""
 
-    updated_messages = messages + [
-        {"role": "user",      "content": question},
-        {"role": "assistant", "content": answer},
-    ]
-
     queue = token_queue_var.get()
     if queue:
         for word in re.findall(r'\S+|\s+', answer):
@@ -492,7 +483,7 @@ What stock would you like me to research?"""
             time.sleep(0.03)
 
     gprint(f"  [handle_out_of_scope] Response generated ({len(answer)} chars)")
-    return {"answer": answer, "messages": updated_messages}
+    return {"answer": answer}
 
 
 # ─────────────────────────────────────────────
@@ -546,16 +537,10 @@ Keep the response concise and contextual. Use markdown and emojis where appropri
             answer += token
             if queue:
                 queue.put_nowait(token)
-
-    updated_messages = messages + [
-        {"role": "user",      "content": question},
-        {"role": "assistant", "content": answer},
-    ]
-
     
     gprint(f"  [handle_greeting] Greeting generated ({len(answer)} chars)")
 
-    return {"answer": answer, "messages": updated_messages}
+    return {"answer": answer}
 
 
 # ─────────────────────────────────────────────
@@ -569,8 +554,14 @@ def discovery_suggest(state: AgentState) -> dict:
     writer = get_stream_writer()
     writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
 
-    question = state["question"]
-    messages = state.get("messages") or []
+    # use synthesized question if clarification ran, else the raw user question
+    question = state.get("enriched_query") or state["question"]
+    
+    # delete after debugging
+    from colors import rprint
+    rprint(f"  [discovery_suggest] question: {question}")
+
+
 
     ticker_prompt = f"""You are a financial analyst.
 The user wants investment recommendations based on their criteria.
@@ -899,10 +890,6 @@ def handle_no_ticker(state: AgentState) -> dict:
     writer = get_stream_writer()
     writer({"type": "progress", "node": "no_ticker", "message": NODE_PROGRESS["no_ticker"]})
 
-
-    
-    messages = state.get("messages") or []
-    question = state["question"]
     intent   = state.get("intent", "")
 
     if intent == "COMPARISON":
@@ -925,11 +912,6 @@ Please name the company specifically, for example:
 
 Note: Foreign companies like Airbus, Toyota, ASML, Alibaba are not yet supported (coming soon)."""
 
-    updated_messages = messages + [
-        {"role": "user",      "content": question},
-        {"role": "assistant", "content": answer},
-    ]
-
     queue = token_queue_var.get()
     if queue:
         for word in re.findall(r'\S+|\s+', answer):
@@ -937,9 +919,7 @@ Note: Foreign companies like Airbus, Toyota, ASML, Alibaba are not yet supported
             time.sleep(0.03)
 
     gprint(f"  [handle_no_ticker] Response generated ({len(answer)} chars)")
-    return {"answer": answer, "messages": updated_messages}
-
-
+    return {"answer": answer}
 
 
 
@@ -960,6 +940,12 @@ def update_session_memory(state: AgentState) -> dict:
     tickers        = state.get("tickers") or []
     messages       = state.get("messages") or []
     session_memory = state.get("session_memory") or {}
+
+    # ── Append this turn to conversation history (single point of truth) ──
+    updated_messages = messages + [
+        {"role": "user",      "content": question},
+        {"role": "assistant", "content": answer},
+    ]
 
     # ── Get previoursly saved memory ──
     structured = session_memory.get("structured", {
@@ -991,7 +977,7 @@ def update_session_memory(state: AgentState) -> dict:
 
     # ── Update clarification state ──
     if intent == "CLARIFICATION":
-        structured["in_clarification"] = not state.get("clarification_complete", False) # TODO
+        structured["in_clarification"] = not state.get("clarification_complete", False)
     else:
         structured["in_clarification"] = False
 
@@ -999,7 +985,7 @@ def update_session_memory(state: AgentState) -> dict:
 
     # ── Build conversation context for narrative ──
     conversation_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
+    for msg in updated_messages[-CONVERSATION_HISTORY_LIMIT:]:
         role    = msg.get("role", "")
         content = msg.get("content", "")[:300]
         conversation_context += f"{role.upper()}: {content}\n"
@@ -1038,7 +1024,18 @@ Write in third person. Do not include disclaimers or formatting."""
     gprint(f"  [update_session_memory] Session memory updated — tickers: {structured['tickers_discussed']}")
     gprint(f"  [update_session_memory] Narrative: {narrative[:100]}...")
 
-    return {"session_memory": updated_session_memory}
+
+    # delete after debugging
+    from colors import rprint
+    rprint("  [update_session_memory] Final messages:")
+    for i, msg in enumerate(updated_messages):
+        rprint(f"    {i}: [{msg['role']}] {msg['content'][:100]}")
+
+
+    return {
+        "messages":       updated_messages,
+        "session_memory": updated_session_memory,
+    }
 
 
 
@@ -1160,13 +1157,8 @@ NEWS & SENTIMENT:
             if queue:
                 queue.put_nowait(token)
 
-    updated_messages = messages + [
-        {"role": "user",      "content": question},
-        {"role": "assistant", "content": answer},
-    ]
-
     gprint(f"  [simple_report] Response generated for {tickers} ({len(answer)} chars)")
-    return {"answer": answer, "messages": updated_messages}
+    return {"answer": answer}
 
 
 
@@ -1248,13 +1240,8 @@ CONVERSATION HISTORY:
             if queue:
                 queue.put_nowait(token)
 
-    updated_messages = messages + [
-        {"role": "user",      "content": question},
-        {"role": "assistant", "content": answer},
-    ]
-
     gprint(f"  [handle_follow_up] Response generated ({len(answer)} chars)")
-    return {"answer": answer, "messages": updated_messages}
+    return {"answer": answer}
 
 
 
@@ -1267,6 +1254,7 @@ def handle_clarification(state: AgentState) -> dict:
     Asks one question at a time until enough criteria collected.
     When ready, builds enriched question and routes to DISCOVERY.
     """
+
     writer = get_stream_writer()
     writer({"type": "progress", "node": "clarification", "message": NODE_PROGRESS["clarification"]})
 
@@ -1297,14 +1285,10 @@ Look at the conversation history below and decide:
 
 
 If NOT enough info:
-{{"complete": false, "message": "Your friendly question here"}}
+{{"complete": false, "clarifying_question": "Your friendly question here"}}
 
 If ENOUGH info:
-{{"complete": true, "message": "Find me a good stock in tech sector, medium risk, long term investment"}}
-
-Where "message" is either:
-- The clarifying question to ask the user (if not complete)
-- The enriched question for DISCOVERY pipeline (if complete)
+{{"complete": true, "enriched_question": "Find me a good stock in tech sector, medium risk, long term investment"}}
 
 USER QUESTION: {question}
 
@@ -1326,35 +1310,30 @@ CONVERSATION HISTORY:
         data = json.loads(content)
     except json.JSONDecodeError:
         gprint(f"  [handle_clarification] Invalid JSON: {content}")
-        data = {"complete": False, "message": "Could you tell me more about what you're looking for?"}
+        data = {"complete": False, "clarifying_question": "Could you tell me more about what you're looking for?"}
 
     complete = data.get("complete", False)
-    message  = data.get("message", "")
 
-    # Stream message word by word to user
-    if queue and not complete:
-        for word in re.findall(r'\S+|\s+', message):
-            queue.put_nowait(word)
-            time.sleep(0.03)
-
-    updated_messages = messages + [
-        {"role": "user",      "content": question},
-        {"role": "assistant", "content": message},
-    ]
-
-    # Check if complete to route to DISCOVERY
     if complete:
-        gprint(f"  [handle_clarification] Complete — enriched question: {message}")
+        enriched_question = data.get("enriched_question", "")
+        gprint(f"  [handle_clarification] Complete — enriched question: {enriched_question}")
         return {
-            "answer":                  message,
-            "question":                message,
-            "clarification_complete":  True,
-            "messages":                updated_messages,
+            "clarification_complete": True,
+            "enriched_query":         enriched_question,
         }
+
     else:
-        gprint(f"  [handle_clarification] Asking clarification ({len(message)} chars)")
+        # only fire this sub_progress when we know another question is needed
+        writer({"type": "sub_progress", "node": "clarification", "message": NODE_PROGRESS["clarification_sub"]})
+        # Stream a clarifying question to user
+        clarifying_question = data.get("clarifying_question", "")
+        if queue:
+            for word in re.findall(r'\S+|\s+', clarifying_question):
+                queue.put_nowait(word)
+                time.sleep(0.03)
+
+        gprint(f"  [handle_clarification] Asking clarification ({len(clarifying_question)} chars)")
         return {
-            "answer":                  message,
             "clarification_complete":  False,
-            "messages":                updated_messages,
+            "answer":                  clarifying_question,
         }

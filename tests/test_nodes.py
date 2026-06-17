@@ -257,8 +257,6 @@ def test_handle_out_of_scope():
     result = handle_out_of_scope(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
-    assert "messages" in result
-    assert len(result["messages"]) == 2
 
 
 # ─────────────────────────────────────────────
@@ -270,8 +268,6 @@ def test_handle_greeting():
     result = handle_greeting(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
-    assert "messages" in result
-    assert len(result["messages"]) == 2
 
 
 
@@ -344,7 +340,6 @@ def test_simple_report():
     result = simple_report(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
-    assert "messages" in result
 
 # ─────────────────────────────────────────────
 # Node: No Ticker
@@ -356,8 +351,6 @@ def test_handle_no_ticker_specific_stock():
     assert "answer" in result
     assert len(result["answer"]) > 0
     assert "company" in result["answer"].lower()
-    assert "messages" in result
-    assert len(result["messages"]) == 2
 
 def test_handle_no_ticker_comparison():
     state = make_state(question="Compare them", intent="COMPARISON")
@@ -365,8 +358,6 @@ def test_handle_no_ticker_comparison():
     assert "answer" in result
     assert len(result["answer"]) > 0
     assert "compare" in result["answer"].lower()
-    assert "messages" in result
-    assert len(result["messages"]) == 2
 
 
 # ─────────────────────────────────────────────
@@ -384,8 +375,6 @@ def test_handle_follow_up():
     result = handle_follow_up(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
-    assert "messages" in result
-    assert len(result["messages"]) == 4  # 2 history + 2 new
 
 
 
@@ -403,8 +392,6 @@ def test_handle_clarification_asks_question():
     assert "answer" in result
     assert len(result["answer"]) > 0
     assert result.get("clarification_complete") == False
-    assert "messages" in result
-    assert len(result["messages"]) == 2
 
 def test_handle_clarification_complete_with_enough_criteria():
     """With enough criteria in history — should return clarification_complete=True."""
@@ -420,8 +407,6 @@ def test_handle_clarification_complete_with_enough_criteria():
         ]
     )
     result = handle_clarification(state)
-    assert "answer" in result
-    assert len(result["answer"]) > 0
     assert result.get("clarification_complete") == True
-    assert "question" in result
-    assert len(result["question"]) > 0
+    assert "enriched_query" in result
+    assert len(result["enriched_query"]) > 0

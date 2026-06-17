@@ -16,6 +16,7 @@ class AgentState(TypedDict):
     intent: Optional[str]       # GREETING / OUT_OF_SCOPE / SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / 
 
     clarification_complete: Optional[bool]  # True when clarification collected enough criteria
+    enriched_query: Optional[str]  # transient — synthesized question for discovery_suggest, never persisted to messages
 
     # Extracted parameters
     tickers: Optional[list[str]]     # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
@@ -69,6 +70,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         },
         "intent":      None,
         "clarification_complete": False,
+        "enriched_query": None,
         "tickers":     [],
         "year":        None,
         "chunks":      [],
