@@ -11,28 +11,28 @@ Supports future internationalisation — swap NODE_PROGRESS dict for different l
 # Node progress messages — user-friendly UX language
 # ─────────────────────────────────────────────
 NODE_PROGRESS = {
-    "classify":           "Understanding your question...",
-    "extract":            "Identifying the company...",
+    "classify_top_intent":         "Understanding your question...",
+    "classify_sub_intent":         "Identifying the task...",
+    "greeting":                    "Welcome! Preparing your response...",
+    "out_of_scope":                "Let me help you with that...",
+    "explain_concept":             "Putting together an explanation...",
+    "extract":                     "Identifying the company...",
     # ──────────────────────────────────────────────────────────────
-    "ensure_sec_data":    "Checking our knowledge base...",
-    "retrieve":           "Reading {ticker} annual report...",                    # sub_progress
-    "fetch":              "Downloading {ticker} annual report from SEC...",       # sub_progress
+    "ensure_sec_data":             "Checking our knowledge base...",
+    "retrieve":                    "Reading {ticker} annual report...",                    # sub_progress
+    "fetch":                       "Downloading {ticker} annual report from SEC...",       # sub_progress
     # ──────────────────────────────────────────────────────────────
-    "market_data":        "Checking live market data...",
-    "market_data_sub":    "Fetching live data for {ticker}...",                   # sub_progress
+    "market_data":                 "Checking live market data...",
+    "market_data_sub":             "Fetching live data for {ticker}...",                   # sub_progress
     # ──────────────────────────────────────────────────────────────
-    "news":               "Reading the latest news...",
-    "news_sub":           "Analysing news sentiment for {ticker}...",             # sub_progress
+    "news":                        "Reading the latest news...",
+    "news_sub":                    "Analysing news sentiment for {ticker}...",             # sub_progress
     # ──────────────────────────────────────────────────────────────
-    "specific_report":    "Generating investment report...",
-    #"comparison_report":  "Analysing and comparing companies...",
-    "discovery_suggest":  "Searching for the best stocks for you...",
-    #"discovery_report":   "Ranking and selecting top stocks...",
-    "greeting":           "Welcome! Preparing your response...",
-    "out_of_scope":       "Let me help you with that...",
-    "no_ticker":          "Could not identify a stock ticker...",
-    "follow_up":          "Looking up from our conversation...",
+    "specific_report":             "Generating investment report...",
+    "discovery_suggest":           "Searching for the best stocks for you...",
+    "no_ticker":                   "Could not identify a stock ticker...",
+    "follow_up":                   "Looking up from our conversation...",
     # ──────────────────────────────────────────────────────────────
-    "clarification":      "Reviewing your investment criteria...",
-    "clarification_sub":  "Gathering more criteria...",                           # sub_progress
+    "clarification":               "Reviewing your investment criteria...",
+    "clarification_sub":           "Gathering more criteria...",                           # sub_progress
 }

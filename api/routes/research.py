@@ -53,7 +53,8 @@ async def query_sync(request: SyncRequest):
         return SyncResponse(
             job_id=job_id,
             tickers=final_state.get("tickers"),
-            intent=final_state.get("intent"),
+            top_intent=final_state.get("top_intent"),
+            sub_intent=final_state.get("sub_intent"),
             answer=final_state.get("answer", ""),
             status="success",
         )
@@ -63,7 +64,8 @@ async def query_sync(request: SyncRequest):
         return SyncResponse(
             job_id=job_id,
             tickers=None,
-            intent=None,
+            top_intent=None,
+            sub_intent=None,
             answer="",
             status="error",
             error=str(e),

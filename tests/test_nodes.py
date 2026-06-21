@@ -2,7 +2,9 @@ import pytest
 from unittest.mock import patch, MagicMock
 from src.agent.state import AgentState
 from src.agent.nodes import (
-    classify_intent,
+    classify_top_intent,
+    classify_sub_intent,
+    explain_concept,
     extract_parameters,
     ensure_sec_data,
     get_market_data,
@@ -10,9 +12,6 @@ from src.agent.nodes import (
     handle_out_of_scope,
     handle_greeting,
     discovery_suggest,
-    # discovery_report,
-    # comparison_report,
-    # specific_report,
     simple_report,
     handle_no_ticker,
     handle_follow_up,
@@ -38,7 +37,8 @@ def make_state(**kwargs) -> AgentState:
         "question": "What are Apple's biggest risks?",
         "messages": [],
         "session_memory": None,
-        "intent": None,
+        "top_intent": None,
+        "sub_intent": None,
         "tickers": [], 
         "year": None,
         "chunks": None,
@@ -51,48 +51,78 @@ def make_state(**kwargs) -> AgentState:
 
 
 # ─────────────────────────────────────────────
-# Node: Intent Classification
+# Node: Top Intent Classification (Layer 1)
 # ─────────────────────────────────────────────
 
-def test_classify_intent_specific_stock():
-    state = make_state(question="What are Apple's biggest risks?")
-    result = classify_intent(state)
-    assert result["intent"] == "SPECIFIC_STOCK"
-
-def test_classify_intent_out_of_scope():
+def test_classify_top_intent_out_of_scope():
     state = make_state(question="I want to become rich")
-    result = classify_intent(state)
-    assert result["intent"] == "OUT_OF_SCOPE"
+    result = classify_top_intent(state)
+    assert result["top_intent"] == "OUT_OF_SCOPE"
 
-def test_classify_intent_greeting():
+def test_classify_top_intent_greeting():
     state = make_state(question="Hello, what can you do?")
-    result = classify_intent(state)
-    assert result["intent"] == "GREETING"
+    result = classify_top_intent(state)
+    assert result["top_intent"] == "GREETING"
 
-def test_classify_intent_comparison():
-    state = make_state(question="Compare Apple and Microsoft")
-    result = classify_intent(state)
-    assert result["intent"] == "COMPARISON"
+def test_classify_top_intent_general_knowledge():
+    state = make_state(question="What is a stock?")
+    result = classify_top_intent(state)
+    assert result["top_intent"] == "GENERAL_KNOWLEDGE"
 
-def test_classify_intent_discovery():
+def test_classify_top_intent_task_specific_stock():
+    state = make_state(question="What are Apple's biggest risks?")
+    result = classify_top_intent(state)
+    assert result["top_intent"] == "TASK"
+
+def test_classify_top_intent_task_discovery():
     state = make_state(question="Find me a low risk stock")
-    result = classify_intent(state)
-    assert result["intent"] == "DISCOVERY"
+    result = classify_top_intent(state)
+    assert result["top_intent"] == "TASK"
 
-def test_classify_intent_stock_market():
+
+# ─────────────────────────────────────────────
+# Node: Sub Intent Classification (Layer 2)
+# ─────────────────────────────────────────────
+
+def test_classify_sub_intent_specific_stock():
+    state = make_state(question="What are Apple's biggest risks?")
+    result = classify_sub_intent(state)
+    assert result["sub_intent"] == "SPECIFIC_STOCK"
+
+def test_classify_sub_intent_comparison():
+    state = make_state(question="Compare Apple and Microsoft")
+    result = classify_sub_intent(state)
+    assert result["sub_intent"] == "COMPARISON"
+
+def test_classify_sub_intent_discovery():
+    state = make_state(question="Find me a low risk stock")
+    result = classify_sub_intent(state)
+    assert result["sub_intent"] == "DISCOVERY"
+
+def test_classify_sub_intent_stock_market():
     state = make_state(question="Tell me about the stock market")
-    result = classify_intent(state)
-    assert result["intent"] == "DISCOVERY"
+    result = classify_sub_intent(state)
+    assert result["sub_intent"] == "DISCOVERY"
 
-def test_classify_intent_vague_sector():
+def test_classify_sub_intent_vague_sector():
     state = make_state(question="Analyse a tech company")
-    result = classify_intent(state)
+    result = classify_sub_intent(state)
+    assert result["sub_intent"] == "DISCOVERY"
 
-    assert result["intent"] == "DISCOVERY"
-def test_classify_intent_clarification():
+def test_classify_sub_intent_clarification():
     state = make_state(question="Find me a good stock")
-    result = classify_intent(state)
-    assert result["intent"] == "CLARIFICATION"
+    result = classify_sub_intent(state)
+    assert result["sub_intent"] == "CLARIFICATION"
+
+# ─────────────────────────────────────────────
+# Node: Explain Concept
+# ─────────────────────────────────────────────
+
+def test_explain_concept():
+    state = make_state(question="What is a stock?")
+    result = explain_concept(state)
+    assert "answer" in result
+    assert len(result["answer"]) > 0
 
 # ─────────────────────────────────────────────
 # Node: Extract Parameters
@@ -159,24 +189,24 @@ def test_no_ticker_edge_cases():
     ]
 
     for question in edge_cases:
-        # Step 1 — classify
+        # Step 1 — classify sub intent
         classify_state = make_state(question=question)
-        classify_result = classify_intent(classify_state)
-        intent = classify_result["intent"]
+        sub_result = classify_sub_intent(classify_state)
+        sub_intent = sub_result["sub_intent"]
 
         # Step 2 — extract
-        extract_state = make_state(question=question, intent=intent)
+        extract_state = make_state(question=question, sub_intent=sub_intent)
         extract_result = extract_parameters(extract_state)
         tickers = extract_result.get("tickers", [])
 
         print(f"\nQ: '{question}'")
-        print(f"  Intent: {intent}")
+        print(f"  Sub-intent: {sub_intent}")
 
         # Assert: if COMPARISON or SPECIFIC_STOCK — no ticker should be found
         # These vague questions should either route to DISCOVERY or have no ticker
-        if intent == "COMPARISON":
+        if sub_intent == "COMPARISON":
             assert not tickers, f"Expected no tickers for vague COMPARISON: '{question}' but got {tickers}"
-        if intent == "SPECIFIC_STOCK":
+        if sub_intent == "SPECIFIC_STOCK":
             assert not tickers, f"Expected no tickers for vague SPECIFIC_STOCK: '{question}' but got {tickers}"
 
 # ─────────────────────────────────────────────
@@ -346,14 +376,14 @@ def test_simple_report():
 # ─────────────────────────────────────────────
 
 def test_handle_no_ticker_specific_stock():
-    state = make_state(question="Analyse XYZ Corporation", intent="SPECIFIC_STOCK")
+    state = make_state(question="Analyse XYZ Corporation", sub_intent="SPECIFIC_STOCK")
     result = handle_no_ticker(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
     assert "company" in result["answer"].lower()
 
 def test_handle_no_ticker_comparison():
-    state = make_state(question="Compare them", intent="COMPARISON")
+    state = make_state(question="Compare them", sub_intent="COMPARISON")
     result = handle_no_ticker(state)
     assert "answer" in result
     assert len(result["answer"]) > 0

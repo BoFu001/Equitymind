@@ -52,7 +52,7 @@ async def query_stream(websocket: WebSocket):
         {"type": "connected",  "job_id": "..."}
         {"type": "progress",   "node": "classify", "message": "..."}
         {"type": "token",      "text": "## Apple Inc"}
-        {"type": "done",       "job_id": "...", "tickers": ["AAPL"], "intent": "SPECIFIC_STOCK"}
+        {"type": "done",       "job_id": "...", "tickers": ["AAPL"], "top_intent": "TASK", "sub_intent": "SPECIFIC_STOCK"}
     """
     await websocket.accept()
 
@@ -170,7 +170,8 @@ async def query_stream(websocket: WebSocket):
             DoneEvent(
                 job_id=job_id,
                 tickers=final_state.get("tickers"),
-                intent=final_state.get("intent"),
+                top_intent=final_state.get("top_intent"),
+                sub_intent=final_state.get("sub_intent"),
                 messages=final_state.get("messages"),
                 session_memory=final_state.get("session_memory"),
             ).model_dump_json()

@@ -21,18 +21,75 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 # ─────────────────────────────────────────────
-# Node: Intent Classification
+# Node: Top Intent Classification (Layer 1)
 # ─────────────────────────────────────────────
 
-def classify_intent(state: AgentState) -> dict:
+def classify_top_intent(state: AgentState) -> dict:
     """
-    Classifies the user's question into one of seven categories.
-    Uses LLM with a strict prompt — returns only the category name.
+    Layer 1 — coarse classification.
+    Decides whether this question needs the task pipeline at all,
+    before any tool-related complexity enters.
+    """
+
+    writer = get_stream_writer()
+    writer({"type": "progress", "node": "classify_top_intent", "message": NODE_PROGRESS["classify_top_intent"]})
+
+    question = state["question"]
+    messages = state.get("messages") or []
+    session_memory  = state.get("session_memory") or {}
+    in_clarification = (session_memory.get("structured") or {}).get("in_clarification", False)
+
+    history_context = ""
+    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
+        role = msg.get("role", "")
+        content = msg.get("content", "")[:200]
+        history_context += f"{role.upper()}: {content}\n"
+
+    prompt = f"""You are {APP_NAME}'s coarse classifier.
+Classify the user question into exactly one of these categories:
+
+- GREETING: user is saying hello or asking what {APP_NAME} can do (e.g. "Hi", "What can you do?")
+- OUT_OF_SCOPE: question has no relation to investing, stocks, or financial markets (e.g. "What's the weather?", "Am I handsome?"). Also OUT_OF_SCOPE: cryptocurrency questions (EquityMind only covers US-listed equities filing 10-Ks), scam/fraud recovery questions (e.g. "I lost money to a fake investment site, how do I get it back"), and "make money with no investment" / side-hustle questions.
+- GENERAL_KNOWLEDGE: user is asking a general conceptual question about investing — they want to be taught, not helped with a specific task. Look for the ABSENCE of concrete parameters: no sector, no risk tolerance, no dollar amount, no named company. Signals: "what is...", "how do I start...", "I'm new to this", "I don't understand...". Examples: "What is a stock?", "How do I start investing as a beginner?", "What's the difference between stocks and ETFs?", "I'm new to investing, where do I start?"
+- TASK: user wants {APP_NAME} to actually do something — analyse a company, compare companies, find recommendations, or answer a question using real data. This includes vague-but-parameterized requests (e.g. "I have $1000 to invest" — has a dollar amount, even though other details are still missing).
+
+The key distinction between GENERAL_KNOWLEDGE and TASK: if the user has given ANY concrete parameter (a number, a sector, a risk preference, a named company) and seems to want a personalised answer, classify TASK even if details are still missing. If the user is asking what something means or how investing works in general, with no parameters at all, classify GENERAL_KNOWLEDGE.
+
+CONVERSATION HISTORY (for context):
+
+{f"⚠️ IMPORTANT: The user is currently in the middle of answering {APP_NAME}'s clarification questions to find a stock recommendation. Their message is almost certainly continuing that conversation — even if phrased as a question, or if it gives indirect/contextual information (e.g. their age, life stage, a general statement about their goals) rather than a direct keyword answer. Classify as TASK unless the message is unmistakably a new greeting, a completely unrelated topic, or genuinely off-scope (e.g. asking about the weather or world news)." if in_clarification else ""}
+
+{history_context if history_context else "NONE — this is the first message in this session."}
+
+User question: {question}
+
+Reply with ONLY the category name. Nothing else."""
+
+    response = client.chat.completions.create(
+        model=LLM_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0,
+    )
+
+    top_intent = response.choices[0].message.content.strip()
+    gprint(f"  [classify_top_intent] top_intent: {top_intent}")
+    return {"top_intent": top_intent}
+
+
+# ─────────────────────────────────────────────
+# Node: Task Classification (Layer 2)
+# ─────────────────────────────────────────────
+
+def classify_sub_intent(state: AgentState) -> dict:
+    """
+    Layer 2 — fine classification.
+    Only runs when top_intent == TASK.
+    Classifies into one of seven task-types.
     """
 
 
     writer = get_stream_writer()
-    writer({"type": "progress", "node": "classify", "message": NODE_PROGRESS["classify"]})
+    writer({"type": "progress", "node": "classify_sub_intent", "message": NODE_PROGRESS["classify_sub_intent"]})
 
     question = state["question"]
     messages = state.get("messages") or []
@@ -41,8 +98,6 @@ def classify_intent(state: AgentState) -> dict:
 
     has_history = len(messages) > 0
 
-    # Hard rule: no history = cannot be FOLLOW_UP
-    # Skip LLM ambiguity by injecting explicit signal into prompt
     history_context = ""
     for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
         role = msg.get("role", "")
@@ -50,10 +105,9 @@ def classify_intent(state: AgentState) -> dict:
         history_context += f"{role.upper()}: {content}\n"
 
     prompt = f"""You are {APP_NAME}'s intent classifier.
-Classify the user question into exactly one of these categories:
+The user's question has already been confirmed as a TASK — something {APP_NAME} should actually do.
+Classify it into exactly one of these categories:
 
-- GREETING: user is saying hello or asking what {APP_NAME} can do (e.g. "Hi", "What can you do?")
-- OUT_OF_SCOPE: question has NO relation to investing, stocks, or financial markets (e.g. "I want to be rich", "What's the weather?", "Am I handsome?")
 - SPECIFIC_STOCK: user asks about one NAMED specific company (e.g. "What are Apple's risks?", "Analyse NVIDIA", "Tell me about Tesla"). The company must be explicitly named — NOT vague like "a tech company" or "a healthcare stock".
 - COMPARISON: user wants to compare two or more EXPLICITLY NAMED companies with real identifiable stock tickers (e.g. "Compare Apple and Microsoft", "AAPL vs GOOGL", "Tesla versus BMW"). Also classify as COMPARISON if the user refers to previously suggested companies (e.g. "Compare the last 5 suggested", "Compare those stocks", "Which of those is better?"). IMPORTANT: if no specific company names are mentioned AND no reference to previous suggestions, classify as DISCOVERY instead.
 - DISCOVERY: user wants general investment recommendations, asks about a sector, or asks general financial market questions without naming a specific company (e.g. "Find me a low risk stock", "Analyse a tech company", "Tell me about semiconductor stocks", "Tell me about the stock market", "What is a good investment?")
@@ -91,13 +145,68 @@ Reply with ONLY the category name. Nothing else."""
         temperature=0,
     )
 
-    intent = response.choices[0].message.content.strip()
-    gprint(f"  [classify_intent] Intent: {intent}")
-    return {"intent": intent}
+    sub_intent = response.choices[0].message.content.strip()
+    gprint(f"  [classify_sub_intent] sub_intent: {sub_intent}")
+    return {"sub_intent": sub_intent}
 
 
 
+# ─────────────────────────────────────────────
+# Node: Explain Concept (GENERAL_KNOWLEDGE handler)
+# ─────────────────────────────────────────────
 
+def explain_concept(state: AgentState) -> dict:
+    """
+    Answers general conceptual questions about investing.
+    No tools, no SEC/market/news data — pure LLM explanation.
+    Ends with a soft invitation back into TASK territory.
+    """
+
+    writer = get_stream_writer()
+    writer({"type": "progress", "node": "explain_concept", "message": NODE_PROGRESS["explain_concept"]})
+
+    question = state["question"]
+    messages = state.get("messages") or []
+
+    history_context = ""
+    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
+        role = msg.get("role", "")
+        content = msg.get("content", "")[:200]
+        history_context += f"{role.upper()}: {content}\n"
+
+    prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
+
+The user is asking a general conceptual question about investing — they want to learn, not get a specific recommendation.
+Give a clear, friendly, beginner-appropriate explanation. Keep it concise — a few short paragraphs, not an exhaustive essay.
+Do NOT ask about sector preference, risk tolerance, or any other specific criteria — that would be premature for someone at this stage.
+End with a brief, natural invitation: if they want help finding or analysing a specific stock once they're ready, they can just ask.
+
+CONVERSATION HISTORY (for context):
+{history_context if history_context else "NONE — this is the first message in this session."}
+
+USER QUESTION: {question}
+
+Use markdown and emojis sparingly where it aids clarity."""
+
+    queue = token_queue_var.get()
+    answer = ""
+
+    response = client.chat.completions.create(
+        model=LLM_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.5,
+        stream=True,
+    )
+
+    for stream_chunk in response:
+        token = stream_chunk.choices[0].delta.content or ""
+        if token:
+            answer += token
+            if queue:
+                queue.put_nowait(token)
+
+    gprint(f"  [explain_concept] Explanation generated ({len(answer)} chars)")
+    return {"answer": answer}
 
 # ─────────────────────────────────────────────
 # Node: Extract Parameters
@@ -128,13 +237,15 @@ Extract the stock ticker(s) and year from the user question.
 Rules:
 - tickers: list of ALL stock ticker symbols. Convert ANY company name to its ticker symbol. If no company or ticker mentioned, return [].
 - year: the year mentioned. If not mentioned, return null.
+- If the user refers to a previously discussed company using a pronoun ("this", "it", "that") instead of naming it, include the ticker from LAST TICKERS FROM PREVIOUS TURN below, IN ADDITION TO any newly named company in the current question. Example: if LAST TICKERS = ["GOOGL"] and the user asks "is this better than Tesla?", return ["GOOGL", "TSLA"] — both the referenced company and the newly named one.
+- If the user refers to the whole previous list ("last", "those", "them", "the suggested ones"), return all of LAST TICKERS FROM PREVIOUS TURN.
 - Examples of conversions: Apple → AAPL, Microsoft → MSFT, Tesla → TSLA, NVIDIA → NVDA, Google → GOOGL, Amazon → AMZN, Alibaba → BABA, Meta → META, Samsung → 005930.KS, Tencent → 0700.HK
 
 CONVERSATION HISTORY (for context):
 {history_context}
 User question: {question}
 
-LAST TICKERS FROM PREVIOUS TURN (use these if user refers to "last", "those", "them", "the suggested ones"):
+LAST TICKERS FROM PREVIOUS TURN:
 {last_tickers if last_tickers else "None"}
 
 Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example:
@@ -890,9 +1001,9 @@ def handle_no_ticker(state: AgentState) -> dict:
     writer = get_stream_writer()
     writer({"type": "progress", "node": "no_ticker", "message": NODE_PROGRESS["no_ticker"]})
 
-    intent   = state.get("intent", "")
+    sub_intent = state.get("sub_intent", "")
 
-    if intent == "COMPARISON":
+    if sub_intent == "COMPARISON":
         answer = f"""I couldn't identify which companies you want to compare.
 
 Please name the companies specifically, for example:
@@ -936,7 +1047,8 @@ def update_session_memory(state: AgentState) -> dict:
     # ── Get current state ──
     question       = state["question"]
     answer         = state.get("answer") or ""
-    intent         = state.get("intent") or ""
+    top_intent     = state.get("top_intent") or ""
+    sub_intent     = state.get("sub_intent") or ""
     tickers        = state.get("tickers") or []
     messages       = state.get("messages") or []
     session_memory = state.get("session_memory") or {}
@@ -951,7 +1063,9 @@ def update_session_memory(state: AgentState) -> dict:
     structured = session_memory.get("structured", {
         "tickers_discussed":   [],       # active
         "last_tickers":        [],       # active
-        "last_intent":         "",       # active
+        "last_top_intent":     "",       # active
+        "last_sub_intent":     "",       # active
+        "last_market_data":    {},       # active
         "top_recommendations": [],       # future
         "user_preferences": {            # future
             "sectors": [],
@@ -968,15 +1082,19 @@ def update_session_memory(state: AgentState) -> dict:
 
     structured["tickers_discussed"] = existing_tickers        # active
     structured["last_tickers"]      = tickers                 # active
-    structured["last_intent"]       = intent                  # active
+    structured["last_top_intent"]   = top_intent              # active
+    structured["last_sub_intent"]   = sub_intent              # active
     new_market_data = state.get("market_data")
     if new_market_data:
+        # Only overwrite if this turn actually fetched fresh data —
+        # GREETING/FOLLOW_UP/CLARIFICATION/etc. turns don't run get_market_data,
+        # so we'd otherwise wipe out the last real fetch with an empty dict.
         structured["last_market_data"] = new_market_data      # active
     # structured["top_recommendations"]                         future
     # structured["user_preferences"]                            future (separate LLM call)
 
     # ── Update clarification state ──
-    if intent == "CLARIFICATION":
+    if sub_intent == "CLARIFICATION":
         structured["in_clarification"] = not state.get("clarification_complete", False)
     else:
         structured["in_clarification"] = False
@@ -1000,7 +1118,8 @@ EXISTING SUMMARY:
 
 LATEST TURN:
 User asked: {question}
-Intent: {intent}
+Top-level category: {top_intent}
+Task type: {sub_intent if sub_intent else "N/A"}
 Tickers involved: {tickers}
 Answer summary: {answer[:300]}
 
@@ -1220,8 +1339,6 @@ CONVERSATION HISTORY:
 
     # ── Debug: verify market data is available ──
     gprint(f"  [handle_follow_up] last_market_data keys: {list(last_market_data.keys())}")
-    gprint(f"  [handle_follow_up] NVDA market_cap: {last_market_data.get('NVDA', {}).get('market_cap')}")
-    gprint(f"  [handle_follow_up] TSLA market_cap: {last_market_data.get('TSLA', {}).get('market_cap')}")
 
     queue = token_queue_var.get()
     answer = ""
@@ -1272,6 +1389,11 @@ def handle_clarification(state: AgentState) -> dict:
 The user wants investment recommendations but hasn't provided enough criteria.
 Your job is to collect the necessary information through friendly conversation.
 
+IMPORTANT: Users often answer indirectly rather than with exact keywords. Treat these as valid signals:
+- Age or life stage ("I'm 47", "I'm retired", "I just graduated") → infer a reasonable time horizon (e.g. closer to retirement age suggests shorter horizon; young age suggests longer horizon). Do NOT ask the same question again if the user has already given you something you can reasonably infer from.
+- General statements about goals ("I want to earn money now", "I'm saving for a house") → can imply risk tolerance or time horizon even without using those exact words.
+- If the user asks YOU to make the inference ("what do you think my time horizon is?"), make a reasonable inference yourself rather than deflecting the question back to them.
+
 Look at the conversation history below and decide:
 
 1. Do you have ENOUGH information to make good recommendations?
@@ -1280,6 +1402,7 @@ Look at the conversation history below and decide:
    - sector + time horizon  
    - budget + sector
    - risk tolerance + time horizon
+   Use reasonable inference from indirect signals (as described above) to fill in any of these — do not require the user to use exact keywords.
 
 2. Reply with ONLY valid JSON. No markdown, no code fences, no explanation.
 

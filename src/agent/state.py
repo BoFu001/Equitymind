@@ -12,8 +12,11 @@ class AgentState(TypedDict):
     messages: list              # full conversation history
     session_memory: Optional[dict]  # structured + narrative summary memory
 
-    # Intent classification
-    intent: Optional[str]       # GREETING / OUT_OF_SCOPE / SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / 
+    # Macro classification (Layer 1)
+    top_intent: Optional[str]   # TASK / GREETING / OUT_OF_SCOPE / GENERAL_KNOWLEDGE
+
+    # Intent classification (Layer 2 — only runs if top_intent == TASK)
+    sub_intent: Optional[str]   # SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / FOLLOW_UP / CLARIFICATION
 
     clarification_complete: Optional[bool]  # True when clarification collected enough criteria
     enriched_query: Optional[str]  # transient — synthesized question for discovery_suggest, never persisted to messages
@@ -57,7 +60,9 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
             "structured": {
                 "tickers_discussed":    [],
                 "last_tickers":         [],
-                "last_intent":          "",
+                "last_top_intent":      "",
+                "last_sub_intent":      "",
+                "last_market_data":     {}, 
                 "in_clarification":     False, 
                 "top_recommendations":  [],        # future
                 "user_preferences": {              # future
@@ -68,7 +73,8 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
             },
             "narrative": ""
         },
-        "intent":      None,
+        "top_intent": None,
+        "sub_intent": None,
         "clarification_complete": False,
         "enriched_query": None,
         "tickers":     [],

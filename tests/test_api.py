@@ -84,60 +84,63 @@ def test_sync_response_shape():
     data = response.json()
     assert "job_id" in data
     assert "tickers" in data
-    assert "intent" in data
+    assert "top_intent" in data
+    assert "sub_intent" in data
     assert "answer" in data
     assert "status" in data
     assert "error" in data
 
 
 def test_sync_greeting_intent():
-    """Greeting question must return GREETING intent and non-empty answer."""
+    """Greeting question must return GREETING top_intent and non-empty answer."""
     response = client.post(
         "/api/v1/query/sync",
         json={"question": "Hello"}
     )
     data = response.json()
     assert data["status"] == "success"
-    assert data["intent"] == "GREETING"
+    assert data["top_intent"] == "GREETING"
     assert len(data["answer"]) > 0
 
 
 def test_sync_out_of_scope_intent():
-    """Out of scope question must return OUT_OF_SCOPE intent."""
+    """Out of scope question must return OUT_OF_SCOPE top_intent."""
     response = client.post(
         "/api/v1/query/sync",
         json={"question": "What is the weather today?"}
     )
     data = response.json()
     assert data["status"] == "success"
-    assert data["intent"] == "OUT_OF_SCOPE"
+    assert data["top_intent"] == "OUT_OF_SCOPE"
     assert len(data["answer"]) > 0
 
 
 
 def test_sync_specific_stock_intent():
-    """Stock question must return SPECIFIC_STOCK intent with ticker and answer."""
+    """Stock question must return SPECIFIC_STOCK sub_intent with ticker and answer."""
     response = client.post(
         "/api/v1/query/sync",
         json={"question": "Analyse Apple"}
     )
     data = response.json()
     assert data["status"] == "success"
-    assert data["intent"] == "SPECIFIC_STOCK"
+    assert data["top_intent"] == "TASK"
+    assert data["sub_intent"] == "SPECIFIC_STOCK"
     assert "AAPL" in data["tickers"]
     assert len(data["answer"]) > 100
 
 
 
 def test_sync_comparison_intent():
-    """Comparison question must return COMPARISON intent with multiple tickers."""
+    """Comparison question must return COMPARISON sub_intent with multiple tickers."""
     response = client.post(
         "/api/v1/query/sync",
         json={"question": "Compare Apple and Microsoft"}
     )
     data = response.json()
     assert data["status"] == "success"
-    assert data["intent"] == "COMPARISON"
+    assert data["top_intent"] == "TASK"
+    assert data["sub_intent"] == "COMPARISON"
     assert len(data["tickers"]) >= 2
     assert len(data["answer"]) > 100
 
@@ -265,7 +268,5 @@ def test_websocket_specific_stock_streams_tokens():
 
     assert len(tokens) > 100
     assert "AAPL" in done_event["tickers"]
-    assert done_event["intent"] == "SPECIFIC_STOCK"
-
-
-
+    assert done_event["top_intent"] == "TASK"
+    assert done_event["sub_intent"] == "SPECIFIC_STOCK"
