@@ -1,6 +1,6 @@
 from colors import yprint
 
-from langgraph.graph import StateGraph, END
+from langgraph.graph import StateGraph, START, END
 
 from src.agent.state import AgentState
 from src.agent.nodes import (
@@ -95,10 +95,7 @@ def build_graph():
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
     graph.add_node("follow_up",              handle_follow_up)
-    graph.add_node("clarification",          handle_clarification)
-
-    # Entry point — Layer 1
-    graph.set_entry_point("classify_top_intent")
+    graph.add_node("clarification",          handle_clarification)    
 
     # Conditional edge after Layer 1
     graph.add_conditional_edges(
@@ -144,6 +141,7 @@ def build_graph():
     )
 
     # Linear flow after market_data
+    graph.add_edge(START,                    "classify_top_intent")
     graph.add_edge("discovery_suggest",      "ensure_sec")
     graph.add_edge("ensure_sec",             "market_data")
     graph.add_edge("market_data",            "news")
