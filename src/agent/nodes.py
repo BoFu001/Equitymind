@@ -14,8 +14,8 @@ from src.agent.nodes_notifications import NODE_PROGRESS
 from src.tools.market_data import get_stock_data
 from src.tools.news_sentiment import get_news_and_sentiment
 from src.tools.sec_retrieval import retrieve, fetch_embed_store_retrieve
-
-from colors import gprint
+from src.agent.formatters import format_market_data, format_news, format_sec_chunks, format_conversation_context
+from colors import gprint, rprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -39,11 +39,7 @@ def classify_top_intent(state: AgentState) -> dict:
     session_memory  = state.get("session_memory") or {}
     in_clarification = (session_memory.get("structured") or {}).get("in_clarification", False)
 
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")[:200]
-        history_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT, max_chars=200)
 
     prompt = f"""You are {APP_NAME}'s coarse classifier.
 Classify the user question into exactly one of these categories:
@@ -59,7 +55,7 @@ CONVERSATION HISTORY (for context):
 
 {f"⚠️ IMPORTANT: The user is currently in the middle of answering {APP_NAME}'s clarification questions to find a stock recommendation. Their message is almost certainly continuing that conversation — even if phrased as a question, or if it gives indirect/contextual information (e.g. their age, life stage, a general statement about their goals) rather than a direct keyword answer. Classify as TASK unless the message is unmistakably a new greeting, a completely unrelated topic, or genuinely off-scope (e.g. asking about the weather or world news)." if in_clarification else ""}
 
-{history_context if history_context else "NONE — this is the first message in this session."}
+{conversation_context if conversation_context else "NONE — this is the first message in this session."}
 
 User question: {question}
 
@@ -72,6 +68,8 @@ Reply with ONLY the category name. Nothing else."""
     )
 
     top_intent = response.choices[0].message.content.strip()
+
+    rprint(f"  [classify_top_intent] question: {question}")
     gprint(f"  [classify_top_intent] top_intent: {top_intent}")
     return {"top_intent": top_intent}
 
@@ -98,11 +96,7 @@ def classify_sub_intent(state: AgentState) -> dict:
 
     has_history = len(messages) > 0
 
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")[:200]
-        history_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT, max_chars=200)
 
     prompt = f"""You are {APP_NAME}'s intent classifier.
 The user's question has already been confirmed as a TASK — something {APP_NAME} should actually do.
@@ -130,7 +124,7 @@ Classify it into exactly one of these categories:
 
 CONVERSATION HISTORY (for context):
 
-{history_context if history_context else "NONE — this is the first message in this session."}
+{conversation_context if conversation_context else "NONE — this is the first message in this session."}
 
 {"⚠️ IMPORTANT: There is NO conversation history. FOLLOW_UP is impossible. Do NOT classify as FOLLOW_UP." if not has_history else "Conversation history exists above."}
 {"⚠️ IMPORTANT: User is currently in an active clarification flow — they are answering your questions to help find a good stock. Classify as CLARIFICATION unless they explicitly name a specific company or ask something completely unrelated." if in_clarification else ""}
@@ -168,11 +162,7 @@ def explain_concept(state: AgentState) -> dict:
     question = state["question"]
     messages = state.get("messages") or []
 
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")[:200]
-        history_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT, max_chars=200)
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
@@ -182,7 +172,7 @@ Do NOT ask about sector preference, risk tolerance, or any other specific criter
 End with a brief, natural invitation: if they want help finding or analysing a specific stock once they're ready, they can just ask.
 
 CONVERSATION HISTORY (for context):
-{history_context if history_context else "NONE — this is the first message in this session."}
+{conversation_context if conversation_context else "NONE — this is the first message in this session."}
 
 USER QUESTION: {question}
 
@@ -225,11 +215,7 @@ def extract_parameters(state: AgentState) -> dict:
     session_memory = state.get("session_memory") or {}
     last_tickers = (session_memory.get("structured") or {}).get("last_tickers", [])
 
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")[:200]
-        history_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT, max_chars=200)
 
     prompt = f"""You are a financial data extractor.
 Extract the stock ticker(s) and year from the user question.
@@ -242,7 +228,7 @@ Rules:
 - Examples of conversions: Apple → AAPL, Microsoft → MSFT, Tesla → TSLA, NVIDIA → NVDA, Google → GOOGL, Amazon → AMZN, Alibaba → BABA, Meta → META, Samsung → 005930.KS, Tencent → 0700.HK
 
 CONVERSATION HISTORY (for context):
-{history_context}
+{conversation_context}
 User question: {question}
 
 LAST TICKERS FROM PREVIOUS TURN:
@@ -366,201 +352,6 @@ def get_news(state: AgentState) -> dict:
 
 
 
-# # ─────────────────────────────────────────────
-# # Node: Specific Report
-# # ─────────────────────────────────────────────
-# def specific_report(state: AgentState) -> dict:
-#     """
-#     Combines all data and generates a structured investment report.
-#     Uses LLM with full context: SEC chunks, market data, news.
-#     Implements XAI by including evidence and sources.
-#     """
-
-
-#     writer = get_stream_writer()
-#     writer({"type": "progress", "node": "report", "message": NODE_PROGRESS["specific_report"]})
-
-
-#     question    = state["question"]
-#     ticker      = (state.get("tickers") or [None])[0]
-#     chunks      = (state.get("chunks") or {}).get(ticker, [])
-#     market_data = (state.get("market_data") or {}).get(ticker, {})
-#     news        = (state.get("news") or {}).get(ticker, [])
-#     messages    = state.get("messages") or []
-
-#     # ── Format SEC chunks for prompt ──
-#     if not chunks:
-#         sec_context = f"No SEC 10-K filing available for {ticker}. This company may be a foreign filer (20-F) or the filing could not be retrieved."
-#     else:
-#         sec_context = ""
-#         for i, chunk in enumerate(chunks):
-#             source = f"{ticker}_{chunk['chunk']['filing_type']}_{chunk['chunk']['section']}_{chunk['chunk']['filing_date']}"
-#             sec_context += f"\n[SEC Source {i+1}: {source} | Score: {chunk['score']:.2f}]\n"
-#             sec_context += chunk["chunk"]["text"] + "\n"
-
-#     # ── Format market data for prompt ──
-#     md = market_data
-#     market_context = f"""
-# Company: {md.get('company_name', ticker)}
-# Price: ${md.get('current_price')} | Market Cap: {md.get('market_cap')}
-# P/E: {md.get('pe_ratio')} | Forward P/E: {md.get('forward_pe')}
-# Revenue: {md.get('revenue')} | Profit Margin: {md.get('profit_margin')}
-# EPS (trailing): {md.get('eps_trailing')} | EPS (forward): {md.get('eps_forward')}
-# 52w High: {md.get('52w_high')} | 52w Low: {md.get('52w_low')}
-# Dividend Yield: {md.get('dividend_yield')} | Dividend Rate: {md.get('dividend_rate')}
-# Analyst Target High: {md.get('target_high')} | Low: {md.get('target_low')} | Mean: {md.get('target_mean')}
-# Analyst Recommendation: {md.get('recommendation')}
-# RSI: {md.get('rsi')} | MACD: {md.get('macd')} | Signal: {md.get('macd_signal')}
-# SMA50: {md.get('sma_50')} | SMA200: {md.get('sma_200')}
-# Sector: {md.get('sector')} | Industry: {md.get('industry')}
-# """
-
-#     # ── Format news for prompt ──
-#     news_context = ""
-#     for i, article in enumerate(news):
-#         news_context += f"\n[News {i+1}] {article.get('sentiment','').upper()} ({article.get('score',0):.2f})\n"
-#         news_context += f"Title: {article.get('title','')}\n"
-#         news_context += f"Summary: {article.get('summary','')}\n"
-#         news_context += f"URL: {article.get('url','')}\n"
-#         news_context += f"Published: {article.get('published','')}\n"
-
-#     # ── Format chat history ──
-#     history_context = ""
-#     for msg in messages[-CONVERSATION_HISTORY_LIMIT:]: 
-#         role = msg.get("role", "")
-#         content = msg.get("content", "")
-#         history_context += f"{role.upper()}: {content}\n"
-
-#     # ── Build prompt ──
-#     prompt = f"""You are {APP_NAME}, a professional AI investment research analyst.
-# Generate a comprehensive, well-structured investment report in markdown format.
-
-# IMPORTANT RULES:
-# 1. Put the recommendation FIRST — users want the answer before the details.
-# 2. Include ALL evidence and sources for XAI (explainable AI) transparency.
-# 3. Include clickable news URLs so users can verify information.
-# 4. Be specific with numbers — never vague.
-# 5. Always include the disclaimer at the end.
-# 6. Use markdown formatting with emojis for visual clarity.
-# 7. Format large numbers cleanly — use $24.5B not $24,452,999,168. Use $7.5B not $7,506,999,808.
-# 8. Round decimal numbers to 2 decimal places — use 15.10 not 15.105477.
-
-# USER QUESTION: {question}
-# TICKER: {ticker}
-# DATE: {datetime.now().strftime('%B %d, %Y')}
-
-# CONVERSATION HISTORY:
-# {history_context}
-
-# MARKET DATA:
-# {market_context}
-
-# SEC FILING DATA (from {ticker} 10-K annual report):
-# {sec_context}
-
-# NEWS & SENTIMENT (last 30 days):
-# {news_context}
-
-# Generate the report in this EXACT structure:
-
-# # 📊 [Company Name] ([TICKER]) — Investment Analysis
-# *Generated by {APP_NAME} · [date]*
-
-# ---
-
-# ## 💡 AI Recommendation: [BUY/HOLD/SELL]
-# **Target Price:** $[mean analyst target] | **Current:** $[price] | **Upside:** [%]
-# **Confidence:** [High/Medium/Low] | **Time Horizon:** [Short/Medium/Long term]
-
-# > [2-3 sentence summary of why this recommendation]
-
-# ---
-
-# ## 📊 Quick Summary
-# - [Key fact 1]
-# - [Key fact 2]
-# - [Key fact 3]
-# - [Key fact 4]
-
-# ---
-
-# ## 💰 Valuation & Fundamentals
-# | Metric | Value | Signal |
-# |--------|-------|--------|
-# | P/E Ratio | [value] | [Cheap/Fair/Expensive] |
-# | Forward P/E | [value] | [signal] |
-# | Revenue | [value] | [signal] |
-# | Profit Margin | [value] | [signal] |
-# | EPS (TTM) | [value] | |
-# | Dividend Yield | [value] | |
-
-# ---
-
-# ## 📈 Technical Analysis
-# | Indicator | Value | Signal |
-# |-----------|-------|--------|
-# | RSI (14) | [value] | [Oversold/Neutral/Overbought] |
-# | MACD | [value] | [Bullish/Bearish] |
-# | SMA 50 | [value] | [Above/Below price] |
-# | SMA 200 | [value] | [Above/Below price] |
-# | 52w Range | [low] - [high] | [position] |
-
-# ---
-
-# ## 📰 News & Sentiment (Last 30 Days)
-# **Overall Sentiment:** [BULLISH/NEUTRAL/BEARISH] | **Avg Score:** [x.xx]
-
-# [For each article:]
-# [emoji] [[title]]([url]) — [sentiment] ([score]) — [date]
-
-# ---
-
-# ## ⚠️ Key Risks (from SEC 10-K Filing)
-# [Extract top 3-5 key risks from the SEC chunks provided]
-
-# ---
-
-# ## 📎 Evidence & Sources (XAI)
-# **This recommendation is based on:**
-# - **Fundamentals:** [key metrics used]
-# - **Technicals:** [indicators used]
-# - **News sentiment:** [x positive, y negative, z neutral articles]
-# - **SEC Filing:** [sources cited with scores]
-
-# ---
-
-# ## ⚠️ Disclaimer
-# *This report is generated by AI for educational and research purposes only. It does not constitute financial advice. Always consult a qualified financial advisor before making investment decisions. Past performance does not guarantee future results.*
-# """
-
-#     queue = token_queue_var.get()
-#     answer = ""
-
-#     response = client.chat.completions.create(
-#         model=LLM_MODEL,
-#         messages=[{"role": "user", "content": prompt}],
-#         temperature=0.3,
-#         stream=True,
-#     )
-
-#     for stream_chunk in response:
-#         token = stream_chunk.choices[0].delta.content or ""
-#         if token:
-#             answer += token
-#             if queue:
-#                 queue.put_nowait(token)
-
-#     # Update conversation history
-#     updated_messages = messages + [
-#         {"role": "user",      "content": question},
-#         {"role": "assistant", "content": answer},
-#     ]
-
-#     gprint(f"  [specific_report] Report generated for {ticker} ({len(answer)} chars)")
-#     return {"answer": answer, "messages": updated_messages}
-
-
-
 
 
 # ─────────────────────────────────────────────
@@ -612,16 +403,12 @@ def handle_greeting(state: AgentState) -> dict:
     question = state["question"]
 
 
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")[:200]
-        history_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT, max_chars=200)
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
 CONVERSATION HISTORY:
-{history_context}
+{conversation_context}
 
 USER MESSAGE: {question}
 
@@ -668,8 +455,7 @@ def discovery_suggest(state: AgentState) -> dict:
     # use synthesized question if clarification ran, else the raw user question
     question = state.get("enriched_query") or state["question"]
     
-    # delete after debugging
-    from colors import rprint
+
     rprint(f"  [discovery_suggest] question: {question}")
 
 
@@ -708,285 +494,7 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
     return {"tickers": candidate_tickers}
 
 
-# # ─────────────────────────────────────────────
-# # Node: Discovery Report
-# # ─────────────────────────────────────────────
-# def discovery_report(state: AgentState) -> dict:
-#     """
-#     Single responsibility: format real data and generate discovery report.
-#     Reads chunks, market_data, news from state — all populated by upstream nodes.
-#     """
-#     writer = get_stream_writer()
-#     writer({"type": "progress", "node": "discovery_report", "message": NODE_PROGRESS["discovery_report"]})
 
-#     question   = state["question"]
-#     tickers    = state.get("tickers") or []
-#     messages   = state.get("messages") or []
-#     all_chunks = state.get("chunks") or {}
-#     all_market = state.get("market_data") or {}
-#     all_news   = state.get("news") or {}
-
-#     # ── Format SEC chunks ──
-#     sec_context = ""
-#     for t in tickers:
-#         chunks = all_chunks.get(t, [])
-#         sec_context += f"\n{t} SEC Filing:\n"
-#         if not chunks:
-#             sec_context += "  No SEC 10-K data available.\n"
-#         else:
-#             for chunk in chunks:
-#                 sec_context += chunk["chunk"]["text"][:300] + "\n"
-
-
-#     # ── Format market data ──
-#     market_context = ""
-#     for t in tickers:
-#         md = all_market.get(t, {})
-#         market_context += f"\n{t} ({md.get('company_name')}):\n"
-#         market_context += f"  Price: ${md.get('current_price')} | P/E: {md.get('pe_ratio')} | Forward P/E: {md.get('forward_pe')}\n"
-#         market_context += f"  Revenue: {md.get('revenue')} | Profit Margin: {md.get('profit_margin')}\n"
-#         market_context += f"  RSI: {md.get('rsi')} | Dividend Yield: {md.get('dividend_yield')}\n"
-#         market_context += f"  Analyst Target: ${md.get('target_mean')} | Recommendation: {md.get('recommendation')}\n"
-
-
-#     # ── Format news ──
-#     news_context = ""
-#     for t in tickers:
-#         articles = all_news.get(t, [])
-#         if articles:
-#             news_context += f"\n{t} News:\n"
-#             for article in articles[:3]:
-#                 news_context += f"  [{article.get('sentiment','').upper()}] {article.get('title','')} ({article.get('score',0):.2f})\n"
-
-
-
-#     prompt = f"""You are {APP_NAME}, a professional AI investment research analyst.
-# The user wants investment recommendations. You have real market data and SEC filing data
-# for 5 candidate companies. Use this real data to rank and recommend the top 3.
-
-# IMPORTANT RULES:
-# - Format large numbers cleanly — use $24.5B not $24,452,999,168.
-# - Round decimal numbers to 2 decimal places — use 15.10 not 15.105477.
-
-# USER QUESTION: {question}
-# DATE: {datetime.now().strftime('%B %d, %Y')}
-
-# SEC FILING EXCERPTS:
-# {sec_context}
-
-# REAL MARKET DATA FOR 5 CANDIDATES:
-# {market_context}
-
-# NEWS & SENTIMENT (last 30 days):
-# {news_context}
-
-# Based on the REAL DATA above:
-# 1. Rank all 5 companies against the user's criteria
-# 2. Select the TOP 3 that best match
-# 3. Explain why each was selected using specific numbers from the real data
-# 4. Briefly explain why the other 2 were not selected
-
-# Generate in markdown format:
-
-# # Investment Recommendations
-# *Generated by {APP_NAME} · {datetime.now().strftime('%B %d, %Y')}*
-
-# ## Top 3 Recommendations
-# [For each of top 3 — explain with real numbers why it fits the user's criteria]
-
-# ## Why we excluded the others
-# [Brief explanation for the 2 not selected — based on real data]
-
-# ## Summary Comparison (Top 3)
-# | Metric | [ticker1] | [ticker2] | [ticker3] |
-# |--------|-----------|-----------|-----------|
-# | Price | | | |
-# | P/E Ratio | | | |
-# | RSI | | | |
-# | Dividend Yield | | | |
-# | Analyst View | | | |
-
-# ## 📰 News Sentiment (Top 3)
-# [For each of the top 3 companies — list 2-3 key news headlines with sentiment and score]
-# Format: [emoji] [title] — [POSITIVE/NEGATIVE/NEUTRAL] ([score]) — [date]
-
-# ## 👉 Next Steps
-# Ask me for a detailed analysis of any of these companies.
-
-# *This is AI-generated for educational purposes only. Not financial advice.*"""
-
-#     queue  = token_queue_var.get()
-#     answer = ""
-
-#     response = client.chat.completions.create(
-#         model=LLM_MODEL,
-#         messages=[{"role": "user", "content": prompt}],
-#         temperature=0.3,
-#         stream=True,
-#     )
-
-#     for stream_chunk in response:
-#         token = stream_chunk.choices[0].delta.content or ""
-#         if token:
-#             answer += token
-#             if queue:
-#                 queue.put_nowait(token)
-
-#     updated_messages = messages + [
-#         {"role": "user",      "content": question},
-#         {"role": "assistant", "content": answer},
-#     ]
-
-#     gprint(f"  [discovery_report] Report generated for {tickers} ({len(answer)} chars)")
-#     return {"answer": answer, "messages": updated_messages}
-
-
-# # ─────────────────────────────────────────────
-# # Node: Comparison Report
-# # ─────────────────────────────────────────────
-# def comparison_report(state: AgentState) -> dict:
-#     """
-#     Single responsibility: format real data and generate comparison report.
-#     Reads chunks, market_data, news from state — all populated by upstream nodes.
-#     """
-#     writer = get_stream_writer()
-#     writer({"type": "progress", "node": "comparison", "message": NODE_PROGRESS["comparison_report"]})
-
-#     question   = state["question"]
-#     tickers    = state.get("tickers") or []
-#     messages   = state.get("messages") or []
-#     all_chunks = state.get("chunks") or {}
-#     all_market = state.get("market_data") or {}
-#     all_news   = state.get("news") or {}
-
-#     # ── Format market data ──
-#     market_context = ""
-#     for t in tickers:
-#         md = all_market.get(t, {})
-#         market_context += f"\n{t}:\n"
-#         market_context += f"  Company: {md.get('company_name')}\n"
-#         market_context += f"  Price: ${md.get('current_price')} | P/E: {md.get('pe_ratio')} | Forward P/E: {md.get('forward_pe')}\n"
-#         market_context += f"  Revenue: {md.get('revenue')} | Profit Margin: {md.get('profit_margin')}\n"
-#         market_context += f"  RSI: {md.get('rsi')} | MACD: {md.get('macd')}\n"
-#         market_context += f"  Analyst Target Mean: ${md.get('target_mean')} | Recommendation: {md.get('recommendation')}\n"
-#         market_context += f"  EPS: {md.get('eps_trailing')} | Dividend Yield: {md.get('dividend_yield')}\n"
-
-#     # ── Format SEC chunks ──
-#     sec_context = ""
-#     for t in tickers:
-#         chunks = all_chunks.get(t, [])
-#         sec_context += f"\n{t} SEC Filing:\n"
-#         if not chunks:
-#             sec_context += "  No SEC 10-K data available.\n"
-#         else:
-#             for chunk in chunks:
-#                 sec_context += chunk["chunk"]["text"][:300] + "\n"
-
-#     # ── Format news ──
-#     news_context = ""
-#     for t in tickers:
-#         articles = all_news.get(t, [])
-#         if articles:
-#             news_context += f"\n{t} News:\n"
-#             for article in articles[:3]:
-#                 news_context += f"  [{article.get('sentiment','').upper()}] {article.get('title','')} ({article.get('score',0):.2f})\n"
-
-#     prompt = f"""You are {APP_NAME}, a professional AI investment research analyst.
-# Generate a detailed comparison report between these companies.
-
-# IMPORTANT RULES:
-# - Format large numbers cleanly — use $24.5B not $24,452,999,168.
-# - Round decimal numbers to 2 decimal places — use 15.10 not 15.105477.
-
-# USER QUESTION: {question}
-# COMPANIES: {', '.join(tickers)}
-# DATE: {datetime.now().strftime('%B %d, %Y')}
-
-# MARKET DATA:
-# {market_context}
-
-# SEC FILING EXCERPTS:
-# {sec_context}
-
-# NEWS & SENTIMENT (last 30 days):
-# {news_context}
-
-# Generate a structured comparison report in markdown format:
-
-# # ⚖️ {' vs '.join(tickers)} — Comparison Analysis
-# *Generated by {APP_NAME} · {datetime.now().strftime('%B %d, %Y')}*
-
-# ---
-
-# ## 💡 Verdict
-# [Which company wins for the user's specific criteria and why — be direct]
-
-# ---
-
-# ## 📊 Side-by-Side Comparison
-# | Metric | {' | '.join(tickers)} |
-# |--------|{'|'.join(['--------' for _ in tickers])}|
-# | Price | [values] |
-# | P/E Ratio | [values] |
-# | Forward P/E | [values] |
-# | Revenue | [values] |
-# | Profit Margin | [values] |
-# | RSI | [values] |
-# | Analyst Target | [values] |
-# | Recommendation | [values] |
-
-# ---
-
-# ## 📈 Technical Comparison
-# [Compare RSI, MACD, price performance for each company]
-
-# ---
-
-# ## 📰 News Sentiment
-# [For each company — 1-2 key headlines with sentiment and score]
-
-# ---
-
-# ## ⚠️ Key Risks
-# [Main risks for each company from SEC filings]
-
-# ---
-
-# ## 📎 Evidence & Sources (XAI)
-# **Data sources used:**
-# - Market data: yfinance
-# - SEC filings: {', '.join([f'{t}_10-K' for t in tickers])}
-# - News sentiment: Finlight + FinBERT
-
-# ---
-
-# ## ⚠️ Disclaimer
-# *This report is AI-generated for educational purposes only. Not financial advice.*"""
-
-#     queue  = token_queue_var.get()
-#     answer = ""
-
-#     response = client.chat.completions.create(
-#         model=LLM_MODEL,
-#         messages=[{"role": "user", "content": prompt}],
-#         temperature=0.3,
-#         stream=True,
-#     )
-
-#     for stream_chunk in response:
-#         token = stream_chunk.choices[0].delta.content or ""
-#         if token:
-#             answer += token
-#             if queue:
-#                 queue.put_nowait(token)
-
-#     updated_messages = messages + [
-#         {"role": "user",      "content": question},
-#         {"role": "assistant", "content": answer},
-#     ]
-
-#     gprint(f"  [comparison_report] Report generated for {tickers} ({len(answer)} chars)")
-#     return {"answer": answer, "messages": updated_messages}
 
 # ─────────────────────────────────────────────
 # Node: Handle No Ticker
@@ -1102,11 +610,7 @@ def update_session_memory(state: AgentState) -> dict:
     gprint(f"  [update_session_memory] in_clarification: {structured.get('in_clarification')}")
 
     # ── Build conversation context for narrative ──
-    conversation_context = ""
-    for msg in updated_messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role    = msg.get("role", "")
-        content = msg.get("content", "")[:300]
-        conversation_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(updated_messages, CONVERSATION_HISTORY_LIMIT, max_chars=300)
 
     existing_narrative = session_memory.get("narrative", "")
 
@@ -1115,6 +619,9 @@ def update_session_memory(state: AgentState) -> dict:
 
 EXISTING SUMMARY:
 {existing_narrative if existing_narrative else "No previous summary."}
+
+CONVERSATION HISTORY:
+{conversation_context}
 
 LATEST TURN:
 User asked: {question}
@@ -1144,8 +651,6 @@ Write in third person. Do not include disclaimers or formatting."""
     gprint(f"  [update_session_memory] Narrative: {narrative[:100]}...")
 
 
-    # delete after debugging
-    from colors import rprint
     rprint("  [update_session_memory] Final messages:")
     for i, msg in enumerate(updated_messages):
         rprint(f"    {i}: [{msg['role']}] {msg['content'][:100]}")
@@ -1163,13 +668,13 @@ Write in third person. Do not include disclaimers or formatting."""
 # ─────────────────────────────────────────────
 # Node: Simple Report
 # ─────────────────────────────────────────────
-def simple_report(state: AgentState) -> dict:
+def generate_report(state: AgentState) -> dict:
     """
     Answers the user's question directly using all available data.
     No fixed template — LLM decides format based on what was asked.
     """
     writer = get_stream_writer()
-    writer({"type": "progress", "node": "report", "message": NODE_PROGRESS["specific_report"]})
+    writer({"type": "progress", "node": "report", "message": NODE_PROGRESS["generate_report"]})
 
     question    = state["question"]
     tickers     = state.get("tickers") or []
@@ -1178,55 +683,15 @@ def simple_report(state: AgentState) -> dict:
     all_news    = state.get("news") or {}
     messages    = state.get("messages") or []
 
-    # ── Format SEC chunks ──
-    sec_context = ""
-    for t in tickers:
-        chunks = all_chunks.get(t, [])
-        if not chunks:
-            sec_context += f"\n{t}: No SEC 10-K filing available.\n"
-        else:
-            sec_context += f"\n{t} SEC Filing:\n"
-            for i, chunk in enumerate(chunks):
-                source = f"{t}_{chunk['chunk']['filing_type']}_{chunk['chunk']['section']}_{chunk['chunk']['filing_date']}"
-                sec_context += f"[Source {i+1}: {source} | Score: {chunk['score']:.2f}]\n"
-                sec_context += chunk["chunk"]["text"] + "\n"
-
-    # ── Format market data ──
-    market_context = ""
-    for t in tickers:
-        md = all_market.get(t, {})
-        market_context += f"""
-{t} — {md.get('company_name')}
-  Price: ${md.get('current_price')} | Market Cap: {md.get('market_cap')}
-  P/E: {md.get('pe_ratio')} | Forward P/E: {md.get('forward_pe')}
-  Revenue: {md.get('revenue')} | Profit Margin: {md.get('profit_margin')}
-  EPS (TTM): {md.get('eps_trailing')} | EPS (Fwd): {md.get('eps_forward')}
-  52w High: {md.get('52w_high')} | 52w Low: {md.get('52w_low')}
-  Dividend Yield: {md.get('dividend_yield')}
-  Analyst Target: ${md.get('target_mean')} | Recommendation: {md.get('recommendation')}
-  RSI: {md.get('rsi')} | MACD: {md.get('macd')}
-  SMA50: {md.get('sma_50')} | SMA200: {md.get('sma_200')}
-  Sector: {md.get('sector')} | Industry: {md.get('industry')}
-"""
-
-    # ── Format news ──
-    news_context = ""
-    for t in tickers:
-        articles = all_news.get(t, [])
-        if articles:
-            news_context += f"\n{t} News:\n"
-            for i, article in enumerate(articles):
-                news_context += f"[{article.get('sentiment','').upper()}] ({article.get('score',0):.2f}) {article.get('title','')}\n"
-                news_context += f"  Summary: {article.get('summary','')}\n"
-                news_context += f"  URL: {article.get('url','')}\n"
-                news_context += f"  Published: {article.get('published','')}\n"
+    sec_context    = "".join(
+        format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t) else f"\n{t}: No SEC 10-K filing available.\n"
+        for t in tickers
+    )
+    market_context = "".join(format_market_data(all_market.get(t, {}), t) for t in tickers)
+    news_context   = "".join(format_news(all_news.get(t, []), t) for t in tickers if all_news.get(t))
 
     # ── Format conversation history ──
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")
-        history_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
@@ -1248,7 +713,7 @@ TICKERS: {', '.join(tickers)}
 DATE: {datetime.now().strftime('%B %d, %Y')}
 
 CONVERSATION HISTORY:
-{history_context}
+{conversation_context}
 
 MARKET DATA:
 {market_context}
@@ -1276,7 +741,7 @@ NEWS & SENTIMENT:
             if queue:
                 queue.put_nowait(token)
 
-    gprint(f"  [simple_report] Response generated for {tickers} ({len(answer)} chars)")
+    gprint(f"  [generate_report] Response generated for {tickers} ({len(answer)} chars)")
     return {"answer": answer}
 
 
@@ -1297,24 +762,12 @@ def handle_follow_up(state: AgentState) -> dict:
     last_market_data = (session_memory.get("structured") or {}).get("last_market_data", {})
 
     # ── Format last known market data ──
-    market_context = ""
-    for t, md in last_market_data.items():
-        if md:
-            market_context += f"""
-{t} — {md.get('company_name')}
-  Price: ${md.get('current_price')} | Market Cap: {md.get('market_cap')}
-  P/E: {md.get('pe_ratio')} | Forward P/E: {md.get('forward_pe')}
-  Revenue: {md.get('revenue')} | Profit Margin: {md.get('profit_margin')}
-  RSI: {md.get('rsi')} | MACD: {md.get('macd')}
-  Analyst Target: ${md.get('target_mean')} | Recommendation: {md.get('recommendation')}
-  52w High: {md.get('52w_high')} | 52w Low: {md.get('52w_low')}
-  Dividend Yield: {md.get('dividend_yield')}
-"""
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")
-        history_context += f"{role.upper()}: {content}\n"
+    market_context = "".join(
+        format_market_data(md, t)
+        for t, md in last_market_data.items() if md
+    )
+    
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
@@ -1335,7 +788,7 @@ LAST KNOWN MARKET DATA (use this to answer metric questions):
 {market_context if market_context else "No market data available."}
 
 CONVERSATION HISTORY:
-{history_context}"""
+{conversation_context}"""
 
     # ── Debug: verify market data is available ──
     gprint(f"  [handle_follow_up] last_market_data keys: {list(last_market_data.keys())}")
@@ -1378,11 +831,7 @@ def handle_clarification(state: AgentState) -> dict:
     question = state["question"]
     messages = state.get("messages") or []
 
-    history_context = ""
-    for msg in messages[-CONVERSATION_HISTORY_LIMIT:]:
-        role = msg.get("role", "")
-        content = msg.get("content", "")
-        history_context += f"{role.upper()}: {content}\n"
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
@@ -1416,7 +865,7 @@ If ENOUGH info:
 USER QUESTION: {question}
 
 CONVERSATION HISTORY:
-{history_context}"""
+{conversation_context}"""
 
     queue = token_queue_var.get()
 

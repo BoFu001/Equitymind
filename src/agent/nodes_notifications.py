@@ -16,7 +16,8 @@ NODE_PROGRESS = {
     "greeting":                    "Welcome! Preparing your response...",
     "out_of_scope":                "Let me help you with that...",
     "explain_concept":             "Putting together an explanation...",
-    "extract":                     "Identifying the company...",
+    "extract":                     "Pinpointing the company...",
+    "research_loop":               "Planning the research...",
     # ──────────────────────────────────────────────────────────────
     "ensure_sec_data":             "Checking our knowledge base...",
     "retrieve":                    "Reading {ticker} annual report...",                    # sub_progress
@@ -28,7 +29,7 @@ NODE_PROGRESS = {
     "news":                        "Reading the latest news...",
     "news_sub":                    "Analysing news sentiment for {ticker}...",             # sub_progress
     # ──────────────────────────────────────────────────────────────
-    "specific_report":             "Generating investment report...",
+    "generate_report":             "Generating investment report...",
     "discovery_suggest":           "Searching for the best stocks for you...",
     "no_ticker":                   "Could not identify a stock ticker...",
     "follow_up":                   "Looking up from our conversation...",

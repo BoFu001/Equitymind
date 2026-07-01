@@ -12,7 +12,7 @@ from src.agent.nodes import (
     handle_out_of_scope,
     handle_greeting,
     discovery_suggest,
-    simple_report,
+    generate_report,
     handle_no_ticker,
     handle_follow_up,
     handle_clarification,
@@ -359,7 +359,7 @@ def test_discovery_suggest():
 #     assert len(result["answer"]) > 0
 #     assert "messages" in result
 
-def test_simple_report():
+def test_generate_report():
     state = make_state(
         question="Analyse Apple",
         tickers=["AAPL"],
@@ -367,7 +367,7 @@ def test_simple_report():
         market_data={"AAPL": {}},
         news={"AAPL": []},
     )
-    result = simple_report(state)
+    result = generate_report(state)
     assert "answer" in result
     assert len(result["answer"]) > 0
 

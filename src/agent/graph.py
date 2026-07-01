@@ -1,17 +1,12 @@
 from colors import yprint
 
 from langgraph.graph import StateGraph, START, END
-
 from src.agent.state import AgentState
 from src.agent.nodes import (
     classify_top_intent,
     classify_sub_intent,
     explain_concept,
     extract_parameters,
-    ensure_sec_data,
-    get_market_data,
-    get_news,
-    simple_report,
     handle_out_of_scope,
     handle_greeting,
     handle_no_ticker,
@@ -19,8 +14,9 @@ from src.agent.nodes import (
     update_session_memory,
     handle_follow_up,
     handle_clarification,
+    generate_report, 
 )
-
+from src.agent.research_loop import research_loop
 
 # ─────────────────────────────────────────────
 # Routing functions
@@ -63,7 +59,7 @@ def route_after_extract(state: AgentState) -> str:
     if not tickers:
         return "no_ticker"
     else:
-        return "ensure_sec"
+        return "research_loop"
 
 def route_after_clarification(state: AgentState) -> str:
     complete = state.get("clarification_complete")
@@ -85,10 +81,8 @@ def build_graph():
     graph.add_node("classify_sub_intent",    classify_sub_intent)
     graph.add_node("explain_concept",        explain_concept)
     graph.add_node("extract",                extract_parameters)
-    graph.add_node("ensure_sec",             ensure_sec_data)
-    graph.add_node("market_data",            get_market_data)
-    graph.add_node("news",                   get_news)
-    graph.add_node("simple_report",          simple_report)
+    graph.add_node("research_loop",          research_loop)
+    graph.add_node("generate_report",        generate_report) 
     graph.add_node("out_of_scope",           handle_out_of_scope)
     graph.add_node("greeting",               handle_greeting)
     graph.add_node("discovery_suggest",      discovery_suggest)
@@ -127,7 +121,7 @@ def build_graph():
         route_after_extract,
         {
             "no_ticker":      "no_ticker",
-            "ensure_sec":     "ensure_sec",
+            "research_loop":  "research_loop",
         }
     )
 
@@ -142,13 +136,11 @@ def build_graph():
 
     # Linear flow after market_data
     graph.add_edge(START,                    "classify_top_intent")
-    graph.add_edge("discovery_suggest",      "ensure_sec")
-    graph.add_edge("ensure_sec",             "market_data")
-    graph.add_edge("market_data",            "news")
-    graph.add_edge("news",                   "simple_report")
+    graph.add_edge("discovery_suggest",      "research_loop")
+    graph.add_edge("research_loop",          "generate_report")
+    graph.add_edge("generate_report",        "update_session_memory")
     graph.add_edge("explain_concept",        "update_session_memory")
     graph.add_edge("follow_up",              "update_session_memory")
-    graph.add_edge("simple_report",          "update_session_memory")
     graph.add_edge("out_of_scope",           "update_session_memory")
     graph.add_edge("greeting",               "update_session_memory")
     graph.add_edge("no_ticker",              "update_session_memory") 
