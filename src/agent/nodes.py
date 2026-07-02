@@ -94,8 +94,6 @@ def classify_sub_intent(state: AgentState) -> dict:
     session_memory  = state.get("session_memory") or {}
     in_clarification = (session_memory.get("structured") or {}).get("in_clarification", False)
 
-    has_history = len(messages) > 0
-
     conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT, max_chars=200)
 
     prompt = f"""You are {APP_NAME}'s intent classifier.
@@ -107,12 +105,6 @@ Classify it into exactly one of these categories:
 - DISCOVERY: user wants general investment recommendations, asks about a sector, or asks general financial market questions without naming a specific company (e.g. "Find me a low risk stock", "Analyse a tech company", "Tell me about semiconductor stocks", "Tell me about the stock market", "What is a good investment?")
 - ANALYZE_POSITION: user asks about their own holding in one stock (e.g. "I bought AAPL at $165, should I sell?", "I have 200 Apple shares, what should I do?")
 - ANALYZE_PORTFOLIO: user wants to analyse their full portfolio of multiple stocks (e.g. "Review my portfolio: AAPL 200 shares, NVDA 50 shares")
-- FOLLOW_UP: user asks a follow-up question about a company already discussed in conversation history, without requesting a full new analysis (e.g. "What is their P/E ratio?", "What about the risk?", "Is it oversold?", "What's the dividend?", "Tell me more about their revenue"). Only classify as FOLLOW_UP if there is conversation history — if no history exists, classify normally.
-  NEVER classify as FOLLOW_UP if:
-  - user asks for a NEW full analysis ("Analyse", "Give me a report", "Tell me about", "Research")
-  - user mentions a DIFFERENT or NEW company not yet discussed in conversation history
-  - user says "again" or "refresh" or "update"
-  - there is NO conversation history
 - CLARIFICATION: user wants investment recommendations but hasn't provided enough 
   criteria to make good suggestions. Classify as CLARIFICATION when the request is 
   too vague (e.g. "Find me a good stock", "What should I buy?", "I have $1000 to invest",
@@ -125,8 +117,6 @@ Classify it into exactly one of these categories:
 CONVERSATION HISTORY (for context):
 
 {conversation_context if conversation_context else "NONE — this is the first message in this session."}
-
-{"⚠️ IMPORTANT: There is NO conversation history. FOLLOW_UP is impossible. Do NOT classify as FOLLOW_UP." if not has_history else "Conversation history exists above."}
 {"⚠️ IMPORTANT: User is currently in an active clarification flow — they are answering your questions to help find a good stock. Classify as CLARIFICATION unless they explicitly name a specific company or ask something completely unrelated." if in_clarification else ""}
 
 User question: {question}
@@ -264,93 +254,6 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
 
     gprint(f"  [extract_parameters] Tickers: {tickers}, Year: {year}")
     return {"tickers": tickers, "year": year}
-
-
-# ─────────────────────────────────────────────
-# Node: Retrieve SEC Data
-# ─────────────────────────────────────────────
-def ensure_sec_data(state: AgentState) -> dict:
-    """
-    Single responsibility: get SEC chunks for all tickers.
-    Works for 1 ticker (SPECIFIC_STOCK) or N tickers (COMPARISON, DISCOVERY).
-    """
-    writer = get_stream_writer()
-    writer({"type": "progress", "node": "ensure_sec", "message": NODE_PROGRESS["ensure_sec_data"]})
-
-    tickers  = state.get("tickers") or []
-    question = state["question"]
-
-    all_chunks = {}
-    for t in tickers:
-        try:
-            chunks = retrieve(question, t)
-            if chunks:
-                writer({"type": "sub_progress", "node": "ensure_sec", "message": NODE_PROGRESS["retrieve"].format(ticker=t)})
-                all_chunks[t] = chunks
-            else:
-                writer({"type": "sub_progress", "node": "ensure_sec", "message": NODE_PROGRESS["fetch"].format(ticker=t)})
-                all_chunks[t] = fetch_embed_store_retrieve(question, t)
-        except Exception as e:
-            gprint(f"  [ensure_sec_data] Could not fetch SEC data for {t}: {e}")
-            all_chunks[t] = []
-
-    gprint(f"  [ensure_sec_data] SEC data fetched for {list(all_chunks.keys())}")
-    return {"chunks": all_chunks}
-
-# ─────────────────────────────────────────────
-# Node: Get Market Data
-# ─────────────────────────────────────────────
-def get_market_data(state: AgentState) -> dict:
-    """
-    Single responsibility: fetch market data for all tickers.
-    Works for 1 ticker (SPECIFIC_STOCK) or N tickers (COMPARISON, DISCOVERY).
-    """
-    writer = get_stream_writer()
-    writer({"type": "progress", "node": "market_data", "message": NODE_PROGRESS["market_data"]})
-
-    tickers = state.get("tickers") or []
-
-    if not tickers:
-        return {"market_data": {}}
-
-    all_market_data = {}
-    for t in tickers:
-        writer({"type": "sub_progress", "node": "market_data", "message": NODE_PROGRESS["market_data_sub"].format(ticker=t)})
-        data = get_stock_data(t)
-        if data:
-            all_market_data[t] = data
-        gprint(f"  [get_market_data] Market data fetched for {t}")
-
-    return {"market_data": all_market_data}
-
-
-
-
-
-
-# ─────────────────────────────────────────────
-# Node: Get News and Sentiment
-# ─────────────────────────────────────────────
-def get_news(state: AgentState) -> dict:
-    writer = get_stream_writer()
-    writer({"type": "progress", "node": "news", "message": NODE_PROGRESS["news"]})
-
-    tickers = state.get("tickers") or []
-
-    if not tickers:
-        return {"news": {}}
-
-    all_news = {}
-    for t in tickers:
-        writer({"type": "sub_progress", "node": "news", "message": NODE_PROGRESS["news_sub"].format(ticker=t)})
-        articles = get_news_and_sentiment(t)
-        all_news[t] = articles
-        gprint(f"  [get_news] {len(articles)} articles fetched for {t}")
-
-    return {"news": all_news}
-
-
-
 
 
 
@@ -569,37 +472,10 @@ def update_session_memory(state: AgentState) -> dict:
 
     # ── Get previoursly saved memory ──
     structured = session_memory.get("structured", {
-        "tickers_discussed":   [],       # active
-        "last_tickers":        [],       # active
-        "last_top_intent":     "",       # active
-        "last_sub_intent":     "",       # active
-        "last_market_data":    {},       # active
-        "top_recommendations": [],       # future
-        "user_preferences": {            # future
-            "sectors": [],
-            "risk":    "",
-            "style":   "",
-        }
+        "last_tickers": [],                             
     })
 
-    # ── Update structured facts ──
-    existing_tickers = structured.get("tickers_discussed", [])
-    for t in tickers:
-        if t not in existing_tickers:
-            existing_tickers.append(t)
-
-    structured["tickers_discussed"] = existing_tickers        # active
-    structured["last_tickers"]      = tickers                 # active
-    structured["last_top_intent"]   = top_intent              # active
-    structured["last_sub_intent"]   = sub_intent              # active
-    new_market_data = state.get("market_data")
-    if new_market_data:
-        # Only overwrite if this turn actually fetched fresh data —
-        # GREETING/FOLLOW_UP/CLARIFICATION/etc. turns don't run get_market_data,
-        # so we'd otherwise wipe out the last real fetch with an empty dict.
-        structured["last_market_data"] = new_market_data      # active
-    # structured["top_recommendations"]                         future
-    # structured["user_preferences"]                            future (separate LLM call)
+    structured["last_tickers"] = tickers                
 
     # ── Update clarification state ──
     if sub_intent == "CLARIFICATION":
@@ -647,7 +523,7 @@ Write in third person. Do not include disclaimers or formatting."""
         "narrative":  narrative,
     }
 
-    gprint(f"  [update_session_memory] Session memory updated — tickers: {structured['tickers_discussed']}")
+    gprint(f"  [update_session_memory] Session memory updated — tickers: {tickers}")
     gprint(f"  [update_session_memory] Narrative: {narrative[:100]}...")
 
 
@@ -666,7 +542,7 @@ Write in third person. Do not include disclaimers or formatting."""
 
 
 # ─────────────────────────────────────────────
-# Node: Simple Report
+# Node: Generate Report
 # ─────────────────────────────────────────────
 def generate_report(state: AgentState) -> dict:
     """
@@ -742,75 +618,6 @@ NEWS & SENTIMENT:
                 queue.put_nowait(token)
 
     gprint(f"  [generate_report] Response generated for {tickers} ({len(answer)} chars)")
-    return {"answer": answer}
-
-
-
-
-def handle_follow_up(state: AgentState) -> dict:
-    """
-    Answers follow-up questions directly from conversation history.
-    No pipeline — reads from messages only.
-    If data not found, tells user honestly what data is available.
-    """
-    writer = get_stream_writer()
-    writer({"type": "progress", "node": "report", "message": NODE_PROGRESS["follow_up"]})
-
-    question = state["question"]
-    messages = state.get("messages") or []
-    session_memory  = state.get("session_memory") or {}
-    last_market_data = (session_memory.get("structured") or {}).get("last_market_data", {})
-
-    # ── Format last known market data ──
-    market_context = "".join(
-        format_market_data(md, t)
-        for t, md in last_market_data.items() if md
-    )
-    
-    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
-
-    prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
-
-The user is asking a follow-up question about a company already discussed.
-Answer the question using the data available. Priority order:
-1. LAST KNOWN MARKET DATA — use this first for any metric questions
-2. CONVERSATION HISTORY — use this for context and previous analysis
-3. If genuinely not answerable from either → say so briefly, then suggest what the user could ask instead.
-
-Never say "I don't have data" if the data is clearly present above.
-Keep the response short and direct. No headers. No tables unless necessary.
-Format large numbers cleanly: use $5.07T for trillions, $892.4B for billions. Round to 2 decimal places.
-End with a one-line disclaimer.
-
-USER QUESTION: {question}
-
-LAST KNOWN MARKET DATA (use this to answer metric questions):
-{market_context if market_context else "No market data available."}
-
-CONVERSATION HISTORY:
-{conversation_context}"""
-
-    # ── Debug: verify market data is available ──
-    gprint(f"  [handle_follow_up] last_market_data keys: {list(last_market_data.keys())}")
-
-    queue = token_queue_var.get()
-    answer = ""
-
-    response = client.chat.completions.create(
-        model=LLM_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3,
-        stream=True,
-    )
-
-    for stream_chunk in response:
-        token = stream_chunk.choices[0].delta.content or ""
-        if token:
-            answer += token
-            if queue:
-                queue.put_nowait(token)
-
-    gprint(f"  [handle_follow_up] Response generated ({len(answer)} chars)")
     return {"answer": answer}
 
 

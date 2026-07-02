@@ -16,7 +16,7 @@ class AgentState(TypedDict):
     top_intent: Optional[str]   # TASK / GREETING / OUT_OF_SCOPE / GENERAL_KNOWLEDGE
 
     # Intent classification (Layer 2 — only runs if top_intent == TASK)
-    sub_intent: Optional[str]   # SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / FOLLOW_UP / CLARIFICATION
+    sub_intent: Optional[str]   # SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / CLARIFICATION
 
     clarification_complete: Optional[bool]  # True when clarification collected enough criteria
     enriched_query: Optional[str]  # transient — synthesized question for discovery_suggest, never persisted to messages
@@ -58,18 +58,8 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "messages":    messages or [],
         "session_memory": session_memory or {
             "structured": {
-                "tickers_discussed":    [],
                 "last_tickers":         [],
-                "last_top_intent":      "",
-                "last_sub_intent":      "",
-                "last_market_data":     {}, 
-                "in_clarification":     False, 
-                "top_recommendations":  [],        # future
-                "user_preferences": {              # future
-                    "sectors": [],
-                    "risk":    "",
-                    "style":   "",
-                }
+                "in_clarification":     False,
             },
             "narrative": ""
         },

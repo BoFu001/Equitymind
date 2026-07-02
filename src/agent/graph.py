@@ -12,7 +12,6 @@ from src.agent.nodes import (
     handle_no_ticker,
     discovery_suggest,
     update_session_memory,
-    handle_follow_up,
     handle_clarification,
     generate_report, 
 )
@@ -42,9 +41,7 @@ def route_after_sub_intent(state: AgentState) -> str:
     sub_intent = state.get("sub_intent", "")
     yprint(f"  [route_after_sub_intent] sub_intent={sub_intent}")
 
-    if sub_intent == "FOLLOW_UP":
-        return "follow_up"
-    elif sub_intent == "CLARIFICATION":
+    if sub_intent == "CLARIFICATION":
         return "clarification"
     elif sub_intent == "DISCOVERY":
         return "discovery_suggest"
@@ -88,7 +85,6 @@ def build_graph():
     graph.add_node("discovery_suggest",      discovery_suggest)
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
-    graph.add_node("follow_up",              handle_follow_up)
     graph.add_node("clarification",          handle_clarification)    
 
     # Conditional edge after Layer 1
@@ -108,7 +104,6 @@ def build_graph():
         "classify_sub_intent",
         route_after_sub_intent,
         {
-            "follow_up":          "follow_up",
             "clarification":      "clarification",
             "discovery_suggest":  "discovery_suggest",
             "extract":            "extract",
@@ -134,13 +129,12 @@ def build_graph():
         }
     )
 
-    # Linear flow after market_data
+    # Linear edges
     graph.add_edge(START,                    "classify_top_intent")
     graph.add_edge("discovery_suggest",      "research_loop")
     graph.add_edge("research_loop",          "generate_report")
     graph.add_edge("generate_report",        "update_session_memory")
     graph.add_edge("explain_concept",        "update_session_memory")
-    graph.add_edge("follow_up",              "update_session_memory")
     graph.add_edge("out_of_scope",           "update_session_memory")
     graph.add_edge("greeting",               "update_session_memory")
     graph.add_edge("no_ticker",              "update_session_memory") 

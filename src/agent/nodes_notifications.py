@@ -32,7 +32,6 @@ NODE_PROGRESS = {
     "generate_report":             "Generating investment report...",
     "discovery_suggest":           "Searching for the best stocks for you...",
     "no_ticker":                   "Could not identify a stock ticker...",
-    "follow_up":                   "Looking up from our conversation...",
     # ──────────────────────────────────────────────────────────────
     "clarification":               "Reviewing your investment criteria...",
     "clarification_sub":           "Gathering more criteria...",                           # sub_progress

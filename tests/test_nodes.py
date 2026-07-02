@@ -6,15 +6,11 @@ from src.agent.nodes import (
     classify_sub_intent,
     explain_concept,
     extract_parameters,
-    ensure_sec_data,
-    get_market_data,
-    get_news,
     handle_out_of_scope,
     handle_greeting,
     discovery_suggest,
     generate_report,
     handle_no_ticker,
-    handle_follow_up,
     handle_clarification,
 )
 
@@ -209,73 +205,6 @@ def test_no_ticker_edge_cases():
         if sub_intent == "SPECIFIC_STOCK":
             assert not tickers, f"Expected no tickers for vague SPECIFIC_STOCK: '{question}' but got {tickers}"
 
-# ─────────────────────────────────────────────
-# Node: Retrieve SEC Data
-# ─────────────────────────────────────────────
-
-def test_retrieve_sec_data_existing_ticker():
-    state = make_state(
-        question="What are Apple's biggest risks?",
-        tickers=["AAPL"]
-    )
-    result = ensure_sec_data(state)
-    assert "chunks" in result
-    assert "AAPL" in result["chunks"]
-    assert len(result["chunks"]["AAPL"]) > 0
-    assert "chunk" in result["chunks"]["AAPL"][0]
-    assert "score" in result["chunks"]["AAPL"][0]
-    assert "text" in result["chunks"]["AAPL"][0]["chunk"]
-
-def test_retrieve_sec_data_unknown_ticker():
-    state = make_state(
-        question="What are the risks?",
-        tickers=["FAKE123"]
-    )
-    result = ensure_sec_data(state)
-    assert "chunks" in result
-    assert isinstance(result["chunks"], dict)
-    assert result["chunks"].get("FAKE123") == []
-
-
-# ─────────────────────────────────────────────
-# Node: Market Data
-# ─────────────────────────────────────────────
-
-def test_get_market_data_aapl():
-    state = make_state(tickers=["AAPL"])
-    result = get_market_data(state)
-    assert result["market_data"] is not None
-    assert "AAPL" in result["market_data"]
-    assert result["market_data"]["AAPL"]["current_price"] is not None
-    assert result["market_data"]["AAPL"]["pe_ratio"] is not None
-
-def test_get_market_data_no_ticker():
-    state = make_state(tickers=[])
-    result = get_market_data(state)
-    assert result["market_data"] == {}
-
-
-# ─────────────────────────────────────────────
-# Node: News and Sentiment
-# ─────────────────────────────────────────────
-
-def test_get_news_aapl():
-    state = make_state(tickers=["AAPL"])
-    result = get_news(state)
-    assert "news" in result
-    assert "AAPL" in result["news"]
-    assert isinstance(result["news"]["AAPL"], list)
-    if len(result["news"]["AAPL"]) > 0:
-        article = result["news"]["AAPL"][0]
-        assert "title" in article
-        assert "sentiment" in article
-        assert "score" in article
-        assert "url" in article
-
-def test_get_news_no_ticker():
-    state = make_state(tickers=[])
-    result = get_news(state)
-    assert result["news"] == {}
 
 
 # ─────────────────────────────────────────────
@@ -319,46 +248,6 @@ def test_discovery_suggest():
 # Node: Report
 # ─────────────────────────────────────────────
 
-
-# def test_specific_report():
-#     state = make_state(
-#         question="Analyse Apple",
-#         tickers=["AAPL"],
-#         chunks={"AAPL": []},
-#         market_data={"AAPL": {}},
-#         news={"AAPL": []},
-#     )
-#     result = specific_report(state)
-#     assert "answer" in result
-#     assert len(result["answer"]) > 0
-#     assert "messages" in result
-
-# def test_comparison_report():
-#     state = make_state(
-#         question="Compare Apple and Microsoft",
-#         tickers=["AAPL", "MSFT"],
-#         chunks={"AAPL": [], "MSFT": []},
-#         market_data={"AAPL": {}, "MSFT": {}},
-#         news={"AAPL": [], "MSFT": []},
-#     )
-#     result = comparison_report(state)
-#     assert "answer" in result
-#     assert len(result["answer"]) > 0
-#     assert "messages" in result
-
-# def test_discovery_report():
-#     state = make_state(
-#         question="Find me a low risk stock",
-#         tickers=["JNJ", "PG", "KO"],
-#         chunks={"JNJ": [], "PG": [], "KO": []},
-#         market_data={"JNJ": {}, "PG": {}, "KO": {}},
-#         news={"JNJ": [], "PG": [], "KO": []},
-#     )
-#     result = discovery_report(state)
-#     assert "answer" in result
-#     assert len(result["answer"]) > 0
-#     assert "messages" in result
-
 def test_generate_report():
     state = make_state(
         question="Analyse Apple",
@@ -388,24 +277,6 @@ def test_handle_no_ticker_comparison():
     assert "answer" in result
     assert len(result["answer"]) > 0
     assert "compare" in result["answer"].lower()
-
-
-# ─────────────────────────────────────────────
-# Node: Handle Follow Up
-# ─────────────────────────────────────────────
-
-def test_handle_follow_up():
-    state = make_state(
-        question="What is their P/E ratio?",
-        messages=[
-            {"role": "user",      "content": "Analyse NVDA"},
-            {"role": "assistant", "content": "NVIDIA P/E ratio is 32.58, revenue $253.49B..."},
-        ]
-    )
-    result = handle_follow_up(state)
-    assert "answer" in result
-    assert len(result["answer"]) > 0
-
 
 
 # ─────────────────────────────────────────────
