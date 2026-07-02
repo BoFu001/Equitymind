@@ -13,6 +13,8 @@ from src.agent.nodes import (
     handle_no_ticker,
     handle_clarification,
 )
+from src.agent.research_loop import research_loop
+import json
 
 @pytest.fixture(autouse=True)
 def mock_stream_writer():
@@ -21,7 +23,11 @@ def mock_stream_writer():
         yield
 
 
-
+@pytest.fixture(autouse=True)
+def mock_research_loop_writer():
+    with patch('src.agent.research_loop.get_stream_writer') as mock:
+        mock.return_value = MagicMock()
+        yield
 
 # ─────────────────────────────────────────────
 # Helpers
@@ -311,3 +317,86 @@ def test_handle_clarification_complete_with_enough_criteria():
     assert result.get("clarification_complete") == True
     assert "enriched_query" in result
     assert len(result["enriched_query"]) > 0
+
+
+# ─────────────────────────────────────────────
+# Node: Research Loop
+# ─────────────────────────────────────────────
+
+
+def make_tool_call(name, arguments: dict, call_id="call_001"):
+    tc = MagicMock()
+    tc.function.name = name
+    tc.function.arguments = json.dumps(arguments)
+    tc.id = call_id
+    return tc
+
+
+def make_llm_response(finish_reason, tool_calls=None, content=""):
+    msg = MagicMock()
+    msg.tool_calls = tool_calls
+    msg.content = content
+    choice = MagicMock()
+    choice.finish_reason = finish_reason
+    choice.message = msg
+    response = MagicMock()
+    response.choices = [choice]
+    return response
+
+
+@patch('src.agent.research_loop.get_stock_data', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.research_loop.get_news_and_sentiment', return_value=[])
+@patch('src.agent.research_loop.retrieve', return_value=[])
+@patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
+@patch('src.agent.research_loop.client')
+def test_research_loop_market_only(mock_client, *_):
+    """When user asks a market metric question, only get_market_data should be called."""
+    tool_call = make_tool_call("get_market_data", {"ticker": "AAPL"})
+    mock_client.chat.completions.create.side_effect = [
+        make_llm_response("tool_calls", tool_calls=[tool_call]),
+        make_llm_response("stop", content="Apple's P/E is 35."),
+    ]
+    state = make_state(question="What is Apple's P/E ratio?", tickers=["AAPL"])
+    result = research_loop(state)
+    assert "market_data" in result
+    assert "AAPL" in result["market_data"]
+    assert result["news"] == {}
+    assert result["chunks"] == {}
+
+
+@patch('src.agent.research_loop.get_stock_data', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.research_loop.get_news_and_sentiment', return_value=[{"title": "Apple news", "sentiment": "positive", "score": 0.9, "summary": "", "url": "", "published": ""}])
+@patch('src.agent.research_loop.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
+@patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
+@patch('src.agent.research_loop.client')
+def test_research_loop_all_tools(mock_client, *_):
+    """When user asks for a full analysis, all three tools should be called."""
+    tool_calls = [
+        make_tool_call("get_market_data", {"ticker": "AAPL"}, "call_001"),
+        make_tool_call("get_news",        {"ticker": "AAPL"}, "call_002"),
+        make_tool_call("ensure_sec_data", {"ticker": "AAPL", "question": "Analyse Apple"}, "call_003"),
+    ]
+    mock_client.chat.completions.create.side_effect = [
+        make_llm_response("tool_calls", tool_calls=tool_calls),
+        make_llm_response("stop", content="Apple analysis complete."),
+    ]
+    state = make_state(question="Analyse Apple", tickers=["AAPL"])
+    result = research_loop(state)
+    assert "AAPL" in result["market_data"]
+    assert "AAPL" in result["news"]
+    assert "AAPL" in result["chunks"]
+
+
+@patch('src.agent.research_loop.get_stock_data', return_value=None)
+@patch('src.agent.research_loop.get_news_and_sentiment', return_value=[])
+@patch('src.agent.research_loop.retrieve', return_value=[])
+@patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
+@patch('src.agent.research_loop.client')
+def test_research_loop_returns_state_fields(mock_client, *_):
+    """research_loop must always return chunks, market_data, news regardless of tools called."""
+    mock_client.chat.completions.create.return_value = make_llm_response("stop", content="Done.")
+    state = make_state(question="Hello", tickers=["AAPL"])
+    result = research_loop(state)
+    assert "chunks" in result
+    assert "market_data" in result
+    assert "news" in result
