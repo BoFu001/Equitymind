@@ -639,6 +639,7 @@ def handle_clarification(state: AgentState) -> dict:
     messages = state.get("messages") or []
 
     conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
+    full_context = conversation_context + f"USER: {question}\n"
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
@@ -669,10 +670,8 @@ If NOT enough info:
 If ENOUGH info:
 {{"complete": true, "enriched_question": "Find me a good stock in tech sector, medium risk, long term investment"}}
 
-USER QUESTION: {question}
-
-CONVERSATION HISTORY:
-{conversation_context}"""
+CONVERSATION HISTORY (including the user's latest message):
+{full_context}"""
 
     queue = token_queue_var.get()
 
