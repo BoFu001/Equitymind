@@ -6,4 +6,3 @@ __pycache__/
 dist/
 build/
 .ipynb_checkpoints/.pytest_cache/
-visualize_graph.ipynb
