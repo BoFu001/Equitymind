@@ -100,7 +100,10 @@ def classify_sub_intent(state: AgentState) -> dict:
 The user's question has already been confirmed as a TASK — something {APP_NAME} should actually do.
 Classify it into exactly one of these categories:
 
-- SPECIFIC_STOCK: user asks about one NAMED specific company (e.g. "What are Apple's risks?", "Analyse NVIDIA", "Tell me about Tesla"). The company must be explicitly named — NOT vague like "a tech company" or "a healthcare stock".
+- SPECIFIC_STOCK: user asks about one NAMED specific company (e.g. "What are Apple's risks?", "Analyse NVIDIA", "Tell me about Tesla"). The company must be explicitly named OR clearly implied by conversation history (e.g. if the previous discussion was about KO and user asks "what's the percentage?", classify as SPECIFIC_STOCK).
+  NEVER classify as CLARIFICATION if:
+  - the question is a follow-up calculation or metric question about a company already discussed in conversation history
+  - the question contains specific numbers or financial figures clearly referencing a previous answer
 - COMPARISON: user wants to compare two or more EXPLICITLY NAMED companies with real identifiable stock tickers (e.g. "Compare Apple and Microsoft", "AAPL vs GOOGL", "Tesla versus BMW"). Also classify as COMPARISON if the user refers to previously suggested companies (e.g. "Compare the last 5 suggested", "Compare those stocks", "Which of those is better?"). IMPORTANT: if no specific company names are mentioned AND no reference to previous suggestions, classify as DISCOVERY instead.
 - DISCOVERY: user wants general investment recommendations, asks about a sector, or asks general financial market questions without naming a specific company (e.g. "Find me a low risk stock", "Analyse a tech company", "Tell me about semiconductor stocks", "Tell me about the stock market", "What is a good investment?")
 - ANALYZE_POSITION: user asks about their own holding in one stock (e.g. "I bought AAPL at $165, should I sell?", "I have 200 Apple shares, what should I do?")
@@ -113,6 +116,7 @@ Classify it into exactly one of these categories:
   - user names a specific company → SPECIFIC_STOCK or COMPARISON
   - user provides enough criteria (sector + risk or sector + time horizon) → DISCOVERY
   - user is answering a clarification question with a new intent → classify by new intent
+  - user is asking a follow-up question about a specific number or calculation from the previous answer (e.g. "what's the percentage?", "how much is that in total?") → SPECIFIC_STOCK
 
 CONVERSATION HISTORY (for context):
 
