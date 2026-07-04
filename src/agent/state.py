@@ -9,33 +9,36 @@ class AgentState(TypedDict):
 
     # Input
     question: str
-    messages: list              # full conversation history
-    session_memory: Optional[dict]  # structured + narrative summary memory
+    messages: list                          # full conversation history
+    session_memory: Optional[dict]          # structured + narrative summary memory
 
     # Macro classification (Layer 1)
-    top_intent: Optional[str]   # TASK / GREETING / OUT_OF_SCOPE / GENERAL_KNOWLEDGE
+    top_intent: Optional[str]               # TASK / GREETING / OUT_OF_SCOPE / GENERAL_KNOWLEDGE
 
     # Intent classification (Layer 2 — only runs if top_intent == TASK)
-    sub_intent: Optional[str]   # SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / CLARIFICATION
+    sub_intent: Optional[str]               # SPECIFIC_STOCK / COMPARISON / DISCOVERY / ANALYZE_POSITION / ANALYZE_PORTFOLIO / CLARIFICATION
 
     clarification_complete: Optional[bool]  # True when clarification collected enough criteria
-    enriched_query: Optional[str]  # transient — synthesized question for discovery_suggest, never persisted to messages
+    enriched_query: Optional[str]           # transient — synthesized question for discovery_suggest, never persisted to messages
 
     # Extracted parameters
-    tickers: Optional[list[str]]     # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
-    year: Optional[str]         # e.g. "2025" or None for latest
+    tickers: Optional[list[str]]            # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
+    year: Optional[str]                     # e.g. "2025" or None for latest
 
     # Retrieval
-    chunks: Optional[list]      # retrieved chunks from Pinecone
+    chunks: Optional[list]                  # retrieved chunks from Pinecone
 
     # Market data
-    market_data: Optional[dict] # price, P/E, revenue etc from yfinance
+    market_data: Optional[dict]             # price, P/E, revenue etc from yfinance
 
     # News and sentiment
-    news: Optional[list]        # recent news articles with sentiment scores
+    news: Optional[list]                    # recent news articles with sentiment scores
+
+    # Quantitative signals — Layer 2
+    quant_signals: Optional[dict]           # computed by quant_engine node
 
     # Final output
-    answer: Optional[str]       # final report
+    answer: Optional[str]                   # final report
 
 
 def build_initial_state(question: str, messages: list | None = None, session_memory: dict | None = None) -> dict:
@@ -72,5 +75,6 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "chunks":      [],
         "market_data": {},
         "news":        [],
+        "quant_signals": {},
         "answer":      "",
     }

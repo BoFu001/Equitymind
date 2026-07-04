@@ -35,4 +35,12 @@ NODE_PROGRESS = {
     # ──────────────────────────────────────────────────────────────
     "clarification":               "Reviewing your investment criteria...",
     "clarification_sub":           "Gathering more criteria...",                           # sub_progress
+    # ──────────────────────────────────────────────────────────────
+    "quant_engine":                "Running quantitative signals...",
+    "quant_valuation":             "Computing valuation signal for {ticker}...",           # sub_progress
+    "quant_momentum":              "Computing momentum signal for {ticker}...",            # sub_progress
+    "quant_risk":                  "Computing risk signal for {ticker}...",                # sub_progress
+    "quant_quality":               "Computing quality signal for {ticker}...",             # sub_progress
+    "quant_sentiment":             "Computing sentiment signal for {ticker}...",           # sub_progress
+    "quant_consensus":             "Computing consensus signal for {ticker}...",           # sub_progress
 }

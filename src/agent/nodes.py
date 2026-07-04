@@ -561,12 +561,28 @@ def generate_report(state: AgentState) -> dict:
     all_chunks  = state.get("chunks") or {}
     all_market  = state.get("market_data") or {}
     all_news    = state.get("news") or {}
+    quant_signals = state.get("quant_signals") or {}
     messages    = state.get("messages") or []
 
     sec_context    = "".join(
         format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t) else f"\n{t}: No SEC 10-K filing available.\n"
         for t in tickers
     )
+    # ── Format quant signals ──
+    quant_context = ""
+    for t in tickers:
+        signals = quant_signals.get(t, {})
+        val = signals.get("valuation")
+        if val:
+            quant_context += f"\n{t} Quantitative Signals:\n"
+            quant_context += f"  Valuation: {val['valuation_label']} (score={val['valuation_score']}, method={val['method']})\n"
+            quant_context += f"  {val['detail']}\n"
+            if val.get("reference_only"):
+                quant_context += f"  ⚠️ Reference only — company is loss-making, P/S used instead of P/E.\n"
+            if val.get("stale_benchmark"):
+                quant_context += f"  ⚠️ Sector benchmarks may be outdated (>90 days old).\n"
+        else:
+            quant_context += f"\n{t} Quantitative Signals: Insufficient data for valuation.\n"
     market_context = "".join(format_market_data(all_market.get(t, {}), t) for t in tickers)
     news_context   = "".join(format_news(all_news.get(t, []), t) for t in tickers if all_news.get(t))
 
@@ -586,7 +602,15 @@ Always use specific numbers from the data. Never be vague.
 Always include ALL tickers in the response — never drop any company from the analysis.
 Format large numbers cleanly: $24.5B not $24,452,999,168. Round to 2 decimal places.
 Use markdown and emojis where appropriate for the format chosen.
-Always end with a one-line disclaimer for investment-related responses.
+
+If QUANTITATIVE SIGNALS are provided, integrate them naturally into your analysis:
+- If reference_only is flagged, explicitly state the valuation is indicative only.
+- If stale_benchmark is flagged, note that sector benchmarks may be outdated.
+- If quant signals show "Insufficient data", do not attempt to estimate valuation.
+- When comparing companies that use different valuation methods 
+  (e.g. one uses P/E and another uses P/S due to losses), explicitly 
+  state that their valuation scores are NOT directly comparable, and 
+  explain why each method was used for each company separately.
 
 USER QUESTION: {question}
 TICKERS: {', '.join(tickers)}
@@ -602,8 +626,11 @@ SEC FILING DATA:
 {sec_context}
 
 NEWS & SENTIMENT:
-{news_context}"""
+{news_context}
 
+QUANTITATIVE SIGNALS:
+{quant_context if quant_context else "No quantitative signals available."}"""
+    
     queue = token_queue_var.get()
     answer = ""
 

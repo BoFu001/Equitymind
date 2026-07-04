@@ -16,6 +16,7 @@ from src.agent.nodes import (
     generate_report, 
 )
 from src.agent.research_loop import research_loop
+from src.agent.quant_engine import quant_engine
 
 # ─────────────────────────────────────────────
 # Routing functions
@@ -85,7 +86,8 @@ def build_graph():
     graph.add_node("discovery_suggest",      discovery_suggest)
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
-    graph.add_node("clarification",          handle_clarification)    
+    graph.add_node("clarification",          handle_clarification)
+    graph.add_node("quant_engine",           quant_engine)
 
     # Conditional edge after Layer 1
     graph.add_conditional_edges(
@@ -132,7 +134,8 @@ def build_graph():
     # Linear edges
     graph.add_edge(START,                    "classify_top_intent")
     graph.add_edge("discovery_suggest",      "research_loop")
-    graph.add_edge("research_loop",          "generate_report")
+    graph.add_edge("research_loop",          "quant_engine")
+    graph.add_edge("quant_engine",           "generate_report")
     graph.add_edge("generate_report",        "update_session_memory")
     graph.add_edge("explain_concept",        "update_session_memory")
     graph.add_edge("out_of_scope",           "update_session_memory")
