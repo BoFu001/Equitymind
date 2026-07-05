@@ -98,6 +98,12 @@ def classify_sub_intent(state: AgentState) -> dict:
 
     prompt = f"""You are {APP_NAME}'s intent classifier.
 The user's question has already been confirmed as a TASK — something {APP_NAME} should actually do.
+
+CRITICAL RULE: If the user mentions ANY specific company name or stock ticker
+(e.g. Microsoft, Apple, Tesla, TSLA, GOOGL), ALWAYS classify as SPECIFIC_STOCK
+or COMPARISON — regardless of how the question is phrased.
+NEVER classify as CLARIFICATION or DISCOVERY if a specific company is named.
+
 Classify it into exactly one of these categories:
 
 - SPECIFIC_STOCK: user asks about one NAMED specific company (e.g. "What are Apple's risks?", "Analyse NVIDIA", "Tell me about Tesla", "Who are Google's peers?", "What sector is Apple in?"). The company must be explicitly named OR clearly implied by conversation history (e.g. if the previous discussion was about KO and user asks "what's the percentage?", classify as SPECIFIC_STOCK).
