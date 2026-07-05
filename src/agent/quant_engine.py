@@ -43,14 +43,14 @@ def quant_engine(state: AgentState) -> dict:
         Empty dict if no market data available.
     """
 
-    writer = get_stream_writer()
-    writer({"type": "progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_engine"]})
-
     market_data = state.get("market_data") or {}
 
     if not market_data:
         gprint("  [quant_engine] No market data available — skipping")
         return {"quant_signals": {}}
+
+    writer = get_stream_writer()
+    writer({"type": "progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_engine"]})
 
     quant_signals = {}
 
