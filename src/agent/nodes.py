@@ -619,6 +619,14 @@ Always include ALL tickers in the response — never drop any company from the a
 Format large numbers cleanly: $24.5B not $24,452,999,168. Round to 2 decimal places.
 Use markdown and emojis where appropriate for the format chosen.
 
+When presenting analyst sentiment, use recommendation_mean for accuracy:
+- 1.0–1.5 = Strong Buy, 1.5–2.5 = Buy, 2.5–3.5 = Hold, 3.5–4.5 = Sell, 4.5–5.0 = Strong Sell
+- If recommendation_mean > 2.5, do not describe analysts as bullish or positive.
+- Always mention analyst_count and recommendation_mean for transparency.
+- If recommendation_mean is between 2.0–3.0, describe as "mixed" or "cautiously positive".
+- When analyst target price range is very wide (high target > 3x low target),
+  explicitly mention the divergence to highlight analyst uncertainty.
+  
 If QUANTITATIVE SIGNALS are provided, integrate them naturally into your analysis:
 - If reference_only is flagged, explicitly state the valuation is indicative only.
 - If stale_benchmark is flagged, note that sector benchmarks may be outdated.

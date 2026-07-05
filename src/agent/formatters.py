@@ -15,7 +15,8 @@ def format_market_data(data: dict, ticker: str) -> str:
   EPS (TTM): {data.get('eps_trailing')} | EPS (Fwd): {data.get('eps_forward')}
   52w High: {data.get('52w_high')} | 52w Low: {data.get('52w_low')}
   Dividend Yield: {data.get('dividend_yield')}
-  Analyst Target: ${data.get('target_mean')} | Recommendation: {data.get('recommendation')}
+  Analyst Target: ${data.get('target_mean')} (Low: ${data.get('target_low')} / High: ${data.get('target_high')}) | Recommendation: {data.get('recommendation')}
+  Analyst Count: {data.get('analyst_count')} | Recommendation Mean: {data.get('recommendation_mean')} (1=Strong Buy, 3=Hold, 5=Strong Sell)
   RSI: {data.get('rsi')} | MACD: {data.get('macd')}
   SMA50: {data.get('sma_50')} | SMA200: {data.get('sma_200')}
   Sector: {data.get('sector')} | Industry: {data.get('industry')}

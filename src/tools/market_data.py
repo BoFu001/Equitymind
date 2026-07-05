@@ -36,6 +36,8 @@ def get_stock_data(ticker: str) -> dict | None:
             "target_low":         info.get("targetLowPrice"),
             "target_mean":        info.get("targetMeanPrice"),
             "recommendation":     info.get("recommendationKey"),
+            "analyst_count":       info.get("numberOfAnalystOpinions"),
+            "recommendation_mean": info.get("recommendationMean"),
             # Valuation ratios for Layer 2 quant engine
             "peg_ratio":          info.get("trailingPegRatio"),
             "earnings_growth":    info.get("earningsGrowth"),
