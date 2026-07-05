@@ -26,27 +26,25 @@ from pathlib import Path
 from datetime import date
 
 # ─────────────────────────────────────────────
-# Load sector benchmarks from JSON
-# Updated quarterly by scripts/update_benchmarks.py
+# Load peer group benchmarks from JSON
+# Updated quarterly by scripts/update_peer_groups.py
 # ─────────────────────────────────────────────
-_BENCHMARKS_PATH = Path(__file__).parent / "data" / "sector_benchmarks.json"
+_PEER_BENCHMARKS_PATH = Path(__file__).parent / "data" / "peer_benchmarks.json"
 
-def _load_benchmarks() -> dict:
-    """Load sector benchmarks from JSON file."""
-    with open(_BENCHMARKS_PATH) as f:
+def _load_peer_benchmarks() -> dict:
+    """Load peer group benchmarks from JSON file."""
+    with open(_PEER_BENCHMARKS_PATH) as f:
         return json.load(f)
 
-_BENCHMARKS = _load_benchmarks()
-
-SECTOR_PE = _BENCHMARKS.get("sector_pe", {})
-SECTOR_PS = _BENCHMARKS.get("sector_ps", {})
-DEFAULT_PE = _BENCHMARKS.get("default_pe", 20)
-DEFAULT_PS = _BENCHMARKS.get("default_ps", 2)
+_PEER_BENCHMARKS = _load_peer_benchmarks()
+_BENCHMARKS_DATA = _PEER_BENCHMARKS.get("benchmarks", {})
+DEFAULT_PE       = _PEER_BENCHMARKS.get("default_pe", 30)
+DEFAULT_PS       = 2  # P/S fallback for loss-making companies
 
 # ── Staleness check ──────────────────────────
-# Warn if benchmarks are more than 90 days old
 def _benchmarks_are_stale() -> bool:
-    updated_at = _BENCHMARKS.get("updated_at", "")
+    """Warn if benchmarks are more than 90 days old."""
+    updated_at = _PEER_BENCHMARKS.get("updated_at", "")
     if not updated_at:
         return True
     try:
@@ -56,6 +54,17 @@ def _benchmarks_are_stale() -> bool:
         return True
 
 BENCHMARKS_STALE = _benchmarks_are_stale()
+
+
+def _get_benchmark_pe(ticker: str) -> float:
+    """
+    Look up benchmark P/E for a ticker from peer_benchmarks.json.
+    Falls back to DEFAULT_PE if ticker not found.
+    """
+    entry = _BENCHMARKS_DATA.get(ticker)
+    if entry:
+        return entry["benchmark_pe"]
+    return DEFAULT_PE
 
 
 
@@ -87,7 +96,7 @@ def valuation_signal(market_data: dict) -> dict | None:
             - reference_only:    bool — True means Tier 3 (P/S), use with caution
             - stale_benchmark:   bool — True if benchmarks are more than 90 days old
             - upside_pct:        float | None — % upside to analyst target
-            - pe_vs_sector:      str | None — e.g. "36.3 vs sector avg 28"
+            - pe_vs_peers:       str | None — e.g. "36.3 vs peer avg 37.3"
             - detail:            str — plain English explanation of the score
         or None if no data available (Tier 4)
     """
@@ -95,12 +104,12 @@ def valuation_signal(market_data: dict) -> dict | None:
     pe            = market_data.get("pe_ratio")
     peg           = market_data.get("peg_ratio")
     ps            = market_data.get("price_to_sales")
-    sector        = market_data.get("sector") or ""
+    ticker    = market_data.get("ticker") or ""
     target_mean   = market_data.get("target_mean")
     current_price = market_data.get("current_price")
 
-    sector_pe = SECTOR_PE.get(sector, DEFAULT_PE)
-    sector_ps = SECTOR_PS.get(sector, DEFAULT_PS)
+    sector_pe = _get_benchmark_pe(ticker)
+    sector_ps = DEFAULT_PS
 
     # ── Shared helper: compute analyst upside score ──────────────────────────
     def _upside_score_and_pct():
@@ -160,9 +169,9 @@ def valuation_signal(market_data: dict) -> dict | None:
             "reference_only":  False,
             "stale_benchmark": BENCHMARKS_STALE,
             "upside_pct":      upside_pct,
-            "pe_vs_sector":    f"{pe} vs sector avg {sector_pe}",
+            "pe_vs_peers": f"{pe} vs peer avg {sector_pe}",
             "detail": (
-                f"P/E of {pe} vs sector average {sector_pe} "
+                f"P/E of {pe} vs peer average {sector_pe} "
                 f"(pe_score={round(pe_score,2)}), "
                 f"PEG of {round(peg,2)} "
                 f"(peg_score={round(peg_score,2)}), "
@@ -194,10 +203,10 @@ def valuation_signal(market_data: dict) -> dict | None:
             "reference_only":  False,
             "stale_benchmark": BENCHMARKS_STALE,
             "upside_pct":      upside_pct,
-            "pe_vs_sector":    f"{pe} vs sector avg {sector_pe}",
+            "pe_vs_peers":     f"{pe} vs peer avg {sector_pe}",
             "detail": (
                 f"{'PEG excluded — negative earnings growth' if earnings_growth is not None and earnings_growth < 0 else 'PEG not available'}. "
-                f"P/E of {pe} vs sector average {sector_pe} "
+                f"P/E of {pe} vs peer average {sector_pe} "
                 f"(pe_score={round(pe_score,2)}), "
                 f"analyst upside {upside_pct}% "
                 f"(upside_score={round(upside_score,2)}). "
@@ -229,10 +238,10 @@ def valuation_signal(market_data: dict) -> dict | None:
             "reference_only":  True,
             "stale_benchmark": BENCHMARKS_STALE,
             "upside_pct":      upside_pct,
-            "pe_vs_sector":    None,
+            "pe_vs_peers":    None,
             "detail": (
                 f"Company is loss-making (no positive P/E). "
-                f"P/S of {ps} vs sector average {sector_ps} "
+                f"P/S of {ps} vs default average {sector_ps} "
                 f"(ps_score={round(ps_score,2)}). "
                 f"This score is for reference only and does not reflect "
                 f"profitability or long-term sustainability."

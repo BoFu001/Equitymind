@@ -1,0 +1,132 @@
+{
+    "updated_at": "2026-07-05",
+    "source": "FMP stock-peers API + Damodaran industry dataset",
+    "notes": "Run quarterly: python scripts/update_peer_groups.py",
+    "default_pe": 30,
+    "benchmarks": {
+        "AAPL": {
+            "benchmark_pe": 27.47,
+            "source": "fmp_peer_group"
+        },
+        "MSFT": {
+            "benchmark_pe": 27.47,
+            "source": "fmp_peer_group"
+        },
+        "NVDA": {
+            "benchmark_pe": 56.21,
+            "source": "fmp_peer_group"
+        },
+        "GOOGL": {
+            "benchmark_pe": 37.32,
+            "source": "fmp_peer_group"
+        },
+        "META": {
+            "benchmark_pe": 27.47,
+            "source": "fmp_peer_group"
+        },
+        "AMZN": {
+            "benchmark_pe": 25.13,
+            "source": "fmp_peer_group"
+        },
+        "TSLA": {
+            "benchmark_pe": 18.65,
+            "source": "fmp_peer_group"
+        },
+        "AVGO": {
+            "benchmark_pe": 37.72,
+            "source": "fmp_peer_group"
+        },
+        "ORCL": {
+            "benchmark_pe": 60.56,
+            "source": "fmp_peer_group"
+        },
+        "CRM": {
+            "benchmark_pe": 31.6,
+            "source": "fmp_peer_group"
+        },
+        "AMD": {
+            "benchmark_pe": 56.84,
+            "source": "fmp_peer_group"
+        },
+        "INTU": {
+            "benchmark_pe": 51.21,
+            "source": "fmp_peer_group"
+        },
+        "IBM": {
+            "benchmark_pe": 19.23,
+            "source": "fmp_peer_group"
+        },
+        "NOW": {
+            "benchmark_pe": 45.87,
+            "source": "fmp_peer_group"
+        },
+        "NFLX": {
+            "benchmark_pe": 59.52,
+            "source": "fmp_peer_group"
+        },
+        "DIS": {
+            "benchmark_pe": 12.62,
+            "source": "fmp_peer_group"
+        },
+        "UBER": {
+            "benchmark_pe": 50.43,
+            "source": "fmp_peer_group"
+        },
+        "RIVN": {
+            "benchmark_pe": 21.21,
+            "source": "fmp_peer_group"
+        },
+        "SPCX": {
+            "benchmark_pe": 35.27,
+            "source": "damodaran"
+        },
+        "JPM": {
+            "benchmark_pe": 17.01,
+            "source": "fmp_peer_group"
+        },
+        "BAC": {
+            "benchmark_pe": 17.3,
+            "source": "fmp_peer_group"
+        },
+        "GS": {
+            "benchmark_pe": 19.28,
+            "source": "fmp_peer_group"
+        },
+        "JNJ": {
+            "benchmark_pe": 24.46,
+            "source": "fmp_peer_group"
+        },
+        "LLY": {
+            "benchmark_pe": 24.46,
+            "source": "fmp_peer_group"
+        },
+        "UNH": {
+            "benchmark_pe": 27.73,
+            "source": "fmp_peer_group"
+        },
+        "XOM": {
+            "benchmark_pe": 13.93,
+            "source": "fmp_peer_group"
+        },
+        "CVX": {
+            "benchmark_pe": 13.93,
+            "source": "fmp_peer_group"
+        },
+        "WMT": {
+            "benchmark_pe": 21.32,
+            "source": "fmp_peer_group"
+        },
+        "COST": {
+            "benchmark_pe": 21.32,
+            "source": "fmp_peer_group"
+        },
+        "PG": {
+            "benchmark_pe": 23.61,
+            "source": "fmp_peer_group"
+        },
+        "KO": {
+            "benchmark_pe": 22.64,
+            "source": "fmp_peer_group"
+        }
+    }
+}

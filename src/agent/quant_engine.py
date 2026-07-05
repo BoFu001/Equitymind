@@ -18,9 +18,11 @@ Signal engines included (grows with each Layer 2 step):
 
 from colors import gprint
 from src.agent.state import AgentState
-from src.quant.valuation_signal import valuation_signal
 from langgraph.config import get_stream_writer
 from src.agent.nodes_notifications import NODE_PROGRESS
+
+from src.quant.valuation_signal import valuation_signal
+from src.quant.momentum_signal import momentum_signal
 
 
 
@@ -71,8 +73,17 @@ def quant_engine(state: AgentState) -> dict:
             gprint(f"    valuation: insufficient data")
 
         # ── Step 2: Momentum Signal ───────────────────────────────────────
-        # Coming in Step 2
-        signals["momentum"] = None
+        writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_momentum"].format(ticker=ticker)})
+        mom = momentum_signal(data)
+        if mom is not None:
+            signals["momentum"] = mom
+            gprint(
+                f"    momentum: {mom['momentum_label']} "
+                f"(score={mom['momentum_score']})"
+            )
+        else:
+            signals["momentum"] = None
+            gprint(f"    momentum: insufficient data")
 
         # ── Step 3: Risk Signal ───────────────────────────────────────────
         # Coming in Step 3

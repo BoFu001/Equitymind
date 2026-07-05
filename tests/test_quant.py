@@ -1,19 +1,15 @@
 """
-tests/test_quant.py
-
 Unit tests for Layer 2 Quantitative Signal Engines.
 
 All tests use mock market data — no real API calls are made.
-Benchmark values (sector P/E, P/S etc.) are loaded dynamically from
-src/quant/data/sector_benchmarks.json so tests remain valid after
-quarterly benchmark updates via scripts/update_benchmarks.py.
+Benchmark values are loaded dynamically from
+src/quant/data/peer_benchmarks.json so tests remain valid after
+quarterly benchmark updates via scripts/update_peer_groups.py.
 """
 
 import pytest
 from src.quant.valuation_signal import (
     valuation_signal,
-    SECTOR_PE,
-    SECTOR_PS,
     DEFAULT_PE,
     DEFAULT_PS,
     BENCHMARKS_STALE,
@@ -31,12 +27,13 @@ def make_market_data(**kwargs) -> dict:
     Override any field via keyword arguments.
     """
     defaults = {
+        "ticker":         "AAPL",
         "company_name":   "Test Corp",
         "sector":         "Technology",
         "current_price":  100.0,
-        "pe_ratio":       float(SECTOR_PE.get("Technology", DEFAULT_PE)),  # matches sector avg
+        "pe_ratio":       float(DEFAULT_PE),  # matches peer avg for AAPL
         "peg_ratio":      1.0,
-        "price_to_sales": float(SECTOR_PS.get("Technology", DEFAULT_PS)),
+        "price_to_sales": float(DEFAULT_PS),
         "target_mean":    100.0,  # no upside by default → neutral upside_score
     }
     defaults.update(kwargs)
@@ -91,12 +88,12 @@ class TestTier1:
         assert result is not None
         assert result["upside_pct"] == 20.0
 
-    def test_pe_vs_sector_string_present(self):
-        """pe_vs_sector should describe the comparison as a readable string."""
+    def test_pe_vs_peers_string_present(self):
+        """pe_vs_peers should describe the comparison as a readable string."""
         result = valuation_signal(make_market_data())
         assert result is not None
-        assert result["pe_vs_sector"] is not None
-        assert "vs sector avg" in result["pe_vs_sector"]
+        assert result["pe_vs_peers"] is not None
+        assert "vs peer avg" in result["pe_vs_peers"]
 
     def test_stale_benchmark_is_bool(self):
         """stale_benchmark must be a boolean."""
@@ -172,12 +169,12 @@ class TestTier3:
         assert result is not None
         assert "reference only" in result["detail"].lower()
 
-    def test_pe_vs_sector_is_none(self):
-        """Tier 3 must not populate pe_vs_sector (P/E is not used)."""
-        data   = make_market_data(pe_ratio=None, peg_ratio=None, price_to_sales=5.0)
+    def test_pe_vs_peers_is_none(self):
+        """Tier 3 must not populate pe_vs_peers (P/E is not used)."""
+        data   = make_market_data(pe_ratio=None, peg_ratio=None, price_to_sales=6.0)
         result = valuation_signal(data)
         assert result is not None
-        assert result["pe_vs_sector"] is None
+        assert result["pe_vs_peers"] is None
 
     def test_stale_benchmark_present(self):
         """Tier 3 result must include stale_benchmark field."""
@@ -238,16 +235,6 @@ class TestScoreBounds:
 
 class TestBenchmarkLoading:
 
-    def test_sector_pe_loaded_from_json(self):
-        """SECTOR_PE must be populated from JSON — not empty."""
-        assert len(SECTOR_PE) > 0
-        assert "Technology" in SECTOR_PE
-
-    def test_sector_ps_loaded_from_json(self):
-        """SECTOR_PS must be populated from JSON — not empty."""
-        assert len(SECTOR_PS) > 0
-        assert "Technology" in SECTOR_PS
-
     def test_default_pe_is_positive_number(self):
         """DEFAULT_PE must be a positive number loaded from JSON."""
         assert isinstance(DEFAULT_PE, (int, float))
@@ -258,13 +245,56 @@ class TestBenchmarkLoading:
         assert isinstance(DEFAULT_PS, (int, float))
         assert DEFAULT_PS > 0
 
-    def test_unknown_sector_uses_default_pe(self):
-        """Unknown sector name must fall back to DEFAULT_PE without crashing."""
-        data   = make_market_data(sector="Intergalactic Mining")
+    def test_unknown_ticker_uses_default_pe(self):
+        """Unknown ticker must fall back to DEFAULT_PE without crashing."""
+        data   = make_market_data(ticker="UNKNOWN")
         result = valuation_signal(data)
         assert result is not None
-        assert str(int(DEFAULT_PE)) in result["pe_vs_sector"]
+        assert str(int(DEFAULT_PE)) in result["pe_vs_peers"]
 
     def test_benchmarks_stale_is_bool(self):
         """BENCHMARKS_STALE must be a boolean."""
         assert isinstance(BENCHMARKS_STALE, bool)
+
+
+# ─────────────────────────────────────────────
+# Helpers — mock market data for momentum
+# ─────────────────────────────────────────────
+
+from src.quant.momentum_signal import momentum_signal
+
+def make_momentum_data(**kwargs) -> dict:
+    """Create a minimal mock market data dict for momentum testing."""
+    defaults = {
+        "rsi":           50.0,
+        "macd":          0.0,
+        "macd_signal":   0.0,
+        "current_price": 100.0,
+        "sma_50":        100.0,
+        "sma_200":       100.0,
+        "52w_high":      120.0,
+        "52w_low":       80.0,
+    }
+    defaults.update(kwargs)
+    return defaults
+
+
+# ─────────────────────────────────────────────
+# Momentum Signal — Neutral baseline
+# ─────────────────────────────────────────────
+
+class TestMomentumNeutral:
+
+    def test_neutral_baseline(self):
+        """RSI=50, MACD=Signal, price=SMA50=SMA200, mid 52w range → neutral."""
+        result = momentum_signal(make_momentum_data())
+        assert result is not None
+        assert result["momentum_label"] == "neutral"
+        assert -0.2 <= result["momentum_score"] <= 0.2
+
+    def test_returns_all_fields(self):
+        """Result must include all required fields."""
+        result = momentum_signal(make_momentum_data())
+        assert result is not None
+        for field in ["momentum_score", "momentum_label", "rsi_score", "macd_score", "price_score", "detail"]:
+            assert field in result

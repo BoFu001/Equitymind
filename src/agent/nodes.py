@@ -100,7 +100,7 @@ def classify_sub_intent(state: AgentState) -> dict:
 The user's question has already been confirmed as a TASK — something {APP_NAME} should actually do.
 Classify it into exactly one of these categories:
 
-- SPECIFIC_STOCK: user asks about one NAMED specific company (e.g. "What are Apple's risks?", "Analyse NVIDIA", "Tell me about Tesla"). The company must be explicitly named OR clearly implied by conversation history (e.g. if the previous discussion was about KO and user asks "what's the percentage?", classify as SPECIFIC_STOCK).
+- SPECIFIC_STOCK: user asks about one NAMED specific company (e.g. "What are Apple's risks?", "Analyse NVIDIA", "Tell me about Tesla", "Who are Google's peers?", "What sector is Apple in?"). The company must be explicitly named OR clearly implied by conversation history (e.g. if the previous discussion was about KO and user asks "what's the percentage?", classify as SPECIFIC_STOCK).
   NEVER classify as CLARIFICATION if:
   - the question is a follow-up calculation or metric question about a company already discussed in conversation history
   - the question contains specific numbers or financial figures clearly referencing a previous answer
@@ -564,26 +564,42 @@ def generate_report(state: AgentState) -> dict:
     quant_signals = state.get("quant_signals") or {}
     messages    = state.get("messages") or []
 
-    sec_context    = "".join(
+    # ── Format SEC filing chunks ──
+    sec_context = "".join(
         format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t) else f"\n{t}: No SEC 10-K filing available.\n"
         for t in tickers
     )
+
     # ── Format quant signals ──
     quant_context = ""
     for t in tickers:
         signals = quant_signals.get(t, {})
+        quant_context += f"\n{t} Quantitative Signals:\n"
+
+        # Valuation
         val = signals.get("valuation")
         if val:
-            quant_context += f"\n{t} Quantitative Signals:\n"
             quant_context += f"  Valuation: {val['valuation_label']} (score={val['valuation_score']}, method={val['method']})\n"
             quant_context += f"  {val['detail']}\n"
             if val.get("reference_only"):
-                quant_context += f"  ⚠️ Reference only — company is loss-making, P/S used instead of P/E.\n"
+                quant_context += f"  ⚠️ Valuation reference only — company is loss-making, P/S used instead of P/E.\n"
             if val.get("stale_benchmark"):
                 quant_context += f"  ⚠️ Sector benchmarks may be outdated (>90 days old).\n"
         else:
-            quant_context += f"\n{t} Quantitative Signals: Insufficient data for valuation.\n"
+            quant_context += f"  Valuation: Insufficient data.\n"
+
+        # Momentum
+        mom = signals.get("momentum")
+        if mom:
+            quant_context += f"  Momentum: {mom['momentum_label']} (score={mom['momentum_score']})\n"
+            quant_context += f"  {mom['detail']}\n"
+        else:
+            quant_context += f"  Momentum: Insufficient data.\n"
+
+    # ── Format market data ──
     market_context = "".join(format_market_data(all_market.get(t, {}), t) for t in tickers)
+
+    # ── Format news and sentiment ──
     news_context   = "".join(format_news(all_news.get(t, []), t) for t in tickers if all_news.get(t))
 
     # ── Format conversation history ──
@@ -611,6 +627,9 @@ If QUANTITATIVE SIGNALS are provided, integrate them naturally into your analysi
   (e.g. one uses P/E and another uses P/S due to losses), explicitly 
   state that their valuation scores are NOT directly comparable, and 
   explain why each method was used for each company separately.
+- When valuation and momentum signals point in opposite directions
+  (e.g. overvalued but bullish, or undervalued but bearish),
+  explicitly highlight this conflict and explain what it means for investors.
 
 USER QUESTION: {question}
 TICKERS: {', '.join(tickers)}
