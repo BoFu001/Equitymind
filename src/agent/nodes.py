@@ -723,6 +723,17 @@ Always include ALL tickers in the response — never drop any company from the a
 Format large numbers cleanly: $24.5B not $24,452,999,168. Round to 2 decimal places.
 Use markdown and emojis where appropriate for the format chosen.
 
+The MARKET DATA section's "revenue" figure is trailing-twelve-months (TTM)
+revenue — a rolling 12-month total. SEC filing excerpts may separately
+mention a fiscal-year revenue figure (e.g. "revenue was $281.7 billion" for
+a specific fiscal year). These are DIFFERENT figures measuring different
+periods — TTM revenue will typically be higher than the most recently
+completed fiscal year's revenue if the company is growing. If both appear
+in the same response, always label each explicitly (e.g. "TTM Revenue:
+$318.27B" and "FY2025 Revenue: $281.72B") — never present them side by
+side without labels, as this reads as a contradiction rather than two
+distinct, correct figures.
+
 When presenting analyst sentiment, use recommendation_mean for accuracy:
 - 1.0–1.5 = Strong Buy, 1.5–2.5 = Buy, 2.5–3.5 = Hold, 3.5–4.5 = Sell, 4.5–5.0 = Strong Sell
 - If recommendation_mean > 2.5, do not describe analysts as bullish or positive.
