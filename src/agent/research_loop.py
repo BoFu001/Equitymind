@@ -9,7 +9,7 @@ from openai import OpenAI
 import json
 
 from config import OPENAI_API_KEY, LLM_MODEL
-from src.tools.market_data import get_stock_data
+from src.tools.market_data import get_stock_snapshot
 from src.tools.news_sentiment import get_news_and_sentiment
 from src.tools.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.agent.state import AgentState
@@ -34,7 +34,7 @@ def get_market_data_tool(ticker: str) -> dict | None:
     writer({"type": "sub_progress", "node": "research_loop", "message": NODE_PROGRESS["market_data_sub"].format(ticker=ticker)})
 
 
-    data = get_stock_data(ticker)
+    data = get_stock_snapshot(ticker)
     if not data:
         return None
 

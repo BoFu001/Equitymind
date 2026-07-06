@@ -2,7 +2,7 @@ import yfinance as yf
 import ta
 
 
-def get_stock_data(ticker: str) -> dict | None:
+def get_stock_snapshot(ticker: str) -> dict | None:
     """
     Fetches fundamentals and technical indicators for a ticker.
     Returns a dict with price, P/E, revenue, RSI, MACD, SMA or None if failed.
@@ -45,7 +45,7 @@ def get_stock_data(ticker: str) -> dict | None:
             "price_to_book":      info.get("priceToBook"),
         }
 
-        # Technical indicators from last 6 months of price data
+        # Technical indicators from last 1 year of price data
         hist = stock.history(period="1y")
         if not hist.empty:
             hist["rsi"]         = ta.momentum.RSIIndicator(hist["Close"]).rsi()

@@ -344,7 +344,7 @@ def make_llm_response(finish_reason, tool_calls=None, content=""):
     return response
 
 
-@patch('src.agent.research_loop.get_stock_data', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.research_loop.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
 @patch('src.agent.research_loop.get_news_and_sentiment', return_value=[])
 @patch('src.agent.research_loop.retrieve', return_value=[])
 @patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
@@ -364,7 +364,7 @@ def test_research_loop_market_only(mock_client, *_):
     assert result["chunks"] == {}
 
 
-@patch('src.agent.research_loop.get_stock_data', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.research_loop.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
 @patch('src.agent.research_loop.get_news_and_sentiment', return_value=[{"title": "Apple news", "sentiment": "positive", "score": 0.9, "summary": "", "url": "", "published": ""}])
 @patch('src.agent.research_loop.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
 @patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
@@ -387,7 +387,7 @@ def test_research_loop_all_tools(mock_client, *_):
     assert "AAPL" in result["chunks"]
 
 
-@patch('src.agent.research_loop.get_stock_data', return_value=None)
+@patch('src.agent.research_loop.get_stock_snapshot', return_value=None)
 @patch('src.agent.research_loop.get_news_and_sentiment', return_value=[])
 @patch('src.agent.research_loop.retrieve', return_value=[])
 @patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
