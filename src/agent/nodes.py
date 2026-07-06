@@ -599,6 +599,20 @@ def generate_report(state: AgentState) -> dict:
         else:
             quant_context += f"  Momentum: Insufficient data.\n"
 
+        # Risk
+        risk = signals.get("risk")
+        if risk:
+            quant_context += f"  Risk: {risk['risk_level']} (score={risk['risk_score']})\n"
+            quant_context += f"  {risk['detail']}\n"
+            if risk.get("low_confidence"):
+                quant_context += f"  ⚠️ Risk signal based on less than 1 year of price history — lower confidence.\n"
+            if risk.get("beta") is None:
+                quant_context += f"  ⚠️ Beta could not be computed — market benchmark data unavailable.\n"
+            if risk.get("max_drawdown", {}).get("stress_tested") is False:
+                quant_context += f"  ⚠️ This stock has not experienced a significant decline in the observed window — risk may be understated.\n"
+        else:
+            quant_context += f"  Risk: Insufficient data.\n"
+
     # ── Format market data ──
     market_context = "".join(format_market_data(all_market.get(t, {}), t) for t in tickers)
 
@@ -641,6 +655,24 @@ If QUANTITATIVE SIGNALS are provided, integrate them naturally into your analysi
 - When valuation and momentum signals point in opposite directions
   (e.g. overvalued but bullish, or undervalued but bearish),
   explicitly highlight this conflict and explain what it means for investors.
+- When presenting the Risk signal, treat Beta, Sharpe Ratio, VaR, and Max
+  Drawdown as historical statistics, not predictions of future risk.
+  Never phrase them as guarantees (e.g. do not say "this stock cannot
+  fall more than X%" — say "historically, losses have not exceeded X%
+  under normal conditions").
+- If Beta could not be computed (market benchmark unavailable), state
+  this plainly and do not substitute your own estimate of the stock's
+  market sensitivity.
+- If the Risk signal is flagged as low confidence (less than 1 year of
+  price history), mention this caveat explicitly rather than presenting
+  the risk score with full confidence.
+- If the stock's observed price window did not include a significant
+  decline, mention that its historical Max Drawdown may understate
+  risk in a genuine market downturn — do not present a low Max Drawdown
+  alone as evidence the stock is safe in a crisis.
+- Always state the observation window (e.g. "based on the past 2 years
+  of price history") when presenting Risk signal metrics, so the user
+  understands the time horizon these statistics are drawn from.
 
 USER QUESTION: {question}
 TICKERS: {', '.join(tickers)}

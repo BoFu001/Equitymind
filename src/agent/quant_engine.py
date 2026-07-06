@@ -12,7 +12,7 @@ No LLM calls — pure Python computation. Fast, deterministic, fully testable.
 Signal engines included (grows with each Layer 2 step):
     Step 1: valuation_signal  — P/E + PEG + analyst upside
     Step 2: momentum_signal   — coming soon
-    Step 3: risk_signal       — coming soon
+    Step 3: risk_signal       — Beta, Sharpe, VaR, Max Drawdown
     ...
 """
 
@@ -23,6 +23,9 @@ from src.agent.nodes_notifications import NODE_PROGRESS
 
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
+
+from src.quant.risk_signal import risk_signal
+from src.tools.market_data import get_risk_inputs
 
 
 
@@ -86,8 +89,18 @@ def quant_engine(state: AgentState) -> dict:
             gprint(f"    momentum: insufficient data")
 
         # ── Step 3: Risk Signal ───────────────────────────────────────────
-        # Coming in Step 3
-        signals["risk"] = None
+        writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_risk"].format(ticker=ticker)})
+        risk_inputs = get_risk_inputs(ticker)
+        risk = risk_signal(data, risk_inputs)
+        if risk is not None:
+            signals["risk"] = risk
+            gprint(
+                f"    risk: {risk['risk_level']} "
+                f"(score={risk['risk_score']})"
+            )
+        else:
+            signals["risk"] = None
+            gprint(f"    risk: insufficient data")
 
         # ── Step 4: Quality Signal ────────────────────────────────────────
         # Coming in Step 4

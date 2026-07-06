@@ -298,3 +298,158 @@ class TestMomentumNeutral:
         assert result is not None
         for field in ["momentum_score", "momentum_label", "rsi_score", "macd_score", "price_score", "detail"]:
             assert field in result
+
+# ─────────────────────────────────────────────
+# Risk Signal Engine
+# ─────────────────────────────────────────────
+import numpy as np
+import pandas as pd
+
+from src.quant.risk_signal import risk_signal
+from src.quant.risk_signal_config import (
+    MIN_TRADING_DAYS,
+    LOW_CONFIDENCE_THRESHOLD,
+    BLUME_RAW_WEIGHT,
+    BLUME_MARKET_WEIGHT,
+)
+
+
+def make_price_series(returns: np.ndarray, start_price: float = 100.0) -> pd.Series:
+    """
+    Build a pd.Series of prices from an array of daily returns.
+    Deterministic — no randomness — so tests can hand-calculate expected
+    Beta/Sharpe/VaR/MaxDD rather than just checking "did it run".
+    """
+    prices = start_price * np.cumprod(1 + returns)
+    dates  = pd.date_range("2024-01-01", periods=len(prices), freq="B")
+    return pd.Series(prices, index=dates)
+
+
+def make_risk_inputs(
+    n_days: int = 504,
+    beta_true: float = 1.5,
+    market_seed: int = 42,
+    risk_free_rate: float = 0.04,
+    include_market: bool = True,
+) -> dict:
+    """
+    Build a mock risk_inputs dict with a known, reproducible relationship
+    between stock and market returns — stock_returns = beta_true * market_returns
+    exactly (no noise), so the computed raw Beta should equal beta_true.
+    """
+    rng = np.random.default_rng(market_seed)
+    market_returns = rng.normal(loc=0.0004, scale=0.01, size=n_days)
+    stock_returns  = beta_true * market_returns  # exact linear relationship
+
+    stock_prices  = make_price_series(stock_returns)
+    market_prices = make_price_series(market_returns) if include_market else None
+
+    return {
+        "stock_prices":   stock_prices,
+        "market_prices":  market_prices,
+        "risk_free_rate": risk_free_rate,
+    }
+
+
+class TestRiskSignalNormalCase:
+    def test_beta_matches_known_relationship(self):
+        """
+        Stock returns are constructed as an exact multiple of market returns
+        (beta_true=1.5), so raw_beta should recover ~1.5, and adjusted_beta
+        should reflect the Blume adjustment formula exactly.
+        """
+        market_data = {"ticker": "TEST"}
+        risk_inputs = make_risk_inputs(n_days=504, beta_true=1.5)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result is not None
+        assert result["beta"] is not None
+        assert result["beta"]["raw_beta"] == pytest.approx(1.5, abs=0.01)
+
+        expected_adjusted = BLUME_RAW_WEIGHT * 1.5 + BLUME_MARKET_WEIGHT * 1.0
+        assert result["beta"]["adjusted_beta"] == pytest.approx(expected_adjusted, abs=0.01)
+
+    def test_composite_score_in_range(self):
+        """Composite risk_score must always fall within [-1.0, +1.0]."""
+        market_data = {"ticker": "TEST"}
+        risk_inputs = make_risk_inputs(n_days=504, beta_true=1.0)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result is not None
+        assert -1.0 <= result["risk_score"] <= 1.0
+        assert result["risk_level"] in ("low", "medium", "high")
+
+    def test_low_confidence_false_with_full_window(self):
+        """A full 504-day (2-year) window should not be flagged low_confidence."""
+        market_data = {"ticker": "TEST"}
+        risk_inputs = make_risk_inputs(n_days=504)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result["low_confidence"] is False
+
+
+class TestRiskSignalMissingMarketData:
+    def test_beta_skipped_when_market_prices_missing(self):
+        """
+        ^GSPC unavailable -> Beta should be skipped (None), but Sharpe,
+        VaR, and Max Drawdown should still compute normally, and the
+        composite score should re-normalise over the remaining three.
+        """
+        market_data = {"ticker": "TEST"}
+        risk_inputs = make_risk_inputs(n_days=504, include_market=False)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result is not None
+        assert result["beta"] is None
+        assert result["sharpe"] is not None
+        assert result["var"] is not None
+        assert result["max_drawdown"] is not None
+        assert "market benchmark data unavailable" in result["detail"]
+
+    def test_risk_free_rate_missing_uses_fallback(self):
+        """
+        ^TNX unavailable (risk_free_rate=None) should not crash — Sharpe
+        falls back to RISK_FREE_RATE_FALLBACK instead of failing.
+        """
+        market_data = {"ticker": "TEST"}
+        risk_inputs = make_risk_inputs(n_days=504, risk_free_rate=None)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result is not None
+        assert result["sharpe"] is not None
+
+
+class TestRiskSignalInsufficientData:
+    def test_returns_none_when_risk_inputs_is_none(self):
+        """get_risk_inputs() itself failed (e.g. network error) -> None."""
+        market_data = {"ticker": "TEST"}
+        result = risk_signal(market_data, None)
+        assert result is None
+
+    def test_returns_none_below_min_trading_days(self):
+        """Fewer than MIN_TRADING_DAYS (60) -> too noisy to report, return None."""
+        market_data = {"ticker": "TEST"}
+        risk_inputs = make_risk_inputs(n_days=MIN_TRADING_DAYS - 1)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result is None
+
+    def test_low_confidence_true_between_thresholds(self):
+        """
+        Between MIN_TRADING_DAYS (60) and LOW_CONFIDENCE_THRESHOLD (252):
+        computable, but flagged as low_confidence.
+        """
+        market_data = {"ticker": "TEST"}
+        n_days = (MIN_TRADING_DAYS + LOW_CONFIDENCE_THRESHOLD) // 2
+        risk_inputs = make_risk_inputs(n_days=n_days)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result is not None
+        assert result["low_confidence"] is True
