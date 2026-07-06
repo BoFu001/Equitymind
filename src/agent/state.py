@@ -12,6 +12,9 @@ class AgentState(TypedDict):
     messages: list                          # full conversation history
     session_memory: Optional[dict]          # structured + narrative summary memory
 
+    # Contextualization — runs before Layer 1 classify_top_intent
+    contextualized_question: Optional[str]  # question rewritten to be self-contained, or same as question if no rewrite needed
+
     # Macro classification (Layer 1)
     top_intent: Optional[str]               # TASK / GREETING / OUT_OF_SCOPE / GENERAL_KNOWLEDGE
 
@@ -66,6 +69,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
             },
             "narrative": ""
         },
+        "contextualized_question": None,
         "top_intent": None,
         "sub_intent": None,
         "clarification_complete": False,

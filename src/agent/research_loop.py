@@ -242,8 +242,10 @@ def research_loop(state: AgentState) -> dict:
     writer({"type": "progress", "node": "research_loop", "message": NODE_PROGRESS["research_loop"]})
 
 
-    # Use enriched_query if clarification ran, else fall back to the raw question
-    question = state.get("enriched_query") or state["question"]
+    # Priority: enriched_query (clarification flow) > contextualized_question
+    # (context-dependent follow-ups) > raw question (self-contained messages)
+    question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
+    gprint(f"  [research_loop] question: {question}")
     tickers = state.get("tickers") or []
 
     system_prompt = f"""You are a financial research assistant.

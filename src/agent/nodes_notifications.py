@@ -11,6 +11,7 @@ Supports future internationalisation — swap NODE_PROGRESS dict for different l
 # Node progress messages — user-friendly UX language
 # ─────────────────────────────────────────────
 NODE_PROGRESS = {
+    "contextualize_question":      "Understanding context...",
     "classify_top_intent":         "Understanding your question...",
     "classify_sub_intent":         "Identifying the task...",
     "greeting":                    "Welcome! Preparing your response...",

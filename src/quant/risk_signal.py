@@ -276,6 +276,17 @@ def _compute_max_drawdown(prices: pd.Series) -> dict:
     drawdown_series = (prices - rolling_peak) / rolling_peak
     max_drawdown = drawdown_series.min()
 
+    # Identify when the trough occurred, and the peak date that preceded it —
+    # this is the specific window a user is asking about when they follow up
+    # with "what happened during that decline?". Without these dates, no
+    # downstream tool (news, market data, SEC filings) can be pointed at the
+    # right time period, forcing the LLM to answer in vague generalities
+    # instead of grounding the explanation in the actual event.
+    trough_date  = drawdown_series.idxmin()
+    peak_date    = prices.loc[:trough_date].idxmax()
+    peak_price   = prices.loc[peak_date]
+    trough_price = prices.loc[trough_date]
+
     # Normalise: MaxDD=0 -> +1 (safest), MaxDD=MAX_DRAWDOWN_EXTREME_ANCHOR (-60%) -> -1
     drawdown_score = max(-1.0, min(1.0, 1 + max_drawdown / abs(MAX_DRAWDOWN_EXTREME_ANCHOR)))
 
@@ -302,9 +313,16 @@ def _compute_max_drawdown(prices: pd.Series) -> dict:
         "max_drawdown":    round(float(max_drawdown), 4),
         "drawdown_score":  round(float(drawdown_score), 4),
         "stress_tested":   bool(stress_tested),
+        "peak_date":       peak_date.strftime("%Y-%m-%d"),
+        "trough_date":     trough_date.strftime("%Y-%m-%d"),
+        "peak_price":      round(float(peak_price), 2),
+        "trough_price":    round(float(trough_price), 2),
         "detail": (
             f"Maximum peak-to-trough decline over the observed window was "
-            f"{round(max_drawdown * 100, 2)}% (drawdown_score={round(drawdown_score, 2)}). "
+            f"{round(max_drawdown * 100, 2)}%, from ${round(float(peak_price), 2)} on "
+            f"{peak_date.strftime('%Y-%m-%d')} (peak) to ${round(float(trough_price), 2)} on "
+            f"{trough_date.strftime('%Y-%m-%d')} (trough) "
+            f"(drawdown_score={round(drawdown_score, 2)}). "
             f"{stress_note}"
         ),
     }

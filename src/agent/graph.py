@@ -3,6 +3,7 @@ from colors import yprint
 from langgraph.graph import StateGraph, START, END
 from src.agent.state import AgentState
 from src.agent.nodes import (
+    contextualize_question,
     classify_top_intent,
     classify_sub_intent,
     explain_concept,
@@ -75,6 +76,7 @@ def build_graph():
     graph = StateGraph(AgentState)
 
     # Add all nodes
+    graph.add_node("contextualize_question", contextualize_question)
     graph.add_node("classify_top_intent",    classify_top_intent)
     graph.add_node("classify_sub_intent",    classify_sub_intent)
     graph.add_node("explain_concept",        explain_concept)
@@ -132,7 +134,8 @@ def build_graph():
     )
 
     # Linear edges
-    graph.add_edge(START,                    "classify_top_intent")
+    graph.add_edge(START,                    "contextualize_question")
+    graph.add_edge("contextualize_question", "classify_top_intent")
     graph.add_edge("discovery_suggest",      "research_loop")
     graph.add_edge("research_loop",          "quant_engine")
     graph.add_edge("quant_engine",           "generate_report")
