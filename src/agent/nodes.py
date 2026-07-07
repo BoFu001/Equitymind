@@ -136,6 +136,15 @@ Classify the user question into exactly one of these categories:
 
 The key distinction between GENERAL_KNOWLEDGE and TASK: if the user has given ANY concrete parameter (a number, a sector, a risk preference, a named company) and seems to want a personalised answer, classify TASK even if details are still missing. If the user is asking what something means or how investing works in general, with no parameters at all, classify GENERAL_KNOWLEDGE.
 
+CRITICAL OVERRIDE: phrases like "what is...", "what does...mean", "how do I..."
+are only GENERAL_KNOWLEDGE signals when they stand alone with NO named company
+or ticker anywhere in the question. If the question names a specific company
+(e.g. "what does that F-Score mean for Microsoft?", "what is Apple's PEG
+ratio?"), this is ALWAYS a TASK asking about that company's specific data —
+never GENERAL_KNOWLEDGE — regardless of how the question is phrased. The
+presence of a named company always takes priority over surface-level
+phrasing patterns.
+
 CONVERSATION HISTORY (for context):
 
 {f"⚠️ IMPORTANT: The user is currently in the middle of answering {APP_NAME}'s clarification questions to find a stock recommendation. Their message is almost certainly continuing that conversation — even if phrased as a question, or if it gives indirect/contextual information (e.g. their age, life stage, a general statement about their goals) rather than a direct keyword answer. Classify as TASK unless the message is unmistakably a new greeting, a completely unrelated topic, or genuinely off-scope (e.g. asking about the weather or world news)." if in_clarification else ""}
