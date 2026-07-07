@@ -453,3 +453,187 @@ class TestRiskSignalInsufficientData:
 
         assert result is not None
         assert result["low_confidence"] is True
+
+
+# ─────────────────────────────────────────────
+# Quality Signal Engine (Piotroski F-Score)
+# ─────────────────────────────────────────────
+from src.quant.quality_signal import quality_signal
+from src.quant.quality_signal_config import (
+    MAX_F_SCORE,
+    HIGH_QUALITY_THRESHOLD,
+    LOW_QUALITY_THRESHOLD,
+)
+
+
+def make_quality_inputs(**overrides) -> dict:
+    """
+    Build a mock quality_inputs dict with "current" and "prior" periods.
+    Defaults represent a company satisfying all 9 Piotroski signals —
+    override individual fields to test specific failure/edge conditions.
+    """
+    current = {
+        "net_income":          600_000_000.0,
+        "operating_cash_flow": 700_000_000.0,
+        "total_assets":        5_500_000_000.0,
+        "gross_profit":        1_512_000_000.0,   # 42% margin on 3.6B revenue
+        "total_revenue":       3_600_000_000.0,
+        "long_term_debt":      1_200_000_000.0,
+        "current_assets":      900_000_000.0,
+        "current_liabilities": 500_000_000.0,
+        "shares_outstanding":  1_000_000_000.0,
+    }
+    prior = {
+        "net_income":          500_000_000.0,
+        "operating_cash_flow": 400_000_000.0,
+        "total_assets":        5_000_000_000.0,
+        "gross_profit":        1_200_000_000.0,   # 40% margin on 3.0B revenue
+        "total_revenue":       3_000_000_000.0,
+        "long_term_debt":      1_500_000_000.0,
+        "current_assets":      800_000_000.0,
+        "current_liabilities": 600_000_000.0,
+        "shares_outstanding":  1_000_000_000.0,
+    }
+    current.update(overrides.get("current", {}))
+    prior.update(overrides.get("prior", {}))
+    return {"current": current, "prior": prior}
+
+
+class TestQualitySignalNormalCase:
+    def test_all_nine_signals_pass(self):
+        """
+        A textbook-healthy company (City Brew Coffee style numbers):
+        profitable, cash-flow-backed earnings, deleveraging, improving
+        liquidity, no dilution, expanding margins and turnover.
+        All 9 signals should pass -> F-Score 9/9, quality_score +1.0.
+        """
+        inputs = make_quality_inputs()
+        result = quality_signal(inputs)
+
+        assert result is not None
+        assert result["f_score_raw"] == 9
+        assert result["signals_evaluated"] == 9
+        assert result["f_score"] == pytest.approx(9.0)
+        assert result["quality_score"] == pytest.approx(1.0)
+        assert result["quality_label"] == "high"
+
+    def test_composite_score_in_range(self):
+        """quality_score must always fall within [-1.0, +1.0]."""
+        inputs = make_quality_inputs()
+        result = quality_signal(inputs)
+
+        assert -1.0 <= result["quality_score"] <= 1.0
+
+    def test_all_nine_signals_fail(self):
+        """
+        A deteriorating company: losses, negative cash flow, rising
+        leverage, worsening liquidity, dilution, shrinking margins —
+        should score F-Score 0/9, quality_score -1.0, label "low".
+        """
+        inputs = make_quality_inputs(
+            current={
+                "net_income":          -100_000_000.0,
+                "operating_cash_flow": -150_000_000.0,   # more negative than net income -> fails signal 4 too
+                "total_assets":        5_000_000_000.0,
+                "gross_profit":        1_000_000_000.0,   # 33% margin on 3.0B revenue (down from 40%)
+                "total_revenue":       3_000_000_000.0,
+                "long_term_debt":      2_000_000_000.0,   # ratio up
+                "current_assets":      500_000_000.0,
+                "current_liabilities": 700_000_000.0,     # ratio down
+                "shares_outstanding":  1_200_000_000.0,   # diluted
+            }
+        )
+        result = quality_signal(inputs)
+
+        assert result is not None
+        assert result["f_score_raw"] == 0
+        assert result["quality_score"] == pytest.approx(-1.0)
+        assert result["quality_label"] == "low"
+
+
+class TestQualitySignalPartialData:
+    def test_missing_long_term_debt_skips_leverage_signal_only(self):
+        """
+        If long_term_debt is None in either period (not 0 — genuinely
+        missing), only the leverage signal should be skipped; the other
+        8 should still be evaluated and the score rescaled accordingly.
+        """
+        inputs = make_quality_inputs()
+        inputs["current"]["long_term_debt"] = None
+
+        result = quality_signal(inputs)
+
+        assert result is not None
+        assert result["signals_evaluated"] == 8
+        assert result["breakdown"]["leverage_decreasing"]["score"] is None
+        # Remaining 8 signals should all still pass with default mock data
+        assert result["f_score_raw"] == 8
+
+    def test_zero_long_term_debt_is_not_missing(self):
+        """
+        A company with genuinely zero long-term debt (e.g. RDDT, PLTR)
+        should NOT be treated as missing data — 0/0 ratio comparison
+        (0% vs 0%) correctly fails the "decreasing" signal since it
+        didn't decrease, but the signal IS evaluable.
+        """
+        inputs = make_quality_inputs(
+            current={"long_term_debt": 0.0},
+            prior={"long_term_debt": 0.0},
+        )
+        result = quality_signal(inputs)
+
+        assert result is not None
+        assert result["signals_evaluated"] == 9
+        assert result["breakdown"]["leverage_decreasing"]["score"] == 0  # 0% is not < 0%
+
+
+class TestQualitySignalShareDilutionEdgeCase:
+    def test_negligible_dilution_still_fails_but_notes_magnitude(self):
+        """
+        Piotroski's original definition is strict: any increase fails,
+        however small. The detail should note the tiny magnitude without
+        speculating on cause (mirrors the real MSFT case: 7.434158B vs
+        7.434139B shares, a 0.00027% increase).
+        """
+        inputs = make_quality_inputs(
+            current={"shares_outstanding": 7_434_158_655.0},
+            prior={"shares_outstanding": 7_434_138_859.0},
+        )
+        result = quality_signal(inputs)
+
+        breakdown = result["breakdown"]["no_share_dilution"]
+        assert breakdown["score"] == 0
+        assert "very small magnitude" in breakdown["detail"]
+
+    def test_buyback_reduces_shares_passes(self):
+        """A share count reduction via buyback should pass this signal."""
+        inputs = make_quality_inputs(
+            current={"shares_outstanding": 900_000_000.0},
+            prior={"shares_outstanding": 1_000_000_000.0},
+        )
+        result = quality_signal(inputs)
+
+        assert result["breakdown"]["no_share_dilution"]["score"] == 1
+
+
+class TestQualitySignalInsufficientData:
+    def test_returns_none_when_quality_inputs_is_none(self):
+        """get_quality_inputs() itself failed (e.g. <2 fiscal years) -> None."""
+        result = quality_signal(None)
+        assert result is None
+
+    def test_returns_none_when_no_signals_evaluable(self):
+        """
+        Every required field missing across both periods -> no signal can
+        be evaluated -> None, not a spurious 0/0 score.
+        """
+        empty_period = {k: None for k in [
+            "net_income", "operating_cash_flow", "total_assets",
+            "gross_profit", "total_revenue", "long_term_debt",
+            "current_assets", "current_liabilities", "shares_outstanding",
+        ]}
+        inputs = {"current": empty_period, "prior": empty_period}
+
+        result = quality_signal(inputs)
+
+        assert result is None

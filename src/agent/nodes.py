@@ -700,6 +700,16 @@ def generate_report(state: AgentState) -> dict:
         else:
             quant_context += f"  Risk: Insufficient data.\n"
 
+        # Quality
+        quality = signals.get("quality")
+        if quality:
+            quant_context += f"  Quality: {quality['quality_label']} (F-Score={quality['f_score_raw']}/{quality['signals_evaluated']}, score={quality['quality_score']})\n"
+            quant_context += f"  {quality['detail']}\n"
+            if quality.get("signals_evaluated", 9) < 9:
+                quant_context += f"  ⚠️ Only {quality['signals_evaluated']} of 9 F-Score signals could be evaluated due to missing financial data.\n"
+        else:
+            quant_context += f"  Quality: Insufficient data.\n"
+
     # ── Format market data ──
     market_context = "".join(format_market_data(all_market.get(t, {}), t) for t in tickers)
 
@@ -720,6 +730,16 @@ Let the question determine the length and format of your response:
 
 Always use specific numbers from the data. Never be vague.
 Always include ALL tickers in the response — never drop any company from the analysis.
+Always include ALL FOUR quantitative signals (Valuation, Momentum, Risk, Quality)
+in a full analysis report whenever their data is available — never omit one
+because it seems less standard or to save space. If a signal shows
+"Insufficient data", state that explicitly rather than omitting the section.
+Valuation and Quality are ALWAYS coupled, regardless of question scope: any
+time you discuss whether a stock is undervalued, overvalued, or a good value
+(even in a targeted, non-comprehensive answer), you MUST also state the
+Quality/F-Score if available — this is not optional and does not depend on
+whether the user asked for a "full report". A valuation judgment without
+the accompanying quality context is incomplete.
 Format large numbers cleanly: $24.5B not $24,452,999,168. Round to 2 decimal places.
 Use markdown and emojis where appropriate for the format chosen.
 

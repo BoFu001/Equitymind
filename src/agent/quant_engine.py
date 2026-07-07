@@ -27,6 +27,9 @@ from src.quant.momentum_signal import momentum_signal
 from src.quant.risk_signal import risk_signal
 from src.tools.market_data import get_risk_inputs
 
+from src.quant.quality_signal import quality_signal
+from src.tools.market_data import get_quality_inputs
+
 
 
 
@@ -103,8 +106,19 @@ def quant_engine(state: AgentState) -> dict:
             gprint(f"    risk: insufficient data")
 
         # ── Step 4: Quality Signal ────────────────────────────────────────
-        # Coming in Step 4
-        signals["quality"] = None
+        writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_quality"].format(ticker=ticker)})
+        quality_inputs = get_quality_inputs(ticker)
+        quality = quality_signal(quality_inputs)
+        if quality is not None:
+            signals["quality"] = quality
+            gprint(
+                f"    quality: {quality['quality_label']} "
+                f"(F-Score={quality['f_score_raw']}/{quality['signals_evaluated']}, "
+                f"score={quality['quality_score']})"
+            )
+        else:
+            signals["quality"] = None
+            gprint(f"    quality: insufficient data")
 
         # ── Step 5: Sentiment Signal ──────────────────────────────────────
         # Coming in Step 5
