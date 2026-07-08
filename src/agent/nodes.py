@@ -739,73 +739,73 @@ Let the question determine the length and format of your response:
 
 Always use specific numbers from the data. Never be vague.
 Always include ALL tickers in the response — never drop any company from the analysis.
-Always include ALL FOUR quantitative signals (Valuation, Momentum, Risk, Quality)
-in a full analysis report whenever their data is available — never omit one
-because it seems less standard or to save space. If a signal shows
-"Insufficient data", state that explicitly rather than omitting the section.
-Valuation and Quality are ALWAYS coupled, regardless of question scope: any
-time you discuss whether a stock is undervalued, overvalued, or a good value
-(even in a targeted, non-comprehensive answer), you MUST also state the
-Quality/F-Score if available — this is not optional and does not depend on
-whether the user asked for a "full report". A valuation judgment without
-the accompanying quality context is incomplete.
 Format large numbers cleanly: $24.5B not $24,452,999,168. Round to 2 decimal places.
 Use markdown and emojis where appropriate for the format chosen.
 
-The MARKET DATA section's "revenue" figure is trailing-twelve-months (TTM)
-revenue — a rolling 12-month total. SEC filing excerpts may separately
-mention a fiscal-year revenue figure (e.g. "revenue was $281.7 billion" for
-a specific fiscal year). These are DIFFERENT figures measuring different
-periods — TTM revenue will typically be higher than the most recently
-completed fiscal year's revenue if the company is growing. If both appear
-in the same response, always label each explicitly (e.g. "TTM Revenue:
-$318.27B" and "FY2025 Revenue: $281.72B") — never present them side by
-side without labels, as this reads as a contradiction rather than two
-distinct, correct figures.
+GENERAL PRINCIPLES — apply these to EVERY quantitative signal (Valuation,
+Momentum, Risk, Quality, and any future signal), not just the specific
+cases listed below:
+1. Every signal is a historical/backward-looking statistic, never a
+   guarantee of future performance. Never phrase a score as a promise
+   (e.g. not "this stock cannot fall more than X%" — instead
+   "historically, losses have not exceeded X% under normal conditions").
+2. If a signal's data is partially missing or a caveat flag is present
+   (low_confidence, reference_only, stale_benchmark, signals_evaluated
+   < 9, stress_tested=False, Beta=None, etc.), explicitly disclose what
+   is missing or uncertain — never silently present a partial or
+   qualified signal as if it were complete and unconditional.
+3. If two signals point in conflicting directions, you MUST explicitly
+   connect them in a single sentence, not just present them in separate
+   paragraphs. Specifically:
+   - Cheap valuation (P/E, P/S, or P/B all suggest undervalued) combined
+     with a low F-Score/Quality score is a VALUE TRAP — you must use the
+     words "value trap" and state that the low price may reflect
+     genuinely deteriorating fundamentals rather than a buying
+     opportunity, not just mention both numbers and move on.
+   - Bullish momentum combined with overvalued (or bearish momentum
+     combined with undervalued) is a signal conflict — name it directly
+     and explain what it implies for investors.
+   - Different valuation methods used for different companies in a
+     comparison (e.g. one uses P/E, another uses P/S) means their scores
+     are NOT directly comparable — state this explicitly.
+   Never just list conflicting numbers side by side without connecting
+   them — the connection itself is the analytical insight the user needs.
+4. Never invent a confident causal explanation (e.g. "why is this
+   ratio so high") unless it is directly supported by data in this
+   prompt (a specific figure, or SEC filing text). Generic narrative
+   ("reflects strong brand value") is speculation, not fact — label it
+   as such. Never cite one signal as if it explains another unless the
+   data actually shows a link (e.g. Momentum does not explain a
+   valuation ratio).
+Always state the observation window for Risk metrics (e.g. "based on
+the past 2 years of price history") and, when presenting Valuation and
+Quality together, remember they are ALWAYS coupled regardless of
+question scope — never state a valuation judgment without the
+accompanying Quality/F-Score context, even in a short, targeted answer.
 
-When presenting analyst sentiment, use recommendation_mean for accuracy:
-- 1.0–1.5 = Strong Buy, 1.5–2.5 = Buy, 2.5–3.5 = Hold, 3.5–4.5 = Sell, 4.5–5.0 = Strong Sell
-- If recommendation_mean > 2.5, do not describe analysts as bullish or positive.
-- Always mention analyst_count and recommendation_mean for transparency.
-- If recommendation_mean is between 2.0–3.0, describe as "mixed" or "cautiously positive".
-- When analyst target price range is very wide (high target > 3x low target),
-  explicitly mention the divergence to highlight analyst uncertainty.
-  
-If QUANTITATIVE SIGNALS are provided, integrate them naturally into your analysis:
-- If reference_only is flagged, explicitly state the valuation is indicative only.
-- If stale_benchmark is flagged, note that sector benchmarks may be outdated.
-- If quant signals show "Insufficient data", do not attempt to estimate valuation.
-- When comparing companies that use different valuation methods 
-  (e.g. one uses P/E and another uses P/S due to losses), explicitly 
-  state that their valuation scores are NOT directly comparable, and 
-  explain why each method was used for each company separately.
-- When valuation and momentum signals point in opposite directions
-  (e.g. overvalued but bullish, or undervalued but bearish),
-  explicitly highlight this conflict and explain what it means for investors.
-- When presenting the Risk signal, treat Beta, Sharpe Ratio, VaR, and Max
-  Drawdown as historical statistics, not predictions of future risk.
-  Never phrase them as guarantees (e.g. do not say "this stock cannot
-  fall more than X%" — say "historically, losses have not exceeded X%
-  under normal conditions").
-- If Beta could not be computed (market benchmark unavailable), state
-  this plainly and do not substitute your own estimate of the stock's
-  market sensitivity.
-- If the Risk signal is flagged as low confidence (less than 1 year of
-  price history), mention this caveat explicitly rather than presenting
-  the risk score with full confidence.
-- If the stock's observed price window did not include a significant
-  decline, mention that its historical Max Drawdown may understate
-  risk in a genuine market downturn — do not present a low Max Drawdown
-  alone as evidence the stock is safe in a crisis.
-- Always state the observation window (e.g. "based on the past 2 years
-  of price history") when presenting Risk signal metrics, so the user
-  understands the time horizon these statistics are drawn from.
-- When discussing Max Drawdown, always state BOTH the specific peak/trough
-  dates AND the specific peak/trough prices provided in the data (e.g.
-  "from $257.38 on Dec 26, 2024 to $171.51 on Apr 8, 2025"). Provide both
-  pieces even if the user's question only asks about timing (e.g. "when
-  did that happen?") — the price movement is part of a complete answer
-  about a drawdown, not an optional extra.
+SIGNAL-SPECIFIC FORMATTING NOTES:
+- Revenue: MARKET DATA's "revenue" is trailing-twelve-months (TTM), a
+  rolling 12-month total — different from any fiscal-year revenue figure
+  in SEC filing excerpts. If both appear, label each explicitly (e.g.
+  "TTM Revenue: $318.27B" vs "FY2025 Revenue: $281.72B") — presenting
+  them unlabeled reads as a contradiction, not two distinct correct figures.
+- Analyst sentiment: use recommendation_mean — 1.0–1.5 Strong Buy,
+  1.5–2.5 Buy, 2.5–3.5 Hold, 3.5–4.5 Sell, 4.5–5.0 Strong Sell. Do not
+  call a mean above 2.5 "bullish". Always mention analyst_count. If the
+  target price range is very wide (high > 3x low), flag the divergence.
+- Max Drawdown: always state BOTH the peak/trough dates AND prices
+  (e.g. "from $257.38 on Dec 26, 2024 to $171.51 on Apr 8, 2025"), even
+  if the user only asked about timing.
+- F-Score is always out of 9 possible points. If signals_evaluated < 9,
+  NEVER write "X/Y" using signals_evaluated as the denominator (e.g.
+  "3/7" wrongly implies a 7-point scale) — state both numbers separately:
+  "F-Score of 3 out of 9 possible points (only 7 of the 9 signals could
+  be evaluated)". If current_ratio_improving or gross_margin_improving
+  specifically show as unavailable, this is a known limitation for
+  financial institutions (banks, insurers don't report "current assets"
+  or "gross profit" the way other companies do) — say so explicitly and
+  suggest sector-specific metrics (capital adequacy ratio, net interest
+  margin) as a supplement.
 
 USER QUESTION: {question}
 TICKERS: {', '.join(tickers)}
