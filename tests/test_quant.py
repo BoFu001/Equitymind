@@ -7,10 +7,12 @@ src/quant/data/peer_benchmarks.json so tests remain valid after
 quarterly benchmark updates via scripts/update_peer_groups.py.
 """
 
+
 import pytest
 from src.quant.valuation_signal import (
     valuation_signal,
     DEFAULT_PE,
+    DEFAULT_PB,
     DEFAULT_PS,
     BENCHMARKS_STALE,
 )
@@ -31,46 +33,45 @@ def make_market_data(**kwargs) -> dict:
         "company_name":   "Test Corp",
         "sector":         "Technology",
         "current_price":  100.0,
-        "pe_ratio":       float(DEFAULT_PE),  # matches peer avg for AAPL
-        "peg_ratio":      1.0,
+        "pe_ratio":       float(DEFAULT_PE),
+        "price_to_book":  float(DEFAULT_PB),
         "price_to_sales": float(DEFAULT_PS),
-        "target_mean":    100.0,  # no upside by default → neutral upside_score
     }
     defaults.update(kwargs)
     return defaults
 
 
 # ─────────────────────────────────────────────
-# Tier 1 — P/E + PEG + analyst upside (most reliable)
+# Tier 1 — P/E + P/B (most reliable)
 # ─────────────────────────────────────────────
 
 class TestTier1:
 
     def test_fairly_valued(self):
-        """P/E equals sector average, PEG = 1, no upside → score near zero."""
-        data   = make_market_data()  # pe_ratio = sector avg, target_mean = current_price
+        """P/E and P/B both equal peer average → score near zero."""
+        data   = make_market_data()
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]          == "pe_peg_upside"
+        assert result["method"]          == "pe_pb"
         assert result["reference_only"]  is False
         assert -0.2 <= result["valuation_score"] <= 0.2
         assert result["valuation_label"] == "fairly valued"
 
     def test_undervalued(self):
-        """P/E well below sector average and PEG < 1 → undervalued."""
-        data   = make_market_data(pe_ratio=5.0, peg_ratio=0.3, target_mean=130.0)
+        """P/E and P/B well below peer average → undervalued."""
+        data   = make_market_data(pe_ratio=5.0, price_to_book=1.0)
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]          == "pe_peg_upside"
+        assert result["method"]          == "pe_pb"
         assert result["valuation_score"] >  0.2
         assert result["valuation_label"] == "undervalued"
 
     def test_overvalued(self):
-        """P/E well above sector average and PEG > 1 → overvalued."""
-        data   = make_market_data(pe_ratio=300.0, peg_ratio=3.0, target_mean=90.0)
+        """P/E and P/B well above peer average → overvalued."""
+        data   = make_market_data(pe_ratio=300.0, price_to_book=100.0)
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]          == "pe_peg_upside"
+        assert result["method"]          == "pe_pb"
         assert result["valuation_score"] <  -0.2
         assert result["valuation_label"] == "overvalued"
 
@@ -80,13 +81,6 @@ class TestTier1:
         assert result is not None
         assert "detail" in result
         assert len(result["detail"]) > 0
-
-    def test_upside_pct_calculated_correctly(self):
-        """Upside percentage should equal (target - price) / price * 100."""
-        data   = make_market_data(current_price=100.0, target_mean=120.0)
-        result = valuation_signal(data)
-        assert result is not None
-        assert result["upside_pct"] == 20.0
 
     def test_pe_vs_peers_string_present(self):
         """pe_vs_peers should describe the comparison as a readable string."""
@@ -101,84 +95,62 @@ class TestTier1:
         assert result is not None
         assert isinstance(result["stale_benchmark"], bool)
 
+    def test_missing_pb_degrades_to_pe_only(self):
+        """Missing P/B should degrade gracefully to a P/E-only score."""
+        data   = make_market_data(price_to_book=None)
+        result = valuation_signal(data)
+        assert result is not None
+        assert result["method"] == "pe_pb"
+        assert "P/B data unavailable" in result["detail"]
+
+    def test_zero_pb_treated_as_missing(self):
+        """A P/B of exactly 0 should be treated as missing, not a real ratio."""
+        data   = make_market_data(price_to_book=0)
+        result = valuation_signal(data)
+        assert result is not None
+        assert "P/B data unavailable" in result["detail"]
+
 
 # ─────────────────────────────────────────────
-# Tier 2 — P/E + analyst upside (no PEG available)
+# Tier 2 — P/S only (loss-making companies, reference only)
 # ─────────────────────────────────────────────
 
 class TestTier2:
 
-    def test_falls_to_tier2_when_peg_none(self):
-        """Missing PEG should trigger Tier 2 fallback."""
-        data   = make_market_data(peg_ratio=None)
-        result = valuation_signal(data)
-        assert result is not None
-        assert result["method"]         == "pe_upside"
-        assert result["reference_only"] is False
-
-    def test_falls_to_tier2_when_peg_negative(self):
-        """Negative PEG (e.g. negative earnings growth) should trigger Tier 2."""
-        data   = make_market_data(peg_ratio=-1.5)
-        result = valuation_signal(data)
-        assert result is not None
-        assert result["method"] == "pe_upside"
-
-    def test_detail_mentions_peg_not_available(self):
-        """Tier 2 detail must note that PEG was not available."""
-        data   = make_market_data(peg_ratio=None)
-        result = valuation_signal(data)
-        assert result is not None
-        assert "PEG not available" in result["detail"]
-
-    def test_stale_benchmark_present(self):
-        """Tier 2 result must include stale_benchmark field."""
-        data   = make_market_data(peg_ratio=None)
-        result = valuation_signal(data)
-        assert result is not None
-        assert "stale_benchmark" in result
-        assert isinstance(result["stale_benchmark"], bool)
-
-
-# ─────────────────────────────────────────────
-# Tier 3 — P/S only (loss-making companies, reference only)
-# ─────────────────────────────────────────────
-
-class TestTier3:
-
     def test_loss_making_company_uses_ps(self):
-        """Negative P/E with available P/S → Tier 3 (reference only)."""
-        data   = make_market_data(pe_ratio=-10.0, peg_ratio=None, price_to_sales=8.0)
+        """Negative P/E with available P/S → Tier 2 (reference only)."""
+        data   = make_market_data(pe_ratio=-10.0, price_to_book=None, price_to_sales=8.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["method"]          == "ps_only"
         assert result["reference_only"]  is True
         assert result["valuation_label"] == "reference only"
 
-    def test_no_pe_falls_to_tier3(self):
-        """No P/E data at all → Tier 3 if P/S is available."""
-        data   = make_market_data(pe_ratio=None, peg_ratio=None, price_to_sales=5.0)
+    def test_no_pe_falls_to_tier2(self):
+        """No P/E data at all → Tier 2 if P/S is available."""
+        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["method"]         == "ps_only"
         assert result["reference_only"] is True
 
     def test_detail_warns_reference_only(self):
-        """Tier 3 detail must explicitly warn the score is for reference only."""
-        data   = make_market_data(pe_ratio=None, peg_ratio=None, price_to_sales=5.0)
+        """Tier 2 detail must explicitly warn the score is for reference only."""
+        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
         result = valuation_signal(data)
         assert result is not None
         assert "reference only" in result["detail"].lower()
 
     def test_pe_vs_peers_is_none(self):
-        """Tier 3 must not populate pe_vs_peers (P/E is not used)."""
-        data   = make_market_data(pe_ratio=None, peg_ratio=None, price_to_sales=6.0)
+        """Tier 2 must not populate pe_vs_peers (P/E is not used)."""
+        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=6.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["pe_vs_peers"] is None
 
     def test_stale_benchmark_present(self):
-        """Tier 3 result must include stale_benchmark field."""
-        data   = make_market_data(pe_ratio=None, peg_ratio=None, price_to_sales=5.0)
+        """Tier 2 result must include stale_benchmark field."""
+        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
         result = valuation_signal(data)
         assert result is not None
         assert "stale_benchmark" in result
@@ -186,20 +158,20 @@ class TestTier3:
 
 
 # ─────────────────────────────────────────────
-# Tier 4 — No usable data → returns None
+# Tier 3 — No usable data → returns None
 # ─────────────────────────────────────────────
 
-class TestTier4:
+class TestTier3:
 
     def test_no_data_returns_none(self):
-        """No P/E, PEG, or P/S → must return None to prevent hallucination."""
-        data   = make_market_data(pe_ratio=None, peg_ratio=None, price_to_sales=None)
+        """No P/E, P/B, or P/S → must return None to prevent hallucination."""
+        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=None)
         result = valuation_signal(data)
         assert result is None
 
     def test_zero_values_return_none(self):
         """Zero P/E and P/S must be treated as missing data."""
-        data   = make_market_data(pe_ratio=0, peg_ratio=0, price_to_sales=0)
+        data   = make_market_data(pe_ratio=0, price_to_book=0, price_to_sales=0)
         result = valuation_signal(data)
         assert result is None
 
@@ -212,18 +184,14 @@ class TestScoreBounds:
 
     def test_score_clamped_on_extreme_cheap(self):
         """Extremely cheap stock must not produce score > +1.0."""
-        data   = make_market_data(
-            pe_ratio=0.5, peg_ratio=0.01, target_mean=10000.0, current_price=100.0
-        )
+        data   = make_market_data(pe_ratio=0.5, price_to_book=0.1)
         result = valuation_signal(data)
         assert result is not None
         assert result["valuation_score"] <= 1.0
 
     def test_score_clamped_on_extreme_expensive(self):
         """Extremely expensive stock must not produce score < -1.0."""
-        data   = make_market_data(
-            pe_ratio=5000.0, peg_ratio=20.0, target_mean=1.0, current_price=100.0
-        )
+        data   = make_market_data(pe_ratio=5000.0, price_to_book=1000.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["valuation_score"] >= -1.0
@@ -240,8 +208,13 @@ class TestBenchmarkLoading:
         assert isinstance(DEFAULT_PE, (int, float))
         assert DEFAULT_PE > 0
 
+    def test_default_pb_is_positive_number(self):
+        """DEFAULT_PB must be a positive number loaded from JSON."""
+        assert isinstance(DEFAULT_PB, (int, float))
+        assert DEFAULT_PB > 0
+
     def test_default_ps_is_positive_number(self):
-        """DEFAULT_PS must be a positive number loaded from JSON."""
+        """DEFAULT_PS must be a positive number."""
         assert isinstance(DEFAULT_PS, (int, float))
         assert DEFAULT_PS > 0
 
@@ -257,7 +230,6 @@ class TestBenchmarkLoading:
         assert isinstance(BENCHMARKS_STALE, bool)
 
 
-# ─────────────────────────────────────────────
 # Helpers — mock market data for momentum
 # ─────────────────────────────────────────────
 
