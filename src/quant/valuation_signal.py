@@ -53,7 +53,7 @@ _PEER_BENCHMARKS = _load_peer_benchmarks()
 _BENCHMARKS_DATA = _PEER_BENCHMARKS.get("benchmarks", {})
 DEFAULT_PE       = _PEER_BENCHMARKS.get("default_pe", 25.54)
 DEFAULT_PB       = _PEER_BENCHMARKS.get("default_pb", 5.44)
-DEFAULT_PS       = 2  # P/S fallback for loss-making companies
+DEFAULT_PS       = _PEER_BENCHMARKS.get("default_ps", 3.70)  
 
 # ── Staleness check ──────────────────────────
 def _benchmarks_are_stale() -> bool:

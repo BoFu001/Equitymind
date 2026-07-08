@@ -30,8 +30,6 @@ def get_stock_snapshot(ticker: str) -> dict | None:
             "eps_trailing":       info.get("trailingEps"),
             "eps_forward":        info.get("forwardEps"),
             "dividend_yield":     info.get("dividendYield"),
-            "dividend_rate":      info.get("dividendRate"),
-            "payout_ratio":       info.get("payoutRatio"),
             # Analyst targets
             "target_high":        info.get("targetHighPrice"),
             "target_low":         info.get("targetLowPrice"),
@@ -40,8 +38,6 @@ def get_stock_snapshot(ticker: str) -> dict | None:
             "analyst_count":       info.get("numberOfAnalystOpinions"),
             "recommendation_mean": info.get("recommendationMean"),
             # Valuation ratios for Layer 2 quant engine
-            "peg_ratio":          info.get("trailingPegRatio"),
-            "earnings_growth":    info.get("earningsGrowth"),
             "price_to_sales":     info.get("priceToSalesTrailing12Months"),
             "price_to_book":      info.get("priceToBook"),
         }

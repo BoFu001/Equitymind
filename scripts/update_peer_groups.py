@@ -178,6 +178,7 @@ def update_peer_benchmarks():
     # and https://www.gurufocus.com/economic_indicators/4240/sp-500-price-to-book-value
     default_pe = 25.54   # S&P 500 P/E, GuruFocus, as of 2026-07-06
     default_pb = 5.44    # S&P 500 P/B, GuruFocus/S&P Dow Jones Indices, as of 2026-01-23
+    default_ps = 3.70    # S&P 500 P/S, GuruFocus/S&P Dow Jones Indices, as of 2026-06-15
 
     for ticker in TARGET_TICKERS:
         print(f"\n[{ticker}]")
@@ -224,6 +225,7 @@ def update_peer_benchmarks():
         "notes":      "Run quarterly: python scripts/update_peer_groups.py",
         "default_pe": default_pe,
         "default_pb": default_pb,
+        "default_ps": default_ps,
         "benchmarks": peer_benchmarks,
     }
 

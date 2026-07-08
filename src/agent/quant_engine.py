@@ -10,7 +10,7 @@ and writes results back to state["quant_signals"].
 No LLM calls — pure Python computation. Fast, deterministic, fully testable.
 
 Signal engines included (grows with each Layer 2 step):
-    Step 1: valuation_signal  — P/E + PEG + analyst upside
+    Step 1: valuation_signal  — P/E + P/B (vs peer group)
     Step 2: momentum_signal   — coming soon
     Step 3: risk_signal       — Beta, Sharpe, VaR, Max Drawdown
     ...
