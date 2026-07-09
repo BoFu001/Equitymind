@@ -719,6 +719,22 @@ def generate_report(state: AgentState) -> dict:
         else:
             quant_context += f"  Quality: Insufficient data.\n"
 
+
+        # Consensus
+        consensus = signals.get("consensus")
+        if consensus:
+            quant_context += f"  Consensus: {consensus['consensus_label']} (score={consensus['consensus_score']})\n"
+            quant_context += f"  {consensus['detail']}\n"
+            if consensus.get("trend_score") is not None:
+                trend_direction = "improving" if consensus["trend_score"] > 0.05 else ("deteriorating" if consensus["trend_score"] < -0.05 else "stable")
+                quant_context += f"  Analyst Rating Trend: {trend_direction} (trend_score={consensus['trend_score']})\n"
+            if consensus.get("low_confidence"):
+                quant_context += f"  ⚠️ Low analyst sample size — reduced confidence.\n"
+            if consensus.get("wide_dispersion"):
+                quant_context += f"  ⚠️ Wide analyst target price dispersion — significant disagreement.\n"
+        else:
+            quant_context += f"  Consensus: Insufficient data.\n"
+
     # ── Format market data ──
     market_context = "".join(format_market_data(all_market.get(t, {}), t) for t in tickers)
 
@@ -782,6 +798,14 @@ the past 2 years of price history") and, when presenting Valuation and
 Quality together, remember they are ALWAYS coupled regardless of
 question scope — never state a valuation judgment without the
 accompanying Quality/F-Score context, even in a short, targeted answer.
+5. Consensus Signal (analyst recommendation/upside/trend) reflects HUMAN
+   JUDGMENT, not an objective market calculation like the other four
+   signals — always make this distinction clear. Analyst ratings carry
+   a well-documented systematic optimism bias (“sell” ratings are rare
+   in practice) — a bullish consensus score should be read as “positive
+   within a system that skews positive,” not as a neutral, unbiased
+   signal. The trend_score reflects the analyst group's aggregate rating
+   distribution over time, not individual analyst revision tracking.
 
 SIGNAL-SPECIFIC FORMATTING NOTES:
 - Revenue: MARKET DATA's "revenue" is trailing-twelve-months (TTM), a

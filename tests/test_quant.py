@@ -609,3 +609,212 @@ class TestQualitySignalInsufficientData:
         result = quality_signal(inputs)
 
         assert result is None
+
+
+# ─────────────────────────────────────────────
+# Consensus Signal Engine (Analyst Sentiment)
+# ─────────────────────────────────────────────
+from src.quant.consensus_signal import consensus_signal
+from src.quant.consensus_signal_config import (
+    WEIGHT_RECOMMENDATION,
+    WEIGHT_UPSIDE,
+    WEIGHT_TREND,
+    MIN_ANALYST_COUNT,
+    WIDE_TARGET_RANGE_RATIO,
+)
+
+
+def make_consensus_market_data(**kwargs) -> dict:
+    """Minimal mock market_data dict for consensus signal testing."""
+    defaults = {
+        "recommendation_mean": 3.0,   # neutral "hold"
+        "target_mean":         100.0,
+        "current_price":       100.0,  # no upside by default
+        "target_high":         110.0,
+        "target_low":          90.0,
+        "analyst_count":       20,
+    }
+    defaults.update(kwargs)
+    return defaults
+
+
+def make_consensus_inputs(**overrides) -> dict:
+    """
+    Mock consensus_inputs with 2 periods by default: current ("0m") and
+    oldest ("-3m"), both identical (stable/no trend) unless overridden.
+    """
+    default_period = {
+        "period": "0m", "strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0
+    }
+    current = {**default_period, **overrides.get("current", {})}
+    oldest  = {**default_period, "period": "-3m", **overrides.get("oldest", {})}
+    return {"periods": [current, oldest]}
+
+
+class TestConsensusNormalCase:
+    def test_neutral_case(self):
+        """Hold recommendation, no upside, stable trend -> near-zero, neutral."""
+        market_data = make_consensus_market_data()
+        consensus_inputs = make_consensus_inputs()
+        result = consensus_signal(market_data, consensus_inputs)
+
+        assert result is not None
+        assert result["consensus_label"] == "neutral"
+        assert -0.3 <= result["consensus_score"] <= 0.3
+
+    def test_bullish_case(self):
+        """Strong buy, large upside, improving trend -> bullish."""
+        market_data = make_consensus_market_data(
+            recommendation_mean=1.2, target_mean=150.0, current_price=100.0
+        )
+        consensus_inputs = make_consensus_inputs(
+            current={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
+            oldest={"strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0},
+        )
+        result = consensus_signal(market_data, consensus_inputs)
+
+        assert result is not None
+        assert result["consensus_label"] == "bullish"
+        assert result["consensus_score"] > 0.3
+
+    def test_bearish_case(self):
+        """Strong sell, negative upside, deteriorating trend -> bearish."""
+        market_data = make_consensus_market_data(
+            recommendation_mean=4.5, target_mean=70.0, current_price=100.0
+        )
+        consensus_inputs = make_consensus_inputs(
+            current={"strongBuy": 0, "buy": 0, "hold": 5, "sell": 10, "strongSell": 5},
+            oldest={"strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0},
+        )
+        result = consensus_signal(market_data, consensus_inputs)
+
+        assert result is not None
+        assert result["consensus_label"] == "bearish"
+        assert result["consensus_score"] < -0.3
+
+    def test_composite_score_in_range(self):
+        """consensus_score must always fall within [-1.0, +1.0]."""
+        market_data = make_consensus_market_data(
+            recommendation_mean=1.0, target_mean=1000.0, current_price=100.0
+        )
+        consensus_inputs = make_consensus_inputs()
+        result = consensus_signal(market_data, consensus_inputs)
+
+        assert -1.0 <= result["consensus_score"] <= 1.0
+
+    def test_detail_string_non_empty(self):
+        result = consensus_signal(make_consensus_market_data(), make_consensus_inputs())
+        assert result is not None
+        assert len(result["detail"]) > 0
+
+    def test_detail_includes_bias_disclosure(self):
+        """Every result must disclose the systematic optimism bias in analyst ratings."""
+        result = consensus_signal(make_consensus_market_data(), make_consensus_inputs())
+        assert result is not None
+        assert "optimism bias" in result["detail"]
+
+
+class TestConsensusTrendCalculation:
+    def test_improving_trend_is_positive(self):
+        """Weighted rating moving toward 'buy' (lower number) -> positive trend_score."""
+        consensus_inputs = make_consensus_inputs(
+            current={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
+            oldest={"strongBuy": 0, "buy": 5, "hold": 15, "sell": 0, "strongSell": 0},
+        )
+        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+
+        assert result["trend_score"] > 0
+
+    def test_deteriorating_trend_is_negative(self):
+        """Weighted rating moving toward 'sell' (higher number) -> negative trend_score."""
+        consensus_inputs = make_consensus_inputs(
+            current={"strongBuy": 0, "buy": 5, "hold": 15, "sell": 0, "strongSell": 0},
+            oldest={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
+        )
+        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+
+        assert result["trend_score"] < 0
+
+    def test_fluctuating_analyst_count_does_not_break_trend(self):
+        """
+        Total analyst count differing slightly between periods (e.g. 20 vs
+        21, as seen in real AAPL/JPM/KO data) should not cause errors —
+        proportions handle this naturally.
+        """
+        consensus_inputs = make_consensus_inputs(
+            current={"strongBuy": 6, "buy": 22, "hold": 16, "sell": 1, "strongSell": 2},  # total 47
+            oldest={"strongBuy": 7, "buy": 25, "hold": 14, "sell": 1, "strongSell": 1},   # total 48
+        )
+        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+
+        assert result is not None
+        assert result["trend_score"] is not None
+
+
+class TestConsensusMissingData:
+    def test_missing_consensus_inputs_falls_back_to_two_signals(self):
+        """
+        If consensus_inputs is None (e.g. no rating history available),
+        trend_score should be None and the composite should dynamically
+        reweight across recommendation_score and upside_score only.
+        """
+        result = consensus_signal(make_consensus_market_data(), None)
+
+        assert result is not None
+        assert result["trend_score"] is None
+        expected = (
+            (WEIGHT_RECOMMENDATION / (WEIGHT_RECOMMENDATION + WEIGHT_UPSIDE)) * result["recommendation_score"] +
+            (WEIGHT_UPSIDE / (WEIGHT_RECOMMENDATION + WEIGHT_UPSIDE)) * result["upside_score"]
+        )
+        assert result["consensus_score"] == pytest.approx(round(expected, 4), abs=0.001)
+
+    def test_single_period_history_returns_none_trend(self):
+        """Only 1 period of rating history -> trend cannot be computed."""
+        consensus_inputs = {"periods": [
+            {"period": "0m", "strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0}
+        ]}
+        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+
+        assert result is not None
+        assert result["trend_score"] is None
+
+    def test_missing_recommendation_mean_returns_none(self):
+        """No recommendation_mean at all -> entire signal returns None."""
+        market_data = make_consensus_market_data(recommendation_mean=None)
+        result = consensus_signal(market_data, make_consensus_inputs())
+        assert result is None
+
+    def test_missing_target_mean_returns_none(self):
+        """No target_mean at all -> entire signal returns None."""
+        market_data = make_consensus_market_data(target_mean=None)
+        result = consensus_signal(market_data, make_consensus_inputs())
+        assert result is None
+
+
+class TestConsensusDisclosures:
+    def test_low_confidence_flagged_when_analyst_count_below_threshold(self):
+        market_data = make_consensus_market_data(analyst_count=MIN_ANALYST_COUNT - 1)
+        result = consensus_signal(market_data, make_consensus_inputs())
+
+        assert result["low_confidence"] is True
+        assert "small sample size" in result["detail"]
+
+    def test_low_confidence_not_flagged_when_analyst_count_sufficient(self):
+        market_data = make_consensus_market_data(analyst_count=MIN_ANALYST_COUNT + 10)
+        result = consensus_signal(market_data, make_consensus_inputs())
+
+        assert result["low_confidence"] is False
+
+    def test_wide_dispersion_flagged(self):
+        """target_high > 3x target_low should trigger the dispersion warning."""
+        market_data = make_consensus_market_data(target_high=400.0, target_low=100.0)
+        result = consensus_signal(market_data, make_consensus_inputs())
+
+        assert result["wide_dispersion"] is True
+        assert "disagreement among analysts" in result["detail"]
+
+    def test_narrow_dispersion_not_flagged(self):
+        market_data = make_consensus_market_data(target_high=110.0, target_low=90.0)
+        result = consensus_signal(market_data, make_consensus_inputs())
+
+        assert result["wide_dispersion"] is False

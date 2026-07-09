@@ -216,3 +216,56 @@ def get_quality_inputs(ticker: str) -> dict | None:
     except Exception as e:
         print(f"  [get_quality_inputs] Error fetching {ticker}: {e}")
         return None
+
+
+def get_consensus_inputs(ticker: str) -> dict | None:
+    """
+    Fetches historical monthly analyst recommendation distributions needed
+    for Consensus Signal Engine calculations (recommendation trend).
+
+    Unlike get_stock_snapshot(), this pulls a multi-period history of
+    analyst rating counts (yfinance's .recommendations, typically covering
+    the most recent ~4 months) rather than a single point-in-time mean —
+    the trend calculation needs at least 2 periods to compare.
+
+    Note: the analyst count contributing to each period can fluctuate
+    slightly month to month (e.g. individual analysts starting/stopping
+    coverage) — this is normal and handled by using proportions (weighted
+    averages), not raw counts, in the downstream trend calculation.
+
+    Returns None if fewer than 2 periods of history are available, since
+    a trend cannot be computed from a single snapshot.
+
+    Args:
+        ticker: stock ticker symbol, e.g. "AAPL"
+
+    Returns:
+        dict with keys:
+            - periods: list of dicts, each with "period" (e.g. "0m", "-1m")
+                       and counts for strongBuy/buy/hold/sell/strongSell,
+                       ordered most-recent-first (matches yfinance's own order)
+        or None if fewer than 2 periods of history are available.
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        recommendations = stock.recommendations
+
+        if recommendations is None or len(recommendations) < 2:
+            return None
+
+        periods = []
+        for _, row in recommendations.iterrows():
+            periods.append({
+                "period":     row["period"],
+                "strongBuy":  int(row["strongBuy"]),
+                "buy":        int(row["buy"]),
+                "hold":       int(row["hold"]),
+                "sell":       int(row["sell"]),
+                "strongSell": int(row["strongSell"]),
+            })
+
+        return {"periods": periods}
+
+    except Exception as e:
+        print(f"  [get_consensus_inputs] Error fetching {ticker}: {e}")
+        return None

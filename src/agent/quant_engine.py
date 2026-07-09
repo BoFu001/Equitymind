@@ -30,6 +30,9 @@ from src.tools.market_data import get_risk_inputs
 from src.quant.quality_signal import quality_signal
 from src.tools.market_data import get_quality_inputs
 
+from src.quant.consensus_signal import consensus_signal
+from src.tools.market_data import get_consensus_inputs
+
 
 
 
@@ -125,8 +128,18 @@ def quant_engine(state: AgentState) -> dict:
         signals["sentiment"] = None
 
         # ── Step 6: Consensus Signal ──────────────────────────────────────
-        # Coming in Step 6
-        signals["consensus"] = None
+        writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_consensus"].format(ticker=ticker)})
+        consensus_inputs = get_consensus_inputs(ticker)
+        consensus = consensus_signal(data, consensus_inputs)
+        if consensus is not None:
+            signals["consensus"] = consensus
+            gprint(
+                f"    consensus: {consensus['consensus_label']} "
+                f"(score={consensus['consensus_score']})"
+            )
+        else:
+            signals["consensus"] = None
+            gprint(f"    consensus: insufficient data")
 
         quant_signals[ticker] = signals
 
