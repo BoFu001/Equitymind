@@ -47,9 +47,6 @@ Academic reference:
 """
 
 from src.quant.consensus_signal_config import (
-    WEIGHT_RECOMMENDATION,
-    WEIGHT_UPSIDE,
-    WEIGHT_TREND,
     UPSIDE_CAP_PCT,
     TREND_CAP_POINTS,
     MIN_ANALYST_COUNT,
@@ -142,8 +139,16 @@ def _trend_score(consensus_inputs: dict) -> tuple[float | None, str]:
     return round(trend_score, 4), detail
 
 
-def _label(score: float) -> str:
-    """Map numeric composite score to human-readable label."""
+def _sub_label(score: float) -> str:
+    """
+    Map a single sub-signal's numeric score to a human-readable label.
+    Used independently for recommendation, upside, and trend — each
+    sub-signal gets its own label, since combining them into one
+    composite score/label would obscure which dimension is driving
+    the reading (see module docstring: these three answer different
+    questions — current standing, future price target, and recent
+    directional change — and should not be collapsed into one number).
+    """
     if score > BULLISH_THRESHOLD:
         return "bullish"
     if score < BEARISH_THRESHOLD:
@@ -153,7 +158,7 @@ def _label(score: float) -> str:
 
 def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict | None:
     """
-    Compute a consensus signal from analyst recommendation and target
+    Compute analyst consensus signals from recommendation and target
     price data.
 
     Pure function — takes already-fetched data, performs no I/O. Data
@@ -162,14 +167,26 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
     market_data.get_consensus_inputs() (for historical rating trend),
     called by quant_engine.py before this function runs.
 
+    IMPORTANT — no composite score: recommendation_score, upside_score,
+    and trend_score answer three genuinely different questions (current
+    standing / future price target / recent directional change) and are
+    NOT combined into a single consensus_score. Averaging them would
+    produce a number that doesn't correspond to any real question a user
+    is asking — e.g. a stock with a strongly bullish current rating but a
+    deteriorating recent trend would average out to "neutral," hiding
+    both the strong current standing AND the concerning trend. Each
+    sub-signal is returned independently with its own label, so the
+    report layer (and ultimately the user) can see the full picture
+    rather than a blended, uninterpretable average.
+
     Degradation strategy: recommendation_score and upside_score require
     only the current snapshot (recommendation_mean, target_mean,
-    current_price) — if these are missing, the whole signal returns None,
-    since there is no meaningful analyst signal without them. trend_score
-    is allowed to be independently unavailable (e.g. insufficient rating
-    history) — in that case the composite score dynamically re-weights
-    across the remaining two sub-signals, same pattern as
-    quality_signal.py's dynamic rescaling when a sub-signal is missing.
+    current_price) — if these are missing, the whole function returns
+    None, since there is no meaningful analyst signal without them.
+    trend_score is allowed to be independently unavailable (e.g.
+    insufficient rating history) — it is simply returned as None,
+    with no downstream reweighting needed since there is no composite
+    to reweight.
 
     Args:
         market_data: dict from get_stock_snapshot(), expected fields:
@@ -183,17 +200,18 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
 
     Returns:
         dict with keys:
-            - consensus_score:  float (-1.0 to +1.0)
-            - consensus_label:  str — "bullish" / "neutral" / "bearish"
-            - recommendation_score: float
-            - upside_score:     float
-            - upside_pct:       float
-            - trend_score:      float | None
-            - low_confidence:   bool — True if analyst_count < MIN_ANALYST_COUNT
-            - wide_dispersion:  bool — True if target_high > 3x target_low
-            - detail:           str — plain English explanation
+            - recommendation_score: float (-1.0 to +1.0)
+            - recommendation_label: str — "bullish" / "neutral" / "bearish"
+            - upside_score:      float (-1.0 to +1.0)
+            - upside_pct:        float
+            - upside_label:      str — "bullish" / "neutral" / "bearish"
+            - trend_score:       float | None
+            - trend_label:       str | None — "improving" / "stable" / "deteriorating"
+            - low_confidence:    bool — True if analyst_count < MIN_ANALYST_COUNT
+            - wide_dispersion:   bool — True if target_high > 3x target_low
+            - detail:            str — plain English explanation of all sub-signals
         or None if recommendation_mean, target_mean, or current_price
-        is missing (Tier: no data)
+        is missing (no meaningful analyst signal without them)
     """
     recommendation_mean   = market_data.get("recommendation_mean")
     target_mean           = market_data.get("target_mean")
@@ -212,23 +230,14 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
     if consensus_inputs is not None:
         trend_score, trend_detail = _trend_score(consensus_inputs)
 
-    if trend_score is not None:
-        composite = (
-            WEIGHT_RECOMMENDATION * rec_score +
-            WEIGHT_UPSIDE * up_score +
-            WEIGHT_TREND * trend_score
-        )
-    else:
-        # Dynamic reweighting: trend unavailable, redistribute its weight
-        # proportionally across the remaining two sub-signals.
-        total_remaining_weight = WEIGHT_RECOMMENDATION + WEIGHT_UPSIDE
-        composite = (
-            (WEIGHT_RECOMMENDATION / total_remaining_weight) * rec_score +
-            (WEIGHT_UPSIDE / total_remaining_weight) * up_score
-        )
-
-    composite = round(max(-1.0, min(1.0, composite)), 4)
-    label = _label(composite)
+    recommendation_label = _sub_label(rec_score)
+    upside_label = _sub_label(up_score)
+    trend_label = (
+        None if trend_score is None else
+        ("improving" if trend_score > 0.05 else
+         "deteriorating" if trend_score < -0.05 else
+         "stable")
+    )
 
     low_confidence = analyst_count is not None and analyst_count < MIN_ANALYST_COUNT
     wide_dispersion = (
@@ -238,9 +247,9 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
 
     detail_parts = [
         f"Recommendation mean {recommendation_mean} "
-        f"(recommendation_score={round(rec_score,2)}), "
+        f"(recommendation_score={round(rec_score,2)}, {recommendation_label}), "
         f"analyst target upside {upside_pct}% "
-        f"(upside_score={round(up_score,2)}).",
+        f"(upside_score={round(up_score,2)}, {upside_label}).",
         trend_detail,
         "Analyst ratings carry a well-documented systematic optimism bias — "
         "'sell' ratings are rare in practice, so a positive score here "
@@ -260,12 +269,13 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
         )
 
     return {
-        "consensus_score":      composite,
-        "consensus_label":      label,
         "recommendation_score": round(rec_score, 4),
+        "recommendation_label": recommendation_label,
         "upside_score":         round(up_score, 4),
         "upside_pct":           upside_pct,
+        "upside_label":         upside_label,
         "trend_score":          trend_score,
+        "trend_label":          trend_label,
         "low_confidence":       low_confidence,
         "wide_dispersion":      wide_dispersion,
         "detail": " ".join(detail_parts),

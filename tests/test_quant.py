@@ -616,9 +616,6 @@ class TestQualitySignalInsufficientData:
 # ─────────────────────────────────────────────
 from src.quant.consensus_signal import consensus_signal
 from src.quant.consensus_signal_config import (
-    WEIGHT_RECOMMENDATION,
-    WEIGHT_UPSIDE,
-    WEIGHT_TREND,
     MIN_ANALYST_COUNT,
     WIDE_TARGET_RANGE_RATIO,
 )
@@ -653,17 +650,18 @@ def make_consensus_inputs(**overrides) -> dict:
 
 class TestConsensusNormalCase:
     def test_neutral_case(self):
-        """Hold recommendation, no upside, stable trend -> near-zero, neutral."""
+        """Hold recommendation, no upside, stable trend -> each sub-signal neutral."""
         market_data = make_consensus_market_data()
         consensus_inputs = make_consensus_inputs()
         result = consensus_signal(market_data, consensus_inputs)
 
         assert result is not None
-        assert result["consensus_label"] == "neutral"
-        assert -0.3 <= result["consensus_score"] <= 0.3
+        assert result["recommendation_label"] == "neutral"
+        assert result["upside_label"] == "neutral"
+        assert result["trend_label"] == "stable"
 
     def test_bullish_case(self):
-        """Strong buy, large upside, improving trend -> bullish."""
+        """Strong buy, large upside, improving trend -> each sub-signal bullish/improving."""
         market_data = make_consensus_market_data(
             recommendation_mean=1.2, target_mean=150.0, current_price=100.0
         )
@@ -674,11 +672,12 @@ class TestConsensusNormalCase:
         result = consensus_signal(market_data, consensus_inputs)
 
         assert result is not None
-        assert result["consensus_label"] == "bullish"
-        assert result["consensus_score"] > 0.3
+        assert result["recommendation_label"] == "bullish"
+        assert result["upside_label"] == "bullish"
+        assert result["trend_label"] == "improving"
 
     def test_bearish_case(self):
-        """Strong sell, negative upside, deteriorating trend -> bearish."""
+        """Strong sell, negative upside, deteriorating trend -> each sub-signal bearish/deteriorating."""
         market_data = make_consensus_market_data(
             recommendation_mean=4.5, target_mean=70.0, current_price=100.0
         )
@@ -689,18 +688,34 @@ class TestConsensusNormalCase:
         result = consensus_signal(market_data, consensus_inputs)
 
         assert result is not None
-        assert result["consensus_label"] == "bearish"
-        assert result["consensus_score"] < -0.3
+        assert result["recommendation_label"] == "bearish"
+        assert result["upside_label"] == "bearish"
+        assert result["trend_label"] == "deteriorating"
 
-    def test_composite_score_in_range(self):
-        """consensus_score must always fall within [-1.0, +1.0]."""
+    def test_each_sub_score_in_range(self):
+        """Each independent sub-signal score must fall within [-1.0, +1.0]."""
         market_data = make_consensus_market_data(
             recommendation_mean=1.0, target_mean=1000.0, current_price=100.0
         )
         consensus_inputs = make_consensus_inputs()
         result = consensus_signal(market_data, consensus_inputs)
 
-        assert -1.0 <= result["consensus_score"] <= 1.0
+        assert -1.0 <= result["recommendation_score"] <= 1.0
+        assert -1.0 <= result["upside_score"] <= 1.0
+        if result["trend_score"] is not None:
+            assert -1.0 <= result["trend_score"] <= 1.0
+
+    def test_no_composite_score_exists(self):
+        """
+        There should be no combined consensus_score/consensus_label —
+        recommendation, upside, and trend answer different questions
+        (current standing / future price target / recent directional
+        change) and must remain independent, not averaged into one number.
+        """
+        result = consensus_signal(make_consensus_market_data(), make_consensus_inputs())
+        assert result is not None
+        assert "consensus_score" not in result
+        assert "consensus_label" not in result
 
     def test_detail_string_non_empty(self):
         result = consensus_signal(make_consensus_market_data(), make_consensus_inputs())
@@ -752,21 +767,23 @@ class TestConsensusTrendCalculation:
 
 
 class TestConsensusMissingData:
-    def test_missing_consensus_inputs_falls_back_to_two_signals(self):
+    def test_missing_consensus_inputs_trend_is_none(self):
         """
         If consensus_inputs is None (e.g. no rating history available),
-        trend_score should be None and the composite should dynamically
-        reweight across recommendation_score and upside_score only.
+        trend_score and trend_label should both be None — recommendation
+        and upside are independent and unaffected, since there is no
+        composite score to reweight (each sub-signal stands on its own).
         """
         result = consensus_signal(make_consensus_market_data(), None)
 
         assert result is not None
         assert result["trend_score"] is None
-        expected = (
-            (WEIGHT_RECOMMENDATION / (WEIGHT_RECOMMENDATION + WEIGHT_UPSIDE)) * result["recommendation_score"] +
-            (WEIGHT_UPSIDE / (WEIGHT_RECOMMENDATION + WEIGHT_UPSIDE)) * result["upside_score"]
-        )
-        assert result["consensus_score"] == pytest.approx(round(expected, 4), abs=0.001)
+        assert result["trend_label"] is None
+        # recommendation and upside are computed independently of trend
+        assert result["recommendation_score"] is not None
+        assert result["recommendation_label"] is not None
+        assert result["upside_score"] is not None
+        assert result["upside_label"] is not None
 
     def test_single_period_history_returns_none_trend(self):
         """Only 1 period of rating history -> trend cannot be computed."""

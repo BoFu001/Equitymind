@@ -10,9 +10,10 @@ Configuration constants for the Consensus Signal Engine (analyst sentiment).
 # most stable sample size (all covering analysts, every period).
 # Upside and Trend are weighted equally as secondary, more volatile inputs.
 # ─────────────────────────────────────────────
-WEIGHT_RECOMMENDATION = 0.4
-WEIGHT_UPSIDE         = 0.3
-WEIGHT_TREND          = 0.3
+# NOTE: sub-signals are no longer combined into a weighted composite —
+# recommendation, upside, and trend answer different questions (current
+# standing / future price target / recent directional change) and are
+# returned independently. No weights are needed.
 
 # ─────────────────────────────────────────────
 # Calibration anchors

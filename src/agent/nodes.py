@@ -720,14 +720,19 @@ def generate_report(state: AgentState) -> dict:
             quant_context += f"  Quality: Insufficient data.\n"
 
 
-        # Consensus
+        # Consensus — three independent sub-signals, NOT combined into
+        # a single score (recommendation/upside/trend answer different
+        # questions: current standing, future price target, and recent
+        # directional change — averaging them would hide the full picture)
         consensus = signals.get("consensus")
         if consensus:
-            quant_context += f"  Consensus: {consensus['consensus_label']} (score={consensus['consensus_score']})\n"
+            quant_context += f"  Consensus - Recommendation: {consensus['recommendation_label']} (score={consensus['recommendation_score']})\n"
+            quant_context += f"  Consensus - Upside: {consensus['upside_label']} ({consensus['upside_pct']}% implied by analyst target price)\n"
+            if consensus.get("trend_label") is not None:
+                quant_context += f"  Consensus - Trend: {consensus['trend_label']} (trend_score={consensus['trend_score']})\n"
+            else:
+                quant_context += f"  Consensus - Trend: Insufficient rating history.\n"
             quant_context += f"  {consensus['detail']}\n"
-            if consensus.get("trend_score") is not None:
-                trend_direction = "improving" if consensus["trend_score"] > 0.05 else ("deteriorating" if consensus["trend_score"] < -0.05 else "stable")
-                quant_context += f"  Analyst Rating Trend: {trend_direction} (trend_score={consensus['trend_score']})\n"
             if consensus.get("low_confidence"):
                 quant_context += f"  ⚠️ Low analyst sample size — reduced confidence.\n"
             if consensus.get("wide_dispersion"):
@@ -792,14 +797,20 @@ the past 2 years of price history") and, when presenting Valuation and
 Quality together, remember they are ALWAYS coupled regardless of
 question scope — never state a valuation judgment without the
 accompanying Quality/F-Score context, even in a short, targeted answer.
-5. Consensus Signal (analyst recommendation/upside/trend) reflects HUMAN
-   JUDGMENT, not an objective market calculation like the other four
+5. Consensus Signal (analyst recommendation, upside, trend) reflects
+   HUMAN JUDGMENT, not an objective market calculation like the other
    signals — always make this distinction clear. Analyst ratings carry
    a well-documented systematic optimism bias (“sell” ratings are rare
-   in practice) — a bullish consensus score should be read as “positive
+   in practice) — a bullish reading should be described as “positive
    within a system that skews positive,” not as a neutral, unbiased
-   signal. The trend_score reflects the analyst group's aggregate rating
-   distribution over time, not individual analyst revision tracking.
+   signal. IMPORTANT: recommendation, upside, and trend are three
+   INDEPENDENT sub-signals answering different questions (current
+   standing / future price target / recent directional change) — present
+   each on its own terms using its own label (e.g. “recommendation is
+   bullish, but the trend has been deteriorating”), never average them
+   into one overall consensus verdict. The trend_label reflects the
+   analyst group's aggregate rating distribution over time, not
+   individual analyst revision tracking.
 
 SIGNAL-SPECIFIC FORMATTING NOTES:
 - Revenue: MARKET DATA's "revenue" is trailing-twelve-months (TTM), a
