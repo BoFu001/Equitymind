@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-08",
+  "updated_at": "2026-07-09",
   "description": "Top 200 US large-cap stocks by market cap, selected from a static candidate pool of 163 well-known tickers.",
   "total_tickers": 161,
   "tickers": [
@@ -14,64 +14,64 @@
     "AVGO",
     "META",
     "TSLA",
-    "LLY",
     "MU",
-    "WMT",
+    "LLY",
     "JPM",
     "AMD",
+    "WMT",
     "ASML",
     "V",
     "JNJ",
     "XOM",
-    "MA",
     "AMAT",
     "CSCO",
+    "MA",
+    "LRCX",
     "ABBV",
     "CAT",
-    "COST",
-    "LRCX",
     "BAC",
     "ORCL",
+    "COST",
     "UNH",
     "GE",
     "KO",
+    "MS",
     "CVX",
     "PG",
-    "MS",
     "HD",
     "NFLX",
+    "GS",
     "PLTR",
     "MRK",
-    "GS",
     "KLAC",
-    "IBM",
     "TXN",
-    "RTX",
-    "WFC",
+    "IBM",
     "PANW",
+    "WFC",
+    "RTX",
     "C",
     "AXP",
     "ANET",
-    "TM",
     "MRVL",
+    "TM",
+    "QCOM",
+    "CRWD",
+    "MCD",
     "AMGN",
     "TMUS",
-    "MCD",
-    "QCOM",
-    "PEP",
-    "CRWD",
     "TMO",
     "ADI",
+    "PEP",
     "NEE",
-    "VZ",
     "SCHW",
     "BA",
-    "DIS",
-    "TJX",
-    "GILD",
+    "VZ",
     "UNP",
-    "ABT",
+    "TJX",
+    "DIS",
+    "GILD",
     "BLK",
+    "ABT",
     "DE",
     "ETN",
     "SHOP",
@@ -79,79 +79,79 @@
     "ISRG",
     "T",
     "PFE",
-    "CRM",
     "DHR",
-    "BKNG",
     "PLD",
-    "CVS",
+    "BKNG",
+    "CRM",
     "COP",
-    "VRTX",
+    "CVS",
     "SPGI",
-    "LMT",
+    "VRTX",
     "COF",
-    "LOW",
-    "BMY",
     "SBUX",
+    "LOW",
     "FTNT",
+    "LMT",
+    "BMY",
     "NOW",
     "SO",
     "CDNS",
     "EQIX",
     "GD",
-    "SPOT",
     "PNC",
+    "SPOT",
     "DUK",
-    "USB",
     "NET",
+    "USB",
+    "DDOG",
     "BK",
     "UPS",
-    "DDOG",
-    "MELI",
-    "ELV",
     "WMB",
     "SNOW",
+    "MELI",
+    "ELV",
     "ADBE",
     "ABNB",
+    "SNPS",
     "SPG",
     "CMCSA",
-    "SNPS",
-    "MMM",
     "MPC",
-    "NOC",
-    "MDLZ",
+    "MMM",
+    "EMR",
     "CI",
     "AMT",
     "ITW",
-    "EMR",
     "PSX",
+    "NOC",
+    "MDLZ",
     "INTU",
     "CL",
     "AEP",
     "EOG",
-    "HON",
     "SLB",
+    "HON",
     "REGN",
     "GM",
-    "NKE",
     "TFC",
+    "NKE",
     "TGT",
     "O",
     "F",
     "OXY",
-    "HUM",
     "MCHP",
+    "HUM",
     "COIN",
     "PYPL",
+    "ON",
     "RDDT",
     "KMB",
-    "ON",
-    "WDAY",
     "CPNG",
-    "KHC",
+    "WDAY",
     "EL",
+    "KHC",
     "MDB",
-    "ZS",
     "RIVN",
+    "ZS",
     "TEAM",
     "CHTR",
     "GIS",
@@ -167,647 +167,647 @@
   ],
   "details": {
     "NVDA": {
-      "market_cap": 4917468069888,
+      "market_cap": 4937814114304,
       "company_name": "NVIDIA Corporation"
     },
     "AAPL": {
-      "market_cap": 4613886443520,
+      "market_cap": 4621082820608,
       "company_name": "Apple Inc."
     },
     "GOOGL": {
-      "market_cap": 4409533661184,
+      "market_cap": 4353390018560,
       "company_name": "Alphabet Inc."
     },
     "GOOG": {
-      "market_cap": 4368887185408,
+      "market_cap": 4316843474944,
       "company_name": "Alphabet Inc."
     },
     "MSFT": {
-      "market_cap": 2849064878080,
+      "market_cap": 2828228100096,
       "company_name": "Microsoft Corporation"
     },
     "AMZN": {
-      "market_cap": 2608545398784,
+      "market_cap": 2635594203136,
       "company_name": "Amazon.com, Inc."
     },
     "TSM": {
-      "market_cap": 2280103608320,
+      "market_cap": 2277743788032,
       "company_name": "Taiwan Semiconductor Manufacturing Company Limited"
     },
     "SPCX": {
-      "market_cap": 1961835364352,
+      "market_cap": 2016902119424,
       "company_name": "Space Exploration Technologies Corp."
     },
     "AVGO": {
-      "market_cap": 1866327392256,
+      "market_cap": 1928389984256,
       "company_name": "Broadcom Inc."
     },
     "META": {
-      "market_cap": 1536406061056,
+      "market_cap": 1563161001984,
       "company_name": "Meta Platforms, Inc."
     },
     "TSLA": {
-      "market_cap": 1482177511424,
+      "market_cap": 1527528030208,
       "company_name": "Tesla, Inc."
     },
-    "LLY": {
-      "market_cap": 1091825827840,
-      "company_name": "Eli Lilly and Company"
-    },
     "MU": {
-      "market_cap": 1068153831424,
+      "market_cap": 1146119520256,
       "company_name": "Micron Technology, Inc."
     },
-    "WMT": {
-      "market_cap": 898546728960,
-      "company_name": "Walmart Inc."
+    "LLY": {
+      "market_cap": 1078454190080,
+      "company_name": "Eli Lilly and Company"
     },
     "JPM": {
-      "market_cap": 893228548096,
+      "market_cap": 898788425728,
       "company_name": "JPMorgan Chase & Co."
     },
     "AMD": {
-      "market_cap": 839107018752,
+      "market_cap": 889892110336,
       "company_name": "Advanced Micro Devices, Inc."
     },
+    "WMT": {
+      "market_cap": 888599150592,
+      "company_name": "Walmart Inc."
+    },
     "ASML": {
-      "market_cap": 684916080640,
+      "market_cap": 700953329664,
       "company_name": "ASML Holding N.V."
     },
     "V": {
-      "market_cap": 660247347200,
+      "market_cap": 659144376320,
       "company_name": "Visa Inc."
     },
     "JNJ": {
-      "market_cap": 638911512576,
+      "market_cap": 622819278848,
       "company_name": "Johnson & Johnson"
     },
     "XOM": {
-      "market_cap": 580582309888,
+      "market_cap": 570469122048,
       "company_name": "ExxonMobil Holdings Corporation"
     },
-    "MA": {
-      "market_cap": 457449013248,
-      "company_name": "Mastercard Incorporated"
-    },
     "AMAT": {
-      "market_cap": 456621948928,
+      "market_cap": 472350261248,
       "company_name": "Applied Materials, Inc."
     },
     "CSCO": {
-      "market_cap": 448417005568,
+      "market_cap": 468360691712,
       "company_name": "Cisco Systems, Inc."
     },
+    "MA": {
+      "market_cap": 459600592896,
+      "company_name": "Mastercard Incorporated"
+    },
+    "LRCX": {
+      "market_cap": 442151895040,
+      "company_name": "Lam Research Corporation"
+    },
     "ABBV": {
-      "market_cap": 446927929344,
+      "market_cap": 438818340864,
       "company_name": "AbbVie Inc."
     },
     "CAT": {
-      "market_cap": 433288052736,
+      "market_cap": 436932509696,
       "company_name": "Caterpillar Inc."
     },
-    "COST": {
-      "market_cap": 422834896896,
-      "company_name": "Costco Wholesale Corporation"
-    },
-    "LRCX": {
-      "market_cap": 419378987008,
-      "company_name": "Lam Research Corporation"
-    },
     "BAC": {
-      "market_cap": 415892144128,
+      "market_cap": 421076205568,
       "company_name": "Bank of America Corporation"
     },
     "ORCL": {
-      "market_cap": 399060434944,
+      "market_cap": 415738396672,
       "company_name": "Oracle Corporation"
     },
+    "COST": {
+      "market_cap": 403805175808,
+      "company_name": "Costco Wholesale Corporation"
+    },
     "UNH": {
-      "market_cap": 389339676672,
+      "market_cap": 390878986240,
       "company_name": "UnitedHealth Group Incorporated"
     },
     "GE": {
-      "market_cap": 373134786560,
+      "market_cap": 375323688960,
       "company_name": "GE Aerospace"
     },
     "KO": {
-      "market_cap": 361013116928,
+      "market_cap": 354438479872,
       "company_name": "The Coca-Cola Company"
     },
+    "MS": {
+      "market_cap": 351679315968,
+      "company_name": "Morgan Stanley"
+    },
     "CVX": {
-      "market_cap": 349545299968,
+      "market_cap": 346936311808,
       "company_name": "Chevron Corporation"
     },
     "PG": {
-      "market_cap": 347147534336,
+      "market_cap": 340534329344,
       "company_name": "The Procter & Gamble Company"
     },
-    "MS": {
-      "market_cap": 344799051776,
-      "company_name": "Morgan Stanley"
-    },
     "HD": {
-      "market_cap": 335280472064,
+      "market_cap": 337391550464,
       "company_name": "The Home Depot, Inc."
     },
     "NFLX": {
-      "market_cap": 320168099840,
+      "market_cap": 314673004544,
       "company_name": "Netflix, Inc."
     },
+    "GS": {
+      "market_cap": 312564809728,
+      "company_name": "The Goldman Sachs Group, Inc."
+    },
     "PLTR": {
-      "market_cap": 311135141888,
+      "market_cap": 308114522112,
       "company_name": "Palantir Technologies Inc."
     },
     "MRK": {
-      "market_cap": 310382854144,
+      "market_cap": 307641319424,
       "company_name": "Merck & Co., Inc."
     },
-    "GS": {
-      "market_cap": 303136374784,
-      "company_name": "The Goldman Sachs Group, Inc."
-    },
     "KLAC": {
-      "market_cap": 290143338496,
+      "market_cap": 301991231488,
       "company_name": "KLA Corporation"
     },
-    "IBM": {
-      "market_cap": 284898033664,
-      "company_name": "International Business Machines Corporation"
-    },
     "TXN": {
-      "market_cap": 279430332416,
+      "market_cap": 282956955648,
       "company_name": "Texas Instruments Incorporated"
     },
-    "RTX": {
-      "market_cap": 264017281024,
-      "company_name": "RTX Corporation"
-    },
-    "WFC": {
-      "market_cap": 262273548288,
-      "company_name": "Wells Fargo & Company"
+    "IBM": {
+      "market_cap": 276998291456,
+      "company_name": "International Business Machines Corporation"
     },
     "PANW": {
-      "market_cap": 261912461312,
+      "market_cap": 274231214080,
       "company_name": "Palo Alto Networks, Inc."
     },
+    "WFC": {
+      "market_cap": 266619617280,
+      "company_name": "Wells Fargo & Company"
+    },
+    "RTX": {
+      "market_cap": 262549405696,
+      "company_name": "RTX Corporation"
+    },
     "C": {
-      "market_cap": 236034801664,
+      "market_cap": 238072971264,
       "company_name": "Citigroup Inc."
     },
     "AXP": {
-      "market_cap": 230469402624,
+      "market_cap": 236125896704,
       "company_name": "American Express Company"
     },
     "ANET": {
-      "market_cap": 224547684352,
+      "market_cap": 232921153536,
       "company_name": "Arista Networks, Inc."
     },
-    "TM": {
-      "market_cap": 209764237312,
-      "company_name": "Toyota Motor Corporation"
-    },
     "MRVL": {
-      "market_cap": 205667434496,
+      "market_cap": 215412342784,
       "company_name": "Marvell Technology, Inc."
     },
+    "TM": {
+      "market_cap": 207070396416,
+      "company_name": "Toyota Motor Corporation"
+    },
+    "QCOM": {
+      "market_cap": 201819914240,
+      "company_name": "QUALCOMM Incorporated"
+    },
+    "CRWD": {
+      "market_cap": 201671327744,
+      "company_name": "CrowdStrike Holdings, Inc."
+    },
+    "MCD": {
+      "market_cap": 196148641792,
+      "company_name": "McDonald's Corporation"
+    },
     "AMGN": {
-      "market_cap": 198704414720,
+      "market_cap": 195633463296,
       "company_name": "Amgen Inc."
     },
     "TMUS": {
-      "market_cap": 197258854400,
+      "market_cap": 195283828736,
       "company_name": "T-Mobile US, Inc."
     },
-    "MCD": {
-      "market_cap": 197094326272,
-      "company_name": "McDonald's Corporation"
-    },
-    "QCOM": {
-      "market_cap": 196613160960,
-      "company_name": "QUALCOMM Incorporated"
-    },
-    "PEP": {
-      "market_cap": 196142366720,
-      "company_name": "PepsiCo, Inc."
-    },
-    "CRWD": {
-      "market_cap": 192644464640,
-      "company_name": "CrowdStrike Holdings, Inc."
-    },
     "TMO": {
-      "market_cap": 190188437504,
+      "market_cap": 193474494464,
       "company_name": "Thermo Fisher Scientific Inc."
     },
     "ADI": {
-      "market_cap": 189467115520,
+      "market_cap": 192316571648,
       "company_name": "Analog Devices, Inc."
     },
+    "PEP": {
+      "market_cap": 187633139712,
+      "company_name": "PepsiCo, Inc."
+    },
     "NEE": {
-      "market_cap": 182970171392,
+      "market_cap": 181322530816,
       "company_name": "NextEra Energy, Inc."
     },
-    "VZ": {
-      "market_cap": 178943574016,
-      "company_name": "Verizon Communications Inc."
-    },
     "SCHW": {
-      "market_cap": 178104877056,
+      "market_cap": 178052694016,
       "company_name": "The Charles Schwab Corporation"
     },
     "BA": {
-      "market_cap": 177348329472,
+      "market_cap": 176552132608,
       "company_name": "The Boeing Company"
     },
-    "DIS": {
-      "market_cap": 169153593344,
-      "company_name": "The Walt Disney Company"
-    },
-    "TJX": {
-      "market_cap": 169141288960,
-      "company_name": "The TJX Companies, Inc."
-    },
-    "GILD": {
-      "market_cap": 167717486592,
-      "company_name": "Gilead Sciences, Inc."
+    "VZ": {
+      "market_cap": 175415230464,
+      "company_name": "Verizon Communications Inc."
     },
     "UNP": {
-      "market_cap": 166812631040,
+      "market_cap": 169050931200,
       "company_name": "Union Pacific Corporation"
     },
-    "ABT": {
-      "market_cap": 166090588160,
-      "company_name": "Abbott Laboratories"
+    "TJX": {
+      "market_cap": 166965018624,
+      "company_name": "The TJX Companies, Inc."
+    },
+    "DIS": {
+      "market_cap": 166340444160,
+      "company_name": "The Walt Disney Company"
+    },
+    "GILD": {
+      "market_cap": 166184140800,
+      "company_name": "Gilead Sciences, Inc."
     },
     "BLK": {
-      "market_cap": 160595804160,
+      "market_cap": 165485248512,
       "company_name": "BlackRock, Inc."
     },
+    "ABT": {
+      "market_cap": 163834937344,
+      "company_name": "Abbott Laboratories"
+    },
     "DE": {
-      "market_cap": 160455884800,
+      "market_cap": 161220296704,
       "company_name": "Deere & Company"
     },
     "ETN": {
-      "market_cap": 153863880704,
+      "market_cap": 159606833152,
       "company_name": "Eaton Corporation plc"
     },
     "SHOP": {
-      "market_cap": 152227856384,
+      "market_cap": 158573395968,
       "company_name": "Shopify Inc."
     },
     "UBER": {
-      "market_cap": 149047574528,
+      "market_cap": 151010902016,
       "company_name": "Uber Technologies, Inc."
     },
     "ISRG": {
-      "market_cap": 148195901440,
+      "market_cap": 145931042816,
       "company_name": "Intuitive Surgical, Inc."
     },
     "T": {
-      "market_cap": 147652198400,
+      "market_cap": 145393975296,
       "company_name": "AT&T Inc."
     },
     "PFE": {
-      "market_cap": 137812557824,
+      "market_cap": 137784066048,
       "company_name": "Pfizer Inc."
     },
-    "CRM": {
-      "market_cap": 135921246208,
-      "company_name": "Salesforce, Inc."
-    },
     "DHR": {
-      "market_cap": 135527456768,
+      "market_cap": 137505669120,
       "company_name": "Danaher Corporation"
     },
-    "BKNG": {
-      "market_cap": 135185301504,
-      "company_name": "Booking Holdings Inc."
-    },
     "PLD": {
-      "market_cap": 134661586944,
+      "market_cap": 135410081792,
       "company_name": "Prologis, Inc."
     },
-    "CVS": {
-      "market_cap": 134157369344,
-      "company_name": "CVS Health Corporation"
+    "BKNG": {
+      "market_cap": 134759112704,
+      "company_name": "Booking Holdings Inc."
+    },
+    "CRM": {
+      "market_cap": 133218541568,
+      "company_name": "Salesforce, Inc."
     },
     "COP": {
-      "market_cap": 133049884672,
+      "market_cap": 131697582080,
       "company_name": "ConocoPhillips"
     },
-    "VRTX": {
-      "market_cap": 129039753216,
-      "company_name": "Vertex Pharmaceuticals Incorporated"
+    "CVS": {
+      "market_cap": 131343958016,
+      "company_name": "CVS Health Corporation"
     },
     "SPGI": {
-      "market_cap": 128046637056,
+      "market_cap": 127469027328,
       "company_name": "S&P Global Inc."
     },
-    "LMT": {
-      "market_cap": 122083434496,
-      "company_name": "Lockheed Martin Corporation"
+    "VRTX": {
+      "market_cap": 123555020800,
+      "company_name": "Vertex Pharmaceuticals Incorporated"
     },
     "COF": {
-      "market_cap": 120918458368,
+      "market_cap": 122942078976,
       "company_name": "Capital One Financial Corporation"
     },
-    "LOW": {
-      "market_cap": 120407433216,
-      "company_name": "Lowe's Companies, Inc."
-    },
-    "BMY": {
-      "market_cap": 118001090560,
-      "company_name": "Bristol-Myers Squibb Company"
-    },
     "SBUX": {
-      "market_cap": 117503066112,
+      "market_cap": 121982083072,
       "company_name": "Starbucks Corporation"
     },
+    "LOW": {
+      "market_cap": 119759478784,
+      "company_name": "Lowe's Companies, Inc."
+    },
     "FTNT": {
-      "market_cap": 114377408512,
+      "market_cap": 119634149376,
       "company_name": "Fortinet, Inc."
     },
+    "LMT": {
+      "market_cap": 119305142272,
+      "company_name": "Lockheed Martin Corporation"
+    },
+    "BMY": {
+      "market_cap": 117378260992,
+      "company_name": "Bristol-Myers Squibb Company"
+    },
     "NOW": {
-      "market_cap": 110226202624,
+      "market_cap": 111453462528,
       "company_name": "ServiceNow, Inc."
     },
     "SO": {
-      "market_cap": 108981837824,
+      "market_cap": 107228889088,
       "company_name": "The Southern Company"
     },
     "CDNS": {
-      "market_cap": 102738698240,
+      "market_cap": 106209853440,
       "company_name": "Cadence Design Systems, Inc."
     },
     "EQIX": {
-      "market_cap": 100943888384,
+      "market_cap": 101919784960,
       "company_name": "Equinix, Inc."
     },
     "GD": {
-      "market_cap": 100621688832,
+      "market_cap": 100944822272,
       "company_name": "General Dynamics Corporation"
     },
-    "SPOT": {
-      "market_cap": 99487211520,
-      "company_name": "Spotify Technology S.A."
-    },
     "PNC": {
-      "market_cap": 99371188224,
+      "market_cap": 100668243968,
       "company_name": "The PNC Financial Services Group, Inc."
     },
+    "SPOT": {
+      "market_cap": 98940264448,
+      "company_name": "Spotify Technology S.A."
+    },
     "DUK": {
-      "market_cap": 99211419648,
+      "market_cap": 97394958336,
       "company_name": "Duke Energy Corporation"
     },
+    "NET": {
+      "market_cap": 97313783808,
+      "company_name": "Cloudflare, Inc."
+    },
     "USB": {
-      "market_cap": 95400165376,
+      "market_cap": 96275611648,
       "company_name": "U.S. Bancorp"
     },
-    "NET": {
-      "market_cap": 94240006144,
-      "company_name": "Cloudflare, Inc."
+    "DDOG": {
+      "market_cap": 95416909824,
+      "company_name": "Datadog, Inc."
     },
     "BK": {
       "market_cap": 94143750144,
       "company_name": "Bank of New York Mellon Corp"
     },
     "UPS": {
-      "market_cap": 93445439488,
+      "market_cap": 93866188800,
       "company_name": "United Parcel Service, Inc."
     },
-    "DDOG": {
-      "market_cap": 91255734272,
-      "company_name": "Datadog, Inc."
-    },
-    "MELI": {
-      "market_cap": 91106131968,
-      "company_name": "MercadoLibre, Inc."
-    },
-    "ELV": {
-      "market_cap": 91016011776,
-      "company_name": "Elevance Health, Inc."
-    },
     "WMB": {
-      "market_cap": 90887118848,
+      "market_cap": 92776652800,
       "company_name": "The Williams Companies, Inc."
     },
     "SNOW": {
-      "market_cap": 89852583936,
+      "market_cap": 92122816512,
       "company_name": "Snowflake Inc."
     },
+    "MELI": {
+      "market_cap": 91296243712,
+      "company_name": "MercadoLibre, Inc."
+    },
+    "ELV": {
+      "market_cap": 91119165440,
+      "company_name": "Elevance Health, Inc."
+    },
     "ADBE": {
-      "market_cap": 87589126144,
+      "market_cap": 87815700480,
       "company_name": "Adobe Inc."
     },
     "ABNB": {
-      "market_cap": 84900880384,
+      "market_cap": 86900981760,
       "company_name": "Airbnb, Inc."
     },
+    "SNPS": {
+      "market_cap": 84386856960,
+      "company_name": "Synopsys, Inc."
+    },
     "SPG": {
-      "market_cap": 84689862656,
+      "market_cap": 84026793984,
       "company_name": "Simon Property Group, Inc."
     },
     "CMCSA": {
-      "market_cap": 84000956416,
+      "market_cap": 82572066816,
       "company_name": "Comcast Corporation"
     },
-    "SNPS": {
-      "market_cap": 82922037248,
-      "company_name": "Synopsys, Inc."
-    },
-    "MMM": {
-      "market_cap": 80978583552,
-      "company_name": "3M Company"
-    },
     "MPC": {
-      "market_cap": 80098656256,
+      "market_cap": 82555305984,
       "company_name": "Marathon Petroleum Corporation"
     },
-    "NOC": {
-      "market_cap": 77102866432,
-      "company_name": "Northrop Grumman Corporation"
+    "MMM": {
+      "market_cap": 81630486528,
+      "company_name": "3M Company"
     },
-    "MDLZ": {
-      "market_cap": 76813606912,
-      "company_name": "Mondelez International, Inc."
+    "EMR": {
+      "market_cap": 77887496192,
+      "company_name": "Emerson Electric Co."
     },
     "CI": {
-      "market_cap": 76813598720,
+      "market_cap": 77325467648,
       "company_name": "The Cigna Group"
     },
     "AMT": {
-      "market_cap": 76802473984,
+      "market_cap": 76825763840,
       "company_name": "American Tower Corporation"
     },
     "ITW": {
-      "market_cap": 76476416000,
+      "market_cap": 76479283200,
       "company_name": "Illinois Tool Works Inc."
     },
-    "EMR": {
-      "market_cap": 75901943808,
-      "company_name": "Emerson Electric Co."
-    },
     "PSX": {
-      "market_cap": 74714243072,
+      "market_cap": 76354019328,
       "company_name": "Phillips 66"
     },
+    "NOC": {
+      "market_cap": 75386396672,
+      "company_name": "Northrop Grumman Corporation"
+    },
+    "MDLZ": {
+      "market_cap": 75151278080,
+      "company_name": "Mondelez International, Inc."
+    },
     "INTU": {
-      "market_cap": 74629095424,
+      "market_cap": 74449928192,
       "company_name": "Intuit Inc."
     },
     "CL": {
-      "market_cap": 74609647616,
+      "market_cap": 72941256704,
       "company_name": "Colgate-Palmolive Company"
     },
     "AEP": {
-      "market_cap": 74343784448,
+      "market_cap": 72825741312,
       "company_name": "American Electric Power Company, Inc."
     },
     "EOG": {
-      "market_cap": 72882233344,
+      "market_cap": 71364239360,
       "company_name": "EOG Resources, Inc."
     },
-    "HON": {
-      "market_cap": 70497075200,
-      "company_name": "Honeywell International Inc."
-    },
     "SLB": {
-      "market_cap": 70178004992,
+      "market_cap": 70746128384,
       "company_name": "SLB N.V."
     },
+    "HON": {
+      "market_cap": 70411534336,
+      "company_name": "Honeywell International Inc."
+    },
     "REGN": {
-      "market_cap": 69546016768,
+      "market_cap": 69825945600,
       "company_name": "Regeneron Pharmaceuticals, Inc."
     },
     "GM": {
-      "market_cap": 68310159360,
+      "market_cap": 69049524224,
       "company_name": "General Motors Company"
     },
-    "NKE": {
-      "market_cap": 63848448000,
-      "company_name": "NIKE, Inc."
-    },
     "TFC": {
-      "market_cap": 61901512704,
+      "market_cap": 63950987264,
       "company_name": "Truist Financial Corporation"
     },
+    "NKE": {
+      "market_cap": 63048765440,
+      "company_name": "NIKE, Inc."
+    },
     "TGT": {
-      "market_cap": 60611801088,
+      "market_cap": 60534591488,
       "company_name": "Target Corporation"
     },
     "O": {
-      "market_cap": 59138674688,
+      "market_cap": 59115364352,
       "company_name": "Realty Income Corporation"
     },
     "F": {
-      "market_cap": 53833199616,
+      "market_cap": 54490673152,
       "company_name": "Ford Motor Company"
     },
     "OXY": {
-      "market_cap": 53193064448,
+      "market_cap": 52158640128,
       "company_name": "Occidental Petroleum Corporation"
     },
-    "HUM": {
-      "market_cap": 48443613184,
-      "company_name": "Humana Inc."
-    },
     "MCHP": {
-      "market_cap": 46693289984,
+      "market_cap": 48740433920,
       "company_name": "Microchip Technology Incorporated"
     },
+    "HUM": {
+      "market_cap": 47438098432,
+      "company_name": "Humana Inc."
+    },
     "COIN": {
-      "market_cap": 42337382400,
+      "market_cap": 42211684352,
       "company_name": "Coinbase Global, Inc."
     },
     "PYPL": {
-      "market_cap": 38971420672,
+      "market_cap": 39769722880,
       "company_name": "PayPal Holdings, Inc."
     },
+    "ON": {
+      "market_cap": 38982774784,
+      "company_name": "ON Semiconductor Corporation"
+    },
     "RDDT": {
-      "market_cap": 37444931584,
+      "market_cap": 38214950912,
       "company_name": "Reddit, Inc."
     },
     "KMB": {
-      "market_cap": 37001392128,
+      "market_cap": 36350787584,
       "company_name": "Kimberly-Clark Corporation"
     },
-    "ON": {
-      "market_cap": 36322693120,
-      "company_name": "ON Semiconductor Corporation"
-    },
-    "WDAY": {
-      "market_cap": 34003306496,
-      "company_name": "Workday, Inc."
-    },
     "CPNG": {
-      "market_cap": 33774133248,
+      "market_cap": 34240849920,
       "company_name": "Coupang, Inc."
     },
-    "KHC": {
-      "market_cap": 29711675392,
-      "company_name": "The Kraft Heinz Company"
+    "WDAY": {
+      "market_cap": 33905135616,
+      "company_name": "Workday, Inc."
     },
     "EL": {
-      "market_cap": 29553215488,
+      "market_cap": 29934909440,
       "company_name": "The Est\u00e9e Lauder Companies Inc."
     },
+    "KHC": {
+      "market_cap": 29407285248,
+      "company_name": "The Kraft Heinz Company"
+    },
     "MDB": {
-      "market_cap": 28591540224,
+      "market_cap": 29035925504,
       "company_name": "MongoDB, Inc."
     },
-    "ZS": {
-      "market_cap": 23155185664,
-      "company_name": "Zscaler, Inc."
-    },
     "RIVN": {
-      "market_cap": 22662623232,
+      "market_cap": 24806387712,
       "company_name": "Rivian Automotive, Inc."
     },
+    "ZS": {
+      "market_cap": 23798790144,
+      "company_name": "Zscaler, Inc."
+    },
     "TEAM": {
-      "market_cap": 21732679680,
+      "market_cap": 22676695040,
       "company_name": "Atlassian Corporation"
     },
     "CHTR": {
-      "market_cap": 21070891008,
+      "market_cap": 21005086720,
       "company_name": "Charter Communications, Inc."
     },
     "GIS": {
-      "market_cap": 19523053568,
+      "market_cap": 19229511680,
       "company_name": "General Mills, Inc."
     },
     "CRCL": {
-      "market_cap": 16980068352,
+      "market_cap": 17057155072,
       "company_name": "Circle Internet Group"
     },
     "COMP": {
-      "market_cap": 8551165952,
+      "market_cap": 8894856192,
       "company_name": "Compass, Inc."
     },
     "PATH": {
-      "market_cap": 5938331648,
+      "market_cap": 6139776512,
       "company_name": "UiPath, Inc."
     },
     "GTLB": {
-      "market_cap": 5376087040,
+      "market_cap": 5789891584,
       "company_name": "GitLab Inc."
     },
     "WRBY": {
-      "market_cap": 3373441792,
+      "market_cap": 3507201280,
       "company_name": "Warby Parker Inc."
     },
     "CLOV": {
-      "market_cap": 2565163264,
+      "market_cap": 2473731072,
       "company_name": "Clover Health Investments, Corp."
     },
     "AI": {
-      "market_cap": 1378057856,
+      "market_cap": 1390493824,
       "company_name": "C3.ai, Inc."
     },
     "AMPL": {
-      "market_cap": 1186279168,
+      "market_cap": 1237337600,
       "company_name": "Amplitude, Inc."
     },
     "ZIP": {
-      "market_cap": 317937952,
+      "market_cap": 324052128,
       "company_name": "ZipRecruiter, Inc."
     }
   }

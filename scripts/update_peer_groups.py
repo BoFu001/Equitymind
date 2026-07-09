@@ -198,7 +198,7 @@ def update_peer_benchmarks():
                 pe        = damodaran_pe
                 print(f"  Damodaran fallback P/E: {pe}")
             else:
-                pe_source = "default"
+                pe_source = "sp500_median"
                 pe        = default_pe
                 print(f"  Default fallback P/E: {pe}")
 
@@ -208,7 +208,7 @@ def update_peer_benchmarks():
             pb        = peer_pb
             print(f"  FMP peer median P/B: {pb}")
         else:
-            pb_source = "default"
+            pb_source = "sp500_median"
             pb        = default_pb
             print(f"  Default fallback P/B: {pb}")
 
@@ -235,9 +235,9 @@ def update_peer_benchmarks():
     print(f"\n✓ peer_benchmarks.json updated — {len(peer_benchmarks)} tickers")
     fmp_pe_count = sum(1 for v in peer_benchmarks.values() if v["pe_source"] == "fmp_peer_group")
     dam_pe_count = sum(1 for v in peer_benchmarks.values() if v["pe_source"] == "damodaran")
-    def_pe_count = sum(1 for v in peer_benchmarks.values() if v["pe_source"] == "default")
+    def_pe_count = sum(1 for v in peer_benchmarks.values() if v["pe_source"] == "sp500_median")
     fmp_pb_count = sum(1 for v in peer_benchmarks.values() if v["pb_source"] == "fmp_peer_group")
-    def_pb_count = sum(1 for v in peer_benchmarks.values() if v["pb_source"] == "default")
+    def_pb_count = sum(1 for v in peer_benchmarks.values() if v["pb_source"] == "sp500_median")
     print(f"  P/E — FMP peer group: {fmp_pe_count} | Damodaran: {dam_pe_count} | Default: {def_pe_count}")
     print(f"  P/B — FMP peer group: {fmp_pb_count} | Default: {def_pb_count}")
 
