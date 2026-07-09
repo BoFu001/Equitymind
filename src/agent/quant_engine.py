@@ -101,8 +101,10 @@ def quant_engine(state: AgentState) -> dict:
         if risk is not None:
             signals["risk"] = risk
             gprint(
-                f"    risk: {risk['risk_level']} "
-                f"(score={risk['risk_score']})"
+                f"    risk: beta_score={risk['beta']['beta_score'] if risk['beta'] else 'N/A'} "
+                f"sharpe_score={risk['sharpe']['sharpe_score']} "
+                f"var_score={risk['var']['var_score']} "
+                f"drawdown_score={risk['max_drawdown']['drawdown_score']}"
             )
         else:
             signals["risk"] = None

@@ -3,14 +3,16 @@ src/quant/risk_signal.py
 
 Risk Signal Engine — Layer 2 Quantitative Intelligence.
 
-Assesses how risky a stock is using four industry-standard metrics:
-    1. Beta             — sensitivity to overall market movements (weight: 30%)
-    2. Sharpe Ratio     — risk-adjusted return efficiency (weight: 30%)
-    3. VaR (95%)        — potential single-day loss in normal conditions (weight: 20%)
-    4. Max Drawdown     — worst historical peak-to-trough decline (weight: 20%)
+Assesses how risky a stock is using four independent, industry-standard
+metrics, each returned separately (no combined score — see below):
+    1. Beta             — sensitivity to overall market movements
+    2. Sharpe Ratio     — risk-adjusted return efficiency
+    3. VaR (95%)        — potential single-day loss in normal conditions
+    4. Max Drawdown     — worst historical peak-to-trough decline
 
-Score range: -1.0 (very high risk) to +1.0 (very low risk)
-Label:       "low" / "medium" / "high"
+Each metric's score is on the same -1.0 (highest risk) to +1.0 (lowest
+risk) scale for consistency, but they are NOT averaged into one number —
+see risk_signal()'s docstring for why.
 
 This is a pure function — it takes already-fetched data as input and
 performs no I/O itself. Data fetching lives in market_data.get_risk_inputs(),
@@ -40,10 +42,6 @@ from src.quant.risk_signal_config import (
     VAR_CONFIDENCE_LEVEL,
     MAX_DRAWDOWN_EXTREME_ANCHOR,
     STRESS_TEST_DISCLOSURE_THRESHOLD,
-    WEIGHT_BETA,
-    WEIGHT_SHARPE,
-    WEIGHT_VAR,
-    WEIGHT_MAX_DRAWDOWN,
     TRADING_DAYS_PER_YEAR,
 )
 
@@ -76,7 +74,7 @@ def _daily_returns(prices: pd.Series) -> pd.Series:
 
 
 # ─────────────────────────────────────────────
-# SUB-SIGNAL 1: Beta (weight: 30%)
+# SUB-SIGNAL 1: Beta
 # ─────────────────────────────────────────────
 
 def _compute_beta(stock_returns: pd.Series, market_returns: pd.Series) -> dict | None:
@@ -131,7 +129,7 @@ def _compute_beta(stock_returns: pd.Series, market_returns: pd.Series) -> dict |
 
 
 # ─────────────────────────────────────────────
-# SUB-SIGNAL 2: Sharpe Ratio (weight: 30%)
+# SUB-SIGNAL 2: Sharpe Ratio
 # ─────────────────────────────────────────────
 
 def _compute_sharpe(stock_returns: pd.Series, risk_free_rate: float | None) -> dict:
@@ -194,7 +192,7 @@ def _compute_sharpe(stock_returns: pd.Series, risk_free_rate: float | None) -> d
 
 
 # ─────────────────────────────────────────────
-# SUB-SIGNAL 3: VaR — 95% Historical Simulation (weight: 20%)
+# SUB-SIGNAL 3: VaR — 95% Historical Simulation
 # ─────────────────────────────────────────────
 
 def _compute_var(stock_returns: pd.Series) -> dict:
@@ -236,7 +234,7 @@ def _compute_var(stock_returns: pd.Series) -> dict:
 
 
 # ─────────────────────────────────────────────
-# SUB-SIGNAL 4: Max Drawdown (weight: 20%)
+# SUB-SIGNAL 4: Max Drawdown
 # ─────────────────────────────────────────────
 
 def _compute_max_drawdown(prices: pd.Series) -> dict:
@@ -334,23 +332,30 @@ def _compute_max_drawdown(prices: pd.Series) -> dict:
 
 def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
     """
-    Compute a risk signal from price history data.
+    Compute risk signals from price history data.
 
     Pure function — takes already-fetched data, performs no I/O. Data
     fetching is done separately by market_data.get_risk_inputs(), called
     by quant_engine.py before this function runs (same pattern as
     valuation_signal.py and momentum_signal.py).
 
-    Degradation strategy (two levels, matching the actual failure modes):
-        1. Stock's own price history missing/too short -> returns None.
-           None of the four metrics can be computed without it.
-        2. Market benchmark (^GSPC) missing -> Beta is skipped, the other
-           three metrics (Sharpe, VaR, Max Drawdown) are computed normally,
-           and the composite score dynamically re-normalises weights over
-           the remaining signals (same approach as momentum_signal.py) —
-           this is the standard way index/portfolio weighting schemes
-           handle a missing constituent, rather than assuming a neutral
-           value of 0 for the missing piece.
+    IMPORTANT — no composite score: Beta, Sharpe, VaR, and Max Drawdown
+    each answer a genuinely different risk question (market sensitivity /
+    return efficiency / normal-day loss / worst historical decline) and
+    are NOT combined into a single risk_score. This matches standard
+    institutional practice — professional risk reporting presents these
+    metrics "in tandem" rather than blending them, because each has
+    distinct blind spots that a combined average would paper over (e.g.
+    a strong Sharpe Ratio can hide a catastrophic Max Drawdown that
+    happened once; averaging the two would understate that tail risk).
+    Each sub-signal is returned independently so the report layer can
+    present the full risk picture rather than one blended number.
+
+    Degradation strategy: stock's own price history missing/too short ->
+    returns None entirely, since none of the four metrics can be computed
+    without it. Market benchmark (^GSPC) missing -> Beta alone is None;
+    Sharpe, VaR, and Max Drawdown are unaffected and computed normally,
+    since each is independent and does not depend on the others.
 
     Args:
         market_data: dict from get_stock_snapshot() — not used for
@@ -364,8 +369,6 @@ def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
 
     Returns:
         dict with keys:
-            - risk_score:        float (-1.0 to +1.0) or None
-            - risk_level:        str — "low" / "medium" / "high"
             - low_confidence:    bool — True if sample size is below
                                   LOW_CONFIDENCE_THRESHOLD (~1 year)
             - beta:               dict | None (from _compute_beta, None if
@@ -373,9 +376,10 @@ def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
             - sharpe:             dict (from _compute_sharpe)
             - var:                dict (from _compute_var)
             - max_drawdown:       dict (from _compute_max_drawdown)
-            - detail:             str — plain English explanation
+            - detail:             str — plain English explanation of all
+                                  four sub-signals
         or None if the stock's own price history is missing or too short
-        (Tier equivalent to valuation_signal's Tier 4 — insufficient data).
+        (insufficient data — none of the four metrics can be computed).
     """
     if risk_inputs is None:
         return None
@@ -388,7 +392,7 @@ def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
 
     low_confidence = len(stock_prices) < LOW_CONFIDENCE_THRESHOLD
 
-    # ── Sub-signal 2, 3, 4: always computable from stock's own data ──────
+    # ── Sub-signals 2, 3, 4: always computable from stock's own data ─────
     sharpe_result = _compute_sharpe(stock_returns, risk_inputs.get("risk_free_rate"))
     var_result    = _compute_var(stock_returns)
     mdd_result    = _compute_max_drawdown(stock_prices)
@@ -399,36 +403,6 @@ def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
     if market_prices is not None and len(market_prices) >= MIN_TRADING_DAYS:
         market_returns = _daily_returns(market_prices)
         beta_result = _compute_beta(stock_returns, market_returns)
-
-    # ── Composite score: dynamic re-normalisation over available signals ─
-    # Matches momentum_signal.py's approach — if a component is missing,
-    # redistribute its weight proportionally over what's available, rather
-    # than assuming a neutral score of 0 for the missing piece.
-    available = {
-        "beta":     (beta_result["beta_score"] if beta_result else None, WEIGHT_BETA),
-        "sharpe":   (sharpe_result["sharpe_score"], WEIGHT_SHARPE),
-        "var":      (var_result["var_score"], WEIGHT_VAR),
-        "drawdown": (mdd_result["drawdown_score"], WEIGHT_MAX_DRAWDOWN),
-    }
-
-    total_weight = sum(w for _, (s, w) in available.items() if s is not None)
-
-    if total_weight == 0:
-        return None  # should not happen in practice — guarded above
-
-    risk_score = sum(
-        s * w for _, (s, w) in available.items() if s is not None
-    ) / total_weight
-
-    risk_score = round(max(-1.0, min(1.0, risk_score)), 4)
-
-    # ── Label ──────────────────────────────────────────────────────────
-    if risk_score > 0.2:
-        risk_level = "low"
-    elif risk_score < -0.2:
-        risk_level = "high"
-    else:
-        risk_level = "medium"
 
     # ── Detail: assembled from sub-signal details, plus missing-data note ─
     detail_parts = []
@@ -457,8 +431,6 @@ def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
         )
 
     return {
-        "risk_score":      risk_score,
-        "risk_level":      risk_level,
         "low_confidence":  low_confidence,
         "beta":            beta_result,
         "sharpe":          sharpe_result,

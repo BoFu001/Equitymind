@@ -342,16 +342,33 @@ class TestRiskSignalNormalCase:
         expected_adjusted = BLUME_RAW_WEIGHT * 1.5 + BLUME_MARKET_WEIGHT * 1.0
         assert result["beta"]["adjusted_beta"] == pytest.approx(expected_adjusted, abs=0.01)
 
-    def test_composite_score_in_range(self):
-        """Composite risk_score must always fall within [-1.0, +1.0]."""
+    def test_each_sub_score_in_range(self):
+        """Each independent sub-signal score must fall within [-1.0, +1.0]."""
         market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=504, beta_true=1.0)
 
         result = risk_signal(market_data, risk_inputs)
 
         assert result is not None
-        assert -1.0 <= result["risk_score"] <= 1.0
-        assert result["risk_level"] in ("low", "medium", "high")
+        assert -1.0 <= result["beta"]["beta_score"] <= 1.0
+        assert -1.0 <= result["sharpe"]["sharpe_score"] <= 1.0
+        assert -1.0 <= result["var"]["var_score"] <= 1.0
+        assert -1.0 <= result["max_drawdown"]["drawdown_score"] <= 1.0
+
+    def test_no_composite_score_exists(self):
+        """
+        There should be no combined risk_score/risk_level — Beta, Sharpe,
+        VaR, and Max Drawdown each answer a different risk question and
+        must remain independent, not averaged into one number.
+        """
+        market_data = {"ticker": "TEST"}
+        risk_inputs = make_risk_inputs(n_days=504, beta_true=1.0)
+
+        result = risk_signal(market_data, risk_inputs)
+
+        assert result is not None
+        assert "risk_score" not in result
+        assert "risk_level" not in result
 
     def test_low_confidence_false_with_full_window(self):
         """A full 504-day (2-year) window should not be flagged low_confidence."""

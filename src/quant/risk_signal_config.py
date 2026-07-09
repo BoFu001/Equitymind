@@ -73,17 +73,9 @@ MAX_DRAWDOWN_EXTREME_ANCHOR = -0.60
 # This is a disclosure flag, not a scoring input.
 STRESS_TEST_DISCLOSURE_THRESHOLD = -0.15
 
-# ─────────────────────────────────────────────
-# Composite score weights
-# Beta and Sharpe carry more weight as they reflect systematic exposure
-# and risk-adjusted return efficiency — the metrics professional
-# investors check first. VaR and Max Drawdown provide supplementary
-# tail-risk confirmation.
-# ─────────────────────────────────────────────
-WEIGHT_BETA         = 0.30
-WEIGHT_SHARPE       = 0.30
-WEIGHT_VAR          = 0.20
-WEIGHT_MAX_DRAWDOWN = 0.20
+# NOTE: no composite score weights here — Beta, Sharpe, VaR, and Max
+# Drawdown each answer a different risk question and are returned
+# independently rather than combined (see risk_signal.py docstring).
 
 # ─────────────────────────────────────────────
 # Trading days per year (US market convention)

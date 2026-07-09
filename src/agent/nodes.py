@@ -695,10 +695,19 @@ def generate_report(state: AgentState) -> dict:
         else:
             quant_context += f"  Momentum: Insufficient data.\n"
 
-        # Risk
+        # Risk — four independent sub-signals, NOT combined into a single
+        # score (Beta/Sharpe/VaR/Max Drawdown each answer a different risk
+        # question — averaging them would hide which dimension matters,
+        # e.g. a strong Sharpe Ratio can mask a catastrophic Max Drawdown)
         risk = signals.get("risk")
         if risk:
-            quant_context += f"  Risk: {risk['risk_level']} (score={risk['risk_score']})\n"
+            if risk.get("beta"):
+                quant_context += f"  Risk - Beta: {risk['beta']['adjusted_beta']} (score={risk['beta']['beta_score']})\n"
+            else:
+                quant_context += f"  Risk - Beta: Unavailable (market benchmark data missing).\n"
+            quant_context += f"  Risk - Sharpe Ratio: {risk['sharpe']['sharpe_ratio']} (score={risk['sharpe']['sharpe_score']})\n"
+            quant_context += f"  Risk - VaR (95%): {risk['var']['var_95']*100:.2f}% (score={risk['var']['var_score']})\n"
+            quant_context += f"  Risk - Max Drawdown: {risk['max_drawdown']['max_drawdown']*100:.2f}% (score={risk['max_drawdown']['drawdown_score']})\n"
             quant_context += f"  {risk['detail']}\n"
             if risk.get("low_confidence"):
                 quant_context += f"  ⚠️ Risk signal based on less than 1 year of price history — lower confidence.\n"
