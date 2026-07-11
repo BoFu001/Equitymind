@@ -3,188 +3,204 @@ src/quant/momentum_signal.py
 
 Momentum Signal Engine — Layer 2 Quantitative Intelligence.
 
-Assesses the current price trend strength and direction using three sub-signals:
-    1. RSI Score        — overbought/oversold conditions (weight: 30%)
-    2. MACD Score       — trend direction and acceleration (weight: 35%)
-    3. Price Position   — price relative to SMA50, SMA200, 52w range (weight: 35%)
+Assesses a stock's price momentum using two independent, academically
+validated sub-signals, computed via cross-sectional ranking within a
+250-ticker large-cap universe (see scripts/update_momentum_universe.py):
 
-Score range: -1.0 (strongly bearish) to +1.0 (strongly bullish)
-Label:       "bullish" / "neutral" / "bearish"
+    1. 12-1 Month Momentum (Jegadeesh & Titman, 1993)
+       Cumulative return from 12 months ago to 1 month ago (the most
+       recent month is excluded to avoid short-term reversal noise).
+       Later incorporated into Carhart's (1997) four-factor model.
+
+    2. 52-Week High Position (George & Hwang, 2004)
+       Current price's position within the 52-week high-low range.
+
+Both effects have been independently replicated across multiple decades
+and international markets (Rouwenhorst 1998; Chui, Titman & Wei 2000 for
+momentum; 18/20 major markets for the 52-week high effect) and published
+in the Journal of Finance — this is why these two were retained while
+RSI, MACD, and simple moving averages were removed: those lack comparable
+independent, large-sample academic validation and are more accurately
+described as technical-analysis heuristics than validated factors.
+
+IMPORTANT — known limitations (must always be disclosed, not hidden):
+
+    1. GROUP-LEVEL, NOT INDIVIDUAL-STOCK evidence: both effects were
+       validated by sorting an entire market into portfolios (e.g. top
+       decile vs bottom decile) and comparing GROUP average returns —
+       not by predicting any single stock's future price. Applying a
+       group-level statistical tendency to one specific stock carries
+       real interpretive risk that should not be glossed over.
+
+    2. RECENT PERFORMANCE HAS WEAKENED: 12-1 momentum's out-of-sample
+       annualized return over 2014-2024 was approximately 2.23%,
+       markedly below both its own historical average (double digits)
+       and a simple S&P 500 buy-and-hold over the same period. Momentum
+       strategies have also historically suffered severe "crashes"
+       during market reversals (e.g. -73% over 3 months in 2009).
+
+    3. UNIVERSE LIMITATION: percentiles are computed within this
+       ~250-ticker large-cap universe only (see stock_universe.json) —
+       not the full US equity market. A ranking here reflects standing
+       relative to other large-cap stocks, not the broader market.
+
+    4. NOT A PREDICTION: even where these effects hold, they describe a
+       historical statistical tendency, not a guarantee of future
+       performance for this specific stock.
+
+Score range: -1.0 (weakest in the universe) to +1.0 (strongest)
+Label:       "strong" / "neutral" / "weak"
 
 Academic references:
-    - RSI: Wilder (1978), New Concepts in Technical Trading Systems
-    - MACD: Appel (1979), The Moving Average Convergence-Divergence Method
-    - 52-week high momentum: George & Hwang (2004), The 52-Week High and Momentum Investing
+    Jegadeesh, N., & Titman, S. (1993), 'Returns to Buying Winners and
+    Selling Losers: Implications for Stock Market Efficiency',
+    Journal of Finance.
+    George, T. J., & Hwang, C.-Y. (2004), 'The 52-Week High and
+    Momentum Investing', Journal of Finance.
 """
 
-import math
+import json
+from pathlib import Path
+from datetime import date
+
+_MOMENTUM_BENCHMARKS_PATH = Path(__file__).parent / "data" / "momentum_benchmarks.json"
+
+
+def _load_momentum_benchmarks() -> dict:
+    """Load precomputed momentum benchmarks from JSON file."""
+    with open(_MOMENTUM_BENCHMARKS_PATH) as f:
+        return json.load(f)
+
+
+_MOMENTUM_BENCHMARKS = _load_momentum_benchmarks()
+_BENCHMARKS_DATA = _MOMENTUM_BENCHMARKS.get("benchmarks", {})
+
+
+def _benchmarks_are_stale() -> bool:
+    """Warn if benchmarks are more than 90 days old."""
+    updated_at = _MOMENTUM_BENCHMARKS.get("updated_at", "")
+    if not updated_at:
+        return True
+    try:
+        updated = date.fromisoformat(updated_at)
+        return (date.today() - updated).days > 90
+    except ValueError:
+        return True
+
+
+BENCHMARKS_STALE = _benchmarks_are_stale()
+
+
+def _percentile_to_score(percentile: float) -> float:
+    """
+    Converts a 0-1 percentile rank to a -1 to +1 score, consistent with
+    every other signal engine in this system.
+    0.0 (bottom of universe) -> -1.0
+    0.5 (median)             ->  0.0
+    1.0 (top of universe)    -> +1.0
+    """
+    return round(percentile * 2 - 1, 4)
+
+
+def _label(score: float) -> str:
+    """Map numeric score to human-readable label."""
+    if score > 0.3:
+        return "strong"
+    if score < -0.3:
+        return "weak"
+    return "neutral"
 
 
 def momentum_signal(market_data: dict) -> dict | None:
     """
-    Compute a momentum signal from yfinance market data.
+    Compute momentum signals for a ticker from precomputed universe
+    benchmarks (see scripts/update_momentum_universe.py).
 
-    Uses a three-tier degradation strategy based on data availability.
-    Returns None if no meaningful momentum can be computed.
+    Pure function — does not fetch data itself. Both sub-signals require
+    the ticker to have been successfully computed in the batch universe
+    update (at least ~200 trading days of price history); if the ticker
+    is missing or was skipped during that batch run (e.g. recent IPO),
+    returns None entirely, since neither signal can be independently
+    substituted for the other.
 
     Args:
-        market_data: dict returned by get_market_data_tool, expected fields:
-            - rsi:           float | None
-            - macd:          float | None
-            - macd_signal:   float | None
-            - current_price: float | None
-            - sma_50:        float | None
-            - sma_200:       float | None  (may be None for recently listed stocks)
-            - 52w_high:      float | None
-            - 52w_low:       float | None
+        market_data: dict from get_stock_snapshot(), expected fields:
+            - ticker: str
 
     Returns:
         dict with keys:
-            - momentum_score:  float (-1.0 to +1.0)
-            - momentum_label:  str — "bullish" / "neutral" / "bearish"
-            - rsi_score:       float | None
-            - macd_score:      float | None
-            - price_score:     float | None
-            - detail:          str — plain English explanation
-        or None if insufficient data
+            - momentum_12_1_pct:        float | None — raw % return, 12mo excl. last month
+            - momentum_12_1_percentile: float | None — 0-1 rank within universe
+            - momentum_12_1_score:      float | None — -1 to +1
+            - momentum_12_1_label:      str | None — "strong"/"neutral"/"weak"
+            - position_52w:             float | None — 0-1, current position in 52w range
+            - position_52w_percentile:  float | None — 0-1 rank within universe
+            - position_52w_score:       float | None — -1 to +1
+            - position_52w_label:       str | None — "strong"/"neutral"/"weak"
+            - stale_benchmark:          bool — True if benchmarks are >90 days old
+            - detail:                  str — plain English explanation with
+                                        mandatory limitation disclosures
+        or None if the ticker was not successfully computed in the batch
+        universe update (e.g. insufficient price history).
     """
+    ticker = market_data.get("ticker") or ""
+    entry = _BENCHMARKS_DATA.get(ticker)
 
-    rsi          = market_data.get("rsi")
-    macd         = market_data.get("macd")
-    macd_signal  = market_data.get("macd_signal")
-    price        = market_data.get("current_price")
-    sma_50       = market_data.get("sma_50")
-    sma_200      = market_data.get("sma_200")
-    high_52w     = market_data.get("52w_high")
-    low_52w      = market_data.get("52w_low")
-
-    # ── Guard: need at least one signal to compute anything ──────────────────
-    if not any([rsi, macd, price]):
+    if entry is None:
         return None
+
+    momentum_pct        = entry.get("momentum_12_1_pct")
+    momentum_percentile = entry.get("momentum_12_1_percentile")
+    position            = entry.get("position_52w")
+    position_percentile = entry.get("position_52w_percentile")
+
+    if momentum_percentile is None and position_percentile is None:
+        return None
+
+    momentum_score = _percentile_to_score(momentum_percentile) if momentum_percentile is not None else None
+    momentum_label = _label(momentum_score) if momentum_score is not None else None
+
+    position_score = _percentile_to_score(position_percentile) if position_percentile is not None else None
+    position_label = _label(position_score) if position_score is not None else None
 
     detail_parts = []
-
-    # ────────────────────────────────────────────────────────────────────────
-    # SUB-SIGNAL 1: RSI Score (weight: 30%)
-    # Formula: (50 - RSI) / 50
-    # RSI=30 → +0.4 (oversold), RSI=70 → -0.4 (overbought), RSI=50 → 0
-    # ────────────────────────────────────────────────────────────────────────
-    if rsi is not None:
-        rsi_score = max(-1.0, min(1.0, (50 - rsi) / 50))
-        if rsi >= 70:
-            rsi_label = "overbought"
-        elif rsi <= 30:
-            rsi_label = "oversold"
-        else:
-            rsi_label = "neutral"
+    if momentum_pct is not None and momentum_percentile is not None:
         detail_parts.append(
-            f"RSI {round(rsi, 1)} ({rsi_label}, rsi_score={round(rsi_score, 2)})"
+            f"Over the past 12 months (excluding the most recent month), "
+            f"this stock returned {momentum_pct}%, ranking at the "
+            f"{round(momentum_percentile * 100)}th percentile among the "
+            f"~250 large-cap stocks tracked ({momentum_label})."
         )
-    else:
-        rsi_score = None
-
-    # ────────────────────────────────────────────────────────────────────────
-    # SUB-SIGNAL 2: MACD Score (weight: 35%)
-    # Uses tanh normalisation to handle different price magnitudes
-    # normalizer = price * 1% so signals are scale-invariant
-    # ────────────────────────────────────────────────────────────────────────
-    if macd is not None and macd_signal is not None and price:
-        diff       = macd - macd_signal
-        normalizer = abs(price) * 0.01 if price else 1.0
-        macd_score = math.tanh(diff / normalizer) if normalizer != 0 else 0.0
-        macd_direction = "bullish" if diff > 0 else "bearish"
+    if position is not None and position_percentile is not None:
         detail_parts.append(
-            f"MACD diff {round(diff, 4)} ({macd_direction}, macd_score={round(macd_score, 2)})"
+            f"The stock is currently at {round(position * 100)}% of its "
+            f"52-week high-low range, ranking at the "
+            f"{round(position_percentile * 100)}th percentile for "
+            f"proximity to its 52-week high among the same universe "
+            f"({position_label})."
         )
-    else:
-        macd_score = None
 
-    # ────────────────────────────────────────────────────────────────────────
-    # SUB-SIGNAL 3: Price Position Score (weight: 35%)
-    # Three components:
-    #   a) Price vs SMA50  (30%) — short-term trend
-    #   b) Price vs SMA200 (30%) — long-term trend
-    #   c) 52-week position (40%) — annual momentum (George & Hwang 2004)
-    # Degrades gracefully when SMA200 or 52w data is unavailable
-    # ────────────────────────────────────────────────────────────────────────
-    if price and sma_50:
-        # a) vs SMA50
-        sma50_score = max(-1.0, min(1.0, (price - sma_50) / sma_50))
-
-        # b) vs SMA200 (may be None for recently listed stocks)
-        if sma_200:
-            sma200_score = max(-1.0, min(1.0, (price - sma_200) / sma_200))
-        else:
-            sma200_score = None
-
-        # c) 52-week position
-        if high_52w and low_52w and high_52w != low_52w:
-            range_52w      = high_52w - low_52w
-            position_52w   = (price - low_52w) / range_52w      # 0=at year low, 1=at year high
-            position_score = max(-1.0, min(1.0, position_52w * 2 - 1))  # scale to [-1, 1]
-        else:
-            position_score = None
-
-        # Weighted combination — adjust weights if components are missing
-        if sma200_score is not None and position_score is not None:
-            price_score = (
-                0.30 * sma50_score +
-                0.30 * sma200_score +
-                0.40 * position_score
-            )
-        elif sma200_score is None and position_score is not None:
-            # No SMA200 — recently listed stock
-            price_score = 0.50 * sma50_score + 0.50 * position_score
-        elif sma200_score is not None and position_score is None:
-            price_score = 0.50 * sma50_score + 0.50 * sma200_score
-        else:
-            price_score = sma50_score
-
-        price_score = max(-1.0, min(1.0, price_score))
-
-        detail_parts.append(
-            f"Price ${round(price, 2)} vs SMA50 ${sma_50} "
-            f"(sma50_score={round(sma50_score, 2)})"
-            + (f", vs SMA200 ${sma_200} (sma200_score={round(sma200_score, 2)})" if sma200_score is not None else ", SMA200 not available")
-            + (f", 52w position={round(position_52w, 2)} (position_score={round(position_score, 2)})" if position_score is not None else "")
-        )
-    else:
-        price_score = None
-
-    # ────────────────────────────────────────────────────────────────────────
-    # COMPOSITE MOMENTUM SCORE
-    # Weights adjust dynamically based on available sub-signals
-    # ────────────────────────────────────────────────────────────────────────
-    available = {
-        "rsi":   (rsi_score,   0.30),
-        "macd":  (macd_score,  0.35),
-        "price": (price_score, 0.35),
-    }
-
-    total_weight = sum(w for _, (s, w) in available.items() if s is not None)
-
-    if total_weight == 0:
-        return None
-
-    momentum_score = sum(
-        s * w for _, (s, w) in available.items() if s is not None
-    ) / total_weight  # normalise by actual weight used
-
-    momentum_score = round(max(-1.0, min(1.0, momentum_score)), 4)
-
-    # ── Label ────────────────────────────────────────────────────────────────
-    if momentum_score > 0.2:
-        momentum_label = "bullish"
-    elif momentum_score < -0.2:
-        momentum_label = "bearish"
-    else:
-        momentum_label = "neutral"
+    detail_parts.append(
+        "Both figures reflect group-level academic findings (Jegadeesh & "
+        "Titman, 1993; George & Hwang, 2004) about how portfolios of "
+        "stocks have historically behaved, not a prediction for this "
+        "specific stock. Recent (2014-2024) real-world performance of "
+        "12-1 momentum has been notably weaker than historical averages, "
+        "and momentum strategies have a documented history of severe "
+        "reversals ('momentum crashes') following market downturns. "
+        "Percentiles are relative to a ~250-ticker large-cap universe, "
+        "not the full market."
+    )
 
     return {
-        "momentum_score": momentum_score,
-        "momentum_label": momentum_label,
-        "rsi_score":      round(rsi_score, 4)   if rsi_score   is not None else None,
-        "macd_score":     round(macd_score, 4)  if macd_score  is not None else None,
-        "price_score":    round(price_score, 4) if price_score is not None else None,
-        "detail":         " | ".join(detail_parts) if detail_parts else "Insufficient data.",
+        "momentum_12_1_pct":        momentum_pct,
+        "momentum_12_1_percentile": momentum_percentile,
+        "momentum_12_1_score":      momentum_score,
+        "momentum_12_1_label":      momentum_label,
+        "position_52w":             position,
+        "position_52w_percentile":  position_percentile,
+        "position_52w_score":       position_score,
+        "position_52w_label":       position_label,
+        "stale_benchmark":          BENCHMARKS_STALE,
+        "detail": " ".join(detail_parts),
     }

@@ -230,46 +230,118 @@ class TestBenchmarkLoading:
         assert isinstance(BENCHMARKS_STALE, bool)
 
 
-# Helpers — mock market data for momentum
+# Helpers — mock momentum benchmark entries
 # ─────────────────────────────────────────────
 
+import src.quant.momentum_signal as momentum_module
 from src.quant.momentum_signal import momentum_signal
 
-def make_momentum_data(**kwargs) -> dict:
-    """Create a minimal mock market data dict for momentum testing."""
+
+def make_momentum_entry(**kwargs) -> dict:
+    """Create a minimal mock momentum_benchmarks.json entry for testing."""
     defaults = {
-        "rsi":           50.0,
-        "macd":          0.0,
-        "macd_signal":   0.0,
-        "current_price": 100.0,
-        "sma_50":        100.0,
-        "sma_200":       100.0,
-        "52w_high":      120.0,
-        "52w_low":       80.0,
+        "momentum_12_1_pct":        10.0,
+        "momentum_12_1_percentile": 0.5,
+        "position_52w":            0.5,
+        "position_52w_percentile":  0.5,
     }
     defaults.update(kwargs)
     return defaults
 
 
+def set_mock_benchmarks(monkeypatch, entries: dict):
+    """Replace the module-level benchmark lookup with mock data for a test."""
+    monkeypatch.setattr(momentum_module, "_BENCHMARKS_DATA", entries)
+
+
 # ─────────────────────────────────────────────
-# Momentum Signal — Neutral baseline
+# Momentum Signal — two independent sub-signals, not combined
 # ─────────────────────────────────────────────
 
 class TestMomentumNeutral:
 
-    def test_neutral_baseline(self):
-        """RSI=50, MACD=Signal, price=SMA50=SMA200, mid 52w range → neutral."""
-        result = momentum_signal(make_momentum_data())
-        assert result is not None
-        assert result["momentum_label"] == "neutral"
-        assert -0.2 <= result["momentum_score"] <= 0.2
+    def test_median_percentile_is_neutral(self, monkeypatch):
+        """Percentile of 0.5 (median of universe) -> neutral for both sub-signals."""
+        set_mock_benchmarks(monkeypatch, {"TEST": make_momentum_entry()})
+        result = momentum_signal({"ticker": "TEST"})
 
-    def test_returns_all_fields(self):
-        """Result must include all required fields."""
-        result = momentum_signal(make_momentum_data())
         assert result is not None
-        for field in ["momentum_score", "momentum_label", "rsi_score", "macd_score", "price_score", "detail"]:
+        assert result["momentum_12_1_label"] == "neutral"
+        assert result["position_52w_label"] == "neutral"
+
+    def test_returns_all_fields(self, monkeypatch):
+        """Result must include all required fields for both sub-signals."""
+        set_mock_benchmarks(monkeypatch, {"TEST": make_momentum_entry()})
+        result = momentum_signal({"ticker": "TEST"})
+
+        assert result is not None
+        for field in [
+            "momentum_12_1_pct", "momentum_12_1_percentile", "momentum_12_1_score", "momentum_12_1_label",
+            "position_52w", "position_52w_percentile", "position_52w_score", "position_52w_label",
+            "stale_benchmark", "detail",
+        ]:
             assert field in result
+
+    def test_no_composite_score_exists(self, monkeypatch):
+        """
+        There should be no combined momentum_score/momentum_label —
+        12-1 momentum and 52-week position answer different questions
+        (cumulative return vs current position) and must remain
+        independent, not averaged into one number.
+        """
+        set_mock_benchmarks(monkeypatch, {"TEST": make_momentum_entry()})
+        result = momentum_signal({"ticker": "TEST"})
+
+        assert result is not None
+        assert "momentum_score" not in result
+        assert "momentum_label" not in result
+
+    def test_top_percentile_is_strong(self, monkeypatch):
+        """Percentile of 1.0 (top of universe) -> strong for both sub-signals."""
+        set_mock_benchmarks(monkeypatch, {"TEST": make_momentum_entry(
+            momentum_12_1_percentile=1.0, position_52w_percentile=1.0
+        )})
+        result = momentum_signal({"ticker": "TEST"})
+
+        assert result is not None
+        assert result["momentum_12_1_label"] == "strong"
+        assert result["position_52w_label"] == "strong"
+
+    def test_bottom_percentile_is_weak(self, monkeypatch):
+        """Percentile of 0.0 (bottom of universe) -> weak for both sub-signals."""
+        set_mock_benchmarks(monkeypatch, {"TEST": make_momentum_entry(
+            momentum_12_1_percentile=0.0, position_52w_percentile=0.0
+        )})
+        result = momentum_signal({"ticker": "TEST"})
+
+        assert result is not None
+        assert result["momentum_12_1_label"] == "weak"
+        assert result["position_52w_label"] == "weak"
+
+    def test_scores_in_range(self, monkeypatch):
+        """Both sub-signal scores must fall within [-1.0, +1.0]."""
+        set_mock_benchmarks(monkeypatch, {"TEST": make_momentum_entry(
+            momentum_12_1_percentile=1.0, position_52w_percentile=0.0
+        )})
+        result = momentum_signal({"ticker": "TEST"})
+
+        assert result is not None
+        assert -1.0 <= result["momentum_12_1_score"] <= 1.0
+        assert -1.0 <= result["position_52w_score"] <= 1.0
+
+    def test_ticker_not_in_universe_returns_none(self, monkeypatch):
+        """A ticker missing from the batch-computed universe -> None entirely."""
+        set_mock_benchmarks(monkeypatch, {})
+        result = momentum_signal({"ticker": "UNKNOWN_TICKER"})
+        assert result is None
+
+    def test_detail_includes_limitation_disclosure(self, monkeypatch):
+        """Every result must disclose the group-level / not-a-prediction limitation."""
+        set_mock_benchmarks(monkeypatch, {"TEST": make_momentum_entry()})
+        result = momentum_signal({"ticker": "TEST"})
+
+        assert result is not None
+        assert "not a prediction" in result["detail"]
 
 # ─────────────────────────────────────────────
 # Risk Signal Engine

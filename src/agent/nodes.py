@@ -687,13 +687,19 @@ def generate_report(state: AgentState) -> dict:
         else:
             quant_context += f"  Valuation: Insufficient data.\n"
 
-        # Momentum
+        # Momentum — two independent sub-signals, NOT combined into a
+        # single score (12-1 momentum answers "how much has it moved over
+        # the past year", 52-week position answers "how close is it to
+        # its own high right now" — different questions, not to be averaged)
         mom = signals.get("momentum")
         if mom:
-            quant_context += f"  Momentum: {mom['momentum_label']} (score={mom['momentum_score']})\n"
+            quant_context += f"  Momentum - 12-1 Month Return: {mom['momentum_12_1_label']} ({mom['momentum_12_1_pct']}%, percentile={mom['momentum_12_1_percentile']})\n"
+            quant_context += f"  Momentum - 52-Week High Position: {mom['position_52w_label']} ({round(mom['position_52w']*100)}% of 52w range, percentile={mom['position_52w_percentile']})\n"
             quant_context += f"  {mom['detail']}\n"
+            if mom.get("stale_benchmark"):
+                quant_context += f"  ⚠️ Momentum benchmarks may be outdated (>90 days old).\n"
         else:
-            quant_context += f"  Momentum: Insufficient data.\n"
+            quant_context += f"  Momentum: Insufficient data (e.g. recent IPO with limited price history).\n"
 
         # Risk — four independent sub-signals, NOT combined into a single
         # score (Beta/Sharpe/VaR/Max Drawdown each answer a different risk

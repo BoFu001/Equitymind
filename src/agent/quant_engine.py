@@ -11,7 +11,7 @@ No LLM calls — pure Python computation. Fast, deterministic, fully testable.
 
 Signal engines included (grows with each Layer 2 step):
     Step 1: valuation_signal  — P/E + P/B (vs peer group)
-    Step 2: momentum_signal   — coming soon
+    Step 2: momentum_signal   — 12-1 month momentum + 52-week high position
     Step 3: risk_signal       — Beta, Sharpe, VaR, Max Drawdown
     ...
 """
@@ -87,8 +87,10 @@ def quant_engine(state: AgentState) -> dict:
         if mom is not None:
             signals["momentum"] = mom
             gprint(
-                f"    momentum: {mom['momentum_label']} "
-                f"(score={mom['momentum_score']})"
+                f"    momentum: 12-1={mom['momentum_12_1_label']} "
+                f"(pctile={mom['momentum_12_1_percentile']}) "
+                f"52w_position={mom['position_52w_label']} "
+                f"(pctile={mom['position_52w_percentile']})"
             )
         else:
             signals["momentum"] = None
