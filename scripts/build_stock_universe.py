@@ -26,7 +26,7 @@ from datetime import date
 from pathlib import Path
 
 OUTPUT_PATH = Path(__file__).parent.parent / "src" / "quant" / "data" / "stock_universe.json"
-TOP_N = 200
+TOP_N = 250
 
 # ─────────────────────────────────────────────
 # Static candidate pool — well-known large-cap US tickers across sectors.
@@ -41,9 +41,14 @@ CANDIDATE_POOL = [
     "AMAT", "MU", "PANW", "SNPS", "CDNS", "FTNT", "ANET", "WDAY", "TEAM",
     "DDOG", "SNOW", "NET", "ZS", "CRWD", "PLTR", "UBER", "ABNB", "SPOT",
     "SHOP", "SQ", "PYPL", "MELI", "BKNG", "NFLX", "DIS",
+    "APP", "TTD", "DASH", "HOOD", "ROKU", "PINS", "SNAP", "U", "DOCU",
+    "OKTA", "TWLO", "HUBS", "BILL", "PCTY", "MNDY", "S", "TEM", "IOT",
+    "AXON", "PLTK", "RBLX", "EA", "TTWO", "MSTR", "APPF",
 
-    # Semiconductors
+    # Semiconductors / Hardware
     "TSM", "ASML", "LRCX", "KLAC", "ADI", "MCHP", "ON", "MRVL",
+    "NXPI", "SWKS", "MPWR", "STX", "WDC", "TER", "ENTG", "COHR", "SMCI",
+    "ARM", "GFS",
 
     # Automotive / EV
     "TSLA", "RIVN", "GM", "F", "TM",
@@ -54,29 +59,45 @@ CANDIDATE_POOL = [
     # Financials
     "JPM", "BAC", "WFC", "GS", "MS", "C", "SCHW", "AXP", "BLK", "SPGI",
     "USB", "PNC", "TFC", "COF", "BK", "V", "MA",
+    "ICE", "CME", "MMC", "AON", "AJG", "BRO", "TROW", "STT", "NTRS",
+    "AIG", "MET", "PRU", "ALL", "TRV", "PGR", "CB", "HIG", "AFL",
+    "SYF", "DFS", "FIS", "FI", "GPN", "JKHY", "SOFI", "AFRM",
 
     # Healthcare / Pharma
     "JNJ", "LLY", "UNH", "PFE", "MRK", "ABBV", "TMO", "ABT", "DHR", "BMY",
     "AMGN", "GILD", "CVS", "CI", "ELV", "HUM", "ISRG", "VRTX", "REGN",
+    "MRNA", "BSX", "SYK", "EW", "MDT", "ZBH", "BAX", "BDX", "IDXX",
+    "IQV", "A", "MTD", "WAT", "RVTY", "ALGN", "DXCM", "PODD", "VTRS",
+    "ZTS", "CNC", "MOH",
 
-    # Energy
+    # Energy / Utilities
     "XOM", "CVX", "COP", "SLB", "EOG", "PSX", "MPC", "OXY", "WMB",
+    "KMI", "OKE", "HAL", "BKR", "FANG", "DVN", "HES", "TRGP", "EXC",
+    "ED", "PEG", "SRE", "XEL", "WEC", "ES", "ETR", "FE", "AEE", "CMS",
+    "NEE", "DUK", "SO", "AEP",
 
     # Consumer / Retail
     "WMT", "COST", "PG", "KO", "PEP", "MCD", "NKE", "SBUX", "TGT", "HD",
     "LOW", "TJX", "EL", "CL", "KMB", "GIS", "KHC", "MDLZ",
+    "ORLY", "AZO", "ROST", "DG", "DLTR", "YUM", "CMG", "DPZ", "DRI",
+    "HLT", "MAR", "RCL", "CCL", "NCLH", "LULU", "ULTA", "TSCO", "BBY",
+    "KR", "SYY", "CAG", "HSY", "STZ", "KDP", "MNST", "CLX", "CHD",
+    "KVUE",
 
     # Industrials
     "HON", "UPS", "CAT", "DE", "MMM", "GE", "UNP", "EMR", "ETN", "ITW",
+    "ADP", "PAYX", "CTAS", "FAST", "PH", "ROK", "DOV", "IR", "CMI",
+    "PCAR", "XYL", "AME", "GEV", "TT", "CARR", "OTIS", "FDX", "NSC",
+    "CSX", "WM", "RSG", "URI", "EFX",
 
     # Communication / Media
     "CMCSA", "T", "VZ", "TMUS", "CHTR",
+    "PARA", "WBD", "LYV", "FOXA", "MTCH",
 
     # Real Estate / REITs
     "AMT", "PLD", "EQIX", "SPG", "O",
-
-    # Utilities
-    "NEE", "DUK", "SO", "AEP",
+    "PSA", "DLR", "VICI", "WELL", "ARE", "AVB", "EQR", "MAA", "ESS",
+    "INVH", "VTR", "CPT", "KIM", "REG", "BXP", "HST",
 
     # Recent large-cap IPOs / notable growth names
     "COIN", "RDDT", "CRCL", "MDB", "GTLB", "PATH", "ZIP", "WRBY", "AMPL",
