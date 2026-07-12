@@ -734,6 +734,18 @@ def generate_report(state: AgentState) -> dict:
         else:
             quant_context += f"  Quality: Insufficient data.\n"
 
+        # News Sentiment — media tone on recent company-specific news,
+        # distinct from Consensus (professional analyst opinion) and a
+        # future Management Risk Sentiment Signal (10-K risk section tone)
+        news_sentiment = signals.get("news_sentiment")
+        if news_sentiment:
+            quant_context += f"  News Sentiment: {news_sentiment['sentiment_label']} (score={news_sentiment['sentiment_score']})\n"
+            quant_context += f"  {news_sentiment['detail']}\n"
+            if news_sentiment.get("low_confidence"):
+                quant_context += f"  ⚠️ Low article count — reduced confidence in this signal.\n"
+        else:
+            quant_context += f"  News Sentiment: Insufficient data.\n"
+
 
         # Consensus — three independent sub-signals, NOT combined into
         # a single score (recommendation/upside/trend answer different

@@ -42,6 +42,6 @@ NODE_PROGRESS = {
     "quant_momentum":              "Computing momentum signal for {ticker}...",            # sub_progress
     "quant_risk":                  "Computing risk signal for {ticker}...",                # sub_progress
     "quant_quality":               "Computing quality signal for {ticker}...",             # sub_progress
-    "quant_sentiment":             "Computing sentiment signal for {ticker}...",           # sub_progress
+    "quant_news_sentiment":        "Computing news sentiment signal for {ticker}...",      # sub_progress
     "quant_consensus":             "Computing consensus signal for {ticker}...",           # sub_progress
 }

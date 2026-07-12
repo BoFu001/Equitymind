@@ -33,6 +33,8 @@ from src.tools.market_data import get_quality_inputs
 from src.quant.consensus_signal import consensus_signal
 from src.tools.market_data import get_consensus_inputs
 
+from src.tools.news_sentiment import get_news_and_sentiment, news_sentiment_signal
+
 
 
 
@@ -62,6 +64,8 @@ def quant_engine(state: AgentState) -> dict:
     writer({"type": "progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_engine"]})
 
     quant_signals = {}
+
+    all_news = state.get("news") or {}
 
     for ticker, data in market_data.items():
         gprint(f"  [quant_engine] Computing signals for {ticker}")
@@ -127,9 +131,32 @@ def quant_engine(state: AgentState) -> dict:
             signals["quality"] = None
             gprint(f"    quality: insufficient data")
 
-        # ── Step 5: Sentiment Signal ──────────────────────────────────────
-        # Coming in Step 5
-        signals["sentiment"] = None
+        # ── Step 5: News Sentiment Signal ──────────────────────────────────
+        # (distinct from a future Management Risk Sentiment Signal, which
+        # will measure sentiment in 10-K risk factor sections — hence the
+        # explicit "news_" prefix, not a generic "sentiment" key)
+        writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_news_sentiment"].format(ticker=ticker)})
+        company_name = data.get("company_name") or ticker
+        # Reuse news already fetched by research_loop (avoids a duplicate
+        # finlight API call — research_loop's get_news_tool already called
+        # get_news_and_sentiment for this ticker if the question needed news)
+        news_articles = all_news.get(ticker)
+        if news_articles is None:
+            # research_loop didn't fetch news for this ticker (e.g. question
+            # was purely about price/valuation) — fetch it now so News
+            # Sentiment Signal can still be computed for a full analysis
+            news_articles = get_news_and_sentiment(ticker)
+        news_sent = news_sentiment_signal(ticker, company_name, news_articles)
+        if news_sent is not None:
+            signals["news_sentiment"] = news_sent
+            gprint(
+                f"    news_sentiment: {news_sent['sentiment_label']} "
+                f"(score={news_sent['sentiment_score']}, "
+                f"n={news_sent['total_articles']})"
+            )
+        else:
+            signals["news_sentiment"] = None
+            gprint(f"    news_sentiment: insufficient data")
 
         # ── Step 6: Consensus Signal ──────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_consensus"].format(ticker=ticker)})
