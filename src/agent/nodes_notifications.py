@@ -18,7 +18,7 @@ NODE_PROGRESS = {
     "out_of_scope":                "Let me help you with that...",
     "explain_concept":             "Putting together an explanation...",
     "extract":                     "Pinpointing the company...",
-    "research_loop":               "Planning the research...",
+    "fetch_all_data":              "Gathering all data...",
     # ──────────────────────────────────────────────────────────────
     "ensure_sec_data":             "Checking our knowledge base...",
     "retrieve":                    "Reading {ticker} annual report...",                    # sub_progress

@@ -2,7 +2,7 @@
 src/agent/formatters.py
 
 Shared formatters for converting structured data into LLM-readable strings.
-Used by research_loop.py and nodes.py to ensure consistent data presentation.
+Used by fetch_all_data.py and nodes.py to ensure consistent data presentation.
 """
 
 
@@ -17,8 +17,6 @@ def format_market_data(data: dict, ticker: str) -> str:
   Dividend Yield: {data.get('dividend_yield')}
   Analyst Target: ${data.get('target_mean')} (Low: ${data.get('target_low')} / High: ${data.get('target_high')}) | Recommendation: {data.get('recommendation')}
   Analyst Count: {data.get('analyst_count')} | Recommendation Mean: {data.get('recommendation_mean')} (1=Strong Buy, 3=Hold, 5=Strong Sell)
-  RSI: {data.get('rsi')} | MACD: {data.get('macd')}
-  SMA50: {data.get('sma_50')} | SMA200: {data.get('sma_200')}
   Sector: {data.get('sector')} | Industry: {data.get('industry')}
 """
 

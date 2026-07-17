@@ -3,11 +3,14 @@ src/agent/quant_engine.py
 
 Quant Engine Node — Layer 2 Quantitative Intelligence.
 
-Sits between research_loop (data acquisition) and generate_report (language generation).
-Reads structured market data from state, computes quantitative signals for each ticker,
-and writes results back to state["quant_signals"].
+Sits between fetch_all_data (data acquisition) and generate_report (language generation).
+Reads ALL inputs from state (market_data, risk_inputs, quality_inputs,
+consensus_inputs, news) — performs NO data fetching of its own. This node
+is pure computation only, consistent with the data-layer/compute-layer
+separation: fetch_all_data is solely responsible for I/O, quant_engine is
+solely responsible for turning that data into signals.
 
-No LLM calls — pure Python computation. Fast, deterministic, fully testable.
+No LLM calls, no network calls — pure Python computation. Fast, deterministic, fully testable.
 
 Signal engines included (grows with each Layer 2 step):
     Step 1: valuation_signal  — P/E + P/B (vs peer group)
@@ -25,15 +28,10 @@ from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
 
 from src.quant.risk_signal import risk_signal
-from src.tools.market_data import get_risk_inputs
-
 from src.quant.quality_signal import quality_signal
-from src.tools.market_data import get_quality_inputs
-
 from src.quant.consensus_signal import consensus_signal
-from src.tools.market_data import get_consensus_inputs
 
-from src.tools.news_sentiment import get_news_and_sentiment, news_sentiment_signal
+from src.tools.news_sentiment import news_sentiment_signal
 
 
 
@@ -47,7 +45,7 @@ def quant_engine(state: AgentState) -> dict:
 
     Args:
         state: AgentState — expects state["market_data"] to be populated
-               by research_loop before this node runs.
+               by fetch_all_data before this node runs.
 
     Returns:
         {"quant_signals": {ticker: {signal_name: result, ...}, ...}}
@@ -65,7 +63,10 @@ def quant_engine(state: AgentState) -> dict:
 
     quant_signals = {}
 
-    all_news = state.get("news") or {}
+    all_news              = state.get("news") or {}
+    all_risk_inputs       = state.get("risk_inputs") or {}
+    all_quality_inputs    = state.get("quality_inputs") or {}
+    all_consensus_inputs  = state.get("consensus_inputs") or {}
 
     for ticker, data in market_data.items():
         gprint(f"  [quant_engine] Computing signals for {ticker}")
@@ -102,7 +103,7 @@ def quant_engine(state: AgentState) -> dict:
 
         # ── Step 3: Risk Signal ───────────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_risk"].format(ticker=ticker)})
-        risk_inputs = get_risk_inputs(ticker)
+        risk_inputs = all_risk_inputs.get(ticker)
         risk = risk_signal(data, risk_inputs)
         if risk is not None:
             signals["risk"] = risk
@@ -118,7 +119,7 @@ def quant_engine(state: AgentState) -> dict:
 
         # ── Step 4: Quality Signal ────────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_quality"].format(ticker=ticker)})
-        quality_inputs = get_quality_inputs(ticker)
+        quality_inputs = all_quality_inputs.get(ticker)
         quality = quality_signal(quality_inputs)
         if quality is not None:
             signals["quality"] = quality
@@ -137,15 +138,9 @@ def quant_engine(state: AgentState) -> dict:
         # explicit "news_" prefix, not a generic "sentiment" key)
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_news_sentiment"].format(ticker=ticker)})
         company_name = data.get("company_name") or ticker
-        # Reuse news already fetched by research_loop (avoids a duplicate
-        # finlight API call — research_loop's get_news_tool already called
-        # get_news_and_sentiment for this ticker if the question needed news)
-        news_articles = all_news.get(ticker)
-        if news_articles is None:
-            # research_loop didn't fetch news for this ticker (e.g. question
-            # was purely about price/valuation) — fetch it now so News
-            # Sentiment Signal can still be computed for a full analysis
-            news_articles = get_news_and_sentiment(ticker)
+        # News is always pre-fetched by fetch_all_data (unconditional fetch
+        # for every ticker) — no fallback re-fetch needed here anymore.
+        news_articles = all_news.get(ticker) or []
         news_sent = news_sentiment_signal(ticker, company_name, news_articles)
         if news_sent is not None:
             signals["news_sentiment"] = news_sent
@@ -160,7 +155,7 @@ def quant_engine(state: AgentState) -> dict:
 
         # ── Step 6: Consensus Signal ──────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_consensus"].format(ticker=ticker)})
-        consensus_inputs = get_consensus_inputs(ticker)
+        consensus_inputs = all_consensus_inputs.get(ticker)
         consensus = consensus_signal(data, consensus_inputs)
         if consensus is not None:
             signals["consensus"] = consensus

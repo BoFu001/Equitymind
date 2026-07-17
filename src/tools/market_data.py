@@ -1,5 +1,4 @@
 import yfinance as yf
-import ta
 import pandas as pd
 
 
@@ -42,19 +41,11 @@ def get_stock_snapshot(ticker: str) -> dict | None:
             "price_to_book":      info.get("priceToBook"),
         }
 
-        # Technical indicators from last 1 year of price data
-        hist = stock.history(period="1y")
-        if not hist.empty:
-            hist["rsi"]         = ta.momentum.RSIIndicator(hist["Close"]).rsi()
-            macd                = ta.trend.MACD(hist["Close"])
-            hist["macd"]        = macd.macd()
-            hist["macd_signal"] = macd.macd_signal()
-
-            market_data["rsi"]         = round(hist["rsi"].iloc[-1], 2)
-            market_data["macd"]        = round(hist["macd"].iloc[-1], 4)
-            market_data["macd_signal"] = round(hist["macd_signal"].iloc[-1], 4)
-            market_data["sma_50"]      = round(hist["Close"].rolling(50).mean().iloc[-1], 2)
-            market_data["sma_200"]     = round(hist["Close"].rolling(200).mean().iloc[-1], 2) if len(hist) >= 200 else None
+        # NOTE: RSI/MACD/SMA technical indicators were deliberately removed —
+        # they lack independent, large-sample academic validation (see
+        # momentum_signal.py docstring). Momentum is now measured via
+        # 12-1 month momentum and 52-week high position, computed from
+        # precomputed universe benchmarks, not from this function.
 
         return market_data
 

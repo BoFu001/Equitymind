@@ -13,7 +13,7 @@ from src.agent.nodes import (
     handle_no_ticker,
     handle_clarification,
 )
-from src.agent.research_loop import research_loop
+from src.agent.fetch_all_data import fetch_all_data
 import json
 
 @pytest.fixture(autouse=True)
@@ -24,8 +24,8 @@ def mock_stream_writer():
 
 
 @pytest.fixture(autouse=True)
-def mock_research_loop_writer():
-    with patch('src.agent.research_loop.get_stream_writer') as mock:
+def mock_fetch_all_data_writer():
+    with patch('src.agent.fetch_all_data.get_stream_writer') as mock:
         mock.return_value = MagicMock()
         yield
 
@@ -344,59 +344,71 @@ def make_llm_response(finish_reason, tool_calls=None, content=""):
     return response
 
 
-@patch('src.agent.research_loop.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.research_loop.get_news_and_sentiment', return_value=[])
-@patch('src.agent.research_loop.retrieve', return_value=[])
-@patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
-@patch('src.agent.research_loop.client')
-def test_research_loop_market_only(mock_client, *_):
-    """When user asks a market metric question, only get_market_data should be called."""
-    tool_call = make_tool_call("get_market_data", {"ticker": "AAPL"})
-    mock_client.chat.completions.create.side_effect = [
-        make_llm_response("tool_calls", tool_calls=[tool_call]),
-        make_llm_response("stop", content="Apple's P/E is 35."),
-    ]
+@patch('src.agent.fetch_all_data.get_consensus_inputs', return_value={"periods": [{"period": "0m", "strongBuy": 5, "buy": 3, "hold": 1, "sell": 0, "strongSell": 0}]})
+@patch('src.agent.fetch_all_data.get_quality_inputs', return_value={"current_year": {}, "prior_year": {}})
+@patch('src.agent.fetch_all_data.get_risk_inputs', return_value={"stock_prices": [1, 2, 3]})
+@patch('src.agent.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.fetch_all_data.get_news_and_sentiment', return_value=[{"title": "Apple news", "sentiment": "positive", "score": 0.9, "summary": "", "url": "", "published": ""}])
+@patch('src.agent.fetch_all_data.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
+@patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
+def test_fetch_all_data_fetches_everything_unconditionally(*_):
+    """
+    fetch_all_data no longer uses an LLM to decide what to fetch — every
+    ticker gets market_data, news, SEC chunks, risk_inputs, quality_inputs,
+    and consensus_inputs unconditionally, regardless of question phrasing.
+    This replaces the old "smart tool selection" test that checked a
+    simple price question only triggered get_market_data — that selective
+    behaviour was deliberately removed (see fetch_all_data.py docstring).
+
+    NOTE: mocks return non-empty dicts (not {}), since real get_xxx_inputs
+    functions return either None (total failure) or a dict with at least
+    some fields populated — an empty dict {} is falsy in Python and would
+    not be stored, which is the correct behaviour for a genuinely empty
+    result, but not representative of a realistic partial-success case.
+    """
     state = make_state(question="What is Apple's P/E ratio?", tickers=["AAPL"])
-    result = research_loop(state)
-    assert "market_data" in result
-    assert "AAPL" in result["market_data"]
-    assert result["news"] == {}
-    assert result["chunks"] == {}
+    result = fetch_all_data(state)
 
-
-@patch('src.agent.research_loop.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.research_loop.get_news_and_sentiment', return_value=[{"title": "Apple news", "sentiment": "positive", "score": 0.9, "summary": "", "url": "", "published": ""}])
-@patch('src.agent.research_loop.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
-@patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
-@patch('src.agent.research_loop.client')
-def test_research_loop_all_tools(mock_client, *_):
-    """When user asks for a full analysis, all three tools should be called."""
-    tool_calls = [
-        make_tool_call("get_market_data", {"ticker": "AAPL"}, "call_001"),
-        make_tool_call("get_news",        {"ticker": "AAPL"}, "call_002"),
-        make_tool_call("ensure_sec_data", {"ticker": "AAPL", "question": "Analyse Apple"}, "call_003"),
-    ]
-    mock_client.chat.completions.create.side_effect = [
-        make_llm_response("tool_calls", tool_calls=tool_calls),
-        make_llm_response("stop", content="Apple analysis complete."),
-    ]
-    state = make_state(question="Analyse Apple", tickers=["AAPL"])
-    result = research_loop(state)
     assert "AAPL" in result["market_data"]
     assert "AAPL" in result["news"]
     assert "AAPL" in result["chunks"]
+    assert "AAPL" in result["risk_inputs"]
+    assert "AAPL" in result["quality_inputs"]
+    assert "AAPL" in result["consensus_inputs"]
 
 
-@patch('src.agent.research_loop.get_stock_snapshot', return_value=None)
-@patch('src.agent.research_loop.get_news_and_sentiment', return_value=[])
-@patch('src.agent.research_loop.retrieve', return_value=[])
-@patch('src.agent.research_loop.fetch_embed_store_retrieve', return_value=[])
-@patch('src.agent.research_loop.client')
-def test_research_loop_returns_state_fields(mock_client, *_):
-    """research_loop must always return chunks, market_data, news regardless of tools called."""
-    mock_client.chat.completions.create.return_value = make_llm_response("stop", content="Done.")
+@patch('src.agent.fetch_all_data.get_consensus_inputs', return_value={"periods": []})
+@patch('src.agent.fetch_all_data.get_quality_inputs', return_value={})
+@patch('src.agent.fetch_all_data.get_risk_inputs', return_value=None)
+@patch('src.agent.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.fetch_all_data.get_news_and_sentiment', return_value=[])
+@patch('src.agent.fetch_all_data.retrieve', return_value=[])
+@patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
+def test_fetch_all_data_full_analysis_question(*_):
+    """A full-analysis question fetches everything, same as a simple one — no branching."""
+    state = make_state(question="Analyse Apple", tickers=["AAPL"])
+    result = fetch_all_data(state)
+
+    assert "AAPL" in result["market_data"]
+    assert "market_data" in result
+    assert "news" in result
+    assert "chunks" in result
+
+
+@patch('src.agent.fetch_all_data.get_consensus_inputs', return_value=None)
+@patch('src.agent.fetch_all_data.get_quality_inputs', return_value=None)
+@patch('src.agent.fetch_all_data.get_risk_inputs', return_value=None)
+@patch('src.agent.fetch_all_data.get_stock_snapshot', return_value=None)
+@patch('src.agent.fetch_all_data.get_news_and_sentiment', return_value=[])
+@patch('src.agent.fetch_all_data.retrieve', return_value=[])
+@patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
+def test_fetch_all_data_returns_state_fields(*_):
+    """fetch_all_data must always return all six state fields, even if every fetch fails."""
     state = make_state(question="Hello", tickers=["AAPL"])
-    result = research_loop(state)
+    result = fetch_all_data(state)
     assert "chunks" in result
     assert "market_data" in result
     assert "news" in result
+    assert "risk_inputs" in result
+    assert "quality_inputs" in result
+    assert "consensus_inputs" in result

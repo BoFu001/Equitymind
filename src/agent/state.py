@@ -37,6 +37,12 @@ class AgentState(TypedDict):
     # News and sentiment
     news: Optional[list]                    # recent news articles with sentiment scores
 
+    # Inputs for quant_engine signal calculations (fetched by fetch_all_data,
+    # consumed by quant_engine — quant_engine performs no I/O of its own)
+    risk_inputs: Optional[dict]             # price history, market benchmark, risk-free rate — for Risk Signal
+    quality_inputs: Optional[dict]          # financial statements — for Quality Signal
+    consensus_inputs: Optional[dict]        # analyst rating history — for Consensus Signal
+
     # Quantitative signals — Layer 2
     quant_signals: Optional[dict]           # computed by quant_engine node
 
@@ -79,6 +85,9 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "chunks":      [],
         "market_data": {},
         "news":        [],
+        "risk_inputs": {},
+        "quality_inputs": {},
+        "consensus_inputs": {},
         "quant_signals": {},
         "answer":      "",
     }

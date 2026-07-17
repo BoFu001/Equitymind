@@ -16,7 +16,7 @@ from src.agent.nodes import (
     handle_clarification,
     generate_report, 
 )
-from src.agent.research_loop import research_loop
+from src.agent.fetch_all_data import fetch_all_data
 from src.agent.quant_engine import quant_engine
 
 # ─────────────────────────────────────────────
@@ -58,7 +58,7 @@ def route_after_extract(state: AgentState) -> str:
     if not tickers:
         return "no_ticker"
     else:
-        return "research_loop"
+        return "fetch_all_data"
 
 def route_after_clarification(state: AgentState) -> str:
     complete = state.get("clarification_complete")
@@ -81,7 +81,7 @@ def build_graph():
     graph.add_node("classify_sub_intent",    classify_sub_intent)
     graph.add_node("explain_concept",        explain_concept)
     graph.add_node("extract",                extract_parameters)
-    graph.add_node("research_loop",          research_loop)
+    graph.add_node("fetch_all_data",         fetch_all_data)
     graph.add_node("generate_report",        generate_report) 
     graph.add_node("out_of_scope",           handle_out_of_scope)
     graph.add_node("greeting",               handle_greeting)
@@ -120,7 +120,7 @@ def build_graph():
         route_after_extract,
         {
             "no_ticker":      "no_ticker",
-            "research_loop":  "research_loop",
+            "fetch_all_data": "fetch_all_data",
         }
     )
 
@@ -136,8 +136,8 @@ def build_graph():
     # Linear edges
     graph.add_edge(START,                    "contextualize_question")
     graph.add_edge("contextualize_question", "classify_top_intent")
-    graph.add_edge("discovery_suggest",      "research_loop")
-    graph.add_edge("research_loop",          "quant_engine")
+    graph.add_edge("discovery_suggest",      "fetch_all_data")
+    graph.add_edge("fetch_all_data",         "quant_engine")
     graph.add_edge("quant_engine",           "generate_report")
     graph.add_edge("generate_report",        "update_session_memory")
     graph.add_edge("explain_concept",        "update_session_memory")

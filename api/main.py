@@ -12,7 +12,7 @@ Startup order
 
 Running locally
 ---------------
-    conda activate equitymind
+    conda activate equitymind-core
     uvicorn api.main:app --reload --port 8000
 
 API docs available at:
