@@ -6,7 +6,7 @@ Used by fetch_all_data.py and nodes.py to ensure consistent data presentation.
 """
 
 
-def format_market_data(data: dict, ticker: str) -> str:
+def format_stock_snapshot(data: dict, ticker: str) -> str:
     return f"""
 {ticker} — {data.get('company_name')}
   Price: ${data.get('current_price')} | Market Cap: {data.get('market_cap')}

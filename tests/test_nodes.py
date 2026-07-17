@@ -44,7 +44,7 @@ def make_state(**kwargs) -> AgentState:
         "tickers": [], 
         "year": None,
         "chunks": None,
-        "market_data": None,
+        "stock_snapshots": None,
         "news": None,
         "answer": None,
     }
@@ -259,7 +259,7 @@ def test_generate_report():
         question="Analyse Apple",
         tickers=["AAPL"],
         chunks={"AAPL": []},
-        market_data={"AAPL": {}},
+        stock_snapshots={"AAPL": {}},
         news={"AAPL": []},
     )
     result = generate_report(state)
@@ -354,10 +354,10 @@ def make_llm_response(finish_reason, tool_calls=None, content=""):
 def test_fetch_all_data_fetches_everything_unconditionally(*_):
     """
     fetch_all_data no longer uses an LLM to decide what to fetch — every
-    ticker gets market_data, news, SEC chunks, risk_inputs, quality_inputs,
+    ticker gets stock_snapshots, news, SEC chunks, risk_inputs, quality_inputs,
     and consensus_inputs unconditionally, regardless of question phrasing.
     This replaces the old "smart tool selection" test that checked a
-    simple price question only triggered get_market_data — that selective
+    simple price question only triggered get_stock_snapshot — that selective
     behaviour was deliberately removed (see fetch_all_data.py docstring).
 
     NOTE: mocks return non-empty dicts (not {}), since real get_xxx_inputs
@@ -369,7 +369,7 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
     state = make_state(question="What is Apple's P/E ratio?", tickers=["AAPL"])
     result = fetch_all_data(state)
 
-    assert "AAPL" in result["market_data"]
+    assert "AAPL" in result["stock_snapshots"]
     assert "AAPL" in result["news"]
     assert "AAPL" in result["chunks"]
     assert "AAPL" in result["risk_inputs"]
@@ -389,8 +389,8 @@ def test_fetch_all_data_full_analysis_question(*_):
     state = make_state(question="Analyse Apple", tickers=["AAPL"])
     result = fetch_all_data(state)
 
-    assert "AAPL" in result["market_data"]
-    assert "market_data" in result
+    assert "AAPL" in result["stock_snapshots"]
+    assert "stock_snapshots" in result
     assert "news" in result
     assert "chunks" in result
 
@@ -407,7 +407,7 @@ def test_fetch_all_data_returns_state_fields(*_):
     state = make_state(question="Hello", tickers=["AAPL"])
     result = fetch_all_data(state)
     assert "chunks" in result
-    assert "market_data" in result
+    assert "stock_snapshots" in result
     assert "news" in result
     assert "risk_inputs" in result
     assert "quality_inputs" in result

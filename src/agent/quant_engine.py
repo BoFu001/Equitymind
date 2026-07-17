@@ -4,7 +4,7 @@ src/agent/quant_engine.py
 Quant Engine Node — Layer 2 Quantitative Intelligence.
 
 Sits between fetch_all_data (data acquisition) and generate_report (language generation).
-Reads ALL inputs from state (market_data, risk_inputs, quality_inputs,
+Reads ALL inputs from state (stock_snapshots, risk_inputs, quality_inputs,
 consensus_inputs, news) — performs NO data fetching of its own. This node
 is pure computation only, consistent with the data-layer/compute-layer
 separation: fetch_all_data is solely responsible for I/O, quant_engine is
@@ -38,13 +38,13 @@ from src.tools.news_sentiment import news_sentiment_signal
 
 def quant_engine(state: AgentState) -> dict:
     """
-    Compute quantitative signals for all tickers in state["market_data"].
+    Compute quantitative signals for all tickers in state["stock_snapshots"].
 
     For each ticker, runs all available signal engines and aggregates
     results into a structured dict keyed by ticker symbol.
 
     Args:
-        state: AgentState — expects state["market_data"] to be populated
+        state: AgentState — expects state["stock_snapshots"] to be populated
                by fetch_all_data before this node runs.
 
     Returns:
@@ -52,9 +52,9 @@ def quant_engine(state: AgentState) -> dict:
         Empty dict if no market data available.
     """
 
-    market_data = state.get("market_data") or {}
+    stock_snapshots = state.get("stock_snapshots") or {}
 
-    if not market_data:
+    if not stock_snapshots:
         gprint("  [quant_engine] No market data available — skipping")
         return {"quant_signals": {}}
 
@@ -68,7 +68,7 @@ def quant_engine(state: AgentState) -> dict:
     all_quality_inputs    = state.get("quality_inputs") or {}
     all_consensus_inputs  = state.get("consensus_inputs") or {}
 
-    for ticker, data in market_data.items():
+    for ticker, data in stock_snapshots.items():
         gprint(f"  [quant_engine] Computing signals for {ticker}")
 
         signals = {}

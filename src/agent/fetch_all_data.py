@@ -33,18 +33,18 @@ from colors import gprint, bprint
 
 
 # ─────────────────────────────────────────────
-# Market Data
+# Stock snapshot
 # ─────────────────────────────────────────────
 
-def _fetch_market_data(ticker: str) -> dict | None:
+def _fetch_stock_snapshot(ticker: str) -> dict | None:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_sub"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_snapshot"].format(ticker=ticker)})
 
     data = get_stock_snapshot(ticker)
     if not data:
         return None
 
-    bprint(f"  [_fetch_market_data] Fetched for {ticker}")
+    bprint(f"  [_fetch_stock_snapshot] Fetched for {ticker}")
     return data
 
 
@@ -53,6 +53,9 @@ def _fetch_market_data(ticker: str) -> dict | None:
 # ─────────────────────────────────────────────
 
 def _fetch_risk_inputs(ticker: str) -> dict | None:
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_risk_history"].format(ticker=ticker)})
+
     data = get_risk_inputs(ticker)
     bprint(f"  [_fetch_risk_inputs] Fetched for {ticker}")
     return data
@@ -63,6 +66,9 @@ def _fetch_risk_inputs(ticker: str) -> dict | None:
 # ─────────────────────────────────────────────
 
 def _fetch_quality_inputs(ticker: str) -> dict | None:
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_financial_statements"].format(ticker=ticker)})
+
     data = get_quality_inputs(ticker)
     bprint(f"  [_fetch_quality_inputs] Fetched for {ticker}")
     return data
@@ -73,6 +79,9 @@ def _fetch_quality_inputs(ticker: str) -> dict | None:
 # ─────────────────────────────────────────────
 
 def _fetch_consensus_inputs(ticker: str) -> dict | None:
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_analyst_ratings"].format(ticker=ticker)})
+
     data = get_consensus_inputs(ticker)
     bprint(f"  [_fetch_consensus_inputs] Fetched for {ticker}")
     return data
@@ -84,7 +93,7 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
 
 def _fetch_news(ticker: str) -> list:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["news_sub"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["news_sentiment"].format(ticker=ticker)})
 
     articles = get_news_and_sentiment(ticker)
     bprint(f"  [_fetch_news] Fetched for {ticker}")
@@ -101,9 +110,9 @@ def _fetch_sec_data(ticker: str, question: str) -> list:
     try:
         chunks = retrieve(question, ticker)
         if chunks:
-            writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["retrieve"].format(ticker=ticker)})
+            writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["sec_retrieve"].format(ticker=ticker)})
         else:
-            writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["fetch"].format(ticker=ticker)})
+            writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
             chunks = fetch_embed_store_retrieve(question, ticker)
     except Exception as e:
         bprint(f"  [_fetch_sec_data] Could not fetch SEC data for {ticker}: {e}")
@@ -132,25 +141,18 @@ def fetch_all_data(state: AgentState) -> dict:
     gprint(f"  [fetch_all_data] question: {question}")
     tickers = state.get("tickers") or []
 
-    all_market       = {}
-    all_news         = {}
-    all_chunks       = {}
-    all_risk         = {}
-    all_quality      = {}
-    all_consensus    = {}
+    all_stock_snapshots = {}
+    all_risk            = {}
+    all_quality         = {}
+    all_consensus       = {}
+    all_news            = {}
+    all_chunks          = {}
 
     for ticker in tickers:
-        market_data = _fetch_market_data(ticker)
-        if market_data:
-            all_market[ticker] = market_data
-
-        news_articles = _fetch_news(ticker)
-        if news_articles:
-            all_news[ticker] = news_articles
-
-        sec_chunks = _fetch_sec_data(ticker, question)
-        if sec_chunks:
-            all_chunks[ticker] = sec_chunks
+        # yfinance-sourced data grouped together first
+        stock_snapshot = _fetch_stock_snapshot(ticker)
+        if stock_snapshot:
+            all_stock_snapshots[ticker] = stock_snapshot
 
         risk_inputs = _fetch_risk_inputs(ticker)
         if risk_inputs:
@@ -164,13 +166,22 @@ def fetch_all_data(state: AgentState) -> dict:
         if consensus_inputs:
             all_consensus[ticker] = consensus_inputs
 
+        # Other data sources (finlight, SEC EDGAR)
+        news_articles = _fetch_news(ticker)
+        if news_articles:
+            all_news[ticker] = news_articles
+
+        sec_chunks = _fetch_sec_data(ticker, question)
+        if sec_chunks:
+            all_chunks[ticker] = sec_chunks
+
     gprint(f"  [fetch_all_data] Completed for {len(tickers)} ticker(s)")
 
     return {
-        "chunks":            all_chunks,
-        "market_data":       all_market,
-        "news":              all_news,
+        "stock_snapshots":   all_stock_snapshots,
         "risk_inputs":       all_risk,
         "quality_inputs":    all_quality,
         "consensus_inputs":  all_consensus,
+        "news":              all_news,
+        "chunks":            all_chunks,
     }

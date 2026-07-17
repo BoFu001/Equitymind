@@ -11,7 +11,7 @@ from langgraph.config import get_stream_writer
 from core.context import token_queue_var
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.formatters import format_market_data, format_news, format_sec_chunks, format_conversation_context
+from src.agent.formatters import format_stock_snapshot, format_news, format_sec_chunks, format_conversation_context
 from colors import gprint, rprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -453,7 +453,7 @@ Keep the response concise and contextual. Use markdown and emojis where appropri
 def discovery_suggest(state: AgentState) -> dict:
     """
     Single responsibility: LLM suggests 5 candidate tickers based on user criteria.
-    Writes candidate tickers to state["tickers"] so retrieve_sec, market_data, news can process them.
+    Writes candidate tickers to state["tickers"] so retrieve_sec, stock_snapshots, news can process them.
     """
     writer = get_stream_writer()
     writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
@@ -655,13 +655,13 @@ def generate_report(state: AgentState) -> dict:
     writer = get_stream_writer()
     writer({"type": "progress", "node": "report", "message": NODE_PROGRESS["generate_report"]})
 
-    question    = state.get("contextualized_question") or state["question"]
-    tickers     = state.get("tickers") or []
-    all_chunks  = state.get("chunks") or {}
-    all_market  = state.get("market_data") or {}
-    all_news    = state.get("news") or {}
-    quant_signals = state.get("quant_signals") or {}
-    messages    = state.get("messages") or []
+    question            = state.get("contextualized_question") or state["question"]
+    tickers             = state.get("tickers") or []
+    all_chunks          = state.get("chunks") or {}
+    all_stock_snapshots = state.get("stock_snapshots") or {}
+    all_news            = state.get("news") or {}
+    quant_signals       = state.get("quant_signals") or {}
+    messages            = state.get("messages") or []
 
     # ── Format SEC filing chunks ──
     sec_context = "".join(
@@ -768,7 +768,7 @@ def generate_report(state: AgentState) -> dict:
             quant_context += f"  Consensus: Insufficient data.\n"
 
     # ── Format market data ──
-    market_context = "".join(format_market_data(all_market.get(t, {}), t) for t in tickers)
+    market_context = "".join(format_stock_snapshot(all_stock_snapshots.get(t, {}), t) for t in tickers)
 
     # ── Format news and sentiment ──
     news_context   = "".join(format_news(all_news.get(t, []), t) for t in tickers if all_news.get(t))

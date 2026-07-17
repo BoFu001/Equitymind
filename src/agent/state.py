@@ -26,16 +26,16 @@ class AgentState(TypedDict):
 
     # Extracted parameters
     tickers: Optional[list[str]]            # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
-    year: Optional[str]                     # e.g. "2025" or None for latest
-
-    # Retrieval
-    chunks: Optional[list]                  # retrieved chunks from Pinecone
-
-    # Market data
-    market_data: Optional[dict]             # price, P/E, revenue etc from yfinance
-
+    year: Optional[str]                     # e.g. "2025" or None for latest    
+    
     # News and sentiment
     news: Optional[list]                    # recent news articles with sentiment scores
+
+    # Retrieval
+    chunks: Optional[list]                  # retrieved chunks from pgvector
+
+    # Stock snapshots
+    stock_snapshots: Optional[dict]         # price, P/E, revenue etc from yfinance
 
     # Inputs for quant_engine signal calculations (fetched by fetch_all_data,
     # consumed by quant_engine — quant_engine performs no I/O of its own)
@@ -82,9 +82,9 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "enriched_query": None,
         "tickers":     [],
         "year":        None,
-        "chunks":      [],
-        "market_data": {},
         "news":        [],
+        "chunks":      [],
+        "stock_snapshots": {},
         "risk_inputs": {},
         "quality_inputs": {},
         "consensus_inputs": {},
