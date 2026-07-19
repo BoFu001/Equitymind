@@ -120,7 +120,10 @@ def _trend_score(consensus_inputs: dict) -> tuple[float | None, str]:
     # i.e. sentiment improved. We negate so positive trend_score = improving.
     raw_trend = current_weighted - oldest_weighted
     trend_score = max(-1.0, min(1.0, -raw_trend / TREND_CAP_POINTS))
-
+    trend_score = round(trend_score, 4)
+    if trend_score == 0:
+        trend_score = 0.0  # avoid displaying -0.0 from floating point negative zero
+        
     direction = (
         "improving" if trend_score > 0.05 else
         "deteriorating" if trend_score < -0.05 else
@@ -136,7 +139,7 @@ def _trend_score(consensus_inputs: dict) -> tuple[float | None, str]:
         f"stopping coverage, not only by existing analysts changing "
         f"their view."
     )
-    return round(trend_score, 4), detail
+    return trend_score, detail
 
 
 def _sub_label(score: float) -> str:
