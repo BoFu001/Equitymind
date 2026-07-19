@@ -348,7 +348,7 @@ def make_llm_response(finish_reason, tool_calls=None, content=""):
 @patch('src.agent.fetch_all_data.get_quality_inputs', return_value={"current_year": {}, "prior_year": {}})
 @patch('src.agent.fetch_all_data.get_risk_inputs', return_value={"stock_prices": [1, 2, 3]})
 @patch('src.agent.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.fetch_all_data.get_news_and_sentiment', return_value=[{"title": "Apple news", "sentiment": "positive", "score": 0.9, "summary": "", "url": "", "published": ""}])
+@patch('src.agent.fetch_all_data.fetch_company_news', return_value=[{"title": "Apple news", "summary": "", "url": "", "published": ""}])
 @patch('src.agent.fetch_all_data.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
 @patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
 def test_fetch_all_data_fetches_everything_unconditionally(*_):
@@ -381,7 +381,7 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
 @patch('src.agent.fetch_all_data.get_quality_inputs', return_value={})
 @patch('src.agent.fetch_all_data.get_risk_inputs', return_value=None)
 @patch('src.agent.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.fetch_all_data.get_news_and_sentiment', return_value=[])
+@patch('src.agent.fetch_all_data.fetch_company_news', return_value=[])
 @patch('src.agent.fetch_all_data.retrieve', return_value=[])
 @patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
 def test_fetch_all_data_full_analysis_question(*_):
@@ -399,7 +399,7 @@ def test_fetch_all_data_full_analysis_question(*_):
 @patch('src.agent.fetch_all_data.get_quality_inputs', return_value=None)
 @patch('src.agent.fetch_all_data.get_risk_inputs', return_value=None)
 @patch('src.agent.fetch_all_data.get_stock_snapshot', return_value=None)
-@patch('src.agent.fetch_all_data.get_news_and_sentiment', return_value=[])
+@patch('src.agent.fetch_all_data.fetch_company_news', return_value=[])
 @patch('src.agent.fetch_all_data.retrieve', return_value=[])
 @patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
 def test_fetch_all_data_returns_state_fields(*_):

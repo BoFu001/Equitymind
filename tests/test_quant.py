@@ -927,17 +927,27 @@ class TestConsensusDisclosures:
 
 
 # ─────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # News Sentiment Signal Engine (Media Tone)
 # ─────────────────────────────────────────────
-from src.tools.news_sentiment import (
-    _is_company_specific,
+from src.quant.news_sentiment_signal import (
     news_sentiment_signal,
+    _aggregate_sentiment,
+    _sentiment_label,
     MIN_ARTICLE_COUNT,
 )
 
 
 def make_article(**kwargs) -> dict:
-    """Create a minimal mock article dict for news sentiment testing."""
+    """
+    Create a minimal mock article dict for news sentiment testing.
+    NOTE: as of the data-layer/compute-layer split, articles reaching
+    news_sentiment_signal() are already filtered (see src/tools/news_data.py)
+    and not yet scored — "sentiment"/"score" here represent what FinBERT
+    would assign, used only to construct pre-scored fixtures for these
+    aggregation-focused tests (the real function scores title+summary
+    itself; these tests bypass that to test aggregation logic in isolation).
+    """
     defaults = {
         "title": "Apple (AAPL) Reports Strong Quarterly Earnings",
         "url": "https://example.com/article",
@@ -950,100 +960,104 @@ def make_article(**kwargs) -> dict:
     return defaults
 
 
-class TestCompanySpecificFilter:
-    def test_ticker_in_title_is_kept(self):
-        """Title containing the ticker symbol should pass the filter."""
-        assert _is_company_specific("AAPL Stock Soars on Earnings", "AAPL", "Apple") is True
+class TestAggregateSentiment:
+    """
+    Tests _aggregate_sentiment and _sentiment_label directly — these are
+    pure functions that trust pre-set sentiment/score fields, unlike
+    news_sentiment_signal itself, which calls real FinBERT and overwrites
+    those fields with its own live judgment. Testing aggregation here
+    keeps these tests fast and fully controllable.
+    """
 
-    def test_company_name_in_title_is_kept(self):
-        """Title containing the company name (not the ticker) should pass."""
-        assert _is_company_specific("Apple Unveils New iPhone", "AAPL", "Apple") is True
-
-    def test_unrelated_industry_news_is_filtered(self):
-        """
-        Title with neither ticker nor company name should be filtered —
-        this is the case that excludes broader industry/market news that
-        only mentions the company in passing (verified against real
-        AAPL/MU/CLOV/COMP news samples during development).
-        """
-        assert _is_company_specific("The PC market is headed for trouble", "AAPL", "Apple") is False
-
-    def test_case_insensitive_matching(self):
-        """Matching should not be case-sensitive."""
-        assert _is_company_specific("apple stock rallies", "AAPL", "Apple") is True
-
-
-class TestNewsSentimentNormalCase:
     def test_all_positive_articles(self):
         """All positive articles -> positive label, positive net score."""
-        articles = [make_article(title=f"Apple (AAPL) News {i}", sentiment="positive", score=0.9)
-                    for i in range(15)]
-        result = news_sentiment_signal("AAPL", "Apple", articles)
+        articles = [make_article(sentiment="positive", score=0.9) for _ in range(15)]
+        stats = _aggregate_sentiment(articles)
+        label = _sentiment_label(stats["net_score"])
 
-        assert result is not None
-        assert result["sentiment_label"] == "positive"
-        assert result["sentiment_score"] > 0
-        assert result["positive_count"] == 15
-        assert result["negative_count"] == 0
-        assert result["total_articles"] == 15
+        assert label == "positive"
+        assert stats["net_score"] > 0
+        assert stats["positive_count"] == 15
+        assert stats["negative_count"] == 0
+        assert stats["total_articles"] == 15
 
     def test_all_negative_articles(self):
         """All negative articles -> negative label, negative net score."""
-        articles = [make_article(title=f"Apple (AAPL) News {i}", sentiment="negative", score=0.9)
-                    for i in range(15)]
-        result = news_sentiment_signal("AAPL", "Apple", articles)
+        articles = [make_article(sentiment="negative", score=0.9) for _ in range(15)]
+        stats = _aggregate_sentiment(articles)
+        label = _sentiment_label(stats["net_score"])
 
-        assert result is not None
-        assert result["sentiment_label"] == "negative"
-        assert result["sentiment_score"] < 0
+        assert label == "negative"
+        assert stats["net_score"] < 0
 
     def test_mixed_sentiment_articles(self):
         """A realistic mix of positive/negative/neutral articles."""
         articles = (
-            [make_article(title=f"Apple (AAPL) Good News {i}", sentiment="positive", score=0.8) for i in range(6)] +
-            [make_article(title=f"Apple (AAPL) Bad News {i}", sentiment="negative", score=0.8) for i in range(4)] +
-            [make_article(title=f"Apple (AAPL) Neutral News {i}", sentiment="neutral", score=0.7) for i in range(3)]
+            [make_article(sentiment="positive", score=0.8) for _ in range(6)] +
+            [make_article(sentiment="negative", score=0.8) for _ in range(4)] +
+            [make_article(sentiment="neutral", score=0.7) for _ in range(3)]
         )
-        result = news_sentiment_signal("AAPL", "Apple", articles)
+        stats = _aggregate_sentiment(articles)
 
-        assert result is not None
-        assert result["positive_count"] == 6
-        assert result["negative_count"] == 4
-        assert result["neutral_count"] == 3
-        assert result["total_articles"] == 13
-
-    def test_filters_out_unrelated_industry_articles(self):
-        """
-        Articles about broader industry/market news (not naming the
-        company in the title) should be excluded from the signal —
-        this is the core value of this signal over raw news aggregation.
-        """
-        articles = (
-            [make_article(title=f"Apple (AAPL) News {i}", sentiment="positive", score=0.9) for i in range(12)] +
-            [make_article(title="The PC market is headed for trouble", sentiment="negative", score=0.95)]
-        )
-        result = news_sentiment_signal("AAPL", "Apple", articles)
-
-        assert result is not None
-        assert result["total_articles"] == 12  # the industry article is excluded
-
-
-class TestNewsSentimentLabelThresholds:
-    def test_score_above_threshold_is_positive(self):
-        """net_score > 0.15 -> positive label."""
-        articles = [make_article(title=f"Apple (AAPL) News {i}", sentiment="positive", score=0.5)
-                    for i in range(12)]
-        result = news_sentiment_signal("AAPL", "Apple", articles)
-        assert result["sentiment_label"] == "positive"
+        assert stats["positive_count"] == 6
+        assert stats["negative_count"] == 4
+        assert stats["neutral_count"] == 3
+        assert stats["total_articles"] == 13
 
     def test_score_near_zero_is_neutral(self):
         """A roughly balanced mix should land in the neutral buffer zone."""
         articles = (
-            [make_article(title=f"Apple (AAPL) Good {i}", sentiment="positive", score=0.5) for i in range(6)] +
-            [make_article(title=f"Apple (AAPL) Bad {i}", sentiment="negative", score=0.5) for i in range(6)]
+            [make_article(sentiment="positive", score=0.5) for _ in range(6)] +
+            [make_article(sentiment="negative", score=0.5) for _ in range(6)]
         )
-        result = news_sentiment_signal("AAPL", "Apple", articles)
-        assert result["sentiment_label"] == "neutral"
+        stats = _aggregate_sentiment(articles)
+        label = _sentiment_label(stats["net_score"])
+        assert label == "neutral"
+
+
+class TestNewsSentimentSignalEndToEnd:
+    """
+    Tests news_sentiment_signal as a whole, including its real call to
+    FinBERT. Uses unambiguous, clearly-worded headlines so the test
+    doesn't depend on FinBERT's judgment of an artificial/generic title
+    (e.g. "Apple News 0" carries no real sentiment) — these headlines
+    are written to have an unambiguous sentiment a model should get right.
+    """
+
+    def test_clearly_positive_headlines_yield_positive_label(self):
+        articles = [
+            {"title": "Company posts record profit, stock surges to all-time high",
+             "url": "https://example.com/a", "published": "2026-07-01T00:00:00.000Z",
+             "summary": "Strong earnings beat expectations across all segments."}
+            for _ in range(12)
+        ]
+        result = news_sentiment_signal("AAPL", articles)
+
+        assert result is not None
+        assert result["sentiment_label"] == "positive"
+        assert result["total_articles"] == 12
+
+    def test_returns_per_article_detail(self):
+        """
+        Result includes an "articles" list with each article's title,
+        url, sentiment, and score — needed by callers (e.g. generate_report)
+        that display a source list with links, not just the aggregate score.
+        """
+        articles = [
+            {"title": "Company posts record profit, stock surges to all-time high",
+             "url": "https://example.com/a", "published": "2026-07-01T00:00:00.000Z",
+             "summary": "Strong earnings beat expectations."}
+            for _ in range(12)
+        ]
+        result = news_sentiment_signal("AAPL", articles)
+
+        assert "articles" in result
+        assert len(result["articles"]) == 12
+        assert result["articles"][0]["title"] == "Company posts record profit, stock surges to all-time high"
+        assert result["articles"][0]["url"] == "https://example.com/a"
+        assert "sentiment" in result["articles"][0]
+        assert "score" in result["articles"][0]
+
 
 
 class TestNewsSentimentLowConfidence:
@@ -1051,7 +1065,7 @@ class TestNewsSentimentLowConfidence:
         """Fewer than MIN_ARTICLE_COUNT relevant articles -> low_confidence True."""
         articles = [make_article(title=f"Apple (AAPL) News {i}", sentiment="positive", score=0.9)
                     for i in range(MIN_ARTICLE_COUNT - 1)]
-        result = news_sentiment_signal("AAPL", "Apple", articles)
+        result = news_sentiment_signal("AAPL", articles)
 
         assert result is not None
         assert result["low_confidence"] is True
@@ -1061,7 +1075,7 @@ class TestNewsSentimentLowConfidence:
         """MIN_ARTICLE_COUNT or more relevant articles -> low_confidence False."""
         articles = [make_article(title=f"Apple (AAPL) News {i}", sentiment="positive", score=0.9)
                     for i in range(MIN_ARTICLE_COUNT)]
-        result = news_sentiment_signal("AAPL", "Apple", articles)
+        result = news_sentiment_signal("AAPL", articles)
 
         assert result is not None
         assert result["low_confidence"] is False
@@ -1070,14 +1084,5 @@ class TestNewsSentimentLowConfidence:
 class TestNewsSentimentMissingData:
     def test_empty_article_list_returns_none(self):
         """No articles at all -> None."""
-        result = news_sentiment_signal("AAPL", "Apple", [])
-        assert result is None
-
-    def test_no_company_specific_articles_returns_none(self):
-        """
-        Articles exist but none mention the company in the title (all
-        filtered out) -> None, since there's nothing left to aggregate.
-        """
-        articles = [make_article(title="The PC market is headed for trouble", sentiment="negative", score=0.9)]
-        result = news_sentiment_signal("AAPL", "Apple", articles)
+        result = news_sentiment_signal("AAPL", [])
         assert result is None

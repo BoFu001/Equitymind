@@ -22,11 +22,11 @@ NODE_PROGRESS = {
     "fetch_all_data":                      "Collecting company data...",
     "sec_retrieve":                        "Reading {ticker} annual report...",                    # sub_progress
     "sec_fetch":                           "Downloading {ticker} annual report from SEC...",       # sub_progress
-    "market_data_snapshot":                "Fetching live data for {ticker}...",                   # sub_progress
+    "market_data_snapshot":                "Fetching {ticker}'s stock data...",                    # sub_progress
     "market_data_risk_history":            "Checking {ticker}'s risk history...",                  # sub_progress
     "market_data_financial_statements":    "Reviewing {ticker}'s financial statements...",         # sub_progress
     "market_data_analyst_ratings":         "Checking analyst ratings for {ticker}...",             # sub_progress
-    "news_sentiment":                      "Analysing news sentiment for {ticker}...",             # sub_progress
+    "news_data":                           "Reading news for {ticker}...",                         # sub_progress
     # ──────────────────────────────────────────────────────────────
     "generate_report":                     "Generating investment report...",
     "discovery_suggest":                   "Searching for the best stocks for you...",

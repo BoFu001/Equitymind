@@ -31,7 +31,7 @@ from src.quant.risk_signal import risk_signal
 from src.quant.quality_signal import quality_signal
 from src.quant.consensus_signal import consensus_signal
 
-from src.tools.news_sentiment import news_sentiment_signal
+from src.quant.news_sentiment_signal import news_sentiment_signal
 
 
 
@@ -137,11 +137,11 @@ def quant_engine(state: AgentState) -> dict:
         # will measure sentiment in 10-K risk factor sections — hence the
         # explicit "news_" prefix, not a generic "sentiment" key)
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_news_sentiment"].format(ticker=ticker)})
-        company_name = data.get("company_name") or ticker
-        # News is always pre-fetched by fetch_all_data (unconditional fetch
-        # for every ticker) — no fallback re-fetch needed here anymore.
+        # News is always pre-fetched and pre-filtered by fetch_all_data
+        # (see src/tools/news_data.py) — this function only scores and
+        # aggregates, it no longer needs company_name for filtering.
         news_articles = all_news.get(ticker) or []
-        news_sent = news_sentiment_signal(ticker, company_name, news_articles)
+        news_sent = news_sentiment_signal(ticker, news_articles)
         if news_sent is not None:
             signals["news_sentiment"] = news_sent
             gprint(

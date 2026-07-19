@@ -22,9 +22,17 @@ def format_stock_snapshot(data: dict, ticker: str) -> str:
 
 
 def format_news(articles: list, ticker: str) -> str:
+    """
+    Formats raw, already-filtered news articles for display in the LLM
+    prompt. These articles come from fetch_company_news() (see
+    src/tools/news_data.py) and do NOT include sentiment/score -- that
+    scoring happens separately in src/quant/news_sentiment_signal.py and
+    is shown to the LLM via quant_context, not here. This function shows
+    only the raw article content (title, summary, URL, published date).
+    """
     news_context = f"\n{ticker} News:\n"
     for article in articles:
-        news_context += f"[{article.get('sentiment','').upper()}] ({article.get('score',0):.2f}) {article.get('title','')}\n"
+        news_context += f"- {article.get('title','')}\n"
         news_context += f"  Summary: {article.get('summary','')}\n"
         news_context += f"  URL: {article.get('url','')}\n"
         news_context += f"  Published: {article.get('published','')}\n"

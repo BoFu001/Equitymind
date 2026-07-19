@@ -23,7 +23,7 @@ reliability gained from removing an unpredictable LLM decision point.
 """
 
 from src.tools.market_data import get_stock_snapshot, get_risk_inputs, get_quality_inputs, get_consensus_inputs
-from src.tools.news_sentiment import get_news_and_sentiment
+from src.tools.news_data import fetch_company_news
 from src.tools.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.agent.state import AgentState
 
@@ -88,14 +88,14 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
 
 
 # ─────────────────────────────────────────────
-# News and Sentiment
+# News Data
 # ─────────────────────────────────────────────
 
-def _fetch_news(ticker: str) -> list:
+def _fetch_news(ticker: str, company_name: str) -> list:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["news_sentiment"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["news_data"].format(ticker=ticker)})
 
-    articles = get_news_and_sentiment(ticker)
+    articles = fetch_company_news(ticker, company_name)
     bprint(f"  [_fetch_news] Fetched for {ticker}")
     return articles
 
@@ -167,7 +167,8 @@ def fetch_all_data(state: AgentState) -> dict:
             all_consensus[ticker] = consensus_inputs
 
         # Other data sources (finlight, SEC EDGAR)
-        news_articles = _fetch_news(ticker)
+        company_name = (stock_snapshot or {}).get("company_name") or ticker
+        news_articles = _fetch_news(ticker, company_name)
         if news_articles:
             all_news[ticker] = news_articles
 
