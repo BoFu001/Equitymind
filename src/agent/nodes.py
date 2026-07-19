@@ -11,7 +11,7 @@ from langgraph.config import get_stream_writer
 from core.context import token_queue_var
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.formatters import format_stock_snapshot, format_news, format_sec_chunks, format_conversation_context
+from src.agent.formatters import format_stock_snapshot, format_news, format_sec_chunks, format_conversation_context, format_quant_signals
 from colors import gprint, rprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -663,118 +663,23 @@ def generate_report(state: AgentState) -> dict:
     quant_signals       = state.get("quant_signals") or {}
     messages            = state.get("messages") or []
 
+    # ── Format conversation history ──
+    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
+
+    # ── Format market data ──
+    market_context = "".join(format_stock_snapshot(all_stock_snapshots.get(t, {}), t) for t in tickers)
+
     # ── Format SEC filing chunks ──
     sec_context = "".join(
         format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t) else f"\n{t}: No SEC 10-K filing available.\n"
         for t in tickers
     )
 
-    # ── Format quant signals ──
-    quant_context = ""
-    for t in tickers:
-        signals = quant_signals.get(t, {})
-        quant_context += f"\n{t} Quantitative Signals:\n"
-
-        # Valuation
-        val = signals.get("valuation")
-        if val:
-            quant_context += f"  Valuation: {val['valuation_label']} (score={val['valuation_score']}, method={val['method']})\n"
-            quant_context += f"  {val['detail']}\n"
-            if val.get("reference_only"):
-                quant_context += f"  ⚠️ Valuation reference only — company is loss-making, P/S used instead of P/E.\n"
-            if val.get("stale_benchmark"):
-                quant_context += f"  ⚠️ Sector benchmarks may be outdated (>90 days old).\n"
-        else:
-            quant_context += f"  Valuation: Insufficient data.\n"
-
-        # Momentum — two independent sub-signals, NOT combined into a
-        # single score (12-1 momentum answers "how much has it moved over
-        # the past year", 52-week position answers "how close is it to
-        # its own high right now" — different questions, not to be averaged)
-        mom = signals.get("momentum")
-        if mom:
-            quant_context += f"  Momentum - 12-1 Month Return: {mom['momentum_12_1_label']} ({mom['momentum_12_1_pct']}%, percentile={mom['momentum_12_1_percentile']})\n"
-            quant_context += f"  Momentum - 52-Week High Position: {mom['position_52w_label']} ({round(mom['position_52w']*100)}% of 52w range, percentile={mom['position_52w_percentile']})\n"
-            quant_context += f"  {mom['detail']}\n"
-            if mom.get("stale_benchmark"):
-                quant_context += f"  ⚠️ Momentum benchmarks may be outdated (>90 days old).\n"
-        else:
-            quant_context += f"  Momentum: Insufficient data (e.g. recent IPO with limited price history).\n"
-
-        # Risk — four independent sub-signals, NOT combined into a single
-        # score (Beta/Sharpe/VaR/Max Drawdown each answer a different risk
-        # question — averaging them would hide which dimension matters,
-        # e.g. a strong Sharpe Ratio can mask a catastrophic Max Drawdown)
-        risk = signals.get("risk")
-        if risk:
-            if risk.get("beta"):
-                quant_context += f"  Risk - Beta: {risk['beta']['adjusted_beta']} (score={risk['beta']['beta_score']})\n"
-            else:
-                quant_context += f"  Risk - Beta: Unavailable (market benchmark data missing).\n"
-            quant_context += f"  Risk - Sharpe Ratio: {risk['sharpe']['sharpe_ratio']} (score={risk['sharpe']['sharpe_score']})\n"
-            quant_context += f"  Risk - VaR (95%): {risk['var']['var_95']*100:.2f}% (score={risk['var']['var_score']})\n"
-            quant_context += f"  Risk - Max Drawdown: {risk['max_drawdown']['max_drawdown']*100:.2f}% (score={risk['max_drawdown']['drawdown_score']})\n"
-            quant_context += f"  {risk['detail']}\n"
-            if risk.get("low_confidence"):
-                quant_context += f"  ⚠️ Risk signal based on less than 1 year of price history — lower confidence.\n"
-            if risk.get("beta") is None:
-                quant_context += f"  ⚠️ Beta could not be computed — market benchmark data unavailable.\n"
-            if risk.get("max_drawdown", {}).get("stress_tested") is False:
-                quant_context += f"  ⚠️ This stock has not experienced a significant decline in the observed window — risk may be understated.\n"
-        else:
-            quant_context += f"  Risk: Insufficient data.\n"
-
-        # Quality
-        quality = signals.get("quality")
-        if quality:
-            quant_context += f"  Quality: {quality['quality_label']} (F-Score={quality['f_score_raw']}/{quality['signals_evaluated']}, score={quality['quality_score']})\n"
-            quant_context += f"  {quality['detail']}\n"
-            if quality.get("signals_evaluated", 9) < 9:
-                quant_context += f"  ⚠️ Only {quality['signals_evaluated']} of 9 F-Score signals could be evaluated due to missing financial data.\n"
-        else:
-            quant_context += f"  Quality: Insufficient data.\n"
-
-        # News Sentiment — media tone on recent company-specific news,
-        # distinct from Consensus (professional analyst opinion) and a
-        # future Management Risk Sentiment Signal (10-K risk section tone)
-        news_sentiment = signals.get("news_sentiment")
-        if news_sentiment:
-            quant_context += f"  News Sentiment: {news_sentiment['sentiment_label']} (score={news_sentiment['sentiment_score']})\n"
-            quant_context += f"  {news_sentiment['detail']}\n"
-            if news_sentiment.get("low_confidence"):
-                quant_context += f"  ⚠️ Low article count — reduced confidence in this signal.\n"
-        else:
-            quant_context += f"  News Sentiment: Insufficient data.\n"
-
-
-        # Consensus — three independent sub-signals, NOT combined into
-        # a single score (recommendation/upside/trend answer different
-        # questions: current standing, future price target, and recent
-        # directional change — averaging them would hide the full picture)
-        consensus = signals.get("consensus")
-        if consensus:
-            quant_context += f"  Consensus - Recommendation: {consensus['recommendation_label']} (score={consensus['recommendation_score']})\n"
-            quant_context += f"  Consensus - Upside: {consensus['upside_label']} ({consensus['upside_pct']}% implied by analyst target price)\n"
-            if consensus.get("trend_label") is not None:
-                quant_context += f"  Consensus - Trend: {consensus['trend_label']} (trend_score={consensus['trend_score']})\n"
-            else:
-                quant_context += f"  Consensus - Trend: Insufficient rating history.\n"
-            quant_context += f"  {consensus['detail']}\n"
-            if consensus.get("low_confidence"):
-                quant_context += f"  ⚠️ Low analyst sample size — reduced confidence.\n"
-            if consensus.get("wide_dispersion"):
-                quant_context += f"  ⚠️ Wide analyst target price dispersion — significant disagreement.\n"
-        else:
-            quant_context += f"  Consensus: Insufficient data.\n"
-
-    # ── Format market data ──
-    market_context = "".join(format_stock_snapshot(all_stock_snapshots.get(t, {}), t) for t in tickers)
-
-    # ── Format news and sentiment ──
+    # ── Format news ──
     news_context   = "".join(format_news(all_news.get(t, []), t) for t in tickers if all_news.get(t))
 
-    # ── Format conversation history ──
-    conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
+    # ── Format quant signals ──
+    quant_context = "".join(format_quant_signals(quant_signals.get(t, {}), t) for t in tickers)
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
@@ -876,7 +781,7 @@ MARKET DATA:
 SEC FILING DATA:
 {sec_context}
 
-NEWS & SENTIMENT:
+NEWS:
 {news_context}
 
 QUANTITATIVE SIGNALS:
