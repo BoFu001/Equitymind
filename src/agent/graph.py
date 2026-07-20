@@ -2,22 +2,20 @@ from colors import yprint
 
 from langgraph.graph import StateGraph, START, END
 from src.agent.state import AgentState
-from src.agent.nodes import (
-    contextualize_question,
-    classify_top_intent,
-    classify_sub_intent,
-    explain_concept,
-    extract_parameters,
-    handle_out_of_scope,
-    handle_greeting,
-    handle_no_ticker,
-    discovery_suggest,
-    update_session_memory,
-    handle_clarification,
-    generate_report, 
-)
-from src.agent.fetch_all_data import fetch_all_data
-from src.agent.quant_engine import quant_engine
+from src.agent.nodes.contextualize_question import contextualize_question
+from src.agent.nodes.classify_top_intent import classify_top_intent
+from src.agent.nodes.classify_sub_intent import classify_sub_intent
+from src.agent.nodes.explain_concept import explain_concept
+from src.agent.nodes.extract_parameters import extract_parameters
+from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
+from src.agent.nodes.handle_greeting import handle_greeting
+from src.agent.nodes.handle_no_ticker import handle_no_ticker
+from src.agent.nodes.discovery_suggest import discovery_suggest
+from src.agent.nodes.update_session_memory import update_session_memory
+from src.agent.nodes.handle_clarification import handle_clarification
+from src.agent.nodes.generate_report import generate_report
+from src.agent.nodes.fetch_all_data import fetch_all_data
+from src.agent.nodes.quant_engine import quant_engine
 
 # ─────────────────────────────────────────────
 # Routing functions

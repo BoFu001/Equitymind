@@ -1,31 +1,42 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from src.agent.state import AgentState
-from src.agent.nodes import (
-    classify_top_intent,
-    classify_sub_intent,
-    explain_concept,
-    extract_parameters,
-    handle_out_of_scope,
-    handle_greeting,
-    discovery_suggest,
-    generate_report,
-    handle_no_ticker,
-    handle_clarification,
-)
-from src.agent.fetch_all_data import fetch_all_data
+from src.agent.nodes.classify_top_intent import classify_top_intent
+from src.agent.nodes.classify_sub_intent import classify_sub_intent
+from src.agent.nodes.explain_concept import explain_concept
+from src.agent.nodes.extract_parameters import extract_parameters
+from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
+from src.agent.nodes.handle_greeting import handle_greeting
+from src.agent.nodes.discovery_suggest import discovery_suggest
+from src.agent.nodes.generate_report import generate_report
+from src.agent.nodes.handle_no_ticker import handle_no_ticker
+from src.agent.nodes.handle_clarification import handle_clarification
+from src.agent.nodes.fetch_all_data import fetch_all_data
 import json
 
 @pytest.fixture(autouse=True)
 def mock_stream_writer():
-    with patch('src.agent.nodes.get_stream_writer') as mock:
-        mock.return_value = MagicMock()
-        yield
+    node_modules = [
+        "contextualize_question", "classify_top_intent", "classify_sub_intent",
+        "explain_concept", "extract_parameters", "handle_out_of_scope",
+        "handle_greeting", "discovery_suggest", "handle_no_ticker",
+        "handle_clarification", "generate_report",
+    ]
+    patchers = [
+        patch(f"src.agent.nodes.{module}.get_stream_writer")
+        for module in node_modules
+    ]
+    mocks = [p.start() for p in patchers]
+    for m in mocks:
+        m.return_value = MagicMock()
+    yield
+    for p in patchers:
+        p.stop()
 
 
 @pytest.fixture(autouse=True)
 def mock_fetch_all_data_writer():
-    with patch('src.agent.fetch_all_data.get_stream_writer') as mock:
+    with patch('src.agent.nodes.fetch_all_data.get_stream_writer') as mock:
         mock.return_value = MagicMock()
         yield
 
@@ -344,13 +355,13 @@ def make_llm_response(finish_reason, tool_calls=None, content=""):
     return response
 
 
-@patch('src.agent.fetch_all_data.get_consensus_inputs', return_value={"periods": [{"period": "0m", "strongBuy": 5, "buy": 3, "hold": 1, "sell": 0, "strongSell": 0}]})
-@patch('src.agent.fetch_all_data.get_quality_inputs', return_value={"current_year": {}, "prior_year": {}})
-@patch('src.agent.fetch_all_data.get_risk_inputs', return_value={"stock_prices": [1, 2, 3]})
-@patch('src.agent.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.fetch_all_data.fetch_company_news', return_value=[{"title": "Apple news", "summary": "", "url": "", "published": ""}])
-@patch('src.agent.fetch_all_data.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
-@patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
+@patch('src.agent.nodes.fetch_all_data.get_consensus_inputs', return_value={"periods": [{"period": "0m", "strongBuy": 5, "buy": 3, "hold": 1, "sell": 0, "strongSell": 0}]})
+@patch('src.agent.nodes.fetch_all_data.get_quality_inputs', return_value={"current_year": {}, "prior_year": {}})
+@patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value={"stock_prices": [1, 2, 3]})
+@patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[{"title": "Apple news", "summary": "", "url": "", "published": ""}])
+@patch('src.agent.nodes.fetch_all_data.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
+@patch('src.agent.nodes.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
 def test_fetch_all_data_fetches_everything_unconditionally(*_):
     """
     fetch_all_data no longer uses an LLM to decide what to fetch — every
@@ -377,13 +388,13 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
     assert "AAPL" in result["consensus_inputs"]
 
 
-@patch('src.agent.fetch_all_data.get_consensus_inputs', return_value={"periods": []})
-@patch('src.agent.fetch_all_data.get_quality_inputs', return_value={})
-@patch('src.agent.fetch_all_data.get_risk_inputs', return_value=None)
-@patch('src.agent.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.fetch_all_data.fetch_company_news', return_value=[])
-@patch('src.agent.fetch_all_data.retrieve', return_value=[])
-@patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
+@patch('src.agent.nodes.fetch_all_data.get_consensus_inputs', return_value={"periods": []})
+@patch('src.agent.nodes.fetch_all_data.get_quality_inputs', return_value={})
+@patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value=None)
+@patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[])
+@patch('src.agent.nodes.fetch_all_data.retrieve', return_value=[])
+@patch('src.agent.nodes.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
 def test_fetch_all_data_full_analysis_question(*_):
     """A full-analysis question fetches everything, same as a simple one — no branching."""
     state = make_state(question="Analyse Apple", tickers=["AAPL"])
@@ -395,13 +406,13 @@ def test_fetch_all_data_full_analysis_question(*_):
     assert "chunks" in result
 
 
-@patch('src.agent.fetch_all_data.get_consensus_inputs', return_value=None)
-@patch('src.agent.fetch_all_data.get_quality_inputs', return_value=None)
-@patch('src.agent.fetch_all_data.get_risk_inputs', return_value=None)
-@patch('src.agent.fetch_all_data.get_stock_snapshot', return_value=None)
-@patch('src.agent.fetch_all_data.fetch_company_news', return_value=[])
-@patch('src.agent.fetch_all_data.retrieve', return_value=[])
-@patch('src.agent.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
+@patch('src.agent.nodes.fetch_all_data.get_consensus_inputs', return_value=None)
+@patch('src.agent.nodes.fetch_all_data.get_quality_inputs', return_value=None)
+@patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value=None)
+@patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value=None)
+@patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[])
+@patch('src.agent.nodes.fetch_all_data.retrieve', return_value=[])
+@patch('src.agent.nodes.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
 def test_fetch_all_data_returns_state_fields(*_):
     """fetch_all_data must always return all six state fields, even if every fetch fails."""
     state = make_state(question="Hello", tickers=["AAPL"])
