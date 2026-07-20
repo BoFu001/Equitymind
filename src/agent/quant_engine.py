@@ -19,7 +19,7 @@ Signal engines included (grows with each Layer 2 step):
     ...
 """
 
-from colors import gprint
+from colors import gprint, mprint
 from src.agent.state import AgentState
 from langgraph.config import get_stream_writer
 from src.agent.nodes_notifications import NODE_PROGRESS
@@ -78,28 +78,28 @@ def quant_engine(state: AgentState) -> dict:
         val = valuation_signal(data)
         if val is not None:
             signals["valuation"] = val
-            gprint(
-                f"    valuation: {val['valuation_label']} "
+            mprint(
+                f"  [valuation] {val['valuation_label']} "
                 f"(score={val['valuation_score']}, method={val['method']})"
             )
         else:
             signals["valuation"] = None
-            gprint(f"    valuation: insufficient data")
+            mprint(f"  [valuation] insufficient data")
 
         # ── Step 2: Momentum Signal ───────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_momentum"].format(ticker=ticker)})
         mom = momentum_signal(data)
         if mom is not None:
             signals["momentum"] = mom
-            gprint(
-                f"    momentum: 12-1={mom['momentum_12_1_label']} "
+            mprint(
+                f"  [momentum] 12-1={mom['momentum_12_1_label']} "
                 f"(pctile={mom['momentum_12_1_percentile']}) "
                 f"52w_position={mom['position_52w_label']} "
                 f"(pctile={mom['position_52w_percentile']})"
             )
         else:
             signals["momentum"] = None
-            gprint(f"    momentum: insufficient data")
+            mprint(f"  [momentum] insufficient data")
 
         # ── Step 3: Risk Signal ───────────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_risk"].format(ticker=ticker)})
@@ -107,15 +107,15 @@ def quant_engine(state: AgentState) -> dict:
         risk = risk_signal(data, risk_inputs)
         if risk is not None:
             signals["risk"] = risk
-            gprint(
-                f"    risk: beta_score={risk['beta']['beta_score'] if risk['beta'] else 'N/A'} "
+            mprint(
+                f"  [risk] beta_score={risk['beta']['beta_score'] if risk['beta'] else 'N/A'} "
                 f"sharpe_score={risk['sharpe']['sharpe_score']} "
                 f"var_score={risk['var']['var_score']} "
                 f"drawdown_score={risk['max_drawdown']['drawdown_score']}"
             )
         else:
             signals["risk"] = None
-            gprint(f"    risk: insufficient data")
+            mprint(f"  [risk] insufficient data")
 
         # ── Step 4: Quality Signal ────────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_quality"].format(ticker=ticker)})
@@ -123,14 +123,14 @@ def quant_engine(state: AgentState) -> dict:
         quality = quality_signal(quality_inputs)
         if quality is not None:
             signals["quality"] = quality
-            gprint(
-                f"    quality: {quality['quality_label']} "
+            mprint(
+                f"  [quality] {quality['quality_label']} "
                 f"(F-Score={quality['f_score_raw']}/{quality['signals_evaluated']}, "
                 f"score={quality['quality_score']})"
             )
         else:
             signals["quality"] = None
-            gprint(f"    quality: insufficient data")
+            mprint(f"  [quality] insufficient data")
 
         # ── Step 5: News Sentiment Signal ──────────────────────────────────
         # (distinct from a future Management Risk Sentiment Signal, which
@@ -144,14 +144,14 @@ def quant_engine(state: AgentState) -> dict:
         news_sent = news_sentiment_signal(ticker, news_articles)
         if news_sent is not None:
             signals["news_sentiment"] = news_sent
-            gprint(
-                f"    news_sentiment: {news_sent['sentiment_label']} "
+            mprint(
+                f"  [news_sentiment] {news_sent['sentiment_label']} "
                 f"(score={news_sent['sentiment_score']}, "
                 f"n={news_sent['total_articles']})"
             )
         else:
             signals["news_sentiment"] = None
-            gprint(f"    news_sentiment: insufficient data")
+            mprint(f"  [news_sentiment] insufficient data")
 
         # ── Step 6: Consensus Signal ──────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_consensus"].format(ticker=ticker)})
@@ -159,14 +159,14 @@ def quant_engine(state: AgentState) -> dict:
         consensus = consensus_signal(data, consensus_inputs)
         if consensus is not None:
             signals["consensus"] = consensus
-            gprint(
-                f"    consensus: recommendation={consensus['recommendation_label']} "
+            mprint(
+                f"  [consensus] recommendation={consensus['recommendation_label']} "
                 f"upside={consensus['upside_label']} "
                 f"trend={consensus['trend_label']}"
             )
         else:
             signals["consensus"] = None
-            gprint(f"    consensus: insufficient data")
+            mprint(f"  [consensus] insufficient data")
 
         quant_signals[ticker] = signals
 
