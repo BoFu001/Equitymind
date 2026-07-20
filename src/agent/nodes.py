@@ -11,7 +11,7 @@ from langgraph.config import get_stream_writer
 from core.context import token_queue_var
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.formatters import format_stock_snapshot, format_news, format_sec_chunks, format_conversation_context, format_quant_signals
+from src.agent.formatters import format_stock_snapshot, format_sec_chunks, format_conversation_context, format_quant_signals
 from colors import gprint, rprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -659,7 +659,6 @@ def generate_report(state: AgentState) -> dict:
     tickers             = state.get("tickers") or []
     all_chunks          = state.get("chunks") or {}
     all_stock_snapshots = state.get("stock_snapshots") or {}
-    all_news            = state.get("news") or {}
     quant_signals       = state.get("quant_signals") or {}
     messages            = state.get("messages") or []
 
@@ -674,9 +673,6 @@ def generate_report(state: AgentState) -> dict:
         format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t) else f"\n{t}: No SEC 10-K filing available.\n"
         for t in tickers
     )
-
-    # ── Format news ──
-    news_context   = "".join(format_news(all_news.get(t, []), t) for t in tickers if all_news.get(t))
 
     # ── Format quant signals ──
     quant_context = "".join(format_quant_signals(quant_signals.get(t, {}), t) for t in tickers)
@@ -780,9 +776,6 @@ MARKET DATA:
 
 SEC FILING DATA:
 {sec_context}
-
-NEWS:
-{news_context}
 
 QUANTITATIVE SIGNALS:
 {quant_context if quant_context else "No quantitative signals available."}"""

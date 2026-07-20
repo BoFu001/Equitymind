@@ -25,23 +25,6 @@ def format_stock_snapshot(data: dict, ticker: str) -> str:
 """
 
 
-def format_news(articles: list, ticker: str) -> str:
-    """
-    Formats raw, already-filtered news articles for display in the LLM
-    prompt. These articles come from fetch_company_news() (see
-    src/tools/news_data.py) and do NOT include sentiment/score -- that
-    scoring happens separately in src/quant/news_sentiment_signal.py and
-    is shown to the LLM via quant_context, not here. This function shows
-    only the raw article content (title, summary, URL, published date).
-    """
-    news_context = f"\n{ticker} News:\n"
-    for article in articles:
-        news_context += f"- {article.get('title','')}\n"
-        news_context += f"  Summary: {article.get('summary','')}\n"
-        news_context += f"  URL: {article.get('url','')}\n"
-        news_context += f"  Published: {article.get('published','')}\n"
-    return news_context
-
 
 def format_sec_chunks(chunks: list, ticker: str) -> str:
     sec_context = f"\n{ticker} SEC Filing:\n"
@@ -162,6 +145,11 @@ def format_news_sentiment(news_sentiment: dict | None) -> str:
     Media tone on recent company-specific news, distinct from Consensus
     (professional analyst opinion) and a future Management Risk
     Sentiment Signal (10-K risk section tone).
+
+    Includes the full per-article list (title, url, published, sentiment)
+    -- this is the only place article-level news data reaches the LLM,
+    since news_sentiment_signal's "articles" field already contains
+    everything news_data.py provides, plus the FinBERT sentiment label.
     """
     if not news_sentiment:
         return "  News Sentiment: Insufficient data.\n"
@@ -169,6 +157,14 @@ def format_news_sentiment(news_sentiment: dict | None) -> str:
     text += f"  {news_sentiment['detail']}\n"
     if news_sentiment.get("low_confidence"):
         text += f"  ⚠️ Low article count — reduced confidence in this signal.\n"
+
+    articles = news_sentiment.get("articles") or []
+    if articles:
+        text += f"  Articles ({len(articles)}):\n"
+        for a in articles:
+            text += f"    - [{a['sentiment'].upper()}] (confidence={a['score']}) {a['title']}\n"
+            text += f"      URL: {a['url']}\n"
+            text += f"      Published: {a['published']}\n"
     return text
 
 
