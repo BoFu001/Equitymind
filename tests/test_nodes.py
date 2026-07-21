@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 from unittest.mock import patch, MagicMock
 from src.agent.state import AgentState
@@ -378,7 +379,7 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
     result, but not representative of a realistic partial-success case.
     """
     state = make_state(question="What is Apple's P/E ratio?", tickers=["AAPL"])
-    result = fetch_all_data(state)
+    result = asyncio.run(fetch_all_data(state))
 
     assert "AAPL" in result["stock_snapshots"]
     assert "AAPL" in result["news"]
@@ -398,7 +399,7 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
 def test_fetch_all_data_full_analysis_question(*_):
     """A full-analysis question fetches everything, same as a simple one — no branching."""
     state = make_state(question="Analyse Apple", tickers=["AAPL"])
-    result = fetch_all_data(state)
+    result = asyncio.run(fetch_all_data(state))
 
     assert "AAPL" in result["stock_snapshots"]
     assert "stock_snapshots" in result
@@ -416,7 +417,7 @@ def test_fetch_all_data_full_analysis_question(*_):
 def test_fetch_all_data_returns_state_fields(*_):
     """fetch_all_data must always return all six state fields, even if every fetch fails."""
     state = make_state(question="Hello", tickers=["AAPL"])
-    result = fetch_all_data(state)
+    result = asyncio.run(fetch_all_data(state))
     assert "chunks" in result
     assert "stock_snapshots" in result
     assert "news" in result

@@ -22,6 +22,8 @@ low-cost APIs) that unconditional fetching costs little relative to the
 reliability gained from removing an unpredictable LLM decision point.
 """
 
+import asyncio
+
 from src.tools.market_data import get_stock_snapshot, get_risk_inputs, get_quality_inputs, get_consensus_inputs
 from src.tools.news_data import fetch_company_news
 from src.tools.sec_retrieval import retrieve, fetch_embed_store_retrieve
@@ -126,11 +128,24 @@ def _fetch_sec_data(ticker: str, question: str) -> list:
 # Main node: unconditional fetch for every ticker
 # ─────────────────────────────────────────────
 
-def fetch_all_data(state: AgentState) -> dict:
+async def fetch_all_data(state: AgentState) -> dict:
     """
     Fetches market data, news, and SEC filing excerpts for every ticker
-    in state["tickers"], unconditionally and in a fixed order — no LLM
-    judgement involved in deciding what to fetch.
+    in state["tickers"] — no LLM judgement involved in deciding what to
+    fetch.
+
+    The 6 data sources per ticker (stock_snapshot, risk_inputs,
+    quality_inputs, consensus_inputs, news, SEC chunks) have no
+    dependencies on each other's results (see news_data.py — company_name
+    resolution was moved inside that module for exactly this reason), so
+    they are fetched concurrently via asyncio.gather + asyncio.to_thread.
+    asyncio.to_thread propagates the current contextvars context to the
+    worker thread, so get_stream_writer() inside each _fetch_xxx function
+    keeps working with no changes needed there.
+
+    Multiple tickers (e.g. a COMPARISON question) are still fetched one
+    ticker at a time — only the 6 data sources *within* a ticker are
+    parallelized in this pass.
     """
     writer = get_stream_writer()
     writer({"type": "progress", "node": "fetch_all_data", "message": NODE_PROGRESS["fetch_all_data"]})
@@ -149,29 +164,25 @@ def fetch_all_data(state: AgentState) -> dict:
     all_chunks          = {}
 
     for ticker in tickers:
-        # yfinance-sourced data grouped together first
-        stock_snapshot = _fetch_stock_snapshot(ticker)
+        stock_snapshot, risk_inputs, quality_inputs, consensus_inputs, news_articles, sec_chunks = await asyncio.gather(
+            asyncio.to_thread(_fetch_stock_snapshot, ticker),
+            asyncio.to_thread(_fetch_risk_inputs, ticker),
+            asyncio.to_thread(_fetch_quality_inputs, ticker),
+            asyncio.to_thread(_fetch_consensus_inputs, ticker),
+            asyncio.to_thread(_fetch_news, ticker),
+            asyncio.to_thread(_fetch_sec_data, ticker, question),
+        )
+
         if stock_snapshot:
             all_stock_snapshots[ticker] = stock_snapshot
-
-        risk_inputs = _fetch_risk_inputs(ticker)
         if risk_inputs:
             all_risk[ticker] = risk_inputs
-
-        quality_inputs = _fetch_quality_inputs(ticker)
         if quality_inputs:
             all_quality[ticker] = quality_inputs
-
-        consensus_inputs = _fetch_consensus_inputs(ticker)
         if consensus_inputs:
             all_consensus[ticker] = consensus_inputs
-
-        # Other data sources (finlight, SEC EDGAR)
-        news_articles = _fetch_news(ticker)
         if news_articles:
             all_news[ticker] = news_articles
-
-        sec_chunks = _fetch_sec_data(ticker, question)
         if sec_chunks:
             all_chunks[ticker] = sec_chunks
 
