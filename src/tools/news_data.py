@@ -41,6 +41,7 @@ import json
 from pathlib import Path
 
 import requests
+import yfinance as yf
 from datetime import datetime, timedelta
 from openai import OpenAI
 
@@ -55,7 +56,7 @@ UNIVERSE_PATH = Path(__file__).parent.parent / "quant" / "data" / "stock_univers
 # Common name lookup (precomputed, with LLM fallback)
 # ─────────────────────────────────────────────
 
-def _get_common_name(ticker: str, company_name: str) -> str:
+def _get_common_name(ticker: str) -> str:
     """
     Returns the short, common name a news headline would use for this
     company (e.g. "Tesla" for "Tesla, Inc.").
@@ -63,22 +64,38 @@ def _get_common_name(ticker: str, company_name: str) -> str:
     Looks up stock_universe.json first, since common_name is precomputed
     there for the whole 250-ticker universe (see
     scripts/update_common_names.py) — this is the fast, free path for
-    any ticker already in the universe.
+    any ticker already in the universe, and covers the vast majority of
+    real traffic.
 
-    Falls back to a live LLM call only for tickers NOT in the universe
-    (e.g. small-caps, recent IPOs) — this result is not cached, since
-    it's expected to be an occasional exception, not the common case.
+    Falls back to a live yfinance lookup + LLM call only for tickers NOT
+    in the universe (e.g. small-caps, recent IPOs) — this result is not
+    cached, since it's expected to be an occasional exception, not the
+    common case. This module resolves the full legal name itself in that
+    fallback case (rather than requiring the caller to supply it), so
+    that news fetching has no dependency on any other data source
+    (e.g. fetch_all_data's stock_snapshot) and can run fully in parallel
+    with it.
     """
     try:
         with open(UNIVERSE_PATH, "r") as f:
             universe = json.load(f)
         details = universe.get("details", {})
         if ticker in details and "common_name" in details[ticker]:
+            print(f"  [_get_common_name] {ticker}: UNIVERSE HIT — {details[ticker]['common_name']!r}")
             return details[ticker]["common_name"]
     except (FileNotFoundError, json.JSONDecodeError):
         pass
 
-    # Fallback: ticker not in the precomputed universe — ask the LLM live
+    # Fallback: ticker not in the precomputed universe. Resolve the full
+    # legal name ourselves (one lightweight yfinance call) rather than
+    # depending on a snapshot fetched elsewhere, then ask the LLM live.
+    print(f"  [_get_common_name] {ticker}: FALLBACK PATH — not in universe, querying yfinance...")
+    try:
+        company_name = yf.Ticker(ticker).info.get("longName") or ticker
+    except Exception:
+        company_name = ticker
+    print(f"  [_get_common_name] {ticker}: FALLBACK PATH — yfinance longName={company_name!r}")
+
     prompt = f'''The company\'s official full legal name is: "{company_name}"
 
 Extract the short, common name this company is most often called in
@@ -147,7 +164,7 @@ def _warn_if_downgraded(articles: list) -> None:
 # Main entry point: fetch + filter
 # ─────────────────────────────────────────────
 
-def fetch_company_news(ticker: str, company_name: str, max_articles: int = 100, days_back: int = 30) -> list:
+def fetch_company_news(ticker: str, max_articles: int = 100, days_back: int = 30) -> list:
     """
     Fetches recent news for a ticker from finlight.me, then filters to
     only company-specific articles (title contains the company's common
@@ -157,10 +174,15 @@ def fetch_company_news(ticker: str, company_name: str, max_articles: int = 100, 
     No sentiment scoring happens here — see module docstring. Returns a
     list of already-filtered articles with basic fields only.
 
+    Takes only a ticker — no company_name input. The common name is
+    resolved entirely inside this module (precomputed universe lookup,
+    with a self-contained yfinance + LLM fallback for tickers outside
+    it — see _get_common_name), so this function has no dependency on
+    any other data source and can be fetched fully in parallel with
+    stock_snapshot, risk_inputs, quality_inputs, consensus_inputs, etc.
+
     Args:
         ticker: stock ticker symbol, e.g. "TSLA"
-        company_name: full legal company name, e.g. "Tesla, Inc." — used
-                      to look up (or derive) the common_name for filtering
         max_articles: max articles to request from finlight (1-100)
         days_back: how many days back to search
 
@@ -168,7 +190,7 @@ def fetch_company_news(ticker: str, company_name: str, max_articles: int = 100, 
         list of dicts, each with "title", "url", "published", "summary" —
         already filtered to company-specific articles only.
     """
-    common_name = _get_common_name(ticker, company_name)
+    common_name = _get_common_name(ticker)
 
     date_from = (datetime.now() - timedelta(days=days_back)).strftime("%Y-%m-%d")
 

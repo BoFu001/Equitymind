@@ -91,11 +91,11 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
 # News Data
 # ─────────────────────────────────────────────
 
-def _fetch_news(ticker: str, company_name: str) -> list:
+def _fetch_news(ticker: str) -> list:
     writer = get_stream_writer()
     writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["news_data"].format(ticker=ticker)})
 
-    articles = fetch_company_news(ticker, company_name)
+    articles = fetch_company_news(ticker)
     bprint(f"  [_fetch_news] Fetched for {ticker}")
     return articles
 
@@ -167,8 +167,7 @@ def fetch_all_data(state: AgentState) -> dict:
             all_consensus[ticker] = consensus_inputs
 
         # Other data sources (finlight, SEC EDGAR)
-        company_name = (stock_snapshot or {}).get("company_name") or ticker
-        news_articles = _fetch_news(ticker, company_name)
+        news_articles = _fetch_news(ticker)
         if news_articles:
             all_news[ticker] = news_articles
 
