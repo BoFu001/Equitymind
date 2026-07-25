@@ -1,0 +1,3289 @@
+{
+    "updated_at": "2026-07-25",
+    "source": "yfinance (P/E-P/B) + peer_groups.json (peer identity) + Damodaran industry dataset (P/E fallback)",
+    "notes": "No FMP calls in this script \u2014 safe to run daily. Peer identity itself comes from peer_groups.json (see update_peer_groups.py, run separately/infrequently).",
+    "default_pe": 25.54,
+    "default_pb": 5.44,
+    "default_ps": 3.7,
+    "benchmarks": {
+        "NVDA": {
+            "benchmark_pe": 55.25,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.84,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AAPL",
+                "ADI",
+                "AVGO",
+                "ENTG",
+                "GOOGL",
+                "MSFT",
+                "TER"
+            ]
+        },
+        "AAPL": {
+            "benchmark_pe": 22.73,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.28,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "GOOGL",
+                "META",
+                "MSFT",
+                "NVDA",
+                "NXT",
+                "RIME",
+                "TBCH"
+            ]
+        },
+        "GOOG": {
+            "benchmark_pe": 31.63,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 8.42,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AAPL",
+                "AVGO",
+                "CSCO",
+                "EXLS",
+                "FLEX",
+                "GRMN",
+                "META",
+                "MSFT",
+                "NVDA"
+            ]
+        },
+        "GOOGL": {
+            "benchmark_pe": 34.84,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 8.82,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AAPL",
+                "AVGO",
+                "CSCO",
+                "FLEX",
+                "GRMN",
+                "META",
+                "MSFT",
+                "NVDA"
+            ]
+        },
+        "MSFT": {
+            "benchmark_pe": 27.11,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 8.82,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AAPL",
+                "DOCN",
+                "FTNT",
+                "GDDY",
+                "GOOGL",
+                "NVDA",
+                "ORCL",
+                "RPD",
+                "SPSC"
+            ]
+        },
+        "AMZN": {
+            "benchmark_pe": 30.89,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.39,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CASY",
+                "ETSY",
+                "GME",
+                "LITB",
+                "LQDT",
+                "RH",
+                "RVLV",
+                "TLF"
+            ]
+        },
+        "AVGO": {
+            "benchmark_pe": 23.9,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.93,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADI",
+                "AMD",
+                "FORM",
+                "META",
+                "MU",
+                "POWI",
+                "QRVO",
+                "SMTC"
+            ]
+        },
+        "SPCX": {
+            "benchmark_pe": 35.27,
+            "pe_source": "damodaran",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "META": {
+            "benchmark_pe": 23.96,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.01,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "AVGO",
+                "CSCO",
+                "GOOGL",
+                "GRMN",
+                "IBM",
+                "MU",
+                "ORCL"
+            ]
+        },
+        "TSLA": {
+            "benchmark_pe": 36.89,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.53,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "F",
+                "GM",
+                "RIVN"
+            ]
+        },
+        "MU": {
+            "benchmark_pe": 40.31,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 15.16,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ARM",
+                "CRM",
+                "CSCO",
+                "IBM",
+                "KLAC",
+                "LRCX",
+                "QCOM",
+                "TXN"
+            ]
+        },
+        "LLY": {
+            "benchmark_pe": 25.86,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.06,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABBV",
+                "AMGN",
+                "AZN",
+                "GILD",
+                "JNJ",
+                "MRK",
+                "NVS",
+                "PFE"
+            ]
+        },
+        "JPM": {
+            "benchmark_pe": 14.33,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.62,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "C",
+                "HSBC",
+                "NU",
+                "WFC"
+            ]
+        },
+        "AMD": {
+            "benchmark_pe": 50.49,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 25.6,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ARM",
+                "KLAC",
+                "LRCX",
+                "MU",
+                "PLTR",
+                "QCOM",
+                "TXN"
+            ]
+        },
+        "WMT": {
+            "benchmark_pe": 21.46,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.86,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BJ",
+                "COST",
+                "DG",
+                "DLTR",
+                "KO",
+                "KR",
+                "OLLI",
+                "PG",
+                "PSMT",
+                "TGT"
+            ]
+        },
+        "V": {
+            "benchmark_pe": 14.73,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.5,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ALLY",
+                "AXP",
+                "BAC",
+                "JPM",
+                "MA",
+                "PYPL",
+                "SEZL",
+                "SLM"
+            ]
+        },
+        "XOM": {
+            "benchmark_pe": 13.77,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.1,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BP",
+                "CVX",
+                "EQNR",
+                "SHEL",
+                "TTE"
+            ]
+        },
+        "JNJ": {
+            "benchmark_pe": 25.86,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.83,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABBV",
+                "AMGN",
+                "AZN",
+                "GILD",
+                "MRK",
+                "NVS",
+                "PFE",
+                "UNH"
+            ]
+        },
+        "MA": {
+            "benchmark_pe": 19.8,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.5,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ALLY",
+                "AXP",
+                "COF",
+                "PYPL",
+                "SOFI",
+                "UPST",
+                "V"
+            ]
+        },
+        "ABBV": {
+            "benchmark_pe": 25.86,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.94,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMGN",
+                "AZN",
+                "GILD",
+                "JNJ",
+                "MRK",
+                "NVS",
+                "PFE",
+                "UNH"
+            ]
+        },
+        "AMAT": {
+            "benchmark_pe": 42.55,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 14.34,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ARM",
+                "INTC",
+                "INTU",
+                "KLAC",
+                "LRCX",
+                "MU",
+                "NOW",
+                "QCOM",
+                "TXN"
+            ]
+        },
+        "CSCO": {
+            "benchmark_pe": 20.83,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 14.34,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ANET",
+                "CRM",
+                "IBM",
+                "LRCX",
+                "MSI",
+                "MU",
+                "QCOM",
+                "UBER"
+            ]
+        },
+        "BAC": {
+            "benchmark_pe": 15.32,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.26,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "C",
+                "GS",
+                "HSBC",
+                "WFC"
+            ]
+        },
+        "CAT": {
+            "benchmark_pe": 36.98,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.32,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AGCO",
+                "ASTE",
+                "DE",
+                "ETN",
+                "GE",
+                "HY",
+                "PCAR",
+                "PH",
+                "RTX"
+            ]
+        },
+        "COST": {
+            "benchmark_pe": 21.37,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.58,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BJ",
+                "DG",
+                "DLTR",
+                "KO",
+                "OLLI",
+                "PG",
+                "PSMT",
+                "TGT",
+                "WMT"
+            ]
+        },
+        "LRCX": {
+            "benchmark_pe": 31.69,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 14.75,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ANET",
+                "ARM",
+                "INTC",
+                "INTU",
+                "KLAC",
+                "MU",
+                "QCOM",
+                "TXN",
+                "UBER"
+            ]
+        },
+        "CVX": {
+            "benchmark_pe": 13.77,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.56,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BP",
+                "EQNR",
+                "SHEL",
+                "TTE",
+                "XOM"
+            ]
+        },
+        "UNH": {
+            "benchmark_pe": 30.58,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.45,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABT",
+                "AZN",
+                "CI",
+                "CVS",
+                "ELV",
+                "HUM",
+                "MRK",
+                "NVS",
+                "TMO"
+            ]
+        },
+        "GE": {
+            "benchmark_pe": 38.04,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.62,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BA",
+                "CAT",
+                "DRS",
+                "GD",
+                "LHX",
+                "LMT",
+                "NOC",
+                "RTX",
+                "TDG",
+                "WWD"
+            ]
+        },
+        "KO": {
+            "benchmark_pe": 22.3,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.42,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BUD",
+                "COKE",
+                "KDP",
+                "MNST",
+                "PEP",
+                "PG"
+            ]
+        },
+        "ORCL": {
+            "benchmark_pe": 67.07,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.1,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADBE",
+                "FTNT",
+                "HPAI",
+                "IIIV",
+                "PLTR",
+                "RDWR",
+                "SNPS"
+            ]
+        },
+        "PG": {
+            "benchmark_pe": 22.95,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.01,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CL",
+                "CLX",
+                "COST",
+                "EPC",
+                "KMB",
+                "KO",
+                "KVUE",
+                "SPB"
+            ]
+        },
+        "MS": {
+            "benchmark_pe": 20.49,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.67,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "APLD",
+                "BTBT",
+                "CLSK",
+                "EVR",
+                "GS",
+                "HUT",
+                "LAZ",
+                "MARA",
+                "MC",
+                "NCPL",
+                "PJT",
+                "RIOT",
+                "SF",
+                "TOP"
+            ]
+        },
+        "HD": {
+            "benchmark_pe": 21.12,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.36,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ARHS",
+                "BKNG",
+                "FND",
+                "HVT",
+                "LOW",
+                "MCD"
+            ]
+        },
+        "MRK": {
+            "benchmark_pe": 25.53,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.54,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABT",
+                "AMGN",
+                "AZN",
+                "GILD",
+                "NVS",
+                "PFE",
+                "TMO"
+            ]
+        },
+        "GS": {
+            "benchmark_pe": 17.95,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.36,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AXP",
+                "HSBC",
+                "MS",
+                "SCHW"
+            ]
+        },
+        "ARM": {
+            "benchmark_pe": 47.18,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 13.43,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "APH",
+                "INTC",
+                "INTU",
+                "KLAC",
+                "LRCX",
+                "NOW",
+                "QCOM",
+                "TXN"
+            ]
+        },
+        "PLTR": {
+            "benchmark_pe": 18.99,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.01,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADBE",
+                "AMD",
+                "CRM",
+                "CRWD",
+                "CSCO",
+                "ORCL",
+                "PANW",
+                "PATH"
+            ]
+        },
+        "NFLX": {
+            "benchmark_pe": 59.42,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.72,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "DIS",
+                "IMAX",
+                "MSGE",
+                "NWSA",
+                "PLAY",
+                "RSVR",
+                "TKO",
+                "WBD",
+                "WMG"
+            ]
+        },
+        "KLAC": {
+            "benchmark_pe": 43.87,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 13.43,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ACN",
+                "ADI",
+                "AMAT",
+                "APH",
+                "ARM",
+                "INTC",
+                "LRCX",
+                "QCOM",
+                "TXN"
+            ]
+        },
+        "RTX": {
+            "benchmark_pe": 39.07,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.96,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BA",
+                "CAT",
+                "DRS",
+                "ETN",
+                "GD",
+                "GE",
+                "LHX",
+                "LMT",
+                "NOC",
+                "TDG"
+            ]
+        },
+        "GEV": {
+            "benchmark_pe": 23.64,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.66,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AQN",
+                "CEG",
+                "CWEN",
+                "DUK",
+                "ENLT",
+                "NEE",
+                "ORA",
+                "SO"
+            ]
+        },
+        "PANW": {
+            "benchmark_pe": 51.46,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 11.06,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ACN",
+                "ADBE",
+                "APH",
+                "CRWD",
+                "FTNT",
+                "KLAC",
+                "NOW",
+                "SNPS",
+                "TXN"
+            ]
+        },
+        "WFC": {
+            "benchmark_pe": 15.13,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.74,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "C",
+                "JPM",
+                "NU",
+                "UBS"
+            ]
+        },
+        "TXN": {
+            "benchmark_pe": 59.45,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.65,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADI",
+                "AMD",
+                "AVGO",
+                "INTC",
+                "LSCC",
+                "MCHP",
+                "MPWR",
+                "MRVL",
+                "MU",
+                "NXPI",
+                "ON",
+                "QCOM",
+                "QRVO"
+            ]
+        },
+        "AXP": {
+            "benchmark_pe": 14.47,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.5,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ALLY",
+                "CAT",
+                "COF",
+                "GS",
+                "MA",
+                "PYPL",
+                "V",
+                "WFC"
+            ]
+        },
+        "ANET": {
+            "benchmark_pe": 43.87,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 10.26,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "APH",
+                "APP",
+                "INTU",
+                "LRCX",
+                "NOW",
+                "QCOM",
+                "SHOP",
+                "UBER"
+            ]
+        },
+        "C": {
+            "benchmark_pe": 14.33,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.62,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "HSBC",
+                "WFC"
+            ]
+        },
+        "TMO": {
+            "benchmark_pe": 27.88,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.58,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "A",
+                "ABT",
+                "AMGN",
+                "AZN",
+                "DHR",
+                "IQV",
+                "ISRG",
+                "MRK",
+                "NVS"
+            ]
+        },
+        "STX": {
+            "benchmark_pe": 32.41,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 13.88,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADSK",
+                "DDOG",
+                "EA",
+                "FTNT",
+                "INFY",
+                "MPWR",
+                "MSI",
+                "NXPI",
+                "SMCI",
+                "WDC"
+            ]
+        },
+        "AMGN": {
+            "benchmark_pe": 18.73,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.32,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BMY",
+                "BSX",
+                "DHR",
+                "GILD",
+                "MRK",
+                "NVS",
+                "PFE"
+            ]
+        },
+        "IBM": {
+            "benchmark_pe": 18.38,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.92,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ACN",
+                "CRM",
+                "CSCO",
+                "EPAM",
+                "III",
+                "INFY",
+                "MU"
+            ]
+        },
+        "WDC": {
+            "benchmark_pe": 46.62,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.75,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "DDOG",
+                "EA",
+                "GRMN",
+                "INFY",
+                "MPWR",
+                "MSI",
+                "NXPI",
+                "SMCI",
+                "STX",
+                "XYZ"
+            ]
+        },
+        "MRVL": {
+            "benchmark_pe": 64.78,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.22,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "FTNT",
+                "GLW",
+                "INFY",
+                "MPWR",
+                "MSTR",
+                "NXPI",
+                "SNPS",
+                "TEL"
+            ]
+        },
+        "NEE": {
+            "benchmark_pe": 24.87,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.32,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AEP",
+                "D",
+                "DUK",
+                "ETR",
+                "GEV",
+                "SO",
+                "XEL"
+            ]
+        },
+        "CRWD": {
+            "benchmark_pe": 55.25,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.92,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ACN",
+                "ADBE",
+                "ADI",
+                "CRWV",
+                "FTNT",
+                "KLAC",
+                "PANW",
+                "SNPS",
+                "TXN"
+            ]
+        },
+        "MCD": {
+            "benchmark_pe": 26.59,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 10.16,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BROS",
+                "CMG",
+                "DPZ",
+                "DRI",
+                "PZZA",
+                "QSR",
+                "SBUX",
+                "SHAK",
+                "WEN",
+                "WING",
+                "YUM",
+                "YUMC"
+            ]
+        },
+        "ADI": {
+            "benchmark_pe": 71.57,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.34,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CDNS",
+                "DELL",
+                "KLAC",
+                "MPWR",
+                "MRVL",
+                "MSTR",
+                "NXPI",
+                "SNPS",
+                "STM",
+                "TXN"
+            ]
+        },
+        "TMUS": {
+            "benchmark_pe": 12.08,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.5,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CMCSA",
+                "DIS",
+                "T",
+                "TDS",
+                "VZ"
+            ]
+        },
+        "PEP": {
+            "benchmark_pe": 25.3,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 10.48,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BUD",
+                "COKE",
+                "KDP",
+                "KO",
+                "MNST"
+            ]
+        },
+        "VZ": {
+            "benchmark_pe": 7.96,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.5,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CHTR",
+                "CMCSA",
+                "DIS",
+                "T",
+                "TMUS"
+            ]
+        },
+        "UNP": {
+            "benchmark_pe": 30.45,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.48,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADP",
+                "CSX",
+                "DE",
+                "ETN",
+                "HON",
+                "LMT",
+                "NSC",
+                "PH"
+            ]
+        },
+        "QCOM": {
+            "benchmark_pe": 50.49,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 16.24,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ANET",
+                "ARM",
+                "INTC",
+                "INTU",
+                "KLAC",
+                "LRCX",
+                "TXN",
+                "UBER"
+            ]
+        },
+        "SCHW": {
+            "benchmark_pe": 17.32,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.9,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "BLK",
+                "BX",
+                "C",
+                "GS",
+                "HOOD",
+                "MS"
+            ]
+        },
+        "ABT": {
+            "benchmark_pe": 30.58,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.51,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BSX",
+                "GILD",
+                "ISRG",
+                "MDT",
+                "MRK",
+                "NVS",
+                "SYK",
+                "TMO",
+                "UNH"
+            ]
+        },
+        "WELL": {
+            "benchmark_pe": 29.88,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.24,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMT",
+                "DLR",
+                "EQIX",
+                "LTC",
+                "NHI",
+                "PLD",
+                "UHT",
+                "VTR"
+            ]
+        },
+        "TJX": {
+            "benchmark_pe": 23.41,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 11.85,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BKNG",
+                "BOOT",
+                "BURL",
+                "LOW",
+                "MCD",
+                "MELI",
+                "NKE",
+                "ORLY",
+                "ROST"
+            ]
+        },
+        "BLK": {
+            "benchmark_pe": 29.4,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.76,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "APO",
+                "ARCC",
+                "ARES",
+                "BAM",
+                "BEN",
+                "BN",
+                "BX",
+                "CG",
+                "IVZ",
+                "KKR",
+                "MAIN",
+                "NTRS",
+                "TROW"
+            ]
+        },
+        "BA": {
+            "benchmark_pe": 24.6,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.41,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ETN",
+                "FLY",
+                "GD",
+                "HON",
+                "LHX",
+                "LMT",
+                "NOC",
+                "RTX",
+                "UNP",
+                "VOYG"
+            ]
+        },
+        "DE": {
+            "benchmark_pe": 28.2,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.67,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AGCO",
+                "CAT",
+                "CMI",
+                "CNH",
+                "HON",
+                "PCAR",
+                "UNP"
+            ]
+        },
+        "GILD": {
+            "benchmark_pe": 26.19,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.51,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMGN",
+                "BMY",
+                "BSX",
+                "DHR",
+                "MRK",
+                "PFE",
+                "SYK"
+            ]
+        },
+        "DIS": {
+            "benchmark_pe": 12.99,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.98,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CMCSA",
+                "FOXA",
+                "SBGI",
+                "T",
+                "TMUS",
+                "VZ"
+            ]
+        },
+        "ETN": {
+            "benchmark_pe": 34.25,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 8.96,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BA",
+                "CMI",
+                "DE",
+                "EMR",
+                "HON",
+                "HWM",
+                "ITW",
+                "LMT",
+                "PH",
+                "UNP"
+            ]
+        },
+        "T": {
+            "benchmark_pe": 12.08,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.52,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CHTR",
+                "CMCSA",
+                "DIS",
+                "TMUS",
+                "VZ"
+            ]
+        },
+        "COP": {
+            "benchmark_pe": 14.34,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.69,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BP",
+                "EOG",
+                "EPD",
+                "EQNR",
+                "FANG",
+                "TTE"
+            ]
+        },
+        "SHOP": {
+            "benchmark_pe": 34.11,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.58,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ANET",
+                "APP",
+                "CRM",
+                "INTU",
+                "LRCX",
+                "NOW",
+                "QCOM",
+                "UBER"
+            ]
+        },
+        "PFE": {
+            "benchmark_pe": 26.19,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.32,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMGN",
+                "BMY",
+                "BSX",
+                "DHR",
+                "GILD",
+                "MRK",
+                "SYK"
+            ]
+        },
+        "UBER": {
+            "benchmark_pe": 50.49,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 10.26,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ANET",
+                "APP",
+                "CRM",
+                "INTU",
+                "LRCX",
+                "NOW",
+                "QCOM",
+                "SHOP"
+            ]
+        },
+        "PLD": {
+            "benchmark_pe": 35.32,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.77,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMT",
+                "DLR",
+                "EGP",
+                "EQIX",
+                "EXR",
+                "PSA",
+                "SPG",
+                "WELL"
+            ]
+        },
+        "CB": {
+            "benchmark_pe": 24.06,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.8,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "IBKR",
+                "KKR",
+                "PGR",
+                "TRV",
+                "UBS"
+            ]
+        },
+        "CVS": {
+            "benchmark_pe": 21.93,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.52,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BMY",
+                "CI",
+                "COR",
+                "ELV",
+                "HCA",
+                "HUM",
+                "MCK",
+                "MDT",
+                "VRTX"
+            ]
+        },
+        "DHR": {
+            "benchmark_pe": 22.31,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.79,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMGN",
+                "BSX",
+                "GILD",
+                "ISRG",
+                "MCK",
+                "MDT",
+                "PFE",
+                "SYK",
+                "TMO"
+            ]
+        },
+        "APP": {
+            "benchmark_pe": 33.28,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.36,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AI",
+                "ASAN",
+                "BILL",
+                "DDOG",
+                "DOCU",
+                "FROG",
+                "GTLB",
+                "INTU",
+                "MNDY",
+                "SHOP",
+                "SNOW",
+                "TEAM",
+                "WDAY",
+                "ZM"
+            ]
+        },
+        "BKNG": {
+            "benchmark_pe": 22.98,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 11.77,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABNB",
+                "EXPE",
+                "LOW",
+                "MCD",
+                "MELI"
+            ]
+        },
+        "LMT": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CRM": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "BMY": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "SPGI": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PH": {
+            "benchmark_pe": 28.46,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 12.38,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CMI",
+                "EMR",
+                "GD",
+                "HWM",
+                "ITW",
+                "LMT",
+                "MMM",
+                "NOC",
+                "TT"
+            ]
+        },
+        "COF": {
+            "benchmark_pe": 26.95,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.62,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "HOOD",
+                "PGR",
+                "SPGI",
+                "UBS"
+            ]
+        },
+        "SYK": {
+            "benchmark_pe": 21.93,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.56,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMGN",
+                "BSX",
+                "DHR",
+                "GILD",
+                "HCA",
+                "MCK",
+                "MDT",
+                "PFE",
+                "VRTX"
+            ]
+        },
+        "PGR": {
+            "benchmark_pe": 14.33,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.87,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "CB",
+                "IBKR",
+                "TRV",
+                "UBS"
+            ]
+        },
+        "VRTX": {
+            "benchmark_pe": 22.12,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.15,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ARGX",
+                "BMY",
+                "CVS",
+                "HCA",
+                "MCK",
+                "MDT",
+                "REGN",
+                "SYK"
+            ]
+        },
+        "ISRG": {
+            "benchmark_pe": 42.02,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.9,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAX",
+                "BDX",
+                "BNGO",
+                "COO",
+                "ICUI",
+                "LUCY",
+                "MMSI",
+                "NXGL",
+                "RGEN",
+                "RMD",
+                "STXS",
+                "TFX",
+                "WST"
+            ]
+        },
+        "SBUX": {
+            "benchmark_pe": 34.84,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 10.99,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABNB",
+                "CMG",
+                "CVNA",
+                "MAR",
+                "MELI",
+                "NKE",
+                "ORLY",
+                "RCL",
+                "SE"
+            ]
+        },
+        "LOW": {
+            "benchmark_pe": 28.47,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.39,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ARHS",
+                "BKNG",
+                "MELI",
+                "NKE",
+                "ORLY",
+                "RCL",
+                "SBUX",
+                "SE",
+                "TJX"
+            ]
+        },
+        "FTNT": {
+            "benchmark_pe": 37.92,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.04,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADSK",
+                "CRWV",
+                "INFY",
+                "MSI",
+                "MSTR",
+                "SNPS",
+                "STX",
+                "TEL",
+                "WDAY",
+                "XYZ"
+            ]
+        },
+        "SO": {
+            "benchmark_pe": 22.25,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.27,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AEP",
+                "CEG",
+                "D",
+                "DUK",
+                "ETR",
+                "EXC",
+                "NEE",
+                "XEL"
+            ]
+        },
+        "TT": {
+            "benchmark_pe": 30.66,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.5,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADP",
+                "CARR",
+                "EMR",
+                "GD",
+                "JCI",
+                "LMT",
+                "MMM",
+                "NOC",
+                "PH",
+                "WM"
+            ]
+        },
+        "MDT": {
+            "benchmark_pe": 25.13,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.06,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BMY",
+                "BSX",
+                "CVS",
+                "EW",
+                "HCA",
+                "MCK",
+                "SYK",
+                "VRTX"
+            ]
+        },
+        "GD": {
+            "benchmark_pe": 30.66,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 12.38,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADP",
+                "HWM",
+                "LHX",
+                "LMT",
+                "MMM",
+                "NOC",
+                "PH",
+                "TDG",
+                "TT",
+                "UPS"
+            ]
+        },
+        "EQIX": {
+            "benchmark_pe": 30.57,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.19,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMT",
+                "CCI",
+                "DLR",
+                "O",
+                "PLD",
+                "PSA",
+                "SPG"
+            ]
+        },
+        "DUK": {
+            "benchmark_pe": 23.54,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.32,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AEP",
+                "D",
+                "DTE",
+                "ETR",
+                "EXC",
+                "PEG",
+                "SO",
+                "WEC",
+                "XEL"
+            ]
+        },
+        "PNC": {
+            "benchmark_pe": 12.77,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.4,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CFG",
+                "FITB",
+                "HBAN",
+                "KEY",
+                "RF",
+                "TFC",
+                "USB",
+                "WAL",
+                "ZION"
+            ]
+        },
+        "USB": {
+            "benchmark_pe": 12.86,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.42,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "PNC",
+                "TFC"
+            ]
+        },
+        "CSX": {
+            "benchmark_pe": 28.71,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.5,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CMI",
+                "FDX",
+                "ITW",
+                "NSC",
+                "PWR",
+                "RSG",
+                "TRI",
+                "URI"
+            ]
+        },
+        "ADP": {
+            "benchmark_pe": 23.77,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.36,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "DE",
+                "GD",
+                "HON",
+                "LMT",
+                "MMM",
+                "NOC",
+                "PAYX",
+                "PH",
+                "TT",
+                "UPS"
+            ]
+        },
+        "UPS": {
+            "benchmark_pe": 28.46,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.47,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "EMR",
+                "FDX",
+                "GD",
+                "HWM",
+                "ITW",
+                "JCI",
+                "MMM",
+                "NOC",
+                "TDG",
+                "WM"
+            ]
+        },
+        "MAR": {
+            "benchmark_pe": 33.32,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 10.99,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABNB",
+                "AZO",
+                "CVNA",
+                "GM",
+                "HLT",
+                "IHG",
+                "ORLY",
+                "RCL",
+                "ROST"
+            ]
+        },
+        "WM": {
+            "benchmark_pe": 32.71,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.01,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CTAS",
+                "EMR",
+                "ITW",
+                "JCI",
+                "MMM",
+                "NOC",
+                "RSG",
+                "TDG",
+                "UPS",
+                "WCN"
+            ]
+        },
+        "NOW": {
+            "benchmark_pe": 34.11,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.51,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMAT",
+                "ANET",
+                "APP",
+                "CRM",
+                "INTU",
+                "LRCX",
+                "PANW",
+                "QCOM",
+                "SHOP",
+                "UBER"
+            ]
+        },
+        "NET": {
+            "benchmark_pe": 70.5,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.53,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CDNS",
+                "CRWV",
+                "FTNT",
+                "GLW",
+                "MRVL",
+                "MSTR",
+                "SNOW",
+                "SNPS",
+                "ZS"
+            ]
+        },
+        "WMB": {
+            "benchmark_pe": 16.79,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.73,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "EPD",
+                "ET",
+                "KMI",
+                "MPC",
+                "MPLX",
+                "OKE"
+            ]
+        },
+        "SNOW": {
+            "benchmark_pe": 56.33,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 11.26,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADSK",
+                "CDNS",
+                "CRWV",
+                "DDOG",
+                "GLW",
+                "MSI",
+                "MSTR",
+                "SNPS",
+                "WDAY"
+            ]
+        },
+        "CME": {
+            "benchmark_pe": 29.71,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.32,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAM",
+                "COIN",
+                "ICE",
+                "MCO",
+                "NDAQ"
+            ]
+        },
+        "CMI": {
+            "benchmark_pe": 27.84,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.96,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AME",
+                "CSX",
+                "FDX",
+                "ITW",
+                "NSC",
+                "PCAR",
+                "ROP",
+                "URI"
+            ]
+        },
+        "MNST": {
+            "benchmark_pe": 25.3,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.79,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CL",
+                "COKE",
+                "DEO",
+                "KDP",
+                "KR",
+                "MDLZ",
+                "TGT"
+            ]
+        },
+        "HOOD": {
+            "benchmark_pe": 18.57,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.87,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BAC",
+                "CB",
+                "COF",
+                "IBKR",
+                "KKR",
+                "SCHW",
+                "UBS"
+            ]
+        },
+        "MELI": {
+            "benchmark_pe": 25.26,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.1,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CPNG",
+                "CVNA",
+                "EBAY",
+                "LOW",
+                "NKE",
+                "SBUX"
+            ]
+        },
+        "MPC": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CDNS": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "MMM": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "DDOG": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "SPG": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ADBE": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "MRSH": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PSX": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ELV": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ABNB": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CTAS": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "EMR": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ICE": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ITW": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "TRV": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CMCSA": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "NSC": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "HON": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "EOG": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "MDLZ": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "INTU": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "AMT": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "RCL": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "AON": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "NOC": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CI": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "FDX": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ROST": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "DASH": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "AEP": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "GM": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "KMI": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "HLT": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CL": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "SNPS": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "URI": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ORLY": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "SLB": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "NXPI": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PCAR": {
+            "benchmark_pe": 27.48,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.99,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "URI"
+            ]
+        },
+        "MPWR": {
+            "benchmark_pe": 46.67,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.99,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "EA",
+                "GRMN",
+                "NXPI",
+                "STX",
+                "TEAM",
+                "TTWO",
+                "UI",
+                "WDC",
+                "XYZ"
+            ]
+        },
+        "REGN": {
+            "benchmark_pe": 20.79,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.18,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ALNY",
+                "ARGX",
+                "CI",
+                "COR",
+                "ELV",
+                "GMAB",
+                "IDXX",
+                "INCY",
+                "UTHR",
+                "ZTS"
+            ]
+        },
+        "DLR": {
+            "benchmark_pe": 31.21,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 9.55,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMT",
+                "CBRE",
+                "CCI",
+                "EQIX",
+                "O",
+                "PSA",
+                "SPG"
+            ]
+        },
+        "RSG": {
+            "benchmark_pe": 30.95,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.21,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CMI",
+                "CSX",
+                "FDX",
+                "ITW",
+                "NSC",
+                "PWR",
+                "WCN",
+                "WM"
+            ]
+        },
+        "ALL": {
+            "benchmark_pe": 10.73,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.14,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AFL",
+                "CB",
+                "CINF",
+                "HIG",
+                "PGR",
+                "TRV",
+                "WRB"
+            ]
+        },
+        "WBD": {
+            "benchmark_pe": 31.61,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.01,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CMCSA",
+                "FOXA",
+                "RDDT",
+                "TKO",
+                "WMG"
+            ]
+        },
+        "BSX": {
+            "benchmark_pe": 22.31,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.45,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ABT",
+                "AMGN",
+                "DHR",
+                "GILD",
+                "HCA",
+                "MCK",
+                "MDT",
+                "PFE",
+                "SYK"
+            ]
+        },
+        "AFL": {
+            "benchmark_pe": 12.79,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.29,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BHF",
+                "CNO",
+                "FG",
+                "JXN",
+                "LNC",
+                "MET",
+                "PRI",
+                "PRU",
+                "PUK",
+                "UNM"
+            ]
+        },
+        "TFC": {
+            "benchmark_pe": 13.53,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.54,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CFG",
+                "FITB",
+                "KEY",
+                "PNC",
+                "USB",
+                "ZION"
+            ]
+        },
+        "AJG": {
+            "benchmark_pe": 12.55,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.44,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AFL",
+                "AON",
+                "PYPL",
+                "TRV",
+                "WFC"
+            ]
+        },
+        "TRGP": {
+            "benchmark_pe": 16.61,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.05,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CQP",
+                "EQT",
+                "ET",
+                "FANG",
+                "OKE",
+                "OXY",
+                "PAA",
+                "WDS"
+            ]
+        },
+        "COHR": {
+            "benchmark_pe": 37.58,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.23,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ASTS",
+                "FLEX",
+                "FN",
+                "FTV",
+                "GFS",
+                "JBL",
+                "SATS",
+                "SSNC",
+                "TDY",
+                "TRMB"
+            ]
+        },
+        "SRE": {
+            "benchmark_pe": 23.2,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.32,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AEP",
+                "D",
+                "ETR",
+                "EXC",
+                "NEE",
+                "PEG",
+                "VST",
+                "WEC",
+                "XEL"
+            ]
+        },
+        "TGT": {
+            "benchmark_pe": 21.6,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 6.39,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "DG",
+                "DLTR",
+                "HSY",
+                "JBS",
+                "KDP",
+                "KMB",
+                "KR",
+                "SYY"
+            ]
+        },
+        "NKE": {
+            "benchmark_pe": 20.14,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.71,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AS",
+                "DECK",
+                "LULU",
+                "UA",
+                "VFC"
+            ]
+        },
+        "O": {
+            "benchmark_pe": 24.09,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.13,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADC",
+                "AKR",
+                "BRX",
+                "FRT",
+                "GTY",
+                "KIM",
+                "MAC",
+                "NNN",
+                "NTST",
+                "REG",
+                "SITC",
+                "SKT",
+                "SPG",
+                "WSR"
+            ]
+        },
+        "MET": {
+            "benchmark_pe": 12.37,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.3,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AFL",
+                "BHFAP",
+                "CNO",
+                "GL",
+                "JXN",
+                "LNC",
+                "PRU",
+                "PUK",
+                "UNM"
+            ]
+        },
+        "OKE": {
+            "benchmark_pe": 28.74,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.24,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ET",
+                "FANG",
+                "LNG",
+                "MPLX",
+                "OXY",
+                "TRGP"
+            ]
+        },
+        "TER": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "FANG": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CARR": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "OXY": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "F": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "BKR": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PSA": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "AME": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ETR": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "FAST": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "EA": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "DVN": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ROK": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "STT": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "XEL": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PYPL": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "EXC": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "EW": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "AZO": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "VTR": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "HUM": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "XYZ": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "MCHP": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "TTWO": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "IDXX": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "COIN": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "BDX": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "ED": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "AIG": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "CMG": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "LYV": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PRU": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "YUM": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "KDP": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PEG": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "AXON": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "A": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "PAYX": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "SYY": {
+            "benchmark_pe": 25.54,
+            "pe_source": "sp500_median",
+            "benchmark_pb": 5.44,
+            "pb_source": "sp500_median",
+            "peers_used": []
+        },
+        "HIG": {
+            "benchmark_pe": 9.27,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.74,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ORI"
+            ]
+        },
+        "WAT": {
+            "benchmark_pe": 28.87,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.18,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "DGX",
+                "DXCM",
+                "ILMN",
+                "INCY",
+                "LH",
+                "MEDP",
+                "MTD",
+                "STE",
+                "WST",
+                "ZBH"
+            ]
+        },
+        "WEC": {
+            "benchmark_pe": 20.46,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.3,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AEE",
+                "CMS",
+                "DTE",
+                "ED",
+                "ES",
+                "ETR",
+                "FE",
+                "PCG",
+                "PEG"
+            ]
+        },
+        "KVUE": {
+            "benchmark_pe": 23.09,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.53,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADM",
+                "CHD",
+                "EL",
+                "HSY",
+                "JBS",
+                "KDP",
+                "KHC",
+                "KMB",
+                "SYY"
+            ]
+        },
+        "KMB": {
+            "benchmark_pe": 23.09,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.51,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADM",
+                "CHD",
+                "EL",
+                "HSY",
+                "JBS",
+                "KDP",
+                "KVUE",
+                "SYY"
+            ]
+        },
+        "ON": {
+            "benchmark_pe": 39.69,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.83,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CDW",
+                "CHKP",
+                "ENTG",
+                "GFS",
+                "J",
+                "SSNC",
+                "STM",
+                "TOST",
+                "TYL"
+            ]
+        },
+        "HSY": {
+            "benchmark_pe": 22.47,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.65,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADM",
+                "EL",
+                "JBS",
+                "KDP",
+                "KHC",
+                "KMB",
+                "KVUE",
+                "SYY"
+            ]
+        },
+        "CCL": {
+            "benchmark_pe": 17.86,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.95,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CMG",
+                "CPRT",
+                "DHI",
+                "EBAY",
+                "FLUT",
+                "LEN",
+                "LVS",
+                "YUM"
+            ]
+        },
+        "IQV": {
+            "benchmark_pe": 34.87,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.58,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "A",
+                "ALC",
+                "CAH",
+                "GEHC",
+                "HUM",
+                "ILMN",
+                "MTD",
+                "RMD",
+                "WAT"
+            ]
+        },
+        "MSTR": {
+            "benchmark_pe": 50.61,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 11.26,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADSK",
+                "CDNS",
+                "DDOG",
+                "FTNT",
+                "GLW",
+                "INFY",
+                "SNOW",
+                "SNPS",
+                "TEL",
+                "WDAY"
+            ]
+        },
+        "KR": {
+            "benchmark_pe": 21.6,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.94,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "DEO",
+                "HSY",
+                "KDP",
+                "KMB",
+                "KVUE",
+                "SFM",
+                "SYY",
+                "TGT"
+            ]
+        },
+        "RBLX": {
+            "benchmark_pe": 46.36,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 8.61,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CRWV",
+                "EA",
+                "FTNT",
+                "GLW",
+                "INFY",
+                "MSI",
+                "MSTR",
+                "TEL",
+                "TTWO"
+            ]
+        },
+        "IR": {
+            "benchmark_pe": 29.79,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.18,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AME",
+                "AOS",
+                "DCI",
+                "DOV",
+                "EMR",
+                "ETN",
+                "FELE",
+                "FLS",
+                "GGG",
+                "IEX",
+                "ITT",
+                "ITW",
+                "XYL"
+            ]
+        },
+        "RDDT": {
+            "benchmark_pe": 46.1,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.1,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CHTR",
+                "NBIS",
+                "PINS",
+                "TWLO"
+            ]
+        },
+        "WDAY": {
+            "benchmark_pe": 36.44,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 13.8,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADSK",
+                "CDNS",
+                "CRWV",
+                "DDOG",
+                "FICO",
+                "FTNT",
+                "INFY",
+                "MSI",
+                "MSTR",
+                "TEAM"
+            ]
+        },
+        "CNC": {
+            "benchmark_pe": 22.04,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 7.6,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "GMAB",
+                "ILMN",
+                "MEDP",
+                "RPRX",
+                "SNN",
+                "TEM",
+                "THC",
+                "UHS"
+            ]
+        },
+        "AEE": {
+            "benchmark_pe": 22.22,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.28,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ATO",
+                "CMS",
+                "DTE",
+                "ES",
+                "FE",
+                "PPL",
+                "SO"
+            ]
+        },
+        "ZTS": {
+            "benchmark_pe": 23.75,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 1.91,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ARGX",
+                "BDX",
+                "CI",
+                "COR",
+                "ELAN",
+                "ELV",
+                "IDXX",
+                "REGN"
+            ]
+        },
+        "GFS": {
+            "benchmark_pe": 60.88,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.66,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CDW",
+                "COHR",
+                "MTSI",
+                "NTNX",
+                "ON",
+                "STM",
+                "TRMB",
+                "TYL"
+            ]
+        },
+        "KHC": {
+            "benchmark_pe": 15.63,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.28,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADM",
+                "EL",
+                "GIS",
+                "JBS",
+                "KVUE",
+                "MKC",
+                "SJM"
+            ]
+        },
+        "VICI": {
+            "benchmark_pe": 30.57,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.39,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AVB",
+                "CCI",
+                "CSGP",
+                "EQR",
+                "EXR",
+                "IRM",
+                "KIM-PN",
+                "MAA",
+                "SBAC",
+                "VTR"
+            ]
+        },
+        "EL": {
+            "benchmark_pe": 23.02,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.49,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "ADM",
+                "CHD",
+                "HSY",
+                "JBS",
+                "KDP",
+                "KHC",
+                "KMB",
+                "KVUE",
+                "SYY"
+            ]
+        },
+        "FE": {
+            "benchmark_pe": 20.97,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.3,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AEE",
+                "AEP",
+                "CNP",
+                "D",
+                "DTE",
+                "DUK",
+                "ED",
+                "EIX",
+                "ETR",
+                "EXC",
+                "LNT",
+                "PEG",
+                "PNW",
+                "SO",
+                "XEL"
+            ]
+        },
+        "TWLO": {
+            "benchmark_pe": 72.5,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.0,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "NBIS",
+                "PINS",
+                "SNAP",
+                "Z"
+            ]
+        },
+        "ES": {
+            "benchmark_pe": 20.64,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.3,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AEE",
+                "CMS",
+                "CNP",
+                "DTE",
+                "ED",
+                "EIX",
+                "ETR",
+                "EXC",
+                "FE",
+                "LNT",
+                "PEG",
+                "PNW",
+                "XEL"
+            ]
+        },
+        "CPNG": {
+            "benchmark_pe": 34.23,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 11.06,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AZO",
+                "CVNA",
+                "EBAY",
+                "F",
+                "GM",
+                "HLT",
+                "ROST"
+            ]
+        },
+        "XYL": {
+            "benchmark_pe": 31.8,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.1,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AOS",
+                "DOV",
+                "EMR",
+                "ETN",
+                "FELE",
+                "FLS",
+                "GGG",
+                "IEX",
+                "IR",
+                "ITT",
+                "ITW",
+                "PH",
+                "PNR"
+            ]
+        },
+        "HAL": {
+            "benchmark_pe": 15.18,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.16,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "CQP",
+                "DVN",
+                "EXE",
+                "EXEEZ",
+                "FTI",
+                "TPL",
+                "TS",
+                "VG"
+            ]
+        },
+        "DXCM": {
+            "benchmark_pe": 26.31,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.91,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "BIIB",
+                "LH",
+                "PODD",
+                "SNN",
+                "STE",
+                "TEVA",
+                "WAT",
+                "WST",
+                "ZBH"
+            ]
+        },
+        "OTIS": {
+            "benchmark_pe": 33.14,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 3.68,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AME",
+                "DAL",
+                "DOV",
+                "EME",
+                "FIX",
+                "IR",
+                "ROK",
+                "ROP",
+                "WAB",
+                "XYL"
+            ]
+        },
+        "AVB": {
+            "benchmark_pe": 31.63,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.36,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMH",
+                "ELS",
+                "EQR",
+                "ESS",
+                "EXR",
+                "INVH",
+                "MAA",
+                "SBAC",
+                "SUI"
+            ]
+        },
+        "MTD": {
+            "benchmark_pe": 30.7,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 5.54,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "A",
+                "ALC",
+                "DGX",
+                "DXCM",
+                "ILMN",
+                "IQV",
+                "MEDP",
+                "NTRA",
+                "STE",
+                "WAT"
+            ]
+        },
+        "DOV": {
+            "benchmark_pe": 30.32,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 4.36,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AER",
+                "CW",
+                "EFX",
+                "HUBB",
+                "HWM",
+                "IEX",
+                "IR",
+                "ITT",
+                "PNR",
+                "VLTO"
+            ]
+        },
+        "EQR": {
+            "benchmark_pe": 29.24,
+            "pe_source": "fmp_peer_group",
+            "benchmark_pb": 2.2,
+            "pb_source": "fmp_peer_group",
+            "peers_used": [
+                "AMH",
+                "AVB",
+                "ESS",
+                "EXR",
+                "INVH",
+                "MAA",
+                "NLY",
+                "SBAC",
+                "SUI"
+            ]
+        }
+    }
+}

@@ -1,0 +1,114 @@
+"""
+scripts/init_db_financial_history.py
+
+One-time database setup script for EquityMind's multi-year financial
+history store — creates the financial_history table in the same
+PostgreSQL database used for sec_chunks and quant_signals.
+
+Wide format: one row per (ticker, fiscal_year_end), one column per
+metric — chosen over a long/narrow (ticker, fiscal_year_end,
+metric_name, value) layout because the project has a confirmed need
+for cross-metric filtering within this table (e.g. "companies where
+revenue grew but gross margin declined" needs two columns from the
+same row, which a narrow table can only do via a self-join). This
+mirrors the design of quant_signals, which uses the same reasoning.
+
+Confirmed via live yfinance test (2026-07-22, tested across
+AAPL/MSFT/TSLA/JPM/JNJ/XOM): yfinance's annual statements return 4 or
+5 raw columns depending on the ticker, but the oldest column is
+consistently NaN whenever 5 are returned — so 4 years is the reliable,
+validated coverage, not 5. Coverage grows by one fiscal year annually
+as new annual reports are filed; there is no fixed cap, and the system
+should state actual coverage to users rather than implying a fixed
+history length.
+
+26 metrics across the three statements (income statement, cash flow,
+balance sheet) — all sourced from the same three yfinance calls
+already made per ticker for get_quality_inputs(), so this adds no
+extra API cost beyond what the project already does. Not every
+company has every metric (e.g. banks have no cost_of_revenue; many
+growth stocks pay no dividends) — missing metrics are NULL, not a
+placeholder zero.
+
+Uses CREATE TABLE IF NOT EXISTS — safe to run repeatedly without
+destroying existing data. (This table was migrated once from an
+earlier long/narrow schema to this wide schema on 2026-07-22, which
+did require a one-time DROP; that migration is complete.)
+
+Run once to create the table:
+    python scripts/init_db_financial_history.py
+"""
+
+import os
+
+import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+
+def init():
+    print("Connecting to PostgreSQL...")
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+
+    print("Creating financial_history table (wide format)...")
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS financial_history (
+            ticker                              TEXT NOT NULL,
+            fiscal_year_end                     DATE NOT NULL,
+
+            -- Income statement (13 columns)
+            total_revenue                       NUMERIC,
+            cost_of_revenue                     NUMERIC,
+            gross_profit                        NUMERIC,
+            research_and_development            NUMERIC,
+            selling_general_and_administration  NUMERIC,
+            operating_expense                   NUMERIC,
+            operating_income                    NUMERIC,
+            ebit                                NUMERIC,
+            ebitda                              NUMERIC,
+            pretax_income                       NUMERIC,
+            net_income                          NUMERIC,
+            diluted_eps                         NUMERIC,
+            basic_eps                           NUMERIC,
+
+            -- Cash flow statement (5 columns)
+            operating_cash_flow                 NUMERIC,
+            capital_expenditure                 NUMERIC,
+            free_cash_flow                      NUMERIC,
+            repurchase_of_capital_stock         NUMERIC,
+            cash_dividends_paid                 NUMERIC,
+
+            -- Balance sheet (8 columns)
+            total_assets                        NUMERIC,
+            total_liabilities                   NUMERIC,
+            stockholders_equity                 NUMERIC,
+            cash_and_equivalents                NUMERIC,
+            long_term_debt                      NUMERIC,
+            current_assets                      NUMERIC,
+            current_liabilities                 NUMERIC,
+            shares_outstanding                  NUMERIC,
+
+            updated_at                          TIMESTAMP NOT NULL DEFAULT NOW(),
+
+            PRIMARY KEY (ticker, fiscal_year_end)
+        );
+    """)
+
+    print("Creating index for ticker lookup...")
+    cursor.execute("""
+        CREATE INDEX IF NOT EXISTS financial_history_ticker_idx
+        ON financial_history (ticker);
+    """)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    print("financial_history table ready (wide format).")
+
+
+if __name__ == "__main__":
+    init()

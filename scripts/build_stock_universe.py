@@ -13,6 +13,13 @@ spanning major sectors — a reasonable, broad starting universe, not an
 official index constituent list. The script ranks this pool by current
 market cap and keeps the top 200.
 
+Every candidate is also checked via scripts/currency_check.py before
+being ranked — this universe is required to be pure-USD-reporting
+companies only (see 2026-07-23 removal of TSM/ASML/TM/SPOT after
+discovering their financial_history figures were in JPY/TWD/EUR, not
+USD, silently corrupting cross-company comparisons). The same check
+is reused by update_quant_signals.py and update_financial_history.py.
+
 Usage:
     python scripts/build_stock_universe.py
 
@@ -21,9 +28,14 @@ Output:
 """
 
 import json
+import sys
 import yfinance as yf
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from scripts.currency_check import is_usd_reporter
 
 OUTPUT_PATH = Path(__file__).parent.parent / "src" / "quant" / "data" / "stock_universe.json"
 TOP_N = 250
@@ -39,29 +51,29 @@ CANDIDATE_POOL = [
     "AAPL", "MSFT", "NVDA", "GOOGL", "GOOG", "META", "AMZN", "AVGO", "ORCL",
     "CRM", "AMD", "INTU", "IBM", "NOW", "ADBE", "CSCO", "QCOM", "TXN",
     "AMAT", "MU", "PANW", "SNPS", "CDNS", "FTNT", "ANET", "WDAY", "TEAM",
-    "DDOG", "SNOW", "NET", "ZS", "CRWD", "PLTR", "UBER", "ABNB", "SPOT",
-    "SHOP", "SQ", "PYPL", "MELI", "BKNG", "NFLX", "DIS",
+    "DDOG", "SNOW", "NET", "ZS", "CRWD", "PLTR", "UBER", "ABNB",
+    "SHOP", "XYZ", "PYPL", "MELI", "BKNG", "NFLX", "DIS",
     "APP", "TTD", "DASH", "HOOD", "ROKU", "PINS", "SNAP", "U", "DOCU",
     "OKTA", "TWLO", "HUBS", "BILL", "PCTY", "MNDY", "S", "TEM", "IOT",
     "AXON", "PLTK", "RBLX", "EA", "TTWO", "MSTR", "APPF",
 
     # Semiconductors / Hardware
-    "TSM", "ASML", "LRCX", "KLAC", "ADI", "MCHP", "ON", "MRVL",
+    "LRCX", "KLAC", "ADI", "MCHP", "ON", "MRVL",
     "NXPI", "SWKS", "MPWR", "STX", "WDC", "TER", "ENTG", "COHR", "SMCI",
     "ARM", "GFS",
 
     # Automotive / EV
-    "TSLA", "RIVN", "GM", "F", "TM",
+    "TSLA", "RIVN", "GM", "F",
 
     # Aerospace / Defense
     "BA", "LMT", "RTX", "NOC", "GD", "SPCX",
 
     # Financials
     "JPM", "BAC", "WFC", "GS", "MS", "C", "SCHW", "AXP", "BLK", "SPGI",
-    "USB", "PNC", "TFC", "COF", "BK", "V", "MA",
-    "ICE", "CME", "MMC", "AON", "AJG", "BRO", "TROW", "STT", "NTRS",
+    "USB", "PNC", "TFC", "COF", "V", "MA",
+    "ICE", "CME", "MRSH", "AON", "AJG", "BRO", "TROW", "STT", "NTRS",
     "AIG", "MET", "PRU", "ALL", "TRV", "PGR", "CB", "HIG", "AFL",
-    "SYF", "DFS", "FIS", "FI", "GPN", "JKHY", "SOFI", "AFRM",
+    "SYF", "FIS", "GPN", "JKHY", "SOFI", "AFRM",
 
     # Healthcare / Pharma
     "JNJ", "LLY", "UNH", "PFE", "MRK", "ABBV", "TMO", "ABT", "DHR", "BMY",
@@ -72,7 +84,7 @@ CANDIDATE_POOL = [
 
     # Energy / Utilities
     "XOM", "CVX", "COP", "SLB", "EOG", "PSX", "MPC", "OXY", "WMB",
-    "KMI", "OKE", "HAL", "BKR", "FANG", "DVN", "HES", "TRGP", "EXC",
+    "KMI", "OKE", "HAL", "BKR", "FANG", "DVN", "TRGP", "EXC",
     "ED", "PEG", "SRE", "XEL", "WEC", "ES", "ETR", "FE", "AEE", "CMS",
     "NEE", "DUK", "SO", "AEP",
 
@@ -92,7 +104,7 @@ CANDIDATE_POOL = [
 
     # Communication / Media
     "CMCSA", "T", "VZ", "TMUS", "CHTR",
-    "PARA", "WBD", "LYV", "FOXA", "MTCH",
+    "WBD", "LYV", "FOXA", "MTCH",
 
     # Real Estate / REITs
     "AMT", "PLD", "EQIX", "SPG", "O",
@@ -101,7 +113,7 @@ CANDIDATE_POOL = [
 
     # Recent large-cap IPOs / notable growth names
     "COIN", "RDDT", "CRCL", "MDB", "GTLB", "PATH", "ZIP", "WRBY", "AMPL",
-    "CFLT", "CPNG", "COMP", "CLOV", "AI",
+    "CPNG", "COMP", "CLOV", "AI",
 ]
 
 
@@ -127,6 +139,9 @@ def rank_by_market_cap(symbols: list[str], top_n: int) -> list[dict]:
             market_cap = info.get("marketCap")
             company_name = info.get("longName") or info.get("shortName")
             if market_cap:
+                if not is_usd_reporter(symbol):
+                    print(f"    Skipping {symbol}: non-USD financial reporting")
+                    continue
                 ranked.append({
                     "symbol": symbol,
                     "market_cap": market_cap,

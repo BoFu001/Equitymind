@@ -3,8 +3,8 @@ Unit tests for Layer 2 Quantitative Signal Engines.
 
 All tests use mock market data — no real API calls are made.
 Benchmark values are loaded dynamically from
-src/quant/data/peer_benchmarks.json so tests remain valid after
-quarterly benchmark updates via scripts/update_peer_groups.py.
+src/quant/data/valuation_benchmarks.json so tests remain valid after
+benchmark updates via scripts/update_valuation_benchmarks.py.
 """
 
 

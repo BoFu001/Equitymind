@@ -1,1499 +1,1504 @@
 {
-    "updated_at": "2026-07-11",
+    "updated_at": "2026-07-23",
     "source": "yfinance price history (1y) \u2014 no FMP dependency",
     "universe_size": 250,
-    "computed_count": 248,
+    "computed_count": 249,
     "notes": "Percentiles are computed within this 250-ticker large-cap universe only, not the broader market. Both signals reflect portfolio/group-level academic findings (Jegadeesh & Titman 1993; George & Hwang 2004), not per-stock predictions. Recent (2014-2024) real-world performance of 12-1 momentum has been notably weaker than historical averages.",
     "benchmarks": {
         "NVDA": {
-            "momentum_12_1_pct": 26.41,
-            "momentum_12_1_percentile": 0.6721,
-            "position_52w": 0.6578,
-            "position_52w_percentile": 0.4656
+            "momentum_12_1_pct": 15.29,
+            "momentum_12_1_percentile": 0.5484,
+            "position_52w": 0.6211,
+            "position_52w_percentile": 0.4476
         },
         "AAPL": {
-            "momentum_12_1_pct": 38.14,
-            "momentum_12_1_percentile": 0.7692,
-            "position_52w": 0.9921,
-            "position_52w_percentile": 0.9433
-        },
-        "GOOGL": {
-            "momentum_12_1_pct": 102.73,
-            "momentum_12_1_percentile": 0.9352,
-            "position_52w": 0.797,
-            "position_52w_percentile": 0.6154
+            "momentum_12_1_pct": 38.22,
+            "momentum_12_1_percentile": 0.7863,
+            "position_52w": 0.9086,
+            "position_52w_percentile": 0.8306
         },
         "GOOG": {
-            "momentum_12_1_pct": 100.39,
-            "momentum_12_1_percentile": 0.9271,
-            "position_52w": 0.7992,
-            "position_52w_percentile": 0.6235
+            "momentum_12_1_pct": 79.64,
+            "momentum_12_1_percentile": 0.9153,
+            "position_52w": 0.6157,
+            "position_52w_percentile": 0.4395
+        },
+        "GOOGL": {
+            "momentum_12_1_pct": 80.63,
+            "momentum_12_1_percentile": 0.9234,
+            "position_52w": 0.6039,
+            "position_52w_percentile": 0.4274
         },
         "MSFT": {
-            "momentum_12_1_pct": -19.21,
-            "momentum_12_1_percentile": 0.1174,
-            "position_52w": 0.1737,
-            "position_52w_percentile": 0.0972
+            "momentum_12_1_pct": -26.22,
+            "momentum_12_1_percentile": 0.0968,
+            "position_52w": 0.1547,
+            "position_52w_percentile": 0.1411
         },
         "AMZN": {
-            "momentum_12_1_pct": 8.52,
-            "momentum_12_1_percentile": 0.417,
-            "position_52w": 0.6109,
-            "position_52w_percentile": 0.4089
+            "momentum_12_1_pct": 0.81,
+            "momentum_12_1_percentile": 0.3669,
+            "position_52w": 0.4576,
+            "position_52w_percentile": 0.3226
         },
-        "TSM": {
-            "momentum_12_1_pct": 87.34,
-            "momentum_12_1_percentile": 0.919,
-            "position_52w": 0.828,
-            "position_52w_percentile": 0.6761
+        "AVGO": {
+            "momentum_12_1_pct": 32.64,
+            "momentum_12_1_percentile": 0.7379,
+            "position_52w": 0.5453,
+            "position_52w_percentile": 0.3831
         },
         "SPCX": null,
-        "AVGO": {
-            "momentum_12_1_pct": 43.75,
-            "momentum_12_1_percentile": 0.8138,
-            "position_52w": 0.6121,
-            "position_52w_percentile": 0.413
-        },
         "META": {
-            "momentum_12_1_pct": -18.33,
-            "momentum_12_1_percentile": 0.1336,
-            "position_52w": 0.5491,
-            "position_52w_percentile": 0.3765
+            "momentum_12_1_pct": -21.09,
+            "momentum_12_1_percentile": 0.1371,
+            "position_52w": 0.3084,
+            "position_52w_percentile": 0.1976
         },
         "TSLA": {
-            "momentum_12_1_pct": 26.53,
-            "momentum_12_1_percentile": 0.6761,
-            "position_52w": 0.5614,
-            "position_52w_percentile": 0.3806
+            "momentum_12_1_pct": 25.0,
+            "momentum_12_1_percentile": 0.6734,
+            "position_52w": 0.0911,
+            "position_52w_percentile": 0.1129
         },
         "MU": {
-            "momentum_12_1_pct": 652.63,
+            "momentum_12_1_pct": 842.72,
             "momentum_12_1_percentile": 0.996,
-            "position_52w": 0.7889,
-            "position_52w_percentile": 0.6113
+            "position_52w": 0.7987,
+            "position_52w_percentile": 0.6573
         },
         "LLY": {
-            "momentum_12_1_pct": 45.37,
-            "momentum_12_1_percentile": 0.8178,
-            "position_52w": 0.9235,
-            "position_52w_percentile": 0.8543
-        },
-        "AMD": {
-            "momentum_12_1_pct": 224.76,
-            "momentum_12_1_percentile": 0.9757,
-            "position_52w": 0.947,
-            "position_52w_percentile": 0.8785
-        },
-        "WMT": {
-            "momentum_12_1_pct": 26.99,
-            "momentum_12_1_percentile": 0.6883,
-            "position_52w": 0.4998,
-            "position_52w_percentile": 0.3158
+            "momentum_12_1_pct": 38.42,
+            "momentum_12_1_percentile": 0.7903,
+            "position_52w": 0.9191,
+            "position_52w_percentile": 0.8427
         },
         "JPM": {
-            "momentum_12_1_pct": 10.6,
-            "momentum_12_1_percentile": 0.4575,
-            "position_52w": 0.9535,
-            "position_52w_percentile": 0.8866
+            "momentum_12_1_pct": 14.32,
+            "momentum_12_1_percentile": 0.5363,
+            "position_52w": 1.0,
+            "position_52w_percentile": 0.9556
         },
-        "ASML": {
-            "momentum_12_1_pct": 123.42,
-            "momentum_12_1_percentile": 0.9514,
-            "position_52w": 0.8526,
-            "position_52w_percentile": 0.7287
+        "AMD": {
+            "momentum_12_1_pct": 220.66,
+            "momentum_12_1_percentile": 0.9718,
+            "position_52w": 0.9041,
+            "position_52w_percentile": 0.8185
+        },
+        "WMT": {
+            "momentum_12_1_pct": 24.66,
+            "momentum_12_1_percentile": 0.6653,
+            "position_52w": 0.3337,
+            "position_52w_percentile": 0.2218
         },
         "V": {
-            "momentum_12_1_pct": -5.84,
-            "momentum_12_1_percentile": 0.2551,
-            "position_52w": 0.8042,
-            "position_52w_percentile": 0.6275
-        },
-        "JNJ": {
-            "momentum_12_1_pct": 54.83,
-            "momentum_12_1_percentile": 0.8502,
-            "position_52w": 0.9114,
-            "position_52w_percentile": 0.8421
+            "momentum_12_1_pct": -6.47,
+            "momentum_12_1_percentile": 0.2782,
+            "position_52w": 0.8072,
+            "position_52w_percentile": 0.6694
         },
         "XOM": {
-            "momentum_12_1_pct": 33.12,
-            "momentum_12_1_percentile": 0.7166,
-            "position_52w": 0.5361,
-            "position_52w_percentile": 0.3603
+            "momentum_12_1_pct": 30.14,
+            "momentum_12_1_percentile": 0.7016,
+            "position_52w": 0.8019,
+            "position_52w_percentile": 0.6613
         },
-        "AMAT": {
-            "momentum_12_1_pct": 154.07,
-            "momentum_12_1_percentile": 0.9676,
-            "position_52w": 0.7876,
-            "position_52w_percentile": 0.6073
-        },
-        "CSCO": {
-            "momentum_12_1_pct": 80.12,
-            "momentum_12_1_percentile": 0.9069,
-            "position_52w": 0.8731,
-            "position_52w_percentile": 0.7733
+        "JNJ": {
+            "momentum_12_1_pct": 44.52,
+            "momentum_12_1_percentile": 0.8266,
+            "position_52w": 0.9252,
+            "position_52w_percentile": 0.8508
         },
         "MA": {
-            "momentum_12_1_pct": -9.58,
-            "momentum_12_1_percentile": 0.2105,
-            "position_52w": 0.4497,
-            "position_52w_percentile": 0.2753
-        },
-        "CAT": {
-            "momentum_12_1_pct": 127.78,
-            "momentum_12_1_percentile": 0.9595,
-            "position_52w": 0.8307,
-            "position_52w_percentile": 0.6802
+            "momentum_12_1_pct": -12.99,
+            "momentum_12_1_percentile": 0.2056,
+            "position_52w": 0.4782,
+            "position_52w_percentile": 0.3266
         },
         "ABBV": {
-            "momentum_12_1_pct": 20.95,
-            "momentum_12_1_percentile": 0.6073,
-            "position_52w": 0.8386,
-            "position_52w_percentile": 0.6923
+            "momentum_12_1_pct": 25.94,
+            "momentum_12_1_percentile": 0.6774,
+            "position_52w": 0.9698,
+            "position_52w_percentile": 0.9153
         },
-        "LRCX": {
-            "momentum_12_1_pct": 223.15,
-            "momentum_12_1_percentile": 0.9717,
-            "position_52w": 0.7552,
-            "position_52w_percentile": 0.5587
+        "AMAT": {
+            "momentum_12_1_pct": 213.72,
+            "momentum_12_1_percentile": 0.9677,
+            "position_52w": 0.7177,
+            "position_52w_percentile": 0.5524
+        },
+        "CSCO": {
+            "momentum_12_1_pct": 80.4,
+            "momentum_12_1_percentile": 0.9194,
+            "position_52w": 0.7409,
+            "position_52w_percentile": 0.5806
         },
         "BAC": {
-            "momentum_12_1_pct": 18.99,
-            "momentum_12_1_percentile": 0.5911,
-            "position_52w": 0.9856,
-            "position_52w_percentile": 0.9312
+            "momentum_12_1_pct": 22.28,
+            "momentum_12_1_percentile": 0.6371,
+            "position_52w": 0.9807,
+            "position_52w_percentile": 0.9315
+        },
+        "CAT": {
+            "momentum_12_1_pct": 130.78,
+            "momentum_12_1_percentile": 0.9556,
+            "position_52w": 0.7444,
+            "position_52w_percentile": 0.5968
         },
         "COST": {
-            "momentum_12_1_pct": 0.38,
-            "momentum_12_1_percentile": 0.336,
-            "position_52w": 0.2782,
-            "position_52w_percentile": 0.1741
+            "momentum_12_1_pct": 3.13,
+            "momentum_12_1_percentile": 0.3952,
+            "position_52w": 0.318,
+            "position_52w_percentile": 0.2097
         },
-        "ORCL": {
-            "momentum_12_1_pct": -10.03,
-            "momentum_12_1_percentile": 0.2065,
-            "position_52w": 0.027,
-            "position_52w_percentile": 0.004
-        },
-        "UNH": {
-            "momentum_12_1_pct": 38.66,
-            "momentum_12_1_percentile": 0.7814,
-            "position_52w": 0.9647,
-            "position_52w_percentile": 0.8947
-        },
-        "GE": {
-            "momentum_12_1_pct": 29.87,
-            "momentum_12_1_percentile": 0.7045,
-            "position_52w": 0.8442,
-            "position_52w_percentile": 0.7166
-        },
-        "KO": {
-            "momentum_12_1_pct": 18.95,
-            "momentum_12_1_percentile": 0.587,
-            "position_52w": 0.9672,
-            "position_52w_percentile": 0.9028
+        "LRCX": {
+            "momentum_12_1_pct": 281.86,
+            "momentum_12_1_percentile": 0.9798,
+            "position_52w": 0.6651,
+            "position_52w_percentile": 0.4879
         },
         "CVX": {
-            "momentum_12_1_pct": 25.29,
-            "momentum_12_1_percentile": 0.6478,
-            "position_52w": 0.4993,
-            "position_52w_percentile": 0.3117
+            "momentum_12_1_pct": 17.66,
+            "momentum_12_1_percentile": 0.5887,
+            "position_52w": 0.7729,
+            "position_52w_percentile": 0.625
         },
-        "MS": {
-            "momentum_12_1_pct": 51.34,
-            "momentum_12_1_percentile": 0.834,
-            "position_52w": 0.9469,
-            "position_52w_percentile": 0.8745
+        "UNH": {
+            "momentum_12_1_pct": 50.84,
+            "momentum_12_1_percentile": 0.8548,
+            "position_52w": 0.9375,
+            "position_52w_percentile": 0.8629
         },
-        "ARM": {
-            "momentum_12_1_pct": 122.6,
-            "momentum_12_1_percentile": 0.9474,
-            "position_52w": 0.6534,
-            "position_52w_percentile": 0.4615
+        "GE": {
+            "momentum_12_1_pct": 33.52,
+            "momentum_12_1_percentile": 0.75,
+            "position_52w": 0.7399,
+            "position_52w_percentile": 0.5766
+        },
+        "KO": {
+            "momentum_12_1_pct": 19.51,
+            "momentum_12_1_percentile": 0.6129,
+            "position_52w": 0.8177,
+            "position_52w_percentile": 0.6895
+        },
+        "ORCL": {
+            "momentum_12_1_pct": -31.45,
+            "momentum_12_1_percentile": 0.0685,
+            "position_52w": 0.0,
+            "position_52w_percentile": 0.0
         },
         "PG": {
-            "momentum_12_1_pct": -2.61,
-            "momentum_12_1_percentile": 0.2955,
-            "position_52w": 0.3677,
-            "position_52w_percentile": 0.2267
+            "momentum_12_1_pct": -2.94,
+            "momentum_12_1_percentile": 0.3105,
+            "position_52w": 0.3654,
+            "position_52w_percentile": 0.254
+        },
+        "MS": {
+            "momentum_12_1_pct": 62.45,
+            "momentum_12_1_percentile": 0.8871,
+            "position_52w": 0.8543,
+            "position_52w_percentile": 0.754
         },
         "HD": {
-            "momentum_12_1_pct": -10.86,
-            "momentum_12_1_percentile": 0.1984,
-            "position_52w": 0.4017,
-            "position_52w_percentile": 0.2429
-        },
-        "GS": {
-            "momentum_12_1_pct": 49.34,
-            "momentum_12_1_percentile": 0.83,
-            "position_52w": 0.8781,
-            "position_52w_percentile": 0.7814
-        },
-        "NFLX": {
-            "momentum_12_1_pct": -34.62,
-            "momentum_12_1_percentile": 0.0567,
-            "position_52w": 0.0437,
-            "position_52w_percentile": 0.0202
+            "momentum_12_1_pct": -10.72,
+            "momentum_12_1_percentile": 0.2258,
+            "position_52w": 0.2462,
+            "position_52w_percentile": 0.1694
         },
         "MRK": {
-            "momentum_12_1_pct": 47.21,
-            "momentum_12_1_percentile": 0.8259,
-            "position_52w": 0.8885,
-            "position_52w_percentile": 0.8138
+            "momentum_12_1_pct": 46.95,
+            "momentum_12_1_percentile": 0.8387,
+            "position_52w": 1.0,
+            "position_52w_percentile": 0.9597
+        },
+        "GS": {
+            "momentum_12_1_pct": 55.24,
+            "momentum_12_1_percentile": 0.8629,
+            "position_52w": 0.8306,
+            "position_52w_percentile": 0.7016
+        },
+        "ARM": {
+            "momentum_12_1_pct": 129.01,
+            "momentum_12_1_percentile": 0.9516,
+            "position_52w": 0.5329,
+            "position_52w_percentile": 0.371
         },
         "PLTR": {
-            "momentum_12_1_pct": -7.06,
-            "momentum_12_1_percentile": 0.2348,
-            "position_52w": 0.1954,
-            "position_52w_percentile": 0.1134
+            "momentum_12_1_pct": -24.64,
+            "momentum_12_1_percentile": 0.1048,
+            "position_52w": 0.1611,
+            "position_52w_percentile": 0.1452
+        },
+        "NFLX": {
+            "momentum_12_1_pct": -38.33,
+            "momentum_12_1_percentile": 0.0565,
+            "position_52w": 0.022,
+            "position_52w_percentile": 0.0484
         },
         "KLAC": {
-            "momentum_12_1_pct": 132.88,
-            "momentum_12_1_percentile": 0.9636,
-            "position_52w": 0.6776,
-            "position_52w_percentile": 0.4818
-        },
-        "GEV": {
-            "momentum_12_1_pct": 71.04,
-            "momentum_12_1_percentile": 0.8907,
-            "position_52w": 0.8693,
-            "position_52w_percentile": 0.7692
-        },
-        "TXN": {
-            "momentum_12_1_pct": 34.11,
-            "momentum_12_1_percentile": 0.7287,
-            "position_52w": 0.8848,
-            "position_52w_percentile": 0.8057
-        },
-        "IBM": {
-            "momentum_12_1_pct": 0.35,
-            "momentum_12_1_percentile": 0.332,
-            "position_52w": 0.6364,
-            "position_52w_percentile": 0.4332
-        },
-        "WFC": {
-            "momentum_12_1_pct": 1.51,
-            "momentum_12_1_percentile": 0.3563,
-            "position_52w": 0.6259,
-            "position_52w_percentile": 0.4251
-        },
-        "PANW": {
-            "momentum_12_1_pct": 39.03,
-            "momentum_12_1_percentile": 0.7854,
-            "position_52w": 0.8535,
-            "position_52w_percentile": 0.7328
+            "momentum_12_1_pct": 172.14,
+            "momentum_12_1_percentile": 0.9637,
+            "position_52w": 0.6188,
+            "position_52w_percentile": 0.4435
         },
         "RTX": {
-            "momentum_12_1_pct": 25.59,
-            "momentum_12_1_percentile": 0.6518,
-            "position_52w": 0.7699,
-            "position_52w_percentile": 0.583
+            "momentum_12_1_pct": 21.99,
+            "momentum_12_1_percentile": 0.6331,
+            "position_52w": 0.9654,
+            "position_52w_percentile": 0.9113
         },
-        "C": {
-            "momentum_12_1_pct": 58.87,
-            "momentum_12_1_percentile": 0.8745,
-            "position_52w": 0.9198,
-            "position_52w_percentile": 0.8502
+        "GEV": {
+            "momentum_12_1_pct": 66.25,
+            "momentum_12_1_percentile": 0.8952,
+            "position_52w": 0.7712,
+            "position_52w_percentile": 0.621
+        },
+        "PANW": {
+            "momentum_12_1_pct": 44.62,
+            "momentum_12_1_percentile": 0.8347,
+            "position_52w": 0.8477,
+            "position_52w_percentile": 0.7419
+        },
+        "WFC": {
+            "momentum_12_1_pct": 2.51,
+            "momentum_12_1_percentile": 0.3911,
+            "position_52w": 0.5817,
+            "position_52w_percentile": 0.4113
+        },
+        "TXN": {
+            "momentum_12_1_pct": 68.5,
+            "momentum_12_1_percentile": 0.8992,
+            "position_52w": 0.7383,
+            "position_52w_percentile": 0.5726
         },
         "AXP": {
-            "momentum_12_1_pct": 0.45,
-            "momentum_12_1_percentile": 0.3401,
-            "position_52w": 0.658,
-            "position_52w_percentile": 0.4696
+            "momentum_12_1_pct": 10.45,
+            "momentum_12_1_percentile": 0.4839,
+            "position_52w": 0.5512,
+            "position_52w_percentile": 0.3911
         },
         "ANET": {
-            "momentum_12_1_pct": 40.15,
-            "momentum_12_1_percentile": 0.7935,
-            "position_52w": 1.0,
-            "position_52w_percentile": 0.9676
+            "momentum_12_1_pct": 42.23,
+            "momentum_12_1_percentile": 0.8145,
+            "position_52w": 0.8581,
+            "position_52w_percentile": 0.7621
         },
-        "MRVL": {
-            "momentum_12_1_pct": 267.74,
-            "momentum_12_1_percentile": 0.9798,
-            "position_52w": 0.6831,
-            "position_52w_percentile": 0.4939
-        },
-        "TM": {
-            "momentum_12_1_pct": 3.24,
-            "momentum_12_1_percentile": 0.3765,
-            "position_52w": 0.1217,
-            "position_52w_percentile": 0.0648
-        },
-        "STX": {
-            "momentum_12_1_pct": 479.15,
-            "momentum_12_1_percentile": 0.9919,
-            "position_52w": 0.807,
-            "position_52w_percentile": 0.6316
-        },
-        "TMUS": {
-            "momentum_12_1_pct": -19.72,
-            "momentum_12_1_percentile": 0.1134,
-            "position_52w": 0.2299,
-            "position_52w_percentile": 0.1538
-        },
-        "WDC": {
-            "momentum_12_1_pct": 684.89,
-            "momentum_12_1_percentile": 1.0,
-            "position_52w": 0.7594,
-            "position_52w_percentile": 0.5628
-        },
-        "QCOM": {
-            "momentum_12_1_pct": 33.21,
-            "momentum_12_1_percentile": 0.7247,
-            "position_52w": 0.5182,
-            "position_52w_percentile": 0.336
-        },
-        "AMGN": {
-            "momentum_12_1_pct": 20.2,
-            "momentum_12_1_percentile": 0.6032,
-            "position_52w": 0.8176,
-            "position_52w_percentile": 0.6437
+        "C": {
+            "momentum_12_1_pct": 55.42,
+            "momentum_12_1_percentile": 0.8669,
+            "position_52w": 0.7532,
+            "position_52w_percentile": 0.6048
         },
         "TMO": {
-            "momentum_12_1_pct": 13.92,
-            "momentum_12_1_percentile": 0.5142,
-            "position_52w": 0.5265,
-            "position_52w_percentile": 0.3482
+            "momentum_12_1_pct": -0.84,
+            "momentum_12_1_percentile": 0.3508,
+            "position_52w": 0.6712,
+            "position_52w_percentile": 0.5
         },
-        "MCD": {
-            "momentum_12_1_pct": -3.6,
-            "momentum_12_1_percentile": 0.2753,
-            "position_52w": 0.1391,
-            "position_52w_percentile": 0.0769
+        "STX": {
+            "momentum_12_1_pct": 585.14,
+            "momentum_12_1_percentile": 0.9919,
+            "position_52w": 0.8101,
+            "position_52w_percentile": 0.6774
         },
-        "ADI": {
-            "momentum_12_1_pct": 67.59,
-            "momentum_12_1_percentile": 0.8866,
-            "position_52w": 0.7812,
-            "position_52w_percentile": 0.5911
+        "AMGN": {
+            "momentum_12_1_pct": 15.85,
+            "momentum_12_1_percentile": 0.5524,
+            "position_52w": 0.8853,
+            "position_52w_percentile": 0.7863
         },
-        "CRWD": {
-            "momentum_12_1_pct": 34.8,
-            "momentum_12_1_percentile": 0.7328,
-            "position_52w": 0.8909,
-            "position_52w_percentile": 0.8259
+        "IBM": {
+            "momentum_12_1_pct": 4.3,
+            "momentum_12_1_percentile": 0.4073,
+            "position_52w": 0.0071,
+            "position_52w_percentile": 0.0323
         },
-        "PEP": {
-            "momentum_12_1_pct": 9.74,
-            "momentum_12_1_percentile": 0.4372,
-            "position_52w": 0.2251,
-            "position_52w_percentile": 0.1498
+        "WDC": {
+            "momentum_12_1_pct": 874.45,
+            "momentum_12_1_percentile": 1.0,
+            "position_52w": 0.7227,
+            "position_52w_percentile": 0.5645
+        },
+        "MRVL": {
+            "momentum_12_1_pct": 277.59,
+            "momentum_12_1_percentile": 0.9758,
+            "position_52w": 0.5789,
+            "position_52w_percentile": 0.4073
         },
         "NEE": {
-            "momentum_12_1_pct": 17.32,
-            "momentum_12_1_percentile": 0.5709,
-            "position_52w": 0.6807,
-            "position_52w_percentile": 0.4899
+            "momentum_12_1_pct": 23.57,
+            "momentum_12_1_percentile": 0.6532,
+            "position_52w": 0.7441,
+            "position_52w_percentile": 0.5927
         },
-        "SCHW": {
-            "momentum_12_1_pct": -2.26,
-            "momentum_12_1_percentile": 0.3036,
-            "position_52w": 0.8415,
-            "position_52w_percentile": 0.7045
+        "CRWD": {
+            "momentum_12_1_pct": 47.38,
+            "momentum_12_1_percentile": 0.8427,
+            "position_52w": 0.7783,
+            "position_52w_percentile": 0.6371
+        },
+        "MCD": {
+            "momentum_12_1_pct": -5.51,
+            "momentum_12_1_percentile": 0.2903,
+            "position_52w": 0.0,
+            "position_52w_percentile": 0.004
+        },
+        "ADI": {
+            "momentum_12_1_pct": 82.32,
+            "momentum_12_1_percentile": 0.9274,
+            "position_52w": 0.7133,
+            "position_52w_percentile": 0.5484
+        },
+        "TMUS": {
+            "momentum_12_1_pct": -24.02,
+            "momentum_12_1_percentile": 0.1169,
+            "position_52w": 0.0311,
+            "position_52w_percentile": 0.0565
+        },
+        "PEP": {
+            "momentum_12_1_pct": 2.19,
+            "momentum_12_1_percentile": 0.3871,
+            "position_52w": 0.0661,
+            "position_52w_percentile": 0.1008
         },
         "VZ": {
-            "momentum_12_1_pct": 15.54,
-            "momentum_12_1_percentile": 0.5344,
-            "position_52w": 0.4208,
-            "position_52w_percentile": 0.2591
-        },
-        "BA": {
-            "momentum_12_1_pct": -5.44,
-            "momentum_12_1_percentile": 0.2632,
-            "position_52w": 0.591,
-            "position_52w_percentile": 0.4008
+            "momentum_12_1_pct": 13.94,
+            "momentum_12_1_percentile": 0.5282,
+            "position_52w": 0.5495,
+            "position_52w_percentile": 0.3871
         },
         "UNP": {
-            "momentum_12_1_pct": 18.01,
-            "momentum_12_1_percentile": 0.5749,
+            "momentum_12_1_pct": 19.94,
+            "momentum_12_1_percentile": 0.621,
             "position_52w": 1.0,
-            "position_52w_percentile": 0.9717
+            "position_52w_percentile": 0.9637
         },
-        "APP": {
-            "momentum_12_1_pct": 55.43,
-            "momentum_12_1_percentile": 0.8583,
-            "position_52w": 0.4313,
-            "position_52w_percentile": 0.2672
+        "QCOM": {
+            "momentum_12_1_pct": 31.22,
+            "momentum_12_1_percentile": 0.7218,
+            "position_52w": 0.3755,
+            "position_52w_percentile": 0.2621
         },
-        "BLK": {
-            "momentum_12_1_pct": -6.22,
-            "momentum_12_1_percentile": 0.247,
-            "position_52w": 0.4455,
-            "position_52w_percentile": 0.2713
-        },
-        "TJX": {
-            "momentum_12_1_pct": 34.9,
-            "momentum_12_1_percentile": 0.7368,
-            "position_52w": 0.6482,
-            "position_52w_percentile": 0.4534
-        },
-        "DIS": {
-            "momentum_12_1_pct": -16.57,
-            "momentum_12_1_percentile": 0.1498,
-            "position_52w": 0.1324,
-            "position_52w_percentile": 0.0729
+        "SCHW": {
+            "momentum_12_1_pct": -2.23,
+            "momentum_12_1_percentile": 0.3226,
+            "position_52w": 0.77,
+            "position_52w_percentile": 0.6169
         },
         "ABT": {
-            "momentum_12_1_pct": -29.47,
-            "momentum_12_1_percentile": 0.081,
-            "position_52w": 0.219,
-            "position_52w_percentile": 0.1417
+            "momentum_12_1_pct": -26.8,
+            "momentum_12_1_percentile": 0.0887,
+            "position_52w": 0.3641,
+            "position_52w_percentile": 0.25
         },
         "WELL": {
-            "momentum_12_1_pct": 35.31,
-            "momentum_12_1_percentile": 0.7409,
-            "position_52w": 0.9292,
-            "position_52w_percentile": 0.8583
+            "momentum_12_1_pct": 36.94,
+            "momentum_12_1_percentile": 0.7782,
+            "position_52w": 1.0,
+            "position_52w_percentile": 0.9677
         },
-        "GILD": {
-            "momentum_12_1_pct": 16.68,
-            "momentum_12_1_percentile": 0.5587,
-            "position_52w": 0.5029,
-            "position_52w_percentile": 0.3198
+        "TJX": {
+            "momentum_12_1_pct": 31.76,
+            "momentum_12_1_percentile": 0.7258,
+            "position_52w": 0.671,
+            "position_52w_percentile": 0.496
         },
-        "SHOP": {
-            "momentum_12_1_pct": -1.51,
-            "momentum_12_1_percentile": 0.3158,
-            "position_52w": 0.3246,
-            "position_52w_percentile": 0.1903
+        "BLK": {
+            "momentum_12_1_pct": -7.31,
+            "momentum_12_1_percentile": 0.2661,
+            "position_52w": 0.4494,
+            "position_52w_percentile": 0.3145
+        },
+        "BA": {
+            "momentum_12_1_pct": -6.3,
+            "momentum_12_1_percentile": 0.2823,
+            "position_52w": 0.4123,
+            "position_52w_percentile": 0.2823
         },
         "DE": {
-            "momentum_12_1_pct": 13.79,
-            "momentum_12_1_percentile": 0.502,
-            "position_52w": 0.6781,
-            "position_52w_percentile": 0.4858
+            "momentum_12_1_pct": 16.16,
+            "momentum_12_1_percentile": 0.5565,
+            "position_52w": 0.7817,
+            "position_52w_percentile": 0.6411
+        },
+        "GILD": {
+            "momentum_12_1_pct": 13.35,
+            "momentum_12_1_percentile": 0.5202,
+            "position_52w": 0.5036,
+            "position_52w_percentile": 0.3468
+        },
+        "DIS": {
+            "momentum_12_1_pct": -14.53,
+            "momentum_12_1_percentile": 0.1935,
+            "position_52w": 0.0391,
+            "position_52w_percentile": 0.0685
         },
         "ETN": {
-            "momentum_12_1_pct": 12.69,
-            "momentum_12_1_percentile": 0.4818,
-            "position_52w": 0.766,
-            "position_52w_percentile": 0.5709
-        },
-        "UBER": {
-            "momentum_12_1_pct": -26.22,
-            "momentum_12_1_percentile": 0.0972,
-            "position_52w": 0.1883,
-            "position_52w_percentile": 0.1012
+            "momentum_12_1_pct": 6.52,
+            "momentum_12_1_percentile": 0.4274,
+            "position_52w": 0.8305,
+            "position_52w_percentile": 0.6976
         },
         "T": {
-            "momentum_12_1_pct": -12.99,
-            "momentum_12_1_percentile": 0.1822,
-            "position_52w": 0.1121,
-            "position_52w_percentile": 0.0607
-        },
-        "ISRG": {
-            "momentum_12_1_pct": -16.69,
-            "momentum_12_1_percentile": 0.1457,
-            "position_52w": 0.0466,
-            "position_52w_percentile": 0.0283
-        },
-        "DHR": {
-            "momentum_12_1_pct": -7.54,
-            "momentum_12_1_percentile": 0.2308,
-            "position_52w": 0.4716,
-            "position_52w_percentile": 0.2915
-        },
-        "BKNG": {
-            "momentum_12_1_pct": -27.68,
-            "momentum_12_1_percentile": 0.085,
-            "position_52w": 0.3271,
-            "position_52w_percentile": 0.1984
-        },
-        "PFE": {
-            "momentum_12_1_pct": 7.2,
-            "momentum_12_1_percentile": 0.3968,
-            "position_52w": 0.3409,
-            "position_52w_percentile": 0.2105
-        },
-        "CB": {
-            "momentum_12_1_pct": 17.28,
-            "momentum_12_1_percentile": 0.5668,
-            "position_52w": 0.8622,
-            "position_52w_percentile": 0.749
-        },
-        "PLD": {
-            "momentum_12_1_pct": 38.5,
-            "momentum_12_1_percentile": 0.7733,
-            "position_52w": 0.8549,
-            "position_52w_percentile": 0.7368
-        },
-        "PGR": {
-            "momentum_12_1_pct": -13.04,
-            "momentum_12_1_percentile": 0.1781,
-            "position_52w": 0.8606,
-            "position_52w_percentile": 0.7449
-        },
-        "CRM": {
-            "momentum_12_1_pct": -31.65,
-            "momentum_12_1_percentile": 0.0648,
-            "position_52w": 0.112,
-            "position_52w_percentile": 0.0567
-        },
-        "CVS": {
-            "momentum_12_1_pct": 55.31,
-            "momentum_12_1_percentile": 0.8543,
-            "position_52w": 0.9861,
-            "position_52w_percentile": 0.9352
+            "momentum_12_1_pct": -15.58,
+            "momentum_12_1_percentile": 0.1734,
+            "position_52w": 0.3351,
+            "position_52w_percentile": 0.2258
         },
         "COP": {
-            "momentum_12_1_pct": 26.2,
-            "momentum_12_1_percentile": 0.664,
-            "position_52w": 0.517,
-            "position_52w_percentile": 0.3279
+            "momentum_12_1_pct": 18.82,
+            "momentum_12_1_percentile": 0.6008,
+            "position_52w": 0.7437,
+            "position_52w_percentile": 0.5847
         },
-        "SPGI": {
-            "momentum_12_1_pct": -18.72,
-            "momentum_12_1_percentile": 0.1255,
-            "position_52w": 0.3876,
-            "position_52w_percentile": 0.2308
+        "SHOP": {
+            "momentum_12_1_pct": -11.8,
+            "momentum_12_1_percentile": 0.2097,
+            "position_52w": 0.1985,
+            "position_52w_percentile": 0.1573
         },
-        "SYK": {
-            "momentum_12_1_pct": -18.77,
-            "momentum_12_1_percentile": 0.1215,
-            "position_52w": 0.4076,
-            "position_52w_percentile": 0.247
+        "PFE": {
+            "momentum_12_1_pct": 4.33,
+            "momentum_12_1_percentile": 0.4113,
+            "position_52w": 0.4823,
+            "position_52w_percentile": 0.3347
         },
-        "COF": {
-            "momentum_12_1_pct": -15.35,
-            "momentum_12_1_percentile": 0.1579,
-            "position_52w": 0.3251,
-            "position_52w_percentile": 0.1943
+        "UBER": {
+            "momentum_12_1_pct": -23.33,
+            "momentum_12_1_percentile": 0.129,
+            "position_52w": 0.0095,
+            "position_52w_percentile": 0.0363
         },
-        "VRTX": {
-            "momentum_12_1_pct": -4.92,
-            "momentum_12_1_percentile": 0.2672,
-            "position_52w": 0.7289,
-            "position_52w_percentile": 0.5263
+        "PLD": {
+            "momentum_12_1_pct": 36.67,
+            "momentum_12_1_percentile": 0.7742,
+            "position_52w": 0.8997,
+            "position_52w_percentile": 0.8145
         },
-        "PH": {
-            "momentum_12_1_pct": 27.76,
-            "momentum_12_1_percentile": 0.6964,
-            "position_52w": 0.8196,
-            "position_52w_percentile": 0.6478
+        "CB": {
+            "momentum_12_1_pct": 23.67,
+            "momentum_12_1_percentile": 0.6613,
+            "position_52w": 0.9182,
+            "position_52w_percentile": 0.8387
         },
-        "SBUX": {
-            "momentum_12_1_pct": 5.31,
-            "momentum_12_1_percentile": 0.3927,
-            "position_52w": 0.9729,
-            "position_52w_percentile": 0.9069
+        "CVS": {
+            "momentum_12_1_pct": 77.27,
+            "momentum_12_1_percentile": 0.9113,
+            "position_52w": 0.9304,
+            "position_52w_percentile": 0.8589
+        },
+        "DHR": {
+            "momentum_12_1_pct": -11.29,
+            "momentum_12_1_percentile": 0.2177,
+            "position_52w": 0.3892,
+            "position_52w_percentile": 0.2661
+        },
+        "APP": {
+            "momentum_12_1_pct": 29.75,
+            "momentum_12_1_percentile": 0.6976,
+            "position_52w": 0.1042,
+            "position_52w_percentile": 0.1169
+        },
+        "BKNG": {
+            "momentum_12_1_pct": -24.62,
+            "momentum_12_1_percentile": 0.1089,
+            "position_52w": 0.2608,
+            "position_52w_percentile": 0.1774
         },
         "LMT": {
-            "momentum_12_1_pct": 16.45,
-            "momentum_12_1_percentile": 0.5547,
-            "position_52w": 0.4526,
-            "position_52w_percentile": 0.2794
+            "momentum_12_1_pct": 22.99,
+            "momentum_12_1_percentile": 0.6492,
+            "position_52w": 0.6081,
+            "position_52w_percentile": 0.4315
         },
-        "LOW": {
-            "momentum_12_1_pct": -1.11,
-            "momentum_12_1_percentile": 0.3198,
-            "position_52w": 0.0629,
-            "position_52w_percentile": 0.0324
+        "CRM": {
+            "momentum_12_1_pct": -42.2,
+            "momentum_12_1_percentile": 0.0444,
+            "position_52w": 0.0578,
+            "position_52w_percentile": 0.0847
         },
         "BMY": {
-            "momentum_12_1_pct": 24.9,
-            "momentum_12_1_percentile": 0.6397,
-            "position_52w": 0.8254,
-            "position_52w_percentile": 0.668
+            "momentum_12_1_pct": 17.58,
+            "momentum_12_1_percentile": 0.5847,
+            "position_52w": 1.0,
+            "position_52w_percentile": 0.9718
+        },
+        "SPGI": {
+            "momentum_12_1_pct": -23.99,
+            "momentum_12_1_percentile": 0.121,
+            "position_52w": 0.3225,
+            "position_52w_percentile": 0.2177
+        },
+        "PH": {
+            "momentum_12_1_pct": 31.0,
+            "momentum_12_1_percentile": 0.7137,
+            "position_52w": 0.8931,
+            "position_52w_percentile": 0.8065
+        },
+        "COF": {
+            "momentum_12_1_pct": -5.02,
+            "momentum_12_1_percentile": 0.2944,
+            "position_52w": 0.3057,
+            "position_52w_percentile": 0.1935
+        },
+        "SYK": {
+            "momentum_12_1_pct": -21.26,
+            "momentum_12_1_percentile": 0.1331,
+            "position_52w": 0.3157,
+            "position_52w_percentile": 0.2056
+        },
+        "PGR": {
+            "momentum_12_1_pct": -7.19,
+            "momentum_12_1_percentile": 0.2702,
+            "position_52w": 0.3569,
+            "position_52w_percentile": 0.2419
+        },
+        "VRTX": {
+            "momentum_12_1_pct": -0.82,
+            "momentum_12_1_percentile": 0.3548,
+            "position_52w": 0.6535,
+            "position_52w_percentile": 0.4798
+        },
+        "ISRG": {
+            "momentum_12_1_pct": -17.48,
+            "momentum_12_1_percentile": 0.1653,
+            "position_52w": 0.0,
+            "position_52w_percentile": 0.0081
+        },
+        "SBUX": {
+            "momentum_12_1_pct": 10.69,
+            "momentum_12_1_percentile": 0.4879,
+            "position_52w": 0.8358,
+            "position_52w_percentile": 0.7177
+        },
+        "LOW": {
+            "momentum_12_1_pct": -3.98,
+            "momentum_12_1_percentile": 0.2984,
+            "position_52w": 0.0,
+            "position_52w_percentile": 0.0121
         },
         "FTNT": {
-            "momentum_12_1_pct": 39.7,
-            "momentum_12_1_percentile": 0.7895,
-            "position_52w": 0.9304,
-            "position_52w_percentile": 0.8664
-        },
-        "NOW": {
-            "momentum_12_1_pct": -43.03,
-            "momentum_12_1_percentile": 0.0324,
-            "position_52w": 0.2126,
-            "position_52w_percentile": 0.1377
+            "momentum_12_1_pct": 41.26,
+            "momentum_12_1_percentile": 0.8024,
+            "position_52w": 0.8346,
+            "position_52w_percentile": 0.7137
         },
         "SO": {
-            "momentum_12_1_pct": 3.59,
-            "momentum_12_1_percentile": 0.3846,
-            "position_52w": 0.8273,
-            "position_52w_percentile": 0.6721
-        },
-        "MDT": {
-            "momentum_12_1_pct": -6.71,
-            "momentum_12_1_percentile": 0.2389,
-            "position_52w": 0.3628,
-            "position_52w_percentile": 0.2227
+            "momentum_12_1_pct": 3.19,
+            "momentum_12_1_percentile": 0.3992,
+            "position_52w": 0.891,
+            "position_52w_percentile": 0.7984
         },
         "TT": {
-            "momentum_12_1_pct": 8.35,
-            "momentum_12_1_percentile": 0.4089,
-            "position_52w": 0.8155,
-            "position_52w_percentile": 0.6397
+            "momentum_12_1_pct": 3.45,
+            "momentum_12_1_percentile": 0.4032,
+            "position_52w": 0.8156,
+            "position_52w_percentile": 0.6855
         },
-        "CDNS": {
-            "momentum_12_1_pct": 21.93,
-            "momentum_12_1_percentile": 0.6154,
-            "position_52w": 0.7862,
-            "position_52w_percentile": 0.5992
-        },
-        "EQIX": {
-            "momentum_12_1_pct": 43.25,
-            "momentum_12_1_percentile": 0.8097,
-            "position_52w": 0.8371,
-            "position_52w_percentile": 0.6883
+        "MDT": {
+            "momentum_12_1_pct": -10.63,
+            "momentum_12_1_percentile": 0.2339,
+            "position_52w": 0.3002,
+            "position_52w_percentile": 0.1895
         },
         "GD": {
-            "momentum_12_1_pct": 15.9,
-            "momentum_12_1_percentile": 0.5425,
-            "position_52w": 0.9786,
-            "position_52w_percentile": 0.9231
+            "momentum_12_1_pct": 12.96,
+            "momentum_12_1_percentile": 0.5121,
+            "position_52w": 1.0,
+            "position_52w_percentile": 0.9758
         },
-        "PNC": {
-            "momentum_12_1_pct": 21.81,
-            "momentum_12_1_percentile": 0.6113,
-            "position_52w": 0.9732,
-            "position_52w_percentile": 0.9109
-        },
-        "HOOD": {
-            "momentum_12_1_pct": -14.82,
-            "momentum_12_1_percentile": 0.17,
-            "position_52w": 0.5362,
-            "position_52w_percentile": 0.3644
-        },
-        "MAR": {
-            "momentum_12_1_pct": 40.99,
-            "momentum_12_1_percentile": 0.8057,
-            "position_52w": 0.8231,
-            "position_52w_percentile": 0.6559
-        },
-        "SPOT": {
-            "momentum_12_1_pct": -30.03,
-            "momentum_12_1_percentile": 0.0729,
-            "position_52w": 0.2057,
-            "position_52w_percentile": 0.1336
+        "EQIX": {
+            "momentum_12_1_pct": 44.55,
+            "momentum_12_1_percentile": 0.8306,
+            "position_52w": 0.7926,
+            "position_52w_percentile": 0.6492
         },
         "DUK": {
-            "momentum_12_1_pct": 9.1,
-            "momentum_12_1_percentile": 0.4251,
-            "position_52w": 0.6624,
-            "position_52w_percentile": 0.4777
+            "momentum_12_1_pct": 8.07,
+            "momentum_12_1_percentile": 0.4476,
+            "position_52w": 0.849,
+            "position_52w_percentile": 0.746
+        },
+        "PNC": {
+            "momentum_12_1_pct": 24.69,
+            "momentum_12_1_percentile": 0.6694,
+            "position_52w": 0.9503,
+            "position_52w_percentile": 0.8871
         },
         "USB": {
-            "momentum_12_1_pct": 22.53,
-            "momentum_12_1_percentile": 0.6235,
-            "position_52w": 0.9767,
-            "position_52w_percentile": 0.915
-        },
-        "ADP": {
-            "momentum_12_1_pct": -22.09,
-            "momentum_12_1_percentile": 0.1053,
-            "position_52w": 0.4737,
-            "position_52w_percentile": 0.2955
-        },
-        "UPS": {
-            "momentum_12_1_pct": 13.84,
-            "momentum_12_1_percentile": 0.5061,
-            "position_52w": 0.896,
-            "position_52w_percentile": 0.83
-        },
-        "MNST": {
-            "momentum_12_1_pct": 53.24,
-            "momentum_12_1_percentile": 0.8421,
-            "position_52w": 0.9936,
-            "position_52w_percentile": 0.9514
-        },
-        "BK": null,
-        "MELI": {
-            "momentum_12_1_pct": -31.26,
-            "momentum_12_1_percentile": 0.0688,
-            "position_52w": 0.3168,
-            "position_52w_percentile": 0.1862
-        },
-        "CMI": {
-            "momentum_12_1_pct": 100.68,
-            "momentum_12_1_percentile": 0.9312,
-            "position_52w": 0.869,
-            "position_52w_percentile": 0.7652
+            "momentum_12_1_pct": 34.42,
+            "momentum_12_1_percentile": 0.7661,
+            "position_52w": 0.9487,
+            "position_52w_percentile": 0.8831
         },
         "CSX": {
-            "momentum_12_1_pct": 40.61,
-            "momentum_12_1_percentile": 0.8016,
-            "position_52w": 1.0,
-            "position_52w_percentile": 0.9757
-        },
-        "WMB": {
-            "momentum_12_1_pct": 25.94,
-            "momentum_12_1_percentile": 0.6559,
-            "position_52w": 0.842,
-            "position_52w_percentile": 0.7085
-        },
-        "DDOG": {
-            "momentum_12_1_pct": 65.49,
-            "momentum_12_1_percentile": 0.8826,
-            "position_52w": 0.8859,
-            "position_52w_percentile": 0.8097
-        },
-        "SNOW": {
-            "momentum_12_1_pct": 13.67,
-            "momentum_12_1_percentile": 0.4939,
-            "position_52w": 0.8824,
-            "position_52w_percentile": 0.7935
-        },
-        "ELV": {
-            "momentum_12_1_pct": 26.69,
-            "momentum_12_1_percentile": 0.6802,
-            "position_52w": 0.9578,
-            "position_52w_percentile": 0.8907
-        },
-        "ADBE": {
-            "momentum_12_1_pct": -34.53,
-            "momentum_12_1_percentile": 0.0607,
-            "position_52w": 0.1684,
-            "position_52w_percentile": 0.0931
-        },
-        "ABNB": {
-            "momentum_12_1_pct": -2.96,
-            "momentum_12_1_percentile": 0.2915,
-            "position_52w": 0.9917,
-            "position_52w_percentile": 0.9393
-        },
-        "CME": {
-            "momentum_12_1_pct": -3.34,
-            "momentum_12_1_percentile": 0.2874,
-            "position_52w": 0.22,
-            "position_52w_percentile": 0.1457
-        },
-        "SNPS": {
-            "momentum_12_1_pct": -16.81,
-            "momentum_12_1_percentile": 0.1417,
-            "position_52w": 0.2455,
-            "position_52w_percentile": 0.1579
-        },
-        "CMCSA": {
-            "momentum_12_1_pct": -24.77,
-            "momentum_12_1_percentile": 0.1012,
-            "position_52w": 0.1554,
-            "position_52w_percentile": 0.085
-        },
-        "DASH": {
-            "momentum_12_1_pct": -35.26,
-            "momentum_12_1_percentile": 0.0526,
-            "position_52w": 0.3346,
-            "position_52w_percentile": 0.2024
-        },
-        "SPG": {
-            "momentum_12_1_pct": 37.23,
-            "momentum_12_1_percentile": 0.7571,
-            "position_52w": 0.8826,
-            "position_52w_percentile": 0.7976
-        },
-        "MPC": {
-            "momentum_12_1_pct": 46.34,
-            "momentum_12_1_percentile": 0.8219,
+            "momentum_12_1_pct": 33.75,
+            "momentum_12_1_percentile": 0.7581,
             "position_52w": 1.0,
             "position_52w_percentile": 0.9798
         },
+        "ADP": {
+            "momentum_12_1_pct": -26.0,
+            "momentum_12_1_percentile": 0.1008,
+            "position_52w": 0.482,
+            "position_52w_percentile": 0.3306
+        },
+        "UPS": {
+            "momentum_12_1_pct": 10.32,
+            "momentum_12_1_percentile": 0.4718,
+            "position_52w": 0.9072,
+            "position_52w_percentile": 0.8266
+        },
+        "MAR": {
+            "momentum_12_1_pct": 43.01,
+            "momentum_12_1_percentile": 0.8185,
+            "position_52w": 0.7452,
+            "position_52w_percentile": 0.6008
+        },
+        "WM": {
+            "momentum_12_1_pct": -3.58,
+            "momentum_12_1_percentile": 0.3024,
+            "position_52w": 0.8561,
+            "position_52w_percentile": 0.7581
+        },
+        "NOW": {
+            "momentum_12_1_pct": -51.85,
+            "momentum_12_1_percentile": 0.0202,
+            "position_52w": 0.0769,
+            "position_52w_percentile": 0.1048
+        },
+        "NET": {
+            "momentum_12_1_pct": 17.41,
+            "momentum_12_1_percentile": 0.5806,
+            "position_52w": 0.8402,
+            "position_52w_percentile": 0.7298
+        },
+        "WMB": {
+            "momentum_12_1_pct": 33.1,
+            "momentum_12_1_percentile": 0.746,
+            "position_52w": 0.8516,
+            "position_52w_percentile": 0.75
+        },
+        "SNOW": {
+            "momentum_12_1_pct": 7.16,
+            "momentum_12_1_percentile": 0.4315,
+            "position_52w": 0.9055,
+            "position_52w_percentile": 0.8226
+        },
+        "CME": {
+            "momentum_12_1_pct": -9.2,
+            "momentum_12_1_percentile": 0.254,
+            "position_52w": 0.3624,
+            "position_52w_percentile": 0.246
+        },
+        "CMI": {
+            "momentum_12_1_pct": 94.44,
+            "momentum_12_1_percentile": 0.9315,
+            "position_52w": 0.8342,
+            "position_52w_percentile": 0.7097
+        },
+        "MNST": {
+            "momentum_12_1_pct": 55.68,
+            "momentum_12_1_percentile": 0.871,
+            "position_52w": 0.8451,
+            "position_52w_percentile": 0.7339
+        },
+        "HOOD": {
+            "momentum_12_1_pct": 1.3,
+            "momentum_12_1_percentile": 0.371,
+            "position_52w": 0.4172,
+            "position_52w_percentile": 0.2863
+        },
+        "MELI": {
+            "momentum_12_1_pct": -33.77,
+            "momentum_12_1_percentile": 0.0605,
+            "position_52w": 0.2613,
+            "position_52w_percentile": 0.1815
+        },
+        "MPC": {
+            "momentum_12_1_pct": 47.91,
+            "momentum_12_1_percentile": 0.8468,
+            "position_52w": 0.9544,
+            "position_52w_percentile": 0.8992
+        },
+        "CDNS": {
+            "momentum_12_1_pct": 16.76,
+            "momentum_12_1_percentile": 0.5726,
+            "position_52w": 0.4299,
+            "position_52w_percentile": 0.2944
+        },
         "MMM": {
-            "momentum_12_1_pct": 2.23,
-            "momentum_12_1_percentile": 0.3603,
-            "position_52w": 0.5251,
-            "position_52w_percentile": 0.3441
+            "momentum_12_1_pct": 10.43,
+            "momentum_12_1_percentile": 0.4758,
+            "position_52w": 0.8969,
+            "position_52w_percentile": 0.8105
         },
-        "AMT": {
-            "momentum_12_1_pct": -10.45,
-            "momentum_12_1_percentile": 0.2024,
+        "DDOG": {
+            "momentum_12_1_pct": 50.5,
+            "momentum_12_1_percentile": 0.8508,
+            "position_52w": 0.8107,
+            "position_52w_percentile": 0.6815
+        },
+        "SPG": {
+            "momentum_12_1_pct": 37.64,
+            "momentum_12_1_percentile": 0.7823,
+            "position_52w": 0.9535,
+            "position_52w_percentile": 0.8952
+        },
+        "ADBE": {
+            "momentum_12_1_pct": -46.88,
+            "momentum_12_1_percentile": 0.0323,
             "position_52w": 0.1052,
-            "position_52w_percentile": 0.0526
+            "position_52w_percentile": 0.121
         },
-        "EMR": {
-            "momentum_12_1_pct": 3.31,
-            "momentum_12_1_percentile": 0.3806,
-            "position_52w": 0.4282,
-            "position_52w_percentile": 0.2632
-        },
-        "CI": {
-            "momentum_12_1_pct": -0.57,
-            "momentum_12_1_percentile": 0.3279,
-            "position_52w": 0.8116,
-            "position_52w_percentile": 0.6356
-        },
-        "ITW": {
-            "momentum_12_1_pct": 0.67,
-            "momentum_12_1_percentile": 0.3522,
-            "position_52w": 0.5431,
-            "position_52w_percentile": 0.3684
-        },
-        "NOC": {
-            "momentum_12_1_pct": 8.29,
-            "momentum_12_1_percentile": 0.4049,
-            "position_52w": 0.1623,
-            "position_52w_percentile": 0.0891
-        },
-        "RCL": {
-            "momentum_12_1_pct": -15.19,
-            "momentum_12_1_percentile": 0.166,
-            "position_52w": 0.3614,
-            "position_52w_percentile": 0.2186
-        },
-        "ICE": {
-            "momentum_12_1_pct": -20.87,
-            "momentum_12_1_percentile": 0.1093,
-            "position_52w": 0.1955,
-            "position_52w_percentile": 0.1174
-        },
-        "HLT": {
-            "momentum_12_1_pct": 23.79,
-            "momentum_12_1_percentile": 0.6275,
-            "position_52w": 0.843,
-            "position_52w_percentile": 0.7126
-        },
-        "AON": {
-            "momentum_12_1_pct": -6.33,
-            "momentum_12_1_percentile": 0.2429,
-            "position_52w": 0.7373,
-            "position_52w_percentile": 0.5385
+        "MRSH": {
+            "momentum_12_1_pct": -20.19,
+            "momentum_12_1_percentile": 0.1492,
+            "position_52w": 0.3755,
+            "position_52w_percentile": 0.2581
         },
         "PSX": {
-            "momentum_12_1_pct": 40.56,
-            "momentum_12_1_percentile": 0.7976,
-            "position_52w": 0.9806,
-            "position_52w_percentile": 0.9271
+            "momentum_12_1_pct": 41.71,
+            "momentum_12_1_percentile": 0.8105,
+            "position_52w": 0.9459,
+            "position_52w_percentile": 0.879
         },
-        "MDLZ": {
-            "momentum_12_1_pct": -3.88,
-            "momentum_12_1_percentile": 0.2713,
-            "position_52w": 0.4617,
-            "position_52w_percentile": 0.2834
+        "ELV": {
+            "momentum_12_1_pct": 43.85,
+            "momentum_12_1_percentile": 0.8226,
+            "position_52w": 0.6991,
+            "position_52w_percentile": 0.5363
         },
-        "INTU": {
-            "momentum_12_1_pct": -60.45,
-            "momentum_12_1_percentile": 0.004,
-            "position_52w": 0.0386,
-            "position_52w_percentile": 0.0162
-        },
-        "FDX": {
-            "momentum_12_1_pct": 77.14,
-            "momentum_12_1_percentile": 0.9028,
-            "position_52w": 0.8626,
-            "position_52w_percentile": 0.753
-        },
-        "CL": {
-            "momentum_12_1_pct": 0.49,
-            "momentum_12_1_percentile": 0.3441,
-            "position_52w": 0.743,
-            "position_52w_percentile": 0.5506
-        },
-        "NXPI": {
-            "momentum_12_1_pct": 31.78,
-            "momentum_12_1_percentile": 0.7085,
-            "position_52w": 0.7376,
-            "position_52w_percentile": 0.5425
-        },
-        "AEP": {
-            "momentum_12_1_pct": 25.12,
-            "momentum_12_1_percentile": 0.6437,
-            "position_52w": 0.9131,
-            "position_52w_percentile": 0.8462
-        },
-        "NSC": {
-            "momentum_12_1_pct": 19.34,
-            "momentum_12_1_percentile": 0.5951,
-            "position_52w": 1.0,
-            "position_52w_percentile": 0.9838
-        },
-        "TRV": {
-            "momentum_12_1_pct": 19.36,
-            "momentum_12_1_percentile": 0.5992,
-            "position_52w": 0.9504,
-            "position_52w_percentile": 0.8826
+        "ABNB": {
+            "momentum_12_1_pct": -1.96,
+            "momentum_12_1_percentile": 0.3306,
+            "position_52w": 0.6962,
+            "position_52w_percentile": 0.5323
         },
         "CTAS": {
-            "momentum_12_1_pct": -15.72,
-            "momentum_12_1_percentile": 0.1538,
-            "position_52w": 0.2709,
-            "position_52w_percentile": 0.17
+            "momentum_12_1_pct": -23.55,
+            "momentum_12_1_percentile": 0.125,
+            "position_52w": 0.6577,
+            "position_52w_percentile": 0.4839
         },
-        "HON": {
-            "momentum_12_1_pct": -0.88,
-            "momentum_12_1_percentile": 0.3239,
-            "position_52w": 0.491,
-            "position_52w_percentile": 0.3036
+        "EMR": {
+            "momentum_12_1_pct": -0.92,
+            "momentum_12_1_percentile": 0.3468,
+            "position_52w": 0.588,
+            "position_52w_percentile": 0.4153
         },
-        "ORLY": {
-            "momentum_12_1_pct": -2.32,
-            "momentum_12_1_percentile": 0.2996,
-            "position_52w": 0.0865,
-            "position_52w_percentile": 0.0405
+        "ICE": {
+            "momentum_12_1_pct": -26.63,
+            "momentum_12_1_percentile": 0.0927,
+            "position_52w": 0.3214,
+            "position_52w_percentile": 0.2137
         },
-        "ROST": {
-            "momentum_12_1_pct": 76.51,
-            "momentum_12_1_percentile": 0.8988,
-            "position_52w": 0.8483,
-            "position_52w_percentile": 0.7247
+        "ITW": {
+            "momentum_12_1_pct": 1.84,
+            "momentum_12_1_percentile": 0.379,
+            "position_52w": 0.6796,
+            "position_52w_percentile": 0.5081
         },
-        "KMI": {
-            "momentum_12_1_pct": 17.24,
-            "momentum_12_1_percentile": 0.5628,
-            "position_52w": 0.7624,
-            "position_52w_percentile": 0.5668
+        "TRV": {
+            "momentum_12_1_pct": 22.91,
+            "momentum_12_1_percentile": 0.6452,
+            "position_52w": 1.0,
+            "position_52w_percentile": 0.9839
         },
-        "EOG": {
-            "momentum_12_1_pct": 15.59,
-            "momentum_12_1_percentile": 0.5385,
-            "position_52w": 0.6994,
-            "position_52w_percentile": 0.5061
+        "CMCSA": {
+            "momentum_12_1_pct": -28.86,
+            "momentum_12_1_percentile": 0.0847,
+            "position_52w": 0.0,
+            "position_52w_percentile": 0.0161
         },
-        "SLB": {
-            "momentum_12_1_pct": 53.78,
-            "momentum_12_1_percentile": 0.8462,
-            "position_52w": 0.6188,
-            "position_52w_percentile": 0.417
-        },
-        "GM": {
-            "momentum_12_1_pct": 58.32,
-            "momentum_12_1_percentile": 0.8664,
-            "position_52w": 0.7832,
-            "position_52w_percentile": 0.5951
-        },
-        "REGN": {
-            "momentum_12_1_pct": 9.13,
-            "momentum_12_1_percentile": 0.4291,
-            "position_52w": 0.4619,
-            "position_52w_percentile": 0.2874
-        },
-        "URI": {
-            "momentum_12_1_pct": 35.5,
-            "momentum_12_1_percentile": 0.7449,
-            "position_52w": 0.8979,
-            "position_52w_percentile": 0.8381
-        },
-        "DLR": {
-            "momentum_12_1_pct": 12.19,
-            "momentum_12_1_percentile": 0.4696,
-            "position_52w": 0.6087,
-            "position_52w_percentile": 0.4049
-        },
-        "RSG": {
-            "momentum_12_1_pct": -12.12,
-            "momentum_12_1_percentile": 0.1943,
-            "position_52w": 0.4787,
-            "position_52w_percentile": 0.2996
-        },
-        "WBD": {
-            "momentum_12_1_pct": 126.43,
-            "momentum_12_1_percentile": 0.9555,
-            "position_52w": 0.8234,
-            "position_52w_percentile": 0.6599
-        },
-        "BSX": {
-            "momentum_12_1_pct": -52.56,
-            "momentum_12_1_percentile": 0.0162,
-            "position_52w": 0.0319,
-            "position_52w_percentile": 0.0081
-        },
-        "MPWR": {
-            "momentum_12_1_pct": 109.27,
-            "momentum_12_1_percentile": 0.9393,
-            "position_52w": 0.659,
-            "position_52w_percentile": 0.4737
-        },
-        "NKE": {
-            "momentum_12_1_pct": -36.84,
-            "momentum_12_1_percentile": 0.0486,
-            "position_52w": 0.0995,
-            "position_52w_percentile": 0.0486
-        },
-        "PCAR": {
-            "momentum_12_1_pct": 26.24,
-            "momentum_12_1_percentile": 0.668,
-            "position_52w": 0.8828,
-            "position_52w_percentile": 0.8016
-        },
-        "AJG": {
-            "momentum_12_1_pct": -29.55,
-            "momentum_12_1_percentile": 0.0769,
-            "position_52w": 0.5121,
-            "position_52w_percentile": 0.3239
-        },
-        "ALL": {
-            "momentum_12_1_pct": 14.6,
-            "momentum_12_1_percentile": 0.5223,
+        "NSC": {
+            "momentum_12_1_pct": 11.16,
+            "momentum_12_1_percentile": 0.4919,
             "position_52w": 1.0,
             "position_52w_percentile": 0.9879
         },
-        "TFC": {
-            "momentum_12_1_pct": 13.73,
-            "momentum_12_1_percentile": 0.498,
-            "position_52w": 0.7981,
-            "position_52w_percentile": 0.6194
+        "HON": {
+            "momentum_12_1_pct": 7.4,
+            "momentum_12_1_percentile": 0.4355,
+            "position_52w": 0.8039,
+            "position_52w_percentile": 0.6653
         },
-        "COHR": {
-            "momentum_12_1_pct": 281.5,
-            "momentum_12_1_percentile": 0.9879,
-            "position_52w": 0.6992,
-            "position_52w_percentile": 0.502
+        "EOG": {
+            "momentum_12_1_pct": 16.39,
+            "momentum_12_1_percentile": 0.5605,
+            "position_52w": 0.9555,
+            "position_52w_percentile": 0.9032
         },
-        "AFL": {
-            "momentum_12_1_pct": 16.25,
-            "momentum_12_1_percentile": 0.5506,
-            "position_52w": 0.9969,
-            "position_52w_percentile": 0.9555
+        "MDLZ": {
+            "momentum_12_1_pct": -10.72,
+            "momentum_12_1_percentile": 0.2298,
+            "position_52w": 0.5355,
+            "position_52w_percentile": 0.375
         },
-        "SRE": {
-            "momentum_12_1_pct": 24.51,
-            "momentum_12_1_percentile": 0.6356,
-            "position_52w": 0.8206,
-            "position_52w_percentile": 0.6518
+        "INTU": {
+            "momentum_12_1_pct": -66.74,
+            "momentum_12_1_percentile": 0.004,
+            "position_52w": 0.0507,
+            "position_52w_percentile": 0.0766
         },
-        "TGT": {
-            "momentum_12_1_pct": 26.78,
-            "momentum_12_1_percentile": 0.6842,
-            "position_52w": 0.8975,
-            "position_52w_percentile": 0.834
+        "AMT": {
+            "momentum_12_1_pct": -19.43,
+            "momentum_12_1_percentile": 0.1573,
+            "position_52w": 0.042,
+            "position_52w_percentile": 0.0726
         },
-        "O": {
-            "momentum_12_1_pct": 12.61,
-            "momentum_12_1_percentile": 0.4777,
-            "position_52w": 0.7667,
-            "position_52w_percentile": 0.5789
+        "RCL": {
+            "momentum_12_1_pct": -9.89,
+            "momentum_12_1_percentile": 0.2419,
+            "position_52w": 0.3446,
+            "position_52w_percentile": 0.2298
         },
-        "MET": {
-            "momentum_12_1_pct": 13.44,
-            "momentum_12_1_percentile": 0.4899,
-            "position_52w": 0.9992,
-            "position_52w_percentile": 0.9636
+        "AON": {
+            "momentum_12_1_pct": -9.63,
+            "momentum_12_1_percentile": 0.246,
+            "position_52w": 0.7197,
+            "position_52w_percentile": 0.5565
         },
-        "TRGP": {
-            "momentum_12_1_pct": 57.19,
-            "momentum_12_1_percentile": 0.8623,
-            "position_52w": 0.9663,
-            "position_52w_percentile": 0.8988
+        "NOC": {
+            "momentum_12_1_pct": -8.31,
+            "momentum_12_1_percentile": 0.2581,
+            "position_52w": 0.1394,
+            "position_52w_percentile": 0.1331
         },
-        "CARR": {
-            "momentum_12_1_pct": -5.65,
-            "momentum_12_1_percentile": 0.2591,
-            "position_52w": 0.6495,
-            "position_52w_percentile": 0.4575
+        "CI": {
+            "momentum_12_1_pct": -1.56,
+            "momentum_12_1_percentile": 0.3387,
+            "position_52w": 0.7021,
+            "position_52w_percentile": 0.5403
         },
-        "BKR": {
-            "momentum_12_1_pct": 58.84,
-            "momentum_12_1_percentile": 0.8704,
-            "position_52w": 0.6219,
-            "position_52w_percentile": 0.4211
-        },
-        "OKE": {
-            "momentum_12_1_pct": 13.88,
-            "momentum_12_1_percentile": 0.5101,
-            "position_52w": 0.8366,
-            "position_52w_percentile": 0.6842
-        },
-        "TER": {
-            "momentum_12_1_pct": 281.41,
-            "momentum_12_1_percentile": 0.9838,
-            "position_52w": 0.6846,
-            "position_52w_percentile": 0.498
-        },
-        "PSA": {
-            "momentum_12_1_pct": 15.23,
-            "momentum_12_1_percentile": 0.5263,
-            "position_52w": 0.8808,
-            "position_52w_percentile": 0.7895
-        },
-        "F": {
-            "momentum_12_1_pct": 33.17,
-            "momentum_12_1_percentile": 0.7206,
-            "position_52w": 0.5174,
-            "position_52w_percentile": 0.332
-        },
-        "ETR": {
-            "momentum_12_1_pct": 37.57,
-            "momentum_12_1_percentile": 0.7611,
-            "position_52w": 0.9386,
-            "position_52w_percentile": 0.8704
-        },
-        "AME": {
-            "momentum_12_1_pct": 27.59,
-            "momentum_12_1_percentile": 0.6923,
-            "position_52w": 0.8805,
-            "position_52w_percentile": 0.7854
-        },
-        "FAST": {
-            "momentum_12_1_pct": 9.9,
-            "momentum_12_1_percentile": 0.4413,
-            "position_52w": 0.7146,
-            "position_52w_percentile": 0.5142
-        },
-        "EW": {
-            "momentum_12_1_pct": 12.16,
-            "momentum_12_1_percentile": 0.4656,
+        "FDX": {
+            "momentum_12_1_pct": 69.7,
+            "momentum_12_1_percentile": 0.9073,
             "position_52w": 0.8682,
-            "position_52w_percentile": 0.7611
+            "position_52w_percentile": 0.7742
         },
-        "OXY": {
-            "momentum_12_1_pct": 24.06,
-            "momentum_12_1_percentile": 0.6316,
-            "position_52w": 0.5235,
-            "position_52w_percentile": 0.3401
+        "ROST": {
+            "momentum_12_1_pct": 69.4,
+            "momentum_12_1_percentile": 0.9032,
+            "position_52w": 0.9262,
+            "position_52w_percentile": 0.8548
         },
-        "ROK": {
-            "momentum_12_1_pct": 36.12,
-            "momentum_12_1_percentile": 0.749,
-            "position_52w": 0.8657,
-            "position_52w_percentile": 0.7571
+        "DASH": {
+            "momentum_12_1_pct": -29.62,
+            "momentum_12_1_percentile": 0.0766,
+            "position_52w": 0.1715,
+            "position_52w_percentile": 0.1492
         },
-        "EA": {
-            "momentum_12_1_pct": 36.71,
-            "momentum_12_1_percentile": 0.753,
-            "position_52w": 0.9975,
-            "position_52w_percentile": 0.9595
+        "AEP": {
+            "momentum_12_1_pct": 26.62,
+            "momentum_12_1_percentile": 0.6815,
+            "position_52w": 0.8912,
+            "position_52w_percentile": 0.8024
         },
-        "FANG": {
-            "momentum_12_1_pct": 38.05,
-            "momentum_12_1_percentile": 0.7652,
-            "position_52w": 0.6378,
-            "position_52w_percentile": 0.4372
+        "GM": {
+            "momentum_12_1_pct": 52.22,
+            "momentum_12_1_percentile": 0.8589,
+            "position_52w": 0.8451,
+            "position_52w_percentile": 0.7379
         },
-        "AZO": {
-            "momentum_12_1_pct": -15.33,
-            "momentum_12_1_percentile": 0.1619,
-            "position_52w": 0.0968,
-            "position_52w_percentile": 0.0445
+        "KMI": {
+            "momentum_12_1_pct": 23.59,
+            "momentum_12_1_percentile": 0.6573,
+            "position_52w": 0.8329,
+            "position_52w_percentile": 0.7056
         },
-        "XEL": {
-            "momentum_12_1_pct": 16.1,
-            "momentum_12_1_percentile": 0.5466,
-            "position_52w": 0.8407,
-            "position_52w_percentile": 0.6964
+        "HLT": {
+            "momentum_12_1_pct": 28.76,
+            "momentum_12_1_percentile": 0.6855,
+            "position_52w": 0.6799,
+            "position_52w_percentile": 0.5121
         },
-        "STT": {
-            "momentum_12_1_pct": 52.08,
-            "momentum_12_1_percentile": 0.8381,
+        "CL": {
+            "momentum_12_1_pct": 5.35,
+            "momentum_12_1_percentile": 0.4153,
+            "position_52w": 0.6758,
+            "position_52w_percentile": 0.504
+        },
+        "SNPS": {
+            "momentum_12_1_pct": -24.3,
+            "momentum_12_1_percentile": 0.1129,
+            "position_52w": 0.0,
+            "position_52w_percentile": 0.0202
+        },
+        "URI": {
+            "momentum_12_1_pct": 22.49,
+            "momentum_12_1_percentile": 0.6411,
             "position_52w": 1.0,
             "position_52w_percentile": 0.9919
         },
-        "DVN": {
-            "momentum_12_1_pct": 32.16,
-            "momentum_12_1_percentile": 0.7126,
-            "position_52w": 0.5436,
-            "position_52w_percentile": 0.3725
+        "ORLY": {
+            "momentum_12_1_pct": -10.82,
+            "momentum_12_1_percentile": 0.2218,
+            "position_52w": 0.1347,
+            "position_52w_percentile": 0.129
         },
-        "MCHP": {
-            "momentum_12_1_pct": 26.01,
-            "momentum_12_1_percentile": 0.6599,
-            "position_52w": 0.7416,
-            "position_52w_percentile": 0.5466
+        "SLB": {
+            "momentum_12_1_pct": 39.32,
+            "momentum_12_1_percentile": 0.7944,
+            "position_52w": 0.5987,
+            "position_52w_percentile": 0.4234
         },
-        "EXC": {
-            "momentum_12_1_pct": 7.94,
-            "momentum_12_1_percentile": 0.4008,
-            "position_52w": 0.643,
-            "position_52w_percentile": 0.4494
+        "NXPI": {
+            "momentum_12_1_pct": 35.56,
+            "momentum_12_1_percentile": 0.7702,
+            "position_52w": 0.6377,
+            "position_52w_percentile": 0.4597
         },
-        "HUM": {
-            "momentum_12_1_pct": 59.34,
-            "momentum_12_1_percentile": 0.8785,
-            "position_52w": 0.9304,
-            "position_52w_percentile": 0.8623
+        "PCAR": {
+            "momentum_12_1_pct": 18.05,
+            "momentum_12_1_percentile": 0.5927,
+            "position_52w": 0.991,
+            "position_52w_percentile": 0.9435
         },
-        "AXON": {
-            "momentum_12_1_pct": -37.98,
-            "momentum_12_1_percentile": 0.0405,
-            "position_52w": 0.4188,
-            "position_52w_percentile": 0.2551
+        "MPWR": {
+            "momentum_12_1_pct": 100.78,
+            "momentum_12_1_percentile": 0.9395,
+            "position_52w": 0.7042,
+            "position_52w_percentile": 0.5444
         },
-        "CMG": {
-            "momentum_12_1_pct": -46.64,
-            "momentum_12_1_percentile": 0.0243,
-            "position_52w": 0.2541,
-            "position_52w_percentile": 0.1619
+        "REGN": {
+            "momentum_12_1_pct": 10.06,
+            "momentum_12_1_percentile": 0.4597,
+            "position_52w": 0.4089,
+            "position_52w_percentile": 0.2782
         },
-        "TTWO": {
-            "momentum_12_1_pct": -9.35,
-            "momentum_12_1_percentile": 0.2146,
-            "position_52w": 0.7371,
-            "position_52w_percentile": 0.5344
+        "DLR": {
+            "momentum_12_1_pct": 11.45,
+            "momentum_12_1_percentile": 0.5,
+            "position_52w": 0.5898,
+            "position_52w_percentile": 0.4194
         },
-        "YUM": {
-            "momentum_12_1_pct": 3.17,
-            "momentum_12_1_percentile": 0.3684,
-            "position_52w": 0.8735,
-            "position_52w_percentile": 0.7773
+        "RSG": {
+            "momentum_12_1_pct": -13.96,
+            "momentum_12_1_percentile": 0.2016,
+            "position_52w": 0.4401,
+            "position_52w_percentile": 0.3024
         },
-        "IDXX": {
-            "momentum_12_1_pct": 8.53,
-            "momentum_12_1_percentile": 0.4211,
-            "position_52w": 0.1942,
-            "position_52w_percentile": 0.1093
+        "ALL": {
+            "momentum_12_1_pct": 21.8,
+            "momentum_12_1_percentile": 0.629,
+            "position_52w": 0.9721,
+            "position_52w_percentile": 0.9274
         },
-        "VTR": {
-            "momentum_12_1_pct": 29.83,
-            "momentum_12_1_percentile": 0.7004,
-            "position_52w": 0.8897,
-            "position_52w_percentile": 0.8219
+        "WBD": {
+            "momentum_12_1_pct": 99.11,
+            "momentum_12_1_percentile": 0.9355,
+            "position_52w": 0.7901,
+            "position_52w_percentile": 0.6452
         },
-        "KDP": {
-            "momentum_12_1_pct": -3.52,
-            "momentum_12_1_percentile": 0.2834,
-            "position_52w": 0.7453,
-            "position_52w_percentile": 0.5547
+        "BSX": {
+            "momentum_12_1_pct": -57.07,
+            "momentum_12_1_percentile": 0.0161,
+            "position_52w": 0.0145,
+            "position_52w_percentile": 0.0444
         },
-        "AIG": {
-            "momentum_12_1_pct": -8.06,
-            "momentum_12_1_percentile": 0.2227,
-            "position_52w": 0.563,
-            "position_52w_percentile": 0.3846
+        "AFL": {
+            "momentum_12_1_pct": 18.42,
+            "momentum_12_1_percentile": 0.5968,
+            "position_52w": 0.9867,
+            "position_52w_percentile": 0.9355
         },
-        "COIN": {
-            "momentum_12_1_pct": -59.83,
-            "momentum_12_1_percentile": 0.0081,
-            "position_52w": 0.0645,
-            "position_52w_percentile": 0.0364
+        "TFC": {
+            "momentum_12_1_pct": 14.16,
+            "momentum_12_1_percentile": 0.5323,
+            "position_52w": 0.7665,
+            "position_52w_percentile": 0.6129
         },
-        "BDX": {
-            "momentum_12_1_pct": 12.6,
-            "momentum_12_1_percentile": 0.4737,
-            "position_52w": 0.388,
-            "position_52w_percentile": 0.2348
+        "AJG": {
+            "momentum_12_1_pct": -29.4,
+            "momentum_12_1_percentile": 0.0806,
+            "position_52w": 0.4228,
+            "position_52w_percentile": 0.2903
         },
-        "LYV": {
-            "momentum_12_1_pct": 13.01,
-            "momentum_12_1_percentile": 0.4858,
-            "position_52w": 0.8885,
-            "position_52w_percentile": 0.8178
-        },
-        "ED": {
-            "momentum_12_1_pct": 9.29,
-            "momentum_12_1_percentile": 0.4332,
-            "position_52w": 0.8408,
-            "position_52w_percentile": 0.7004
-        },
-        "PYPL": {
-            "momentum_12_1_pct": -41.4,
-            "momentum_12_1_percentile": 0.0364,
-            "position_52w": 0.1934,
-            "position_52w_percentile": 0.1053
-        },
-        "PEG": {
-            "momentum_12_1_pct": -1.65,
-            "momentum_12_1_percentile": 0.3117,
-            "position_52w": 0.4156,
-            "position_52w_percentile": 0.251
-        },
-        "SYY": {
-            "momentum_12_1_pct": 3.1,
-            "momentum_12_1_percentile": 0.3644,
-            "position_52w": 0.7192,
-            "position_52w_percentile": 0.5182
-        },
-        "PRU": {
-            "momentum_12_1_pct": 3.2,
-            "momentum_12_1_percentile": 0.3725,
-            "position_52w": 0.9925,
-            "position_52w_percentile": 0.9474
-        },
-        "RBLX": {
-            "momentum_12_1_pct": -59.31,
-            "momentum_12_1_percentile": 0.0121,
-            "position_52w": 0.14,
-            "position_52w_percentile": 0.081
-        },
-        "PAYX": {
-            "momentum_12_1_pct": -27.14,
-            "momentum_12_1_percentile": 0.0891,
-            "position_52w": 0.3925,
-            "position_52w_percentile": 0.2389
-        },
-        "HIG": {
-            "momentum_12_1_pct": 8.5,
-            "momentum_12_1_percentile": 0.413,
-            "position_52w": 0.859,
-            "position_52w_percentile": 0.7409
-        },
-        "A": {
-            "momentum_12_1_pct": 10.57,
-            "momentum_12_1_percentile": 0.4534,
-            "position_52w": 0.5273,
-            "position_52w_percentile": 0.3522
-        },
-        "GFS": {
-            "momentum_12_1_pct": 82.54,
-            "momentum_12_1_percentile": 0.915,
-            "position_52w": 0.6419,
-            "position_52w_percentile": 0.4453
-        },
-        "RDDT": {
-            "momentum_12_1_pct": 22.34,
-            "momentum_12_1_percentile": 0.6194,
-            "position_52w": 0.4937,
-            "position_52w_percentile": 0.3077
-        },
-        "WEC": {
-            "momentum_12_1_pct": 10.8,
-            "momentum_12_1_percentile": 0.4615,
-            "position_52w": 0.7774,
-            "position_52w_percentile": 0.587
-        },
-        "KVUE": {
-            "momentum_12_1_pct": -12.12,
-            "momentum_12_1_percentile": 0.1903,
-            "position_52w": 0.7145,
-            "position_52w_percentile": 0.5101
-        },
-        "ON": {
-            "momentum_12_1_pct": 95.88,
-            "momentum_12_1_percentile": 0.9231,
-            "position_52w": 0.5735,
-            "position_52w_percentile": 0.3887
-        },
-        "KMB": {
-            "momentum_12_1_pct": -18.5,
-            "momentum_12_1_percentile": 0.1296,
-            "position_52w": 0.5343,
-            "position_52w_percentile": 0.3563
-        },
-        "KR": {
-            "momentum_12_1_pct": -8.89,
-            "momentum_12_1_percentile": 0.2186,
-            "position_52w": 0.2547,
-            "position_52w_percentile": 0.166
-        },
-        "WAT": {
-            "momentum_12_1_pct": 5.17,
-            "momentum_12_1_percentile": 0.3887,
-            "position_52w": 0.7322,
-            "position_52w_percentile": 0.5304
-        },
-        "CCL": {
-            "momentum_12_1_pct": -2.2,
-            "momentum_12_1_percentile": 0.3077,
-            "position_52w": 0.3101,
-            "position_52w_percentile": 0.1822
-        },
-        "HSY": {
-            "momentum_12_1_pct": 9.92,
-            "momentum_12_1_percentile": 0.4453,
-            "position_52w": 0.203,
-            "position_52w_percentile": 0.1296
-        },
-        "IQV": {
-            "momentum_12_1_pct": 14.4,
-            "momentum_12_1_percentile": 0.5182,
-            "position_52w": 0.5842,
-            "position_52w_percentile": 0.3968
-        },
-        "WDAY": {
-            "momentum_12_1_pct": -37.22,
-            "momentum_12_1_percentile": 0.0445,
-            "position_52w": 0.1957,
-            "position_52w_percentile": 0.1215
-        },
-        "NTRS": {
-            "momentum_12_1_pct": 38.57,
-            "momentum_12_1_percentile": 0.7773,
+        "TRGP": {
+            "momentum_12_1_pct": 65.94,
+            "momentum_12_1_percentile": 0.8911,
             "position_52w": 1.0,
             "position_52w_percentile": 0.996
         },
-        "MSTR": {
-            "momentum_12_1_pct": -73.07,
-            "momentum_12_1_percentile": 0.0,
-            "position_52w": 0.033,
-            "position_52w_percentile": 0.0121
+        "COHR": {
+            "momentum_12_1_pct": 286.16,
+            "momentum_12_1_percentile": 0.9839,
+            "position_52w": 0.666,
+            "position_52w_percentile": 0.4919
         },
-        "CPNG": {
-            "momentum_12_1_pct": -47.11,
-            "momentum_12_1_percentile": 0.0202,
-            "position_52w": 0.1999,
-            "position_52w_percentile": 0.1255
+        "SRE": {
+            "momentum_12_1_pct": 17.19,
+            "momentum_12_1_percentile": 0.5766,
+            "position_52w": 0.7438,
+            "position_52w_percentile": 0.5887
         },
-        "CNC": {
-            "momentum_12_1_pct": 110.59,
-            "momentum_12_1_percentile": 0.9433,
-            "position_52w": 0.9768,
-            "position_52w_percentile": 0.919
+        "TGT": {
+            "momentum_12_1_pct": 32.28,
+            "momentum_12_1_percentile": 0.7298,
+            "position_52w": 0.8864,
+            "position_52w_percentile": 0.7944
         },
-        "TWLO": {
-            "momentum_12_1_pct": 80.89,
-            "momentum_12_1_percentile": 0.9109,
-            "position_52w": 0.8469,
-            "position_52w_percentile": 0.7206
+        "NKE": {
+            "momentum_12_1_pct": -42.27,
+            "momentum_12_1_percentile": 0.0403,
+            "position_52w": 0.0066,
+            "position_52w_percentile": 0.0282
         },
-        "ZTS": {
-            "momentum_12_1_pct": -46.13,
-            "momentum_12_1_percentile": 0.0283,
-            "position_52w": 0.0446,
-            "position_52w_percentile": 0.0243
+        "O": {
+            "momentum_12_1_pct": 11.45,
+            "momentum_12_1_percentile": 0.496,
+            "position_52w": 0.8734,
+            "position_52w_percentile": 0.7782
         },
-        "AEE": {
-            "momentum_12_1_pct": 15.45,
-            "momentum_12_1_percentile": 0.5304,
-            "position_52w": 0.7867,
-            "position_52w_percentile": 0.6032
+        "MET": {
+            "momentum_12_1_pct": 16.56,
+            "momentum_12_1_percentile": 0.5685,
+            "position_52w": 0.9456,
+            "position_52w_percentile": 0.875
         },
-        "IR": {
-            "momentum_12_1_pct": -16.89,
-            "momentum_12_1_percentile": 0.1377,
-            "position_52w": 0.3417,
-            "position_52w_percentile": 0.2146
+        "OKE": {
+            "momentum_12_1_pct": 13.29,
+            "momentum_12_1_percentile": 0.5161,
+            "position_52w": 0.9382,
+            "position_52w_percentile": 0.8669
         },
-        "EL": {
-            "momentum_12_1_pct": -3.57,
-            "momentum_12_1_percentile": 0.2794,
-            "position_52w": 0.3028,
-            "position_52w_percentile": 0.1781
+        "TER": {
+            "momentum_12_1_pct": 361.18,
+            "momentum_12_1_percentile": 0.9879,
+            "position_52w": 0.7205,
+            "position_52w_percentile": 0.5605
         },
-        "KHC": {
-            "momentum_12_1_pct": -7.88,
-            "momentum_12_1_percentile": 0.2267,
-            "position_52w": 0.6389,
-            "position_52w_percentile": 0.4413
+        "FANG": {
+            "momentum_12_1_pct": 32.66,
+            "momentum_12_1_percentile": 0.7419,
+            "position_52w": 0.9126,
+            "position_52w_percentile": 0.8347
         },
-        "DOV": {
-            "momentum_12_1_pct": 18.18,
-            "momentum_12_1_percentile": 0.5789,
-            "position_52w": 0.7664,
-            "position_52w_percentile": 0.5749
+        "CARR": {
+            "momentum_12_1_pct": -9.89,
+            "momentum_12_1_percentile": 0.2379,
+            "position_52w": 0.6515,
+            "position_52w_percentile": 0.4758
         },
-        "DXCM": {
-            "momentum_12_1_pct": -6.21,
-            "momentum_12_1_percentile": 0.251,
-            "position_52w": 0.58,
-            "position_52w_percentile": 0.3927
+        "OXY": {
+            "momentum_12_1_pct": 19.45,
+            "momentum_12_1_percentile": 0.6089,
+            "position_52w": 0.6955,
+            "position_52w_percentile": 0.5282
         },
-        "XYL": {
-            "momentum_12_1_pct": -14.24,
-            "momentum_12_1_percentile": 0.1741,
-            "position_52w": 0.3363,
-            "position_52w_percentile": 0.2065
+        "F": {
+            "momentum_12_1_pct": 30.47,
+            "momentum_12_1_percentile": 0.7056,
+            "position_52w": 0.5385,
+            "position_52w_percentile": 0.379
         },
-        "HAL": {
-            "momentum_12_1_pct": 75.65,
-            "momentum_12_1_percentile": 0.8947,
-            "position_52w": 0.6306,
-            "position_52w_percentile": 0.4291
+        "BKR": {
+            "momentum_12_1_pct": 30.56,
+            "momentum_12_1_percentile": 0.7097,
+            "position_52w": 0.5134,
+            "position_52w_percentile": 0.3548
         },
-        "VICI": {
-            "momentum_12_1_pct": -12.21,
-            "momentum_12_1_percentile": 0.1862,
-            "position_52w": 0.0135,
-            "position_52w_percentile": 0.0
+        "PSA": {
+            "momentum_12_1_pct": 16.47,
+            "momentum_12_1_percentile": 0.5645,
+            "position_52w": 0.8079,
+            "position_52w_percentile": 0.6734
         },
-        "ES": {
-            "momentum_12_1_pct": 10.47,
-            "momentum_12_1_percentile": 0.4494,
+        "AME": {
+            "momentum_12_1_pct": 31.07,
+            "momentum_12_1_percentile": 0.7177,
+            "position_52w": 0.9879,
+            "position_52w_percentile": 0.9395
+        },
+        "ETR": {
+            "momentum_12_1_pct": 32.41,
+            "momentum_12_1_percentile": 0.7339,
+            "position_52w": 0.9525,
+            "position_52w_percentile": 0.8911
+        },
+        "FAST": {
+            "momentum_12_1_pct": -2.87,
+            "momentum_12_1_percentile": 0.3145,
+            "position_52w": 0.6833,
+            "position_52w_percentile": 0.5161
+        },
+        "EA": {
+            "momentum_12_1_pct": 33.86,
+            "momentum_12_1_percentile": 0.7621,
+            "position_52w": 0.9953,
+            "position_52w_percentile": 0.9476
+        },
+        "DVN": {
+            "momentum_12_1_pct": 33.68,
+            "momentum_12_1_percentile": 0.754,
+            "position_52w": 0.6883,
+            "position_52w_percentile": 0.5202
+        },
+        "ROK": {
+            "momentum_12_1_pct": 29.64,
+            "momentum_12_1_percentile": 0.6895,
+            "position_52w": 0.7986,
+            "position_52w_percentile": 0.6532
+        },
+        "STT": {
+            "momentum_12_1_pct": 59.78,
+            "momentum_12_1_percentile": 0.879,
+            "position_52w": 0.9705,
+            "position_52w_percentile": 0.9194
+        },
+        "XEL": {
+            "momentum_12_1_pct": 13.78,
+            "momentum_12_1_percentile": 0.5242,
+            "position_52w": 0.8608,
+            "position_52w_percentile": 0.7661
+        },
+        "PYPL": {
+            "momentum_12_1_pct": -45.95,
+            "momentum_12_1_percentile": 0.0363,
+            "position_52w": 0.4434,
+            "position_52w_percentile": 0.3065
+        },
+        "EXC": {
+            "momentum_12_1_pct": 10.43,
+            "momentum_12_1_percentile": 0.4798,
+            "position_52w": 0.6905,
+            "position_52w_percentile": 0.5242
+        },
+        "EW": {
+            "momentum_12_1_pct": 14.71,
+            "momentum_12_1_percentile": 0.5403,
+            "position_52w": 0.4958,
+            "position_52w_percentile": 0.3427
+        },
+        "AZO": {
+            "momentum_12_1_pct": -20.7,
+            "momentum_12_1_percentile": 0.1411,
+            "position_52w": 0.0,
+            "position_52w_percentile": 0.0242
+        },
+        "VTR": {
+            "momentum_12_1_pct": 29.71,
+            "momentum_12_1_percentile": 0.6935,
             "position_52w": 1.0,
             "position_52w_percentile": 1.0
         },
-        "OTIS": {
-            "momentum_12_1_pct": -26.91,
-            "momentum_12_1_percentile": 0.0931,
-            "position_52w": 0.1262,
-            "position_52w_percentile": 0.0688
+        "HUM": {
+            "momentum_12_1_pct": 58.57,
+            "momentum_12_1_percentile": 0.875,
+            "position_52w": 0.9396,
+            "position_52w_percentile": 0.871
         },
-        "AFRM": {
-            "momentum_12_1_pct": 0.6,
-            "momentum_12_1_percentile": 0.3482,
-            "position_52w": 0.8236,
-            "position_52w_percentile": 0.664
+        "XYZ": {
+            "momentum_12_1_pct": -9.28,
+            "momentum_12_1_percentile": 0.25,
+            "position_52w": 0.8374,
+            "position_52w_percentile": 0.7258
+        },
+        "MCHP": {
+            "momentum_12_1_pct": 41.26,
+            "momentum_12_1_percentile": 0.8065,
+            "position_52w": 0.6092,
+            "position_52w_percentile": 0.4355
+        },
+        "TTWO": {
+            "momentum_12_1_pct": 7.48,
+            "momentum_12_1_percentile": 0.4395,
+            "position_52w": 0.5587,
+            "position_52w_percentile": 0.3992
+        },
+        "IDXX": {
+            "momentum_12_1_pct": -1.57,
+            "momentum_12_1_percentile": 0.3347,
+            "position_52w": 0.0538,
+            "position_52w_percentile": 0.0806
+        },
+        "COIN": {
+            "momentum_12_1_pct": -60.13,
+            "momentum_12_1_percentile": 0.0081,
+            "position_52w": 0.0785,
+            "position_52w_percentile": 0.1089
+        },
+        "BDX": {
+            "momentum_12_1_pct": 2.14,
+            "momentum_12_1_percentile": 0.3831,
+            "position_52w": 0.4083,
+            "position_52w_percentile": 0.2742
+        },
+        "ED": {
+            "momentum_12_1_pct": 10.11,
+            "momentum_12_1_percentile": 0.4637,
+            "position_52w": 0.9195,
+            "position_52w_percentile": 0.8468
+        },
+        "AIG": {
+            "momentum_12_1_pct": -1.1,
+            "momentum_12_1_percentile": 0.3427,
+            "position_52w": 0.4934,
+            "position_52w_percentile": 0.3387
+        },
+        "CMG": {
+            "momentum_12_1_pct": -32.33,
+            "momentum_12_1_percentile": 0.0645,
+            "position_52w": 0.2061,
+            "position_52w_percentile": 0.1613
+        },
+        "LYV": {
+            "momentum_12_1_pct": 10.28,
+            "momentum_12_1_percentile": 0.4677,
+            "position_52w": 0.8273,
+            "position_52w_percentile": 0.6935
+        },
+        "PRU": {
+            "momentum_12_1_pct": 9.65,
+            "momentum_12_1_percentile": 0.4556,
+            "position_52w": 0.9565,
+            "position_52w_percentile": 0.9073
+        },
+        "YUM": {
+            "momentum_12_1_pct": 5.96,
+            "momentum_12_1_percentile": 0.4234,
+            "position_52w": 0.3557,
+            "position_52w_percentile": 0.2379
+        },
+        "KDP": {
+            "momentum_12_1_pct": -5.62,
+            "momentum_12_1_percentile": 0.2863,
+            "position_52w": 0.5315,
+            "position_52w_percentile": 0.3669
+        },
+        "PEG": {
+            "momentum_12_1_pct": -3.28,
+            "momentum_12_1_percentile": 0.3065,
+            "position_52w": 0.3476,
+            "position_52w_percentile": 0.2339
+        },
+        "AXON": {
+            "momentum_12_1_pct": -38.94,
+            "momentum_12_1_percentile": 0.0524,
+            "position_52w": 0.278,
+            "position_52w_percentile": 0.1855
+        },
+        "A": {
+            "momentum_12_1_pct": 5.89,
+            "momentum_12_1_percentile": 0.4194,
+            "position_52w": 0.6446,
+            "position_52w_percentile": 0.4718
+        },
+        "PAYX": {
+            "momentum_12_1_pct": -30.84,
+            "momentum_12_1_percentile": 0.0726,
+            "position_52w": 0.4456,
+            "position_52w_percentile": 0.3105
+        },
+        "SYY": {
+            "momentum_12_1_pct": 1.42,
+            "momentum_12_1_percentile": 0.375,
+            "position_52w": 0.6218,
+            "position_52w_percentile": 0.4516
+        },
+        "HIG": {
+            "momentum_12_1_pct": 8.6,
+            "momentum_12_1_percentile": 0.4516,
+            "position_52w": 0.9972,
+            "position_52w_percentile": 0.9516
+        },
+        "WAT": {
+            "momentum_12_1_pct": 19.68,
+            "momentum_12_1_percentile": 0.6169,
+            "position_52w": 0.7765,
+            "position_52w_percentile": 0.629
+        },
+        "WEC": {
+            "momentum_12_1_pct": 7.71,
+            "momentum_12_1_percentile": 0.4435,
+            "position_52w": 0.7586,
+            "position_52w_percentile": 0.6089
+        },
+        "KVUE": {
+            "momentum_12_1_pct": -14.37,
+            "momentum_12_1_percentile": 0.1976,
+            "position_52w": 0.6438,
+            "position_52w_percentile": 0.4677
+        },
+        "KMB": {
+            "momentum_12_1_pct": -14.65,
+            "momentum_12_1_percentile": 0.1895,
+            "position_52w": 0.4021,
+            "position_52w_percentile": 0.2702
+        },
+        "ON": {
+            "momentum_12_1_pct": 111.15,
+            "momentum_12_1_percentile": 0.9435,
+            "position_52w": 0.508,
+            "position_52w_percentile": 0.3508
+        },
+        "HSY": {
+            "momentum_12_1_pct": 0.4,
+            "momentum_12_1_percentile": 0.3589,
+            "position_52w": 0.1763,
+            "position_52w_percentile": 0.1532
+        },
+        "CCL": {
+            "momentum_12_1_pct": -2.52,
+            "momentum_12_1_percentile": 0.3185,
+            "position_52w": 0.1518,
+            "position_52w_percentile": 0.1371
+        },
+        "IQV": {
+            "momentum_12_1_pct": -14.71,
+            "momentum_12_1_percentile": 0.1855,
+            "position_52w": 0.5781,
+            "position_52w_percentile": 0.4032
+        },
+        "MSTR": {
+            "momentum_12_1_pct": -74.97,
+            "momentum_12_1_percentile": 0.0,
+            "position_52w": 0.034,
+            "position_52w_percentile": 0.0605
+        },
+        "KR": {
+            "momentum_12_1_pct": -19.54,
+            "momentum_12_1_percentile": 0.1532,
+            "position_52w": 0.0117,
+            "position_52w_percentile": 0.0403
+        },
+        "RBLX": {
+            "momentum_12_1_pct": -60.12,
+            "momentum_12_1_percentile": 0.0121,
+            "position_52w": 0.0622,
+            "position_52w_percentile": 0.0927
+        },
+        "IR": {
+            "momentum_12_1_pct": -11.71,
+            "momentum_12_1_percentile": 0.2137,
+            "position_52w": 0.5227,
+            "position_52w_percentile": 0.3589
+        },
+        "RDDT": {
+            "momentum_12_1_pct": 11.81,
+            "momentum_12_1_percentile": 0.504,
+            "position_52w": 0.3153,
+            "position_52w_percentile": 0.2016
+        },
+        "WDAY": {
+            "momentum_12_1_pct": -51.46,
+            "momentum_12_1_percentile": 0.0242,
+            "position_52w": 0.1137,
+            "position_52w_percentile": 0.125
+        },
+        "CNC": {
+            "momentum_12_1_pct": 135.95,
+            "momentum_12_1_percentile": 0.9597,
+            "position_52w": 0.8855,
+            "position_52w_percentile": 0.7903
+        },
+        "AEE": {
+            "momentum_12_1_pct": 14.84,
+            "momentum_12_1_percentile": 0.5444,
+            "position_52w": 0.7778,
+            "position_52w_percentile": 0.6331
+        },
+        "ZTS": {
+            "momentum_12_1_pct": -49.11,
+            "momentum_12_1_percentile": 0.0282,
+            "position_52w": 0.0389,
+            "position_52w_percentile": 0.0645
+        },
+        "GFS": {
+            "momentum_12_1_pct": 112.57,
+            "momentum_12_1_percentile": 0.9476,
+            "position_52w": 0.4349,
+            "position_52w_percentile": 0.2984
+        },
+        "KHC": {
+            "momentum_12_1_pct": -16.69,
+            "momentum_12_1_percentile": 0.1694,
+            "position_52w": 0.7376,
+            "position_52w_percentile": 0.5685
+        },
+        "VICI": {
+            "momentum_12_1_pct": -15.16,
+            "momentum_12_1_percentile": 0.1774,
+            "position_52w": 0.0657,
+            "position_52w_percentile": 0.0968
+        },
+        "EL": {
+            "momentum_12_1_pct": -2.05,
+            "momentum_12_1_percentile": 0.3266,
+            "position_52w": 0.25,
+            "position_52w_percentile": 0.1734
         },
         "FE": {
-            "momentum_12_1_pct": 18.28,
-            "momentum_12_1_percentile": 0.583,
-            "position_52w": 0.7265,
-            "position_52w_percentile": 0.5223
+            "momentum_12_1_pct": 19.27,
+            "momentum_12_1_percentile": 0.6048,
+            "position_52w": 0.837,
+            "position_52w_percentile": 0.7218
+        },
+        "TWLO": {
+            "momentum_12_1_pct": 39.77,
+            "momentum_12_1_percentile": 0.7984,
+            "position_52w": 0.6423,
+            "position_52w_percentile": 0.4637
+        },
+        "ES": {
+            "momentum_12_1_pct": 11.85,
+            "momentum_12_1_percentile": 0.5081,
+            "position_52w": 0.9719,
+            "position_52w_percentile": 0.9234
+        },
+        "CPNG": {
+            "momentum_12_1_pct": -41.9,
+            "momentum_12_1_percentile": 0.0484,
+            "position_52w": 0.0277,
+            "position_52w_percentile": 0.0524
+        },
+        "XYL": {
+            "momentum_12_1_pct": -14.79,
+            "momentum_12_1_percentile": 0.1815,
+            "position_52w": 0.2406,
+            "position_52w_percentile": 0.1653
+        },
+        "HAL": {
+            "momentum_12_1_pct": 60.23,
+            "momentum_12_1_percentile": 0.8831,
+            "position_52w": 0.5568,
+            "position_52w_percentile": 0.3952
+        },
+        "DXCM": {
+            "momentum_12_1_pct": -20.54,
+            "momentum_12_1_percentile": 0.1452,
+            "position_52w": 0.4509,
+            "position_52w_percentile": 0.3185
+        },
+        "OTIS": {
+            "momentum_12_1_pct": -17.93,
+            "momentum_12_1_percentile": 0.1613,
+            "position_52w": 0.0603,
+            "position_52w_percentile": 0.0887
+        },
+        "AVB": {
+            "momentum_12_1_pct": -6.88,
+            "momentum_12_1_percentile": 0.2742,
+            "position_52w": 0.8761,
+            "position_52w_percentile": 0.7823
+        },
+        "MTD": {
+            "momentum_12_1_pct": -8.26,
+            "momentum_12_1_percentile": 0.2621,
+            "position_52w": 0.6376,
+            "position_52w_percentile": 0.4556
+        },
+        "DOV": {
+            "momentum_12_1_pct": 21.03,
+            "momentum_12_1_percentile": 0.625,
+            "position_52w": 0.5238,
+            "position_52w_percentile": 0.3629
+        },
+        "EQR": {
+            "momentum_12_1_pct": 0.45,
+            "momentum_12_1_percentile": 0.3629,
+            "position_52w": 0.861,
+            "position_52w_percentile": 0.7702
         }
     }
 }

@@ -39,26 +39,29 @@ from pathlib import Path
 from datetime import date
 
 # ─────────────────────────────────────────────
-# Load peer group benchmarks from JSON
-# Updated quarterly by scripts/update_peer_groups.py
+# Load valuation benchmarks from JSON
+# Updated daily by scripts/update_valuation_benchmarks.py — peer
+# IDENTITY (which companies) comes from peer_groups.json instead,
+# refreshed separately/infrequently by scripts/update_peer_groups.py
+# (see that script's docstring for why these were split).
 # ─────────────────────────────────────────────
-_PEER_BENCHMARKS_PATH = Path(__file__).parent / "data" / "peer_benchmarks.json"
+_VALUATION_BENCHMARKS_PATH = Path(__file__).parent / "data" / "valuation_benchmarks.json"
 
-def _load_peer_benchmarks() -> dict:
-    """Load peer group benchmarks from JSON file."""
-    with open(_PEER_BENCHMARKS_PATH) as f:
+def _load_valuation_benchmarks() -> dict:
+    """Load valuation benchmarks from JSON file."""
+    with open(_VALUATION_BENCHMARKS_PATH) as f:
         return json.load(f)
 
-_PEER_BENCHMARKS = _load_peer_benchmarks()
-_BENCHMARKS_DATA = _PEER_BENCHMARKS.get("benchmarks", {})
-DEFAULT_PE       = _PEER_BENCHMARKS.get("default_pe", 25.54)
-DEFAULT_PB       = _PEER_BENCHMARKS.get("default_pb", 5.44)
-DEFAULT_PS       = _PEER_BENCHMARKS.get("default_ps", 3.70)  
+_VALUATION_BENCHMARKS = _load_valuation_benchmarks()
+_BENCHMARKS_DATA = _VALUATION_BENCHMARKS.get("benchmarks", {})
+DEFAULT_PE       = _VALUATION_BENCHMARKS.get("default_pe", 25.54)
+DEFAULT_PB       = _VALUATION_BENCHMARKS.get("default_pb", 5.44)
+DEFAULT_PS       = _VALUATION_BENCHMARKS.get("default_ps", 3.70)  
 
 # ── Staleness check ──────────────────────────
 def _benchmarks_are_stale() -> bool:
     """Warn if benchmarks are more than 90 days old."""
-    updated_at = _PEER_BENCHMARKS.get("updated_at", "")
+    updated_at = _VALUATION_BENCHMARKS.get("updated_at", "")
     if not updated_at:
         return True
     try:
@@ -72,7 +75,7 @@ BENCHMARKS_STALE = _benchmarks_are_stale()
 
 def _get_benchmark_pe(ticker: str) -> float:
     """
-    Look up benchmark P/E for a ticker from peer_benchmarks.json.
+    Look up benchmark P/E for a ticker from valuation_benchmarks.json.
     Falls back to DEFAULT_PE if ticker not found.
     """
     entry = _BENCHMARKS_DATA.get(ticker)
@@ -83,13 +86,28 @@ def _get_benchmark_pe(ticker: str) -> float:
 
 def _get_benchmark_pb(ticker: str) -> float:
     """
-    Look up benchmark P/B for a ticker from peer_benchmarks.json.
+    Look up benchmark P/B for a ticker from valuation_benchmarks.json.
     Falls back to DEFAULT_PB if ticker not found.
     """
     entry = _BENCHMARKS_DATA.get(ticker)
     if entry:
         return entry["benchmark_pb"]
     return DEFAULT_PB
+
+
+def _get_peers_used(ticker: str) -> list[str]:
+    """
+    Look up which named peer companies actually contributed to this
+    ticker's benchmark P/E/P/B (see update_valuation_benchmarks.py —
+    this is the subset of FMP's peer list that had valid, non-extreme
+    data, not necessarily the full peer group). Returns [] if the
+    ticker fell back to Damodaran or the global default — in that
+    case there is no specific peer company to name.
+    """
+    entry = _BENCHMARKS_DATA.get(ticker)
+    if entry:
+        return entry.get("peers_used", [])
+    return []
 
 
 
@@ -127,6 +145,20 @@ def valuation_signal(market_data: dict) -> dict | None:
     pb            = market_data.get("price_to_book")
     ps            = market_data.get("price_to_sales")
     ticker    = market_data.get("ticker") or ""
+
+    # Defensive type check: yfinance has, in practice, returned a
+    # non-numeric string (e.g. "Infinity") for these ratio fields when
+    # a company's EPS is near zero — a genuine mathematical edge case
+    # of the P/E ratio, not a data error (confirmed for BILL,
+    # 2026-07-24). Without this check, the comparisons below (pe > 0,
+    # etc.) crash with a TypeError instead of gracefully degrading to
+    # the next tier.
+    if not isinstance(pe, (int, float)):
+        pe = None
+    if not isinstance(pb, (int, float)):
+        pb = None
+    if not isinstance(ps, (int, float)):
+        ps = None
 
     sector_pe = _get_benchmark_pe(ticker)
     sector_pb = _get_benchmark_pb(ticker)
@@ -180,6 +212,9 @@ def valuation_signal(market_data: dict) -> dict | None:
 
         label = _label(score, reference_only=False)
 
+        peers_used = _get_peers_used(ticker)
+        peers_note = f" (compared against: {', '.join(peers_used)})" if peers_used else ""
+
         return {
             "valuation_score": score,
             "valuation_label": label,
@@ -187,8 +222,9 @@ def valuation_signal(market_data: dict) -> dict | None:
             "reference_only":  False,
             "stale_benchmark": BENCHMARKS_STALE,
             "pe_vs_peers": f"{pe} vs peer avg {sector_pe}",
+            "peers_used": peers_used,
             "detail": (
-                f"P/E of {pe} vs peer average {sector_pe} "
+                f"P/E of {pe} vs peer average {sector_pe}{peers_note} "
                 f"(pe_score={round(pe_score,2)}), "
                 f"{pb_detail}. "
                 f"Composite: {score} → {label}."
@@ -217,8 +253,13 @@ def valuation_signal(market_data: dict) -> dict | None:
             "reference_only":  True,
             "stale_benchmark": BENCHMARKS_STALE,
             "pe_vs_peers":    None,
+            # No named peer comparison here — this tier uses the
+            # global P/S default, not a peer-specific benchmark (see
+            # module docstring: Tier 2 is for loss-making companies
+            # where P/E-based peer comparison isn't meaningful).
+            "peers_used":     [],
             "detail": (
-                f"Company is loss-making (no positive P/E). "
+                f"No usable P/E data available for this company. "
                 f"P/S of {ps} vs default average {sector_ps} "
                 f"(ps_score={round(ps_score,2)}). "
                 f"This score is for reference only and does not reflect "

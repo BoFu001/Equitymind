@@ -1,5 +1,5 @@
 """
-scripts/init_db.py
+scripts/init_db_sec_chunks.py
 
 One-time database setup script for EquityMind pgvector store.
 
@@ -8,11 +8,16 @@ Run once to:
 2. Create sec_chunks table
 
 Usage:
-    python scripts/init_db.py
+    python scripts/init_db_sec_chunks.py
 """
 
+import os
+
 import psycopg2
-from config import DATABASE_URL
+from dotenv import load_dotenv
+
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def init():

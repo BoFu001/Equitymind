@@ -54,6 +54,8 @@ def format_valuation(val: dict | None) -> str:
         return "  Valuation: Insufficient data.\n"
     text = f"  Valuation: {val['valuation_label']} (score={val['valuation_score']}, method={val['method']})\n"
     text += f"  {val['detail']}\n"
+    if val.get("peers_used"):
+        text += f"  Compared against: {', '.join(val['peers_used'])}\n"
     if val.get("reference_only"):
         text += f"  ⚠️ Valuation reference only — company is loss-making, P/S used instead of P/E.\n"
     if val.get("stale_benchmark"):
