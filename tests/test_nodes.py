@@ -357,7 +357,7 @@ def make_llm_response(finish_reason, tool_calls=None, content=""):
 
 
 @patch('src.agent.nodes.fetch_all_data.get_consensus_inputs', return_value={"periods": [{"period": "0m", "strongBuy": 5, "buy": 3, "hold": 1, "sell": 0, "strongSell": 0}]})
-@patch('src.agent.nodes.fetch_all_data.get_quality_inputs', return_value={"current_year": {}, "prior_year": {}})
+@patch('src.agent.nodes.fetch_all_data.get_quality_inputs_from_db', return_value={"current_year": {}, "prior_year": {}})
 @patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value={"stock_prices": [1, 2, 3]})
 @patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
 @patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[{"title": "Apple news", "summary": "", "url": "", "published": ""}])
@@ -390,7 +390,7 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
 
 
 @patch('src.agent.nodes.fetch_all_data.get_consensus_inputs', return_value={"periods": []})
-@patch('src.agent.nodes.fetch_all_data.get_quality_inputs', return_value={})
+@patch('src.agent.nodes.fetch_all_data.get_quality_inputs_from_db', return_value={})
 @patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value=None)
 @patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
 @patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[])
@@ -408,7 +408,7 @@ def test_fetch_all_data_full_analysis_question(*_):
 
 
 @patch('src.agent.nodes.fetch_all_data.get_consensus_inputs', return_value=None)
-@patch('src.agent.nodes.fetch_all_data.get_quality_inputs', return_value=None)
+@patch('src.agent.nodes.fetch_all_data.get_quality_inputs_from_db', return_value=None)
 @patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value=None)
 @patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value=None)
 @patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[])

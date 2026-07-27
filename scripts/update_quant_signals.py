@@ -45,9 +45,9 @@ from psycopg2.extras import Json, execute_values
 from src.tools.market_data import (
     get_stock_snapshot,
     get_risk_inputs,
-    get_quality_inputs,
     get_consensus_inputs,
 )
+from src.tools.financial_history_reader import get_quality_inputs_from_db
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
 from src.quant.risk_signal import risk_signal
@@ -96,7 +96,9 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
         return None
 
     risk_inputs      = get_risk_inputs(ticker)
-    quality_inputs   = get_quality_inputs(ticker)
+    # Reads from financial_history (DB) instead of calling yfinance
+    # live — see src/tools/financial_history_reader.py for why.
+    quality_inputs   = get_quality_inputs_from_db(ticker)
     consensus_inputs = get_consensus_inputs(ticker)
 
     val_result       = valuation_signal(market_data)

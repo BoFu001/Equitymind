@@ -24,7 +24,8 @@ reliability gained from removing an unpredictable LLM decision point.
 
 import asyncio
 
-from src.tools.market_data import get_stock_snapshot, get_risk_inputs, get_quality_inputs, get_consensus_inputs
+from src.tools.market_data import get_stock_snapshot, get_risk_inputs, get_consensus_inputs
+from src.tools.financial_history_reader import get_quality_inputs_from_db
 from src.tools.news_data import fetch_company_news
 from src.tools.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.agent.state import AgentState
@@ -68,10 +69,13 @@ def _fetch_risk_inputs(ticker: str) -> dict | None:
 # ─────────────────────────────────────────────
 
 def _fetch_quality_inputs(ticker: str) -> dict | None:
+    # Reads from financial_history (DB) instead of calling yfinance
+    # live — see src/tools/financial_history_reader.py for why, and
+    # why there is deliberately no live-yfinance fallback here.
     writer = get_stream_writer()
     writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_financial_statements"].format(ticker=ticker)})
 
-    data = get_quality_inputs(ticker)
+    data = get_quality_inputs_from_db(ticker)
     bprint(f"  [_fetch_quality_inputs] Fetched for {ticker}")
     return data
 
