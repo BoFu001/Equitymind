@@ -82,29 +82,67 @@ def _to_float(value) -> float | None:
     return None if value is None else float(value)
 
 
-def _compute_ticker_row(ticker: str) -> tuple | None:
+def _quality_needs_recompute(cursor, ticker: str) -> bool:
     """
-    Fetches this ticker's inputs and computes all 5 signals, returning
-    a single row tuple ready for INSERT. Returns None only if the
-    stock_snapshot itself can't be fetched at all (nothing else can be
-    computed without it) — individual signals returning None (e.g.
-    quality with insufficient history) are still stored as NULL, not
-    treated as a ticker-level failure.
+    Compares financial_history's latest annual period_end for this
+    ticker against quant_signals.quality_period_end (the period the
+    cached Quality result was last computed from). Returns True if
+    Quality should be recomputed — either because there's no cached
+    result yet, or because a newer annual report has been filed since.
+
+    Returns True (recompute) on any ambiguity — e.g. financial_history
+    has no annual data at all for this ticker (quality_signal() will
+    correctly return None downstream; there's nothing to "skip" here),
+    or the ticker has no row in quant_signals yet (first run).
+    """
+    cursor.execute(
+        "SELECT MAX(period_end) FROM financial_history "
+        "WHERE ticker = %s AND period_type = 'annual'",
+        (ticker,),
+    )
+    row = cursor.fetchone()
+    latest_annual_period_end = row[0] if row else None
+    if latest_annual_period_end is None:
+        return True
+
+    cursor.execute(
+        "SELECT quality_period_end FROM quant_signals WHERE ticker = %s",
+        (ticker,),
+    )
+    row = cursor.fetchone()
+    cached_period_end = row[0] if row else None
+    if cached_period_end is None:
+        return True
+
+    return latest_annual_period_end > cached_period_end
+
+
+def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None:
+    """
+    Fetches this ticker's inputs and computes signals, returning a row
+    tuple ready for INSERT. Returns None only if the stock_snapshot
+    itself can't be fetched at all (nothing else can be computed
+    without it) — individual signals returning None (e.g. quality with
+    insufficient history) are still stored as NULL, not treated as a
+    ticker-level failure.
+
+    skip_quality: when True, Quality is NOT recomputed and is omitted
+    entirely from the returned tuple — see _quality_needs_recompute()
+    and INSERT_SQL_SKIP_QUALITY. This is decided by the caller (which
+    already has the DB cursor needed to check financial_history vs.
+    quant_signals.quality_period_end), not by this function — this
+    function only knows how to skip, not why.
     """
     market_data = get_stock_snapshot(ticker)
     if not market_data:
         return None
 
     risk_inputs      = get_risk_inputs(ticker)
-    # Reads from financial_history (DB) instead of calling yfinance
-    # live — see src/tools/financial_history_reader.py for why.
-    quality_inputs   = get_quality_inputs_from_db(ticker)
     consensus_inputs = get_consensus_inputs(ticker)
 
     val_result       = valuation_signal(market_data)
     mom_result       = momentum_signal(ticker)
     risk_result      = risk_signal(market_data, risk_inputs)
-    quality_result   = quality_signal(quality_inputs)
     consensus_result = consensus_signal(market_data, consensus_inputs)
 
     valuation_score      = _to_float(val_result.get("valuation_score") if val_result else None)
@@ -116,13 +154,11 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
     risk_var_score      = _to_float((risk_result.get("var") or {}).get("var_score") if risk_result else None)
     risk_drawdown_score = _to_float((risk_result.get("max_drawdown") or {}).get("drawdown_score") if risk_result else None)
 
-    quality_score = _to_float(quality_result.get("quality_score") if quality_result else None)
-
     consensus_recommendation_score = _to_float(consensus_result.get("recommendation_score") if consensus_result else None)
     consensus_upside_score         = _to_float(consensus_result.get("upside_score") if consensus_result else None)
     consensus_trend_score          = _to_float(consensus_result.get("trend_score") if consensus_result else None)
 
-    return (
+    row = (
         ticker,
         Json(val_result) if val_result else None,
         valuation_score,
@@ -134,22 +170,40 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
         risk_sharpe_score,
         risk_var_score,
         risk_drawdown_score,
-        Json(quality_result) if quality_result else None,
-        quality_score,
+    )
+
+    if not skip_quality:
+        # Reads from financial_history (DB) instead of calling yfinance
+        # live — see src/tools/financial_history_reader.py for why.
+        quality_inputs = get_quality_inputs_from_db(ticker)
+        quality_result = quality_signal(quality_inputs)
+        quality_score = _to_float(quality_result.get("quality_score") if quality_result else None)
+        quality_period_end = quality_inputs["current_period_end"] if quality_inputs else None
+        row = row + (
+            Json(quality_result) if quality_result else None,
+            quality_score,
+            quality_period_end,
+        )
+
+    row = row + (
         Json(consensus_result) if consensus_result else None,
         consensus_recommendation_score,
         consensus_upside_score,
         consensus_trend_score,
     )
 
+    return row
 
-INSERT_SQL = """
+
+# Used when Quality WAS recomputed this run (skip_quality=False) —
+# writes all 5 signals, including the 3 quality_* columns.
+INSERT_SQL_WITH_QUALITY = """
     INSERT INTO quant_signals (
         ticker,
         valuation_data, valuation_score, valuation_computed_at,
         momentum_data, momentum_12_1_score, position_52w_score, momentum_computed_at,
         risk_data, risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score, risk_computed_at,
-        quality_data, quality_score, quality_computed_at,
+        quality_data, quality_score, quality_period_end, quality_computed_at,
         consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at
     )
     VALUES %s
@@ -169,6 +223,7 @@ INSERT_SQL = """
         risk_computed_at = NOW(),
         quality_data = EXCLUDED.quality_data,
         quality_score = EXCLUDED.quality_score,
+        quality_period_end = EXCLUDED.quality_period_end,
         quality_computed_at = NOW(),
         consensus_data = EXCLUDED.consensus_data,
         consensus_recommendation_score = EXCLUDED.consensus_recommendation_score,
@@ -176,9 +231,47 @@ INSERT_SQL = """
         consensus_trend_score = EXCLUDED.consensus_trend_score,
         consensus_computed_at = NOW();
 """
-TEMPLATE = (
+TEMPLATE_WITH_QUALITY = (
     "(%s, %s, %s, NOW(), %s, %s, %s, NOW(), %s, %s, %s, %s, %s, NOW(), "
-    "%s, %s, NOW(), %s, %s, %s, %s, NOW())"
+    "%s, %s, %s, NOW(), %s, %s, %s, %s, NOW())"
+)
+
+# Used when Quality was SKIPPED this run (skip_quality=True) — the
+# quality_* columns are entirely absent from both the column list and
+# the SET clause, so ON CONFLICT DO UPDATE leaves them untouched
+# rather than overwriting them with NULL.
+INSERT_SQL_SKIP_QUALITY = """
+    INSERT INTO quant_signals (
+        ticker,
+        valuation_data, valuation_score, valuation_computed_at,
+        momentum_data, momentum_12_1_score, position_52w_score, momentum_computed_at,
+        risk_data, risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score, risk_computed_at,
+        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at
+    )
+    VALUES %s
+    ON CONFLICT (ticker) DO UPDATE SET
+        valuation_data = EXCLUDED.valuation_data,
+        valuation_score = EXCLUDED.valuation_score,
+        valuation_computed_at = NOW(),
+        momentum_data = EXCLUDED.momentum_data,
+        momentum_12_1_score = EXCLUDED.momentum_12_1_score,
+        position_52w_score = EXCLUDED.position_52w_score,
+        momentum_computed_at = NOW(),
+        risk_data = EXCLUDED.risk_data,
+        risk_beta_score = EXCLUDED.risk_beta_score,
+        risk_sharpe_score = EXCLUDED.risk_sharpe_score,
+        risk_var_score = EXCLUDED.risk_var_score,
+        risk_drawdown_score = EXCLUDED.risk_drawdown_score,
+        risk_computed_at = NOW(),
+        consensus_data = EXCLUDED.consensus_data,
+        consensus_recommendation_score = EXCLUDED.consensus_recommendation_score,
+        consensus_upside_score = EXCLUDED.consensus_upside_score,
+        consensus_trend_score = EXCLUDED.consensus_trend_score,
+        consensus_computed_at = NOW();
+"""
+TEMPLATE_SKIP_QUALITY = (
+    "(%s, %s, %s, NOW(), %s, %s, %s, NOW(), %s, %s, %s, %s, %s, NOW(), "
+    "%s, %s, %s, %s, NOW())"
 )
 
 
@@ -200,6 +293,8 @@ def update_quant_signals():
     print(f"  Removed {removed} orphaned ticker(s) not in the current universe.\n")
 
     success_count = 0
+    quality_skipped_count = 0
+    quality_recomputed_tickers = []
     failed_tickers = []
 
     for i, ticker in enumerate(tickers):
@@ -210,9 +305,15 @@ def update_quant_signals():
             failed_tickers.append(ticker)
             continue
 
+        skip_quality = not _quality_needs_recompute(cursor, ticker)
+        if skip_quality:
+            quality_skipped_count += 1
+        else:
+            quality_recomputed_tickers.append(ticker)
+
         try:
             with ThreadPoolExecutor(max_workers=1) as executor:
-                future = executor.submit(_compute_ticker_row, ticker)
+                future = executor.submit(_compute_ticker_row, ticker, skip_quality)
                 row = future.result(timeout=30)
         except FutureTimeoutError:
             print(f"    Timed out after 30s for {ticker} — skipping")
@@ -225,7 +326,10 @@ def update_quant_signals():
             failed_tickers.append(ticker)
         else:
             try:
-                execute_values(cursor, INSERT_SQL, [row], template=TEMPLATE)
+                if skip_quality:
+                    execute_values(cursor, INSERT_SQL_SKIP_QUALITY, [row], template=TEMPLATE_SKIP_QUALITY)
+                else:
+                    execute_values(cursor, INSERT_SQL_WITH_QUALITY, [row], template=TEMPLATE_WITH_QUALITY)
                 conn.commit()
                 success_count += 1
             except Exception as e:
@@ -245,6 +349,10 @@ def update_quant_signals():
     conn.close()
 
     print(f"\n✓ quant_signals updated — {success_count}/{len(tickers)} tickers succeeded")
+    print(f"  Quality — skipped (no new annual report): {quality_skipped_count}")
+    print(f"  Quality — recomputed: {len(quality_recomputed_tickers)}")
+    if quality_recomputed_tickers:
+        print(f"    {quality_recomputed_tickers}")
     if failed_tickers:
         print(f"  Failed: {failed_tickers}")
 

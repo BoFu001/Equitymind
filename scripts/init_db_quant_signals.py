@@ -48,6 +48,14 @@ Refresh cadence differs per signal group (see each *_computed_at
 column): Valuation/Momentum are price-driven (daily); Risk/Quality/
 Consensus are slower-moving (weekly) — see update_quant_signals.py.
 
+quality_period_end: which financial_history period_end the cached
+Quality result was computed from (distinct from quality_computed_at,
+which only says when). Lets update_quant_signals.py skip recomputing
+Quality when financial_history has no newer annual period than this.
+Nullable — unlike financial_history's one-row-per-period design, this
+table has one row per ticker covering all 5 signals, so a missing
+Quality result must not block the row's other signals from being written.
+
 Run once to create the table:
     python scripts/init_db_quant_signals.py
 """
@@ -93,6 +101,7 @@ def init():
             -- Quality (see quality_signal.py)
             quality_data                    JSONB,
             quality_score                   REAL,
+            quality_period_end              DATE,
             quality_computed_at             TIMESTAMP,
 
             -- Consensus (see consensus_signal.py)

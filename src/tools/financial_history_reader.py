@@ -118,4 +118,10 @@ def get_quality_inputs_from_db(ticker: str) -> dict | None:
     return {
         "current": _row_to_dict(current_row),
         "prior":   _row_to_dict(prior_row),
+        # The period_end this "current" data is drawn from — lets
+        # update_quant_signals.py record which financial_history period
+        # a cached Quality result was computed from (quant_signals.
+        # quality_period_end), so it can skip recomputing when nothing
+        # newer has been filed since.
+        "current_period_end": current_row[0],
     }
