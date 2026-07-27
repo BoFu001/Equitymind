@@ -5,13 +5,25 @@ One-time database setup script for EquityMind's multi-year financial
 history store — creates the financial_history table in the same
 PostgreSQL database used for sec_chunks and quant_signals.
 
-Wide format: one row per (ticker, fiscal_year_end), one column per
-metric — chosen over a long/narrow (ticker, fiscal_year_end,
+Wide format: one row per (ticker, period_end, period_type), one
+column per metric — chosen over a long/narrow (ticker, period_end,
 metric_name, value) layout because the project has a confirmed need
 for cross-metric filtering within this table (e.g. "companies where
 revenue grew but gross margin declined" needs two columns from the
 same row, which a narrow table can only do via a self-join). This
 mirrors the design of quant_signals, which uses the same reasoning.
+
+period_type ('annual' | 'quarterly') was added to the primary key on
+2026-07-26 to support quarterly data accumulation toward a T12M
+(trailing-twelve-month) Quality signal — a ticker's Q4 period_end
+is often the exact same calendar date as its annual period_end
+(e.g. AAPL: both 2025-09-30), so without period_type in the key, an
+annual and a Q4 quarterly row for the same date would collide.
+period_type has NO DEFAULT and is NOT NULL — both the annual writer
+(update_financial_history.py) and the future quarterly writer always
+know which kind of data they are writing, so there is no legitimate
+case for omitting it; a missing value should fail loudly, not be
+silently guessed.
 
 Confirmed via live yfinance test (2026-07-22, tested across
 AAPL/MSFT/TSLA/JPM/JNJ/XOM): yfinance's annual statements return 4 or
@@ -57,7 +69,7 @@ def init():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS financial_history (
             ticker                              TEXT NOT NULL,
-            fiscal_year_end                     DATE NOT NULL,
+            period_end                          DATE NOT NULL,
 
             -- Income statement (13 columns)
             total_revenue                       NUMERIC,
@@ -91,9 +103,10 @@ def init():
             current_liabilities                 NUMERIC,
             shares_outstanding                  NUMERIC,
 
+            period_type                         TEXT NOT NULL,
             updated_at                          TIMESTAMP NOT NULL DEFAULT NOW(),
 
-            PRIMARY KEY (ticker, fiscal_year_end)
+            PRIMARY KEY (ticker, period_end, period_type)
         );
     """)
 

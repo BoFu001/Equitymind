@@ -1,32 +1,43 @@
 """
 scripts/update_financial_history.py
 
-Financial History Updater for EquityMind Layer 2 — pulls multi-year
-financial statement data (income statement, cash flow, balance sheet)
-for every ticker in stock_universe.json and stores it in the
-financial_history table (see init_db_financial_history.py), so
-questions like "Apple's net income over the last few years" can be
-answered from a table lookup instead of the live 2-year-only fetch
-that get_quality_inputs() does for signal computation.
+Financial History Updater for EquityMind Layer 2 — pulls both annual
+and quarterly financial statement data (income statement, cash flow,
+balance sheet) for every ticker in stock_universe.json and stores it
+in the financial_history table (see init_db_financial_history.py).
 
-Wide format: one row per (ticker, fiscal_year_end), one column per
-metric. Chosen over the original long/narrow layout because the
-project has a confirmed need for cross-metric filtering within this
-table (e.g. "revenue grew but gross margin declined" needs two columns
-from the same row — a narrow table can only do this via a self-join).
+Two independent write paths, sharing the same 26-metric mapping,
+database connection, retry/timeout handling, and INSERT template.
+BOTH check for new data before writing — companies file annually
+(10-K) and quarterly (10-Q), so re-fetching an unchanged statement on
+every run is pure waste on both sides, not just the quarterly one.
 
-Data source: yfinance .financials / .cashflow / .balance_sheet.
-Confirmed live (2026-07-22, tested across AAPL/MSFT/TSLA/JPM/JNJ/XOM):
-yfinance's annual statements return 4 or 5 raw columns depending on
-the ticker, but the oldest column is consistently NaN whenever 5 are
-returned — so 4 years is the reliable, validated coverage, not 5.
+The freshness check (_has_new_data) compares this ticker's latest
+period_end already in financial_history (for the given
+period_type) against what yfinance currently offers; skips the full
+statement fetch entirely if nothing new has been filed since last
+run. yfinance rate-limiting (observed repeatedly, 2026-07-2X) makes
+avoiding unnecessary calls a real, non-trivial benefit.
 
-26 metrics across the three statements (see the *_METRICS dicts below)
-— all sourced from the same three yfinance calls already made per
-ticker for get_quality_inputs(), so this adds no extra API cost beyond
-what the project already does. Not every company has every metric
-(e.g. banks have no cost_of_revenue) — missing metrics are NULL, not a
-placeholder zero.
+Quarterly accumulation is the mechanism toward a T12M
+(trailing-twelve-month) Quality signal (see project notes,
+2026-07-26): quarterly history grows by one period roughly every 3
+months as new 10-Qs are filed. Confirmed via live yfinance test
+(2026-07-26, 33 companies across ~15 sectors): quarterly_financials/
+_cashflow/_balance_sheet return 5-7 periods depending on the ticker
+(never fewer than 5); quarterly figures are discrete (not
+year-to-date cumulative) — cross-checked against Apple's own
+published FY2025 Q1 operating cash flow ($29.935B, 0.03% deviation
+from inferred value) and JPM's FY2025 revenue (four quarters summed
+vs annual total, 0.32% deviation).
+
+period_type ('annual'/'quarterly') is written explicitly for every
+row — the column has no default (see init_db_financial_history.py) —
+so a missing value fails loudly rather than being silently guessed.
+
+26 metrics across the three statements — all sourced from the same
+three yfinance calls already made per ticker for get_quality_inputs(),
+so this adds no extra API cost beyond what the project already does.
 
 The INSERT statement's column list is generated from METRIC_COLUMNS at
 import time, not hand-written — this guarantees the SQL and the Python
@@ -65,14 +76,9 @@ def _load_target_tickers() -> list[str]:
     ticker already present in financial_history — not just the current
     universe alone. This table is deliberately append-only: a ticker
     that once entered the universe keeps its accumulated history
-    forever, even after it later drops out of the top 250 (e.g. market
-    cap decline). Re-including it here on every run means its data
-    keeps refreshing/growing for as long as it exists in yfinance,
-    rather than being silently abandoned the moment it's no longer in
-    the current universe. See update_quant_signals.py for the opposite
-    policy (that table IS synced strictly to the current universe,
-    since it stores present-day signal scores with no historical value
-    once a ticker is no longer relevant).
+    forever, even after it later drops out of the top 250. See
+    update_quant_signals.py for the opposite policy (that table IS
+    synced strictly to the current universe).
     """
     universe_path = Path(__file__).parent.parent / "src" / "quant" / "data" / "stock_universe.json"
     with open(universe_path, "r") as f:
@@ -89,7 +95,10 @@ def _load_target_tickers() -> list[str]:
     return sorted(current_universe | already_tracked)
 
 
-# yfinance row label -> our column name (snake_case), grouped by statement
+# yfinance row label -> our column name (snake_case), grouped by statement.
+# Confirmed identical row labels for annual and quarterly statements
+# (2026-07-24: quarterly has zero fields not also in annual — quarterly
+# is a strict subset), so the same mapping serves both writers.
 INCOME_STATEMENT_METRICS = {
     "Total Revenue":                      "total_revenue",
     "Cost Of Revenue":                    "cost_of_revenue",
@@ -129,37 +138,25 @@ METRIC_COLUMNS = list(ALL_METRICS.values())  # 26 column names, in a fixed order
 assert len(METRIC_COLUMNS) == len(set(METRIC_COLUMNS)), \
     "Duplicate column name across the three metric dicts — check for a naming collision."
 
-# Built from METRIC_COLUMNS, not hand-written, so the SQL can never
-# silently drift out of sync with the Python metric dicts above.
-_ALL_COLUMNS = ["ticker", "fiscal_year_end"] + METRIC_COLUMNS
+_ALL_COLUMNS = ["ticker", "period_end", "period_type"] + METRIC_COLUMNS
 INSERT_SQL = f"""
     INSERT INTO financial_history ({", ".join(_ALL_COLUMNS)})
     VALUES %s
-    ON CONFLICT (ticker, fiscal_year_end) DO UPDATE SET
+    ON CONFLICT (ticker, period_end, period_type) DO UPDATE SET
         {", ".join(f"{col} = EXCLUDED.{col}" for col in METRIC_COLUMNS)},
         updated_at = NOW();
 """
 
 
-def _extract_ticker_rows(ticker: str) -> list[tuple]:
+def _extract_rows(fin, cf, bs, ticker: str, period_type: str) -> list[tuple]:
     """
-    Fetches the 3 financial statements for one ticker and merges them
-    into one row per fiscal year, with all 26 metrics as columns.
-    Metrics not present for a given company/year are left as None
-    (SQL NULL), not a placeholder value. Skips the whole ticker
-    (returns []) if the statements can't be fetched at all.
+    Shared row-assembly logic for both annual and quarterly statements
+    (same three DataFrames, same 26-metric mapping — only the source
+    call and the period_type tag differ between callers). Metrics not
+    present for a given company/period are left as None (SQL NULL),
+    not a placeholder value.
     """
-    try:
-        stock = yf.Ticker(ticker)
-        fin = stock.financials
-        cf  = stock.cashflow
-        bs  = stock.balance_sheet
-    except Exception as e:
-        print(f"    Skipping {ticker}: {e}")
-        return []
-
-    # fiscal_year_end (date) -> {column_name: value}
-    by_year = defaultdict(dict)
+    by_period = defaultdict(dict)
 
     def _collect(df, metric_map):
         for row_label, column_name in metric_map.items():
@@ -169,18 +166,95 @@ def _extract_ticker_rows(ticker: str) -> list[tuple]:
                 value = df.loc[row_label, period_end]
                 if value is None or (isinstance(value, float) and math.isnan(value)):
                     continue
-                by_year[period_end.date()][column_name] = float(value)
+                by_period[period_end.date()][column_name] = float(value)
 
     _collect(fin, INCOME_STATEMENT_METRICS)
     _collect(cf, CASH_FLOW_METRICS)
     _collect(bs, BALANCE_SHEET_METRICS)
 
     rows = []
-    for fiscal_year_end, metrics in sorted(by_year.items()):
-        row = (ticker, fiscal_year_end) + tuple(metrics.get(col) for col in METRIC_COLUMNS)
+    for period_end, metrics in sorted(by_period.items()):
+        row = (ticker, period_end, period_type) + tuple(metrics.get(col) for col in METRIC_COLUMNS)
         rows.append(row)
 
     return rows
+
+
+def _extract_annual_rows(ticker: str) -> list[tuple]:
+    """
+    Fetches the 3 ANNUAL financial statements for one ticker. Skips
+    the whole ticker (returns []) if the statements can't be fetched
+    at all.
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        fin = stock.financials
+        cf  = stock.cashflow
+        bs  = stock.balance_sheet
+    except Exception as e:
+        print(f"    Skipping {ticker} (annual): {e}")
+        return []
+
+    return _extract_rows(fin, cf, bs, ticker, "annual")
+
+
+def _extract_quarterly_rows(ticker: str) -> list[tuple]:
+    """
+    Fetches the 3 QUARTERLY financial statements for one ticker. Skips
+    the whole ticker (returns []) if the statements can't be fetched
+    at all.
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        fin = stock.quarterly_financials
+        cf  = stock.quarterly_cashflow
+        bs  = stock.quarterly_balance_sheet
+    except Exception as e:
+        print(f"    Skipping {ticker} (quarterly): {e}")
+        return []
+
+    return _extract_rows(fin, cf, bs, ticker, "quarterly")
+
+
+def _latest_period_in_db(cursor, ticker: str, period_type: str):
+    """
+    Returns the most recent period_end already stored for this
+    ticker under the given period_type ('annual' or 'quarterly'), or
+    None if none exist yet.
+    """
+    cursor.execute(
+        """
+        SELECT MAX(period_end) FROM financial_history
+        WHERE ticker = %s AND period_type = %s
+        """,
+        (ticker, period_type),
+    )
+    return cursor.fetchone()[0]
+
+
+def _has_new_data(ticker: str, latest_in_db, quarterly: bool) -> bool:
+    """
+    Cheap check: does yfinance currently offer a period (annual or
+    quarterly, per the `quarterly` flag) newer than what we already
+    have? Only reads the column index (dates), not the full statement
+    — this "check before you fetch" step applies equally to annual
+    (companies file once a year — daily re-fetching is pure waste)
+    and quarterly data.
+
+    Returns True (fetch) if there's nothing in the DB yet, or if
+    yfinance's latest available period is newer than what's stored.
+    """
+    if latest_in_db is None:
+        return True
+    try:
+        stock = yf.Ticker(ticker)
+        df = stock.quarterly_financials if quarterly else stock.financials
+        latest_available = df.columns[0].date()
+        return latest_available > latest_in_db
+    except Exception:
+        # If the cheap check itself fails, fall back to fetching —
+        # safer to do the expensive call than to silently skip forever.
+        return True
 
 
 def update_financial_history():
@@ -189,49 +263,91 @@ def update_financial_history():
 
     tickers = _load_target_tickers()
     print(f"\nUniverse size: {len(tickers)} tickers")
-    print("Fetching financial statements and writing to financial_history...\n")
+    print("Checking for new annual and quarterly filings...\n")
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     total_rows = 0
-    failed_tickers = []
+    annual_failed = []
+    quarterly_failed = []
+    annual_skipped = 0
+    quarterly_skipped = 0
 
     for i, ticker in enumerate(tickers):
         print(f"  [{i+1}/{len(tickers)}] {ticker}...", flush=True)
 
         if not is_usd_reporter(ticker):
             print(f"    Skipping {ticker}: non-USD financial reporting")
-            failed_tickers.append(ticker)
+            annual_failed.append(ticker)
+            quarterly_failed.append(ticker)
             continue
 
-        try:
-            with ThreadPoolExecutor(max_workers=1) as executor:
-                future = executor.submit(_extract_ticker_rows, ticker)
-                rows = future.result(timeout=30)
-        except FutureTimeoutError:
-            print(f"    Timed out after 30s for {ticker} — skipping")
-            rows = []
-        except Exception as e:
-            print(f"    Extraction failed for {ticker}: {e}")
-            rows = []
-
-        if not rows:
-            failed_tickers.append(ticker)
+        # ── Annual: check for new data first, skip if nothing new ──
+        annual_latest_in_db = _latest_period_in_db(cursor, ticker, "annual")
+        if not _has_new_data(ticker, annual_latest_in_db, quarterly=False):
+            annual_skipped += 1
         else:
             try:
-                execute_values(cursor, INSERT_SQL, rows)
-                conn.commit()
-                total_rows += len(rows)
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(_extract_annual_rows, ticker)
+                    annual_rows = future.result(timeout=30)
+            except FutureTimeoutError:
+                print(f"    Timed out after 30s for {ticker} (annual) — skipping")
+                annual_rows = []
             except Exception as e:
-                print(f"    DB write failed for {ticker}: {e}")
-                failed_tickers.append(ticker)
-                if conn.closed:
-                    print("    Connection was closed — reconnecting...")
-                    conn = psycopg2.connect(DATABASE_URL)
-                    cursor = conn.cursor()
-                else:
-                    conn.rollback()
+                print(f"    Extraction failed for {ticker} (annual): {e}")
+                annual_rows = []
+
+            if not annual_rows:
+                annual_failed.append(ticker)
+            else:
+                try:
+                    execute_values(cursor, INSERT_SQL, annual_rows)
+                    conn.commit()
+                    total_rows += len(annual_rows)
+                except Exception as e:
+                    print(f"    DB write failed for {ticker} (annual): {e}")
+                    annual_failed.append(ticker)
+                    if conn.closed:
+                        print("    Connection was closed — reconnecting...")
+                        conn = psycopg2.connect(DATABASE_URL)
+                        cursor = conn.cursor()
+                    else:
+                        conn.rollback()
+
+        # ── Quarterly: check for new data first, skip if nothing new ──
+        quarterly_latest_in_db = _latest_period_in_db(cursor, ticker, "quarterly")
+        if not _has_new_data(ticker, quarterly_latest_in_db, quarterly=True):
+            quarterly_skipped += 1
+        else:
+            try:
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(_extract_quarterly_rows, ticker)
+                    quarterly_rows = future.result(timeout=30)
+            except FutureTimeoutError:
+                print(f"    Timed out after 30s for {ticker} (quarterly) — skipping")
+                quarterly_rows = []
+            except Exception as e:
+                print(f"    Extraction failed for {ticker} (quarterly): {e}")
+                quarterly_rows = []
+
+            if not quarterly_rows:
+                quarterly_failed.append(ticker)
+            else:
+                try:
+                    execute_values(cursor, INSERT_SQL, quarterly_rows)
+                    conn.commit()
+                    total_rows += len(quarterly_rows)
+                except Exception as e:
+                    print(f"    DB write failed for {ticker} (quarterly): {e}")
+                    quarterly_failed.append(ticker)
+                    if conn.closed:
+                        print("    Connection was closed — reconnecting...")
+                        conn = psycopg2.connect(DATABASE_URL)
+                        cursor = conn.cursor()
+                    else:
+                        conn.rollback()
 
         if (i + 1) % 50 == 0:
             print(f"  ...processed {i + 1}/{len(tickers)}")
@@ -239,10 +355,15 @@ def update_financial_history():
     cursor.close()
     conn.close()
 
-    print(f"\n✓ financial_history updated — {total_rows} rows written across "
-          f"{len(tickers) - len(failed_tickers)}/{len(tickers)} tickers")
-    if failed_tickers:
-        print(f"  Skipped (no data): {failed_tickers}")
+    print(f"\n✓ financial_history updated — {total_rows} rows written across {len(tickers)} tickers")
+    print(f"  Annual — skipped (no new data): {annual_skipped}")
+    print(f"  Annual — fetched: {len(tickers) - annual_skipped - len(annual_failed)}")
+    if annual_failed:
+        print(f"  Annual — failed: {annual_failed}")
+    print(f"  Quarterly — skipped (no new data): {quarterly_skipped}")
+    print(f"  Quarterly — fetched: {len(tickers) - quarterly_skipped - len(quarterly_failed)}")
+    if quarterly_failed:
+        print(f"  Quarterly — failed: {quarterly_failed}")
 
 
 if __name__ == "__main__":
