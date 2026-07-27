@@ -100,7 +100,7 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
     consensus_inputs = get_consensus_inputs(ticker)
 
     val_result       = valuation_signal(market_data)
-    mom_result       = momentum_signal(market_data)
+    mom_result       = momentum_signal(ticker)
     risk_result      = risk_signal(market_data, risk_inputs)
     quality_result   = quality_signal(quality_inputs)
     consensus_result = consensus_signal(market_data, consensus_inputs)

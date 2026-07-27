@@ -111,21 +111,30 @@ def _label(score: float) -> str:
     return "neutral"
 
 
-def momentum_signal(market_data: dict) -> dict | None:
+def momentum_signal(ticker: str) -> dict | None:
     """
     Compute momentum signals for a ticker from precomputed universe
     benchmarks (see scripts/update_momentum_universe.py).
 
-    Pure function — does not fetch data itself. Both sub-signals require
-    the ticker to have been successfully computed in the batch universe
-    update (at least ~200 trading days of price history); if the ticker
-    is missing or was skipped during that batch run (e.g. recent IPO),
-    returns None entirely, since neither signal can be independently
-    substituted for the other.
+    Pure function — does not fetch data itself, and unlike
+    valuation_signal/consensus_signal, needs nothing from
+    get_stock_snapshot() beyond the ticker symbol itself (no live
+    price, no market cap, nothing) — it only looks up this ticker's
+    precomputed entry in momentum_benchmarks.json. The signature
+    reflects this directly (a bare ticker string, not a market_data
+    dict) rather than accepting an unused dict for interface
+    consistency with the other signal functions — a signature should
+    say what a function actually needs, not what would look uniform
+    next to its neighbors (2026-07-26).
+
+    Both sub-signals require the ticker to have been successfully
+    computed in the batch universe update (at least ~200 trading days
+    of price history); if the ticker is missing or was skipped during
+    that batch run (e.g. recent IPO), returns None entirely, since
+    neither signal can be independently substituted for the other.
 
     Args:
-        market_data: dict from get_stock_snapshot(), expected fields:
-            - ticker: str
+        ticker: stock ticker symbol, e.g. "AAPL"
 
     Returns:
         dict with keys:
@@ -143,7 +152,6 @@ def momentum_signal(market_data: dict) -> dict | None:
         or None if the ticker was not successfully computed in the batch
         universe update (e.g. insufficient price history).
     """
-    ticker = market_data.get("ticker") or ""
     entry = _BENCHMARKS_DATA.get(ticker)
 
     if entry is None:

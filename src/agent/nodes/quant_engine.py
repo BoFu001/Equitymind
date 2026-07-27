@@ -88,7 +88,7 @@ def quant_engine(state: AgentState) -> dict:
 
         # ── Step 2: Momentum Signal ───────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_momentum"].format(ticker=ticker)})
-        mom = momentum_signal(data)
+        mom = momentum_signal(ticker)
         if mom is not None:
             signals["momentum"] = mom
             mprint(
