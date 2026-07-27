@@ -113,6 +113,16 @@ accompanying Quality/F-Score context, even in a short, targeted answer.
    individual analyst revision tracking.
 
 SIGNAL-SPECIFIC FORMATTING NOTES:
+- Valuation: if the data includes "Compared against: X, Y, Z" (named
+  peer companies), you MUST name those specific companies in your
+  answer (e.g. "trading at a premium to peers like Microsoft, Alphabet,
+  and Meta") — do not compress this into a generic phrase like "peer
+  average" or "industry peers" with no names, even in a short answer.
+  If instead the data says "Comparison uses a broad S&P 500 average",
+  state explicitly that no company-specific peer data was available
+  and a broad market average was used instead — this is a materially
+  different, lower-confidence comparison and must not be presented
+  the same way as a named peer match.
 - Revenue: MARKET DATA's "revenue" is trailing-twelve-months (TTM), a
   rolling 12-month total — different from any fiscal-year revenue figure
   in SEC filing excerpts. If both appear, label each explicitly (e.g.

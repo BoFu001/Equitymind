@@ -215,6 +215,17 @@ def valuation_signal(market_data: dict) -> dict | None:
         peers_used = _get_peers_used(ticker)
         peers_note = f" (compared against: {', '.join(peers_used)})" if peers_used else ""
 
+        # No named peer group means the benchmark fell back to either
+        # Damodaran's industry average or the global S&P 500 default
+        # (see _get_benchmark_pe/_get_peers_used) — either way, this is
+        # not a company-specific peer comparison, and the report should
+        # say so rather than silently presenting it as equivalent to a
+        # real peer match (2026-07-27: confirmed ~110-120/250 tickers
+        # currently fall into this case, not a rare edge case).
+        generic_benchmark_note = (
+            "" if peers_used else " Comparison uses a broad S&P 500 average."
+        )
+
         return {
             "valuation_score": score,
             "valuation_label": label,
@@ -228,6 +239,7 @@ def valuation_signal(market_data: dict) -> dict | None:
                 f"(pe_score={round(pe_score,2)}), "
                 f"{pb_detail}. "
                 f"Composite: {score} → {label}."
+                f"{generic_benchmark_note}"
             ),
         }
 
