@@ -159,16 +159,22 @@ def _sub_label(score: float) -> str:
     return "neutral"
 
 
-def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict | None:
+def consensus_signal(consensus_data: dict | None) -> dict | None:
     """
     Compute analyst consensus signals from recommendation and target
     price data.
 
     Pure function — takes already-fetched data, performs no I/O. Data
-    fetching is done separately by market_data.get_stock_snapshot() (for
-    recommendation_mean, target_mean, current_price) and
-    market_data.get_consensus_inputs() (for historical rating trend),
-    called by quant_engine.py before this function runs.
+    fetching is done separately by consensus_reader.get_consensus_snapshot()
+    (for recommendation_mean, target_mean, current_price) and
+    consensus_reader.get_consensus_trend() (for historical rating trend),
+    called by fetch_all_data.py, which merges both into the single
+    consensus_data dict this function receives (see
+    fetch_all_data._fetch_consensus_inputs()). Both are fetched via
+    independent yfinance calls (2026-07-27: no longer shared with
+    snapshot_reader.py's get_stock_snapshot() — see consensus_reader.py
+    for why), so that a live user question needing only Consensus does
+    not have to fetch data other signals would need.
 
     IMPORTANT — no composite score: recommendation_score, upside_score,
     and trend_score answer three genuinely different questions (current
@@ -183,7 +189,7 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
     rather than a blended, uninterpretable average.
 
     Degradation strategy: recommendation_score and upside_score require
-    only the current snapshot (recommendation_mean, target_mean,
+    only the snapshot portion (recommendation_mean, target_mean,
     current_price) — if these are missing, the whole function returns
     None, since there is no meaningful analyst signal without them.
     trend_score is allowed to be independently unavailable (e.g.
@@ -192,14 +198,16 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
     to reweight.
 
     Args:
-        market_data: dict from get_stock_snapshot(), expected fields:
-            - recommendation_mean: float | None (1.0-5.0 scale)
-            - target_mean:         float | None
-            - current_price:       float | None
-            - target_high:         float | None
-            - target_low:          float | None
-            - analyst_count:       int | None
-        consensus_inputs: dict from get_consensus_inputs(), or None
+        consensus_data: dict with keys "snapshot" and "trend" (see
+            fetch_all_data._fetch_consensus_inputs()):
+            - snapshot: dict from get_consensus_snapshot(), expected fields:
+                - recommendation_mean: float | None (1.0-5.0 scale)
+                - target_mean:         float | None
+                - current_price:       float | None
+                - target_high:         float | None
+                - target_low:          float | None
+                - analyst_count:       int | None
+            - trend: dict from get_consensus_trend(), or None
 
     Returns:
         dict with keys:
@@ -213,15 +221,22 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
             - low_confidence:    bool — True if analyst_count < MIN_ANALYST_COUNT
             - wide_dispersion:   bool — True if target_high > 3x target_low
             - detail:            str — plain English explanation of all sub-signals
-        or None if recommendation_mean, target_mean, or current_price
-        is missing (no meaningful analyst signal without them)
+        or None if consensus_data is None, or recommendation_mean,
+        target_mean, or current_price is missing from the snapshot
+        (no meaningful analyst signal without them)
     """
-    recommendation_mean   = market_data.get("recommendation_mean")
-    target_mean           = market_data.get("target_mean")
-    current_price         = market_data.get("current_price")
-    target_high           = market_data.get("target_high")
-    target_low            = market_data.get("target_low")
-    analyst_count         = market_data.get("analyst_count")
+    if consensus_data is None:
+        return None
+
+    snapshot = consensus_data.get("snapshot") or {}
+    trend_data = consensus_data.get("trend")
+
+    recommendation_mean   = snapshot.get("recommendation_mean")
+    target_mean           = snapshot.get("target_mean")
+    current_price         = snapshot.get("current_price")
+    target_high           = snapshot.get("target_high")
+    target_low            = snapshot.get("target_low")
+    analyst_count         = snapshot.get("analyst_count")
 
     if recommendation_mean is None or target_mean is None or current_price is None:
         return None
@@ -230,8 +245,23 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
     up_score, upside_pct = _upside_score(target_mean, current_price)
 
     trend_score, trend_detail = (None, "No rating history data available.")
-    if consensus_inputs is not None:
-        trend_score, trend_detail = _trend_score(consensus_inputs)
+    latest_rating_counts = None
+    if trend_data is not None:
+        trend_score, trend_detail = _trend_score(trend_data)
+        periods = trend_data.get("periods", [])
+        if periods:
+            # periods[0] is the most recent period (see
+            # consensus_reader.get_consensus_trend() — "ordered
+            # most-recent-first") — exposed here so the report layer
+            # can show "how many analysts currently say Buy vs Sell",
+            # not just the single averaged recommendation_mean number.
+            latest_rating_counts = {
+                "strongBuy":  periods[0]["strongBuy"],
+                "buy":        periods[0]["buy"],
+                "hold":       periods[0]["hold"],
+                "sell":       periods[0]["sell"],
+                "strongSell": periods[0]["strongSell"],
+            }
 
     recommendation_label = _sub_label(rec_score)
     upside_label = _sub_label(up_score)
@@ -259,19 +289,27 @@ def consensus_signal(market_data: dict, consensus_inputs: dict | None) -> dict |
         "should be read as 'positive within a system that skews positive,' "
         "not as a neutral, unbiased signal.",
     ]
-    if low_confidence:
-        detail_parts.append(
-            f"⚠️ Only {analyst_count} analysts cover this stock — small "
-            f"sample size, lower confidence."
-        )
-    if wide_dispersion:
-        detail_parts.append(
-            f"⚠️ Wide target price dispersion (${target_low} to ${target_high}) "
-            f"indicates significant disagreement among analysts about this "
-            f"stock's future value."
-        )
+    # low_confidence / wide_dispersion warnings are NOT duplicated into
+    # detail here -- formatters.format_consensus() already surfaces both
+    # as standalone Note lines using the returned booleans below.
+    # detail's job is explaining the trend calculation and disclosing
+    # the methodology bias, not restating these two flags.
+
 
     return {
+        # Raw inputs, included alongside the computed results so the
+        # report layer (and ultimately the user) can see what each
+        # judgment is actually based on — e.g. "bullish (score=0.65)"
+        # means little without knowing whether that came from 3
+        # analysts or 30, or what the actual recommendation_mean was.
+        "recommendation_mean": recommendation_mean,
+        "target_mean":         target_mean,
+        "current_price":       current_price,
+        "target_high":         target_high,
+        "target_low":          target_low,
+        "analyst_count":       analyst_count,
+        "latest_rating_counts": latest_rating_counts,
+
         "recommendation_score": round(rec_score, 4),
         "recommendation_label": recommendation_label,
         "upside_score":         round(up_score, 4),

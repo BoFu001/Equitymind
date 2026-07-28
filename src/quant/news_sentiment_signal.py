@@ -6,7 +6,7 @@ News Sentiment Signal — Layer 2 Quantitative Intelligence.
 Pure compute-layer module: scores already-fetched, already-filtered
 news articles with FinBERT and aggregates them into a single sentiment
 signal. Does no data fetching and no relevance filtering — both of
-those are handled upstream by src/tools/news_data.py, consistent with
+those are handled upstream by src/tools/news_reader.py, consistent with
 the project's data-layer / compute-layer separation.
 
 This measures MEDIA sentiment specifically — how outlets are currently
@@ -104,7 +104,7 @@ def news_sentiment_signal(ticker: str, articles: list) -> dict | None:
     Args:
         ticker: stock ticker symbol, e.g. "TSLA" — used only for logging,
                 not for any filtering (articles are already filtered by
-                the time they reach this function — see news_data.py)
+                the time they reach this function — see news_reader.py)
         articles: list of dicts from fetch_company_news(), each with at
                   least "title" and "summary" keys — already filtered
                   to company-specific articles, not yet scored

@@ -1,5 +1,5 @@
 """
-src/tools/news_data.py
+src/tools/news_reader.py
 
 News Data Acquisition — fetches and filters company news, with no
 sentiment scoring. This is a pure data-layer module: it retrieves raw
@@ -153,7 +153,7 @@ def _warn_if_downgraded(articles: list) -> None:
     has_companies_field = any(a.get("companies") is not None for a in articles)
     if not has_companies_field:
         print(
-            "  [news_data] \u26a0\ufe0f WARNING: no 'companies' field in "
+            "  [news_reader] \u26a0\ufe0f WARNING: no 'companies' field in "
             "response — this suggests the finlight subscription may have "
             "reverted to the free tier (e.g. payment issue). Check your "
             "billing at https://app.finlight.me/"
@@ -214,7 +214,7 @@ def fetch_company_news(ticker: str, max_articles: int = 100, days_back: int = 30
         _warn_if_downgraded(raw_articles)
 
     except Exception as e:
-        print(f"  [news_data] Error fetching news for {ticker}: {e}")
+        print(f"  [news_reader] Error fetching news for {ticker}: {e}")
         return []
 
     filtered = [
@@ -233,7 +233,7 @@ def fetch_company_news(ticker: str, max_articles: int = 100, days_back: int = 30
     ]
 
     print(
-        f"  [news_data] {ticker}: {len(raw_articles)} fetched, "
+        f"  [news_reader] {ticker}: {len(raw_articles)} fetched, "
         f"{len(results)} relevant (common_name={common_name!r})"
     )
     return results

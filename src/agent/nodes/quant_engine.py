@@ -138,7 +138,7 @@ def quant_engine(state: AgentState) -> dict:
         # explicit "news_" prefix, not a generic "sentiment" key)
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_news_sentiment"].format(ticker=ticker)})
         # News is always pre-fetched and pre-filtered by fetch_all_data
-        # (see src/tools/news_data.py) — this function only scores and
+        # (see src/tools/news_reader.py) — this function only scores and
         # aggregates, it no longer needs company_name for filtering.
         news_articles = all_news.get(ticker) or []
         news_sent = news_sentiment_signal(ticker, news_articles)
@@ -156,7 +156,7 @@ def quant_engine(state: AgentState) -> dict:
         # ── Step 6: Consensus Signal ──────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_consensus"].format(ticker=ticker)})
         consensus_inputs = all_consensus_inputs.get(ticker)
-        consensus = consensus_signal(data, consensus_inputs)
+        consensus = consensus_signal(consensus_inputs)
         if consensus is not None:
             signals["consensus"] = consensus
             mprint(

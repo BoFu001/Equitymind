@@ -24,9 +24,11 @@ reliability gained from removing an unpredictable LLM decision point.
 
 import asyncio
 
-from src.tools.market_data import get_stock_snapshot, get_risk_inputs, get_consensus_inputs
+from src.tools.snapshot_reader import get_stock_snapshot
+from src.tools.risk_reader import get_risk_inputs
+from src.tools.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.tools.quality_reader import get_quality_inputs_from_db
-from src.tools.news_data import fetch_company_news
+from src.tools.news_reader import fetch_company_news
 from src.tools.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.agent.state import AgentState
 
@@ -85,12 +87,29 @@ def _fetch_quality_inputs(ticker: str) -> dict | None:
 # ─────────────────────────────────────────────
 
 def _fetch_consensus_inputs(ticker: str) -> dict | None:
+    """
+    Fetches BOTH pieces consensus_signal() needs — the point-in-time
+    snapshot (recommendation_mean, target_mean, etc.) and the rating
+    trend history — via two independent calls (consensus_reader.py),
+    not shared with snapshot_reader.py. See consensus_reader.py's
+    module docstring for why this duplicates part of what
+    _fetch_stock_snapshot() also fetches.
+
+    Returns None only if the snapshot portion fails — consensus_signal()
+    cannot compute anything without it. The trend portion is allowed to
+    be None independently (consensus_signal() degrades gracefully).
+    """
     writer = get_stream_writer()
     writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_analyst_ratings"].format(ticker=ticker)})
 
-    data = get_consensus_inputs(ticker)
+    snapshot = get_consensus_snapshot(ticker)
+    if not snapshot:
+        return None
+
+    trend = get_consensus_trend(ticker)
+
     bprint(f"  [_fetch_consensus_inputs] Fetched for {ticker}")
-    return data
+    return {"snapshot": snapshot, "trend": trend}
 
 
 # ─────────────────────────────────────────────
@@ -140,7 +159,7 @@ async def fetch_all_data(state: AgentState) -> dict:
 
     The 6 data sources per ticker (stock_snapshot, risk_inputs,
     quality_inputs, consensus_inputs, news, SEC chunks) have no
-    dependencies on each other's results (see news_data.py — company_name
+    dependencies on each other's results (see news_reader.py — company_name
     resolution was moved inside that module for exactly this reason), so
     they are fetched concurrently via asyncio.gather + asyncio.to_thread.
     asyncio.to_thread propagates the current contextvars context to the

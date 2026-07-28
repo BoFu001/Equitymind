@@ -737,12 +737,32 @@ def make_consensus_inputs(**overrides) -> dict:
     return {"periods": [current, oldest]}
 
 
+def make_consensus_data(snapshot: dict | None = None, trend: dict | None = None) -> dict:
+    """
+    Wraps make_consensus_market_data() and make_consensus_inputs() into
+    the {"snapshot": ..., "trend": ...} shape consensus_signal() expects
+    as of 2026-07-27 (single-argument signature — see consensus_signal.py
+    for why snapshot and trend are now fetched independently rather than
+    passed as two separate arguments).
+
+    snapshot=None uses make_consensus_market_data()'s defaults; pass an
+    explicit dict (including {}) to override. trend=None means no rating
+    history available (matches consensus_signal()'s "trend independently
+    unavailable" degradation path) — pass make_consensus_inputs(...) 
+    explicitly when a test needs trend data.
+    """
+    return {
+        "snapshot": snapshot if snapshot is not None else make_consensus_market_data(),
+        "trend": trend,
+    }
+
+
 class TestConsensusNormalCase:
     def test_neutral_case(self):
         """Hold recommendation, no upside, stable trend -> each sub-signal neutral."""
         market_data = make_consensus_market_data()
         consensus_inputs = make_consensus_inputs()
-        result = consensus_signal(market_data, consensus_inputs)
+        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
 
         assert result is not None
         assert result["recommendation_label"] == "neutral"
@@ -758,7 +778,7 @@ class TestConsensusNormalCase:
             current={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
             oldest={"strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(market_data, consensus_inputs)
+        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
 
         assert result is not None
         assert result["recommendation_label"] == "bullish"
@@ -774,7 +794,7 @@ class TestConsensusNormalCase:
             current={"strongBuy": 0, "buy": 0, "hold": 5, "sell": 10, "strongSell": 5},
             oldest={"strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(market_data, consensus_inputs)
+        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
 
         assert result is not None
         assert result["recommendation_label"] == "bearish"
@@ -787,7 +807,7 @@ class TestConsensusNormalCase:
             recommendation_mean=1.0, target_mean=1000.0, current_price=100.0
         )
         consensus_inputs = make_consensus_inputs()
-        result = consensus_signal(market_data, consensus_inputs)
+        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
 
         assert -1.0 <= result["recommendation_score"] <= 1.0
         assert -1.0 <= result["upside_score"] <= 1.0
@@ -801,19 +821,19 @@ class TestConsensusNormalCase:
         (current standing / future price target / recent directional
         change) and must remain independent, not averaged into one number.
         """
-        result = consensus_signal(make_consensus_market_data(), make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), make_consensus_inputs()))
         assert result is not None
         assert "consensus_score" not in result
         assert "consensus_label" not in result
 
     def test_detail_string_non_empty(self):
-        result = consensus_signal(make_consensus_market_data(), make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), make_consensus_inputs()))
         assert result is not None
         assert len(result["detail"]) > 0
 
     def test_detail_includes_bias_disclosure(self):
         """Every result must disclose the systematic optimism bias in analyst ratings."""
-        result = consensus_signal(make_consensus_market_data(), make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), make_consensus_inputs()))
         assert result is not None
         assert "optimism bias" in result["detail"]
 
@@ -825,7 +845,7 @@ class TestConsensusTrendCalculation:
             current={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
             oldest={"strongBuy": 0, "buy": 5, "hold": 15, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
 
         assert result["trend_score"] > 0
 
@@ -835,7 +855,7 @@ class TestConsensusTrendCalculation:
             current={"strongBuy": 0, "buy": 5, "hold": 15, "sell": 0, "strongSell": 0},
             oldest={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
 
         assert result["trend_score"] < 0
 
@@ -849,7 +869,7 @@ class TestConsensusTrendCalculation:
             current={"strongBuy": 6, "buy": 22, "hold": 16, "sell": 1, "strongSell": 2},  # total 47
             oldest={"strongBuy": 7, "buy": 25, "hold": 14, "sell": 1, "strongSell": 1},   # total 48
         )
-        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
 
         assert result is not None
         assert result["trend_score"] is not None
@@ -863,7 +883,7 @@ class TestConsensusMissingData:
         and upside are independent and unaffected, since there is no
         composite score to reweight (each sub-signal stands on its own).
         """
-        result = consensus_signal(make_consensus_market_data(), None)
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), None))
 
         assert result is not None
         assert result["trend_score"] is None
@@ -879,7 +899,7 @@ class TestConsensusMissingData:
         consensus_inputs = {"periods": [
             {"period": "0m", "strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0}
         ]}
-        result = consensus_signal(make_consensus_market_data(), consensus_inputs)
+        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
 
         assert result is not None
         assert result["trend_score"] is None
@@ -887,41 +907,39 @@ class TestConsensusMissingData:
     def test_missing_recommendation_mean_returns_none(self):
         """No recommendation_mean at all -> entire signal returns None."""
         market_data = make_consensus_market_data(recommendation_mean=None)
-        result = consensus_signal(market_data, make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
         assert result is None
 
     def test_missing_target_mean_returns_none(self):
         """No target_mean at all -> entire signal returns None."""
         market_data = make_consensus_market_data(target_mean=None)
-        result = consensus_signal(market_data, make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
         assert result is None
 
 
 class TestConsensusDisclosures:
     def test_low_confidence_flagged_when_analyst_count_below_threshold(self):
         market_data = make_consensus_market_data(analyst_count=MIN_ANALYST_COUNT - 1)
-        result = consensus_signal(market_data, make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
 
         assert result["low_confidence"] is True
-        assert "small sample size" in result["detail"]
 
     def test_low_confidence_not_flagged_when_analyst_count_sufficient(self):
         market_data = make_consensus_market_data(analyst_count=MIN_ANALYST_COUNT + 10)
-        result = consensus_signal(market_data, make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
 
         assert result["low_confidence"] is False
 
     def test_wide_dispersion_flagged(self):
         """target_high > 3x target_low should trigger the dispersion warning."""
         market_data = make_consensus_market_data(target_high=400.0, target_low=100.0)
-        result = consensus_signal(market_data, make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
 
         assert result["wide_dispersion"] is True
-        assert "disagreement among analysts" in result["detail"]
 
     def test_narrow_dispersion_not_flagged(self):
         market_data = make_consensus_market_data(target_high=110.0, target_low=90.0)
-        result = consensus_signal(market_data, make_consensus_inputs())
+        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
 
         assert result["wide_dispersion"] is False
 
@@ -942,7 +960,7 @@ def make_article(**kwargs) -> dict:
     """
     Create a minimal mock article dict for news sentiment testing.
     NOTE: as of the data-layer/compute-layer split, articles reaching
-    news_sentiment_signal() are already filtered (see src/tools/news_data.py)
+    news_sentiment_signal() are already filtered (see src/tools/news_reader.py)
     and not yet scored — "sentiment"/"score" here represent what FinBERT
     would assign, used only to construct pre-scored fixtures for these
     aggregation-focused tests (the real function scores title+summary

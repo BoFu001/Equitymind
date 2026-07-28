@@ -15,7 +15,7 @@ valuation_signal() result with zero special-casing, and adding a new
 field to any signal function requires no table migration (it just
 appears in the JSONB automatically) — this avoids the class of
 silent-drift bug already seen once in this project (company_name
-handling in news_data.py).
+handling in news_reader.py).
 
 A small number of scalar score columns are duplicated out of each
 JSONB column specifically to support discovery_suggest's screening
@@ -35,7 +35,7 @@ measures nearness to the 52-week high, not "momentum" in the 12-1
 sense), and the table column matches this verbatim.
 
 News Sentiment is deliberately excluded — never cached, always fetched
-and scored live (see news_data.py / news_sentiment_signal.py), due to
+and scored live (see news_reader.py / news_sentiment_signal.py), due to
 its short shelf life.
 
 Scope: only the 250-ticker universe is stored here. Tickers outside the

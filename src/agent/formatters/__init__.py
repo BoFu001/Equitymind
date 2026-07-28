@@ -1,9 +1,18 @@
 """
-src/agent/formatters.py
+src/agent/formatters/__init__.py
 
 Shared formatters for converting structured data into LLM-readable strings.
 Used by fetch_all_data.py and nodes.py to ensure consistent data presentation.
+
+Was a single file (formatters.py) until 2026-07-27, when format_consensus
+was split into its own file (consensus.py) — see that file's docstring
+for why. Re-exported here so every existing `from src.agent.formatters
+import format_consensus` (and all the other format_xxx imports) keeps
+working unchanged; callers don't need to know or care whether a given
+formatter lives in this file or a submodule.
 """
+
+from src.agent.formatters.consensus_formatter import format_consensus
 
 
 # ─────────────────────────────────────────────
@@ -19,8 +28,6 @@ def format_stock_snapshot(data: dict, ticker: str) -> str:
   EPS (TTM): {data.get('eps_trailing')} | EPS (Fwd): {data.get('eps_forward')}
   52w High: {data.get('52w_high')} | 52w Low: {data.get('52w_low')}
   Dividend Yield: {data.get('dividend_yield')}
-  Analyst Target: ${data.get('target_mean')} (Low: ${data.get('target_low')} / High: ${data.get('target_high')}) | Recommendation: {data.get('recommendation')}
-  Analyst Count: {data.get('analyst_count')} | Recommendation Mean: {data.get('recommendation_mean')} (1=Strong Buy, 3=Hold, 5=Strong Sell)
   Sector: {data.get('sector')} | Industry: {data.get('industry')}
 """
 
@@ -151,7 +158,7 @@ def format_news_sentiment(news_sentiment: dict | None) -> str:
     Includes the full per-article list (title, url, published, sentiment)
     -- this is the only place article-level news data reaches the LLM,
     since news_sentiment_signal's "articles" field already contains
-    everything news_data.py provides, plus the FinBERT sentiment label.
+    everything news_reader.py provides, plus the FinBERT sentiment label.
     """
     if not news_sentiment:
         return "  News Sentiment: Insufficient data.\n"
@@ -167,29 +174,6 @@ def format_news_sentiment(news_sentiment: dict | None) -> str:
             text += f"    - [{a['sentiment'].upper()}] (confidence={a['score']}) {a['title']}\n"
             text += f"      URL: {a['url']}\n"
             text += f"      Published: {a['published']}\n"
-    return text
-
-
-def format_consensus(consensus: dict | None) -> str:
-    """
-    Three independent sub-signals, NOT combined into a single score
-    (recommendation/upside/trend answer different questions: current
-    standing, future price target, and recent directional change —
-    averaging them would hide the full picture).
-    """
-    if not consensus:
-        return "  Consensus: Insufficient data.\n"
-    text = f"  Consensus - Recommendation: {consensus['recommendation_label']} (score={consensus['recommendation_score']})\n"
-    text += f"  Consensus - Upside: {consensus['upside_label']} ({consensus['upside_pct']}% implied by analyst target price)\n"
-    if consensus.get("trend_label") is not None:
-        text += f"  Consensus - Trend: {consensus['trend_label']} (trend_score={consensus['trend_score']})\n"
-    else:
-        text += f"  Consensus - Trend: Insufficient rating history.\n"
-    text += f"  {consensus['detail']}\n"
-    if consensus.get("low_confidence"):
-        text += f"  ⚠️ Low analyst sample size — reduced confidence.\n"
-    if consensus.get("wide_dispersion"):
-        text += f"  ⚠️ Wide analyst target price dispersion — significant disagreement.\n"
     return text
 
 
@@ -240,8 +224,8 @@ def format_quant_signals(signals: dict, ticker: str) -> str:
     Formats all six quant signals for one ticker into a single block.
     Each signal is independently formatted (see format_valuation,
     format_momentum, format_risk, format_quality, format_news_sentiment,
-    format_consensus above) — this function just concatenates them under
-    one ticker heading.
+    format_consensus in this package) — this function just concatenates
+    them under one ticker heading.
     """
     text = f"\n{ticker} Quantitative Signals:\n"
     text += format_valuation(signals.get("valuation"))
