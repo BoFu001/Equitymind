@@ -42,11 +42,9 @@ import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import Json, execute_values
 
-from src.tools.market_data import (
-    get_stock_snapshot,
-    get_risk_inputs,
-    get_consensus_inputs,
-)
+from src.tools.snapshot_reader import get_stock_snapshot
+from src.tools.risk_reader import get_risk_inputs
+from src.tools.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.tools.quality_reader import get_quality_inputs_from_db
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
@@ -137,13 +135,22 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
     if not market_data:
         return None
 
-    risk_inputs      = get_risk_inputs(ticker)
-    consensus_inputs = get_consensus_inputs(ticker)
+    risk_inputs = get_risk_inputs(ticker)
+
+    # consensus_signal() needs both pieces merged into one dict -- see
+    # consensus_reader.py and consensus_signal.py for why these are
+    # fetched independently of market_data rather than shared with it.
+    consensus_snapshot = get_consensus_snapshot(ticker)
+    consensus_trend = get_consensus_trend(ticker)
+    consensus_data = (
+        {"snapshot": consensus_snapshot, "trend": consensus_trend}
+        if consensus_snapshot else None
+    )
 
     val_result       = valuation_signal(market_data)
     mom_result       = momentum_signal(ticker)
     risk_result      = risk_signal(market_data, risk_inputs)
-    consensus_result = consensus_signal(market_data, consensus_inputs)
+    consensus_result = consensus_signal(consensus_data)
 
     valuation_score      = _to_float(val_result.get("valuation_score") if val_result else None)
     momentum_12_1_score  = _to_float(mom_result.get("momentum_12_1_score") if mom_result else None)
