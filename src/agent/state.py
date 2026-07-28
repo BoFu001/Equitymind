@@ -36,6 +36,7 @@ class AgentState(TypedDict):
 
     # Stock snapshots
     stock_snapshots: Optional[dict]         # price, P/E, revenue etc from yfinance
+    valuation_inputs: Optional[dict]        # pe_ratio, price_to_book, price_to_sales — for Valuation Signal
 
     # Inputs for quant_engine signal calculations (fetched by fetch_all_data,
     # consumed by quant_engine — quant_engine performs no I/O of its own)
@@ -85,6 +86,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "news":        [],
         "chunks":      [],
         "stock_snapshots": {},
+        "valuation_inputs": {},
         "risk_inputs": {},
         "quality_inputs": {},
         "consensus_inputs": {},

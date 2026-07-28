@@ -43,6 +43,7 @@ from dotenv import load_dotenv
 from psycopg2.extras import Json, execute_values
 
 from src.tools.snapshot_reader import get_stock_snapshot
+from src.tools.valuation_reader import get_valuation_inputs
 from src.tools.risk_reader import get_risk_inputs
 from src.tools.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.tools.quality_reader import get_quality_inputs_from_db
@@ -135,6 +136,12 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
     if not market_data:
         return None
 
+    # valuation_signal() fetched independently of market_data as of
+    # 2026-07-27 -- see valuation_reader.py for why (same principle
+    # already applied to consensus_reader.py).
+    valuation_inputs = get_valuation_inputs(ticker)
+
+
     risk_inputs = get_risk_inputs(ticker)
 
     # consensus_signal() needs both pieces merged into one dict -- see
@@ -147,7 +154,7 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
         if consensus_snapshot else None
     )
 
-    val_result       = valuation_signal(market_data)
+    val_result       = valuation_signal(valuation_inputs) if valuation_inputs else None
     mom_result       = momentum_signal(ticker)
     risk_result      = risk_signal(market_data, risk_inputs)
     consensus_result = consensus_signal(consensus_data)

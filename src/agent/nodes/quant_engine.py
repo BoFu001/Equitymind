@@ -64,6 +64,7 @@ def quant_engine(state: AgentState) -> dict:
     quant_signals = {}
 
     all_news              = state.get("news") or {}
+    all_valuation_inputs   = state.get("valuation_inputs") or {}
     all_risk_inputs       = state.get("risk_inputs") or {}
     all_quality_inputs    = state.get("quality_inputs") or {}
     all_consensus_inputs  = state.get("consensus_inputs") or {}
@@ -75,7 +76,8 @@ def quant_engine(state: AgentState) -> dict:
 
         # ── Step 1: Valuation Signal ──────────────────────────────────────
         writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_valuation"].format(ticker=ticker)})
-        val = valuation_signal(data)
+        valuation_inputs = all_valuation_inputs.get(ticker)
+        val = valuation_signal(valuation_inputs) if valuation_inputs else None
         if val is not None:
             signals["valuation"] = val
             mprint(

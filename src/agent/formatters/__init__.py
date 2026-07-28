@@ -13,23 +13,17 @@ formatter lives in this file or a submodule.
 """
 
 from src.agent.formatters.consensus_formatter import format_consensus
+from src.agent.formatters.valuation_formatter import format_valuation
+from src.agent.formatters.snapshot_formatter import format_stock_snapshot
 
 
 # ─────────────────────────────────────────────
 # Raw data formatters (fetched data, not computed signals)
 # ─────────────────────────────────────────────
 
-def format_stock_snapshot(data: dict, ticker: str) -> str:
-    return f"""
-{ticker} — {data.get('company_name')}
-  Price: ${data.get('current_price')} | Market Cap: {data.get('market_cap')}
-  P/E: {data.get('pe_ratio')} | Forward P/E: {data.get('forward_pe')}
-  Revenue: {data.get('revenue')} | Profit Margin: {data.get('profit_margin')}
-  EPS (TTM): {data.get('eps_trailing')} | EPS (Fwd): {data.get('eps_forward')}
-  52w High: {data.get('52w_high')} | 52w Low: {data.get('52w_low')}
-  Dividend Yield: {data.get('dividend_yield')}
-  Sector: {data.get('sector')} | Industry: {data.get('industry')}
-"""
+# format_stock_snapshot() now lives in snapshot_formatter.py — see
+# that file's docstring (same principle as format_consensus() /
+# format_valuation(), 2026-07-27).
 
 
 
@@ -56,18 +50,9 @@ def format_conversation_context(messages: list, limit: int, max_chars: int = Non
 # Quant signal formatters (computed signal results, not raw data)
 # ─────────────────────────────────────────────
 
-def format_valuation(val: dict | None) -> str:
-    if not val:
-        return "  Valuation: Insufficient data.\n"
-    text = f"  Valuation: {val['valuation_label']} (score={val['valuation_score']}, method={val['method']})\n"
-    text += f"  {val['detail']}\n"
-    if val.get("peers_used"):
-        text += f"  Compared against: {', '.join(val['peers_used'])}\n"
-    if val.get("reference_only"):
-        text += f"  ⚠️ Valuation reference only — company is loss-making, P/S used instead of P/E.\n"
-    if val.get("stale_benchmark"):
-        text += f"  ⚠️ Sector benchmarks may be outdated (>90 days old).\n"
-    return text
+# format_valuation() now lives in valuation_formatter.py — see that
+# file's docstring (same principle as format_consensus() /
+# consensus_formatter.py, 2026-07-27).
 
 
 def format_momentum(mom: dict | None) -> str:

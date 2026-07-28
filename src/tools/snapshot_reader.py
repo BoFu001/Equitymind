@@ -7,7 +7,10 @@ a ticker — one yfinance .info call, shared by multiple consumers
 
     - Displayed directly in reports (format_stock_snapshot): price,
       market cap, sector/industry, EPS, dividend yield.
-    - valuation_signal() reads pe_ratio, price_to_book, price_to_sales.
+    - valuation_signal() no longer reads anything from this file as of
+      2026-07-27 — pe_ratio, price_to_book, price_to_sales moved to
+      valuation_reader.get_valuation_inputs(), fetched independently
+      (see valuation_reader.py for why).
     - consensus_signal() no longer reads anything from this file as
       of 2026-07-27 — all fields it needs (recommendation_mean,
       target_mean, current_price, target_high, target_low,
@@ -42,7 +45,6 @@ def get_stock_snapshot(ticker: str) -> dict | None:
             "company_name":       info.get("longName", ticker),
             "current_price":      info.get("currentPrice"),
             "market_cap":         info.get("marketCap"),
-            "pe_ratio":           info.get("trailingPE"),
             "forward_pe":         info.get("forwardPE"),
             "revenue":            info.get("totalRevenue"),
             "profit_margin":      info.get("profitMargins"),
@@ -54,9 +56,6 @@ def get_stock_snapshot(ticker: str) -> dict | None:
             "eps_trailing":       info.get("trailingEps"),
             "eps_forward":        info.get("forwardEps"),
             "dividend_yield":     info.get("dividendYield"),
-            # Valuation ratios for Layer 2 quant engine
-            "price_to_sales":     info.get("priceToSalesTrailing12Months"),
-            "price_to_book":      info.get("priceToBook"),
         }
 
         # NOTE: RSI/MACD/SMA technical indicators were deliberately removed —

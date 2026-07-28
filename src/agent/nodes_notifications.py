@@ -23,6 +23,7 @@ NODE_PROGRESS = {
     "sec_retrieve":                        "Reading {ticker} annual report...",                    # sub_progress
     "sec_fetch":                           "Downloading {ticker} annual report from SEC...",       # sub_progress
     "market_data_snapshot":                "Fetching {ticker}'s stock data...",                    # sub_progress
+    "market_data_valuation":               "Checking {ticker}'s valuation ratios...",              # sub_progress
     "market_data_risk_history":            "Checking {ticker}'s risk history...",                  # sub_progress
     "market_data_financial_statements":    "Reviewing {ticker}'s financial statements...",         # sub_progress
     "market_data_analyst_ratings":         "Checking analyst ratings for {ticker}...",             # sub_progress

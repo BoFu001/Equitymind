@@ -25,6 +25,7 @@ reliability gained from removing an unpredictable LLM decision point.
 import asyncio
 
 from src.tools.snapshot_reader import get_stock_snapshot
+from src.tools.valuation_reader import get_valuation_inputs
 from src.tools.risk_reader import get_risk_inputs
 from src.tools.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.tools.quality_reader import get_quality_inputs_from_db
@@ -50,6 +51,25 @@ def _fetch_stock_snapshot(ticker: str) -> dict | None:
         return None
 
     bprint(f"  [_fetch_stock_snapshot] Fetched for {ticker}")
+    return data
+
+
+# ─────────────────────────────────────────────
+# Valuation Signal inputs (pe_ratio, price_to_book, price_to_sales)
+# ─────────────────────────────────────────────
+
+def _fetch_valuation_inputs(ticker: str) -> dict | None:
+    """
+    Fetched independently of snapshot_reader.py as of 2026-07-27 —
+    see valuation_reader.py for why (same principle already applied
+    to consensus_reader.py: every signal's data point should be
+    independently fetchable).
+    """
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_valuation"].format(ticker=ticker)})
+
+    data = get_valuation_inputs(ticker)
+    bprint(f"  [_fetch_valuation_inputs] Fetched for {ticker}")
     return data
 
 
@@ -180,6 +200,7 @@ async def fetch_all_data(state: AgentState) -> dict:
     tickers = state.get("tickers") or []
 
     all_stock_snapshots = {}
+    all_valuation       = {}
     all_risk            = {}
     all_quality         = {}
     all_consensus       = {}
@@ -187,8 +208,9 @@ async def fetch_all_data(state: AgentState) -> dict:
     all_chunks          = {}
 
     for ticker in tickers:
-        stock_snapshot, risk_inputs, quality_inputs, consensus_inputs, news_articles, sec_chunks = await asyncio.gather(
+        stock_snapshot, valuation_inputs, risk_inputs, quality_inputs, consensus_inputs, news_articles, sec_chunks = await asyncio.gather(
             asyncio.to_thread(_fetch_stock_snapshot, ticker),
+            asyncio.to_thread(_fetch_valuation_inputs, ticker),
             asyncio.to_thread(_fetch_risk_inputs, ticker),
             asyncio.to_thread(_fetch_quality_inputs, ticker),
             asyncio.to_thread(_fetch_consensus_inputs, ticker),
@@ -198,6 +220,8 @@ async def fetch_all_data(state: AgentState) -> dict:
 
         if stock_snapshot:
             all_stock_snapshots[ticker] = stock_snapshot
+        if valuation_inputs:
+            all_valuation[ticker] = valuation_inputs
         if risk_inputs:
             all_risk[ticker] = risk_inputs
         if quality_inputs:
@@ -213,6 +237,7 @@ async def fetch_all_data(state: AgentState) -> dict:
 
     return {
         "stock_snapshots":   all_stock_snapshots,
+        "valuation_inputs":  all_valuation,
         "risk_inputs":       all_risk,
         "quality_inputs":    all_quality,
         "consensus_inputs":  all_consensus,

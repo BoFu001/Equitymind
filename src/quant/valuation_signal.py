@@ -113,21 +113,25 @@ def _get_peers_used(ticker: str) -> list[str]:
 
 
 
-def valuation_signal(market_data: dict) -> dict | None:
+def valuation_signal(valuation_inputs: dict) -> dict | None:
     """
-    Compute a valuation signal from yfinance market data.
+    Compute a valuation signal from valuation_reader.get_valuation_inputs().
 
     Uses a two-tier degradation strategy based on data availability.
     Returns None if no meaningful valuation can be computed, allowing
     the report layer to skip valuation entirely and avoid hallucination.
 
+    Fetched independently of snapshot_reader.py as of 2026-07-27 — see
+    valuation_reader.py for why (same principle already applied to
+    consensus_reader.py: every signal's data point should be
+    independently fetchable).
+
     Args:
-        market_data: dict returned by get_market_data_tool, expected fields:
+        valuation_inputs: dict from get_valuation_inputs(), expected fields:
             - pe_ratio:               float | None  (trailing P/E)
             - price_to_book:          float | None  (P/B ratio)
             - price_to_sales:         float | None  (P/S ratio)
             - ticker:                 str
-            - company_name:           str
 
     Returns:
         dict with keys:
@@ -141,10 +145,10 @@ def valuation_signal(market_data: dict) -> dict | None:
         or None if no data available (Tier 3)
     """
 
-    pe            = market_data.get("pe_ratio")
-    pb            = market_data.get("price_to_book")
-    ps            = market_data.get("price_to_sales")
-    ticker    = market_data.get("ticker") or ""
+    pe            = valuation_inputs.get("pe_ratio")
+    pb            = valuation_inputs.get("price_to_book")
+    ps            = valuation_inputs.get("price_to_sales")
+    ticker        = valuation_inputs.get("ticker") or ""
 
     # Defensive type check: yfinance has, in practice, returned a
     # non-numeric string (e.g. "Infinity") for these ratio fields when
@@ -227,6 +231,16 @@ def valuation_signal(market_data: dict) -> dict | None:
         )
 
         return {
+            # Raw benchmark values, exposed as independent fields (not
+            # just baked into the pe_vs_peers string or detail text) so
+            # the report layer can display them directly -- same
+            # principle already applied to consensus_signal.py's raw
+            # inputs (2026-07-27).
+            "pe":              pe,
+            "pb":              pb,
+            "benchmark_pe":    sector_pe,
+            "benchmark_pb":    sector_pb,
+
             "valuation_score": score,
             "valuation_label": label,
             "method":          "pe_pb",
