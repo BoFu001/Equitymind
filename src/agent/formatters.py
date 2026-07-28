@@ -193,6 +193,48 @@ def format_consensus(consensus: dict | None) -> str:
     return text
 
 
+def format_financial_history(rows: list, ticker: str) -> str:
+    """
+    Formats multi-year financial_history rows (annual + quarterly) into
+    a plain-text year-over-year table for the LLM. Only triggered when
+    the user's question suggests they want historical trend data (see
+    fetch_all_data.py's _question_wants_financial_history()) — not
+    fetched unconditionally like the other 6 data sources, since most
+    questions don't need multi-year figures.
+
+    Shows total_revenue and net_income only (the two figures users most
+    commonly ask about in a "historical trend" question) — not all 26
+    stored metrics, to avoid overloading the prompt with numbers the
+    question didn't ask about.
+    """
+    if not rows:
+        return f"\n{ticker}: No historical financial data available.\n"
+
+    annual_rows = [r for r in rows if r["period_type"] == "annual"]
+    quarterly_rows = [r for r in rows if r["period_type"] == "quarterly"]
+
+    text = f"\n{ticker} Historical Financials:\n"
+
+    def _format_row(r):
+        rev = r.get("total_revenue")
+        ni = r.get("net_income")
+        if rev is not None and ni is not None:
+            return f"    {r['period_end']}: Revenue ${rev/1e9:.2f}B, Net Income ${ni/1e9:.2f}B\n"
+        return f"    {r['period_end']}: Revenue/Net Income data incomplete\n"
+
+    if annual_rows:
+        text += "  Annual (fiscal year end):\n"
+        for r in sorted(annual_rows, key=lambda x: x["period_end"]):
+            text += _format_row(r)
+
+    if quarterly_rows:
+        text += "  Quarterly (most recent periods):\n"
+        for r in sorted(quarterly_rows, key=lambda x: x["period_end"]):
+            text += _format_row(r)
+
+    return text
+
+
 def format_quant_signals(signals: dict, ticker: str) -> str:
     """
     Formats all six quant signals for one ticker into a single block.

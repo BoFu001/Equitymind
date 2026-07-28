@@ -47,7 +47,7 @@ from src.tools.market_data import (
     get_risk_inputs,
     get_consensus_inputs,
 )
-from src.tools.financial_history_reader import get_quality_inputs_from_db
+from src.tools.quality_reader import get_quality_inputs_from_db
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
 from src.quant.risk_signal import risk_signal
@@ -174,7 +174,7 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
 
     if not skip_quality:
         # Reads from financial_history (DB) instead of calling yfinance
-        # live — see src/tools/financial_history_reader.py for why.
+        # live — see src/tools/quality_reader.py for why.
         quality_inputs = get_quality_inputs_from_db(ticker)
         quality_result = quality_signal(quality_inputs)
         quality_score = _to_float(quality_result.get("quality_score") if quality_result else None)
