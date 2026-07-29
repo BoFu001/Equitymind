@@ -14,6 +14,8 @@ from core.context import token_queue_var
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
 from src.agent.formatters import format_stock_snapshot, format_sec_chunks, format_conversation_context, format_quant_signals
+from src.agent.formatters import format_financial_history
+from src.tools.financial_history_reader import get_financial_history_rows
 from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -37,8 +39,8 @@ def generate_report(state: AgentState) -> dict:
     # ── Format conversation history ──
     conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
 
-    # ── Format market data ──
-    market_context = "".join(format_stock_snapshot(all_stock_snapshots.get(t, {}), t) for t in tickers)
+    # ── Format company snapshot ──
+    snapshot_context = "".join(format_stock_snapshot(all_stock_snapshots.get(t, {}), t) for t in tickers)
 
     # ── Format SEC filing chunks ──
     sec_context = "".join(
@@ -48,6 +50,16 @@ def generate_report(state: AgentState) -> dict:
 
     # ── Format quant signals ──
     quant_context = "".join(format_quant_signals(quant_signals.get(t, {}), t) for t in tickers)
+
+    # ── Format historical financials ──
+    # Fetched unconditionally (like the other data sources) as a
+    # temporary measure until determine_data_needs exists — see that
+    # node's planned design (2026-07-27) for why this should eventually
+    # be fetched only when the question asks about historical trends,
+    # not on every request.
+    financial_history_context = "".join(
+        format_financial_history(get_financial_history_rows(t), t) for t in tickers
+    )
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
@@ -111,8 +123,19 @@ accompanying Quality/F-Score context, even in a short, targeted answer.
    into one overall consensus verdict. The trend_label reflects the
    analyst group's aggregate rating distribution over time, not
    individual analyst revision tracking.
+6. News Sentiment reflects MEDIA TONE (how recent news articles are
+   written about the company), not analyst opinion (Consensus) or an
+   objective financial calculation like Valuation/Momentum/Risk/Quality
+   — always make this distinction clear. A sentiment score is an
+   interpretation of language in news coverage, not a fact about the
+   company's fundamentals or future performance.
 
 SIGNAL-SPECIFIC FORMATTING NOTES:
+- Valuation P/E clarification: COMPANY SNAPSHOT's "Forward P/E" is a
+  DIFFERENT figure from the "P/E" used in the Valuation signal's
+  judgment (trailing P/E). If both appear in your answer, label each
+  explicitly (e.g. "trailing P/E of 41.22 vs. Forward P/E of 35.26")
+  — never use them interchangeably or imply they are the same number.
 - Valuation: if the data includes "Compared against: X, Y, Z" (named
   peer companies), you MUST name those specific companies in your
   answer (e.g. "trading at a premium to peers like Microsoft, Alphabet,
@@ -123,7 +146,7 @@ SIGNAL-SPECIFIC FORMATTING NOTES:
   and a broad market average was used instead — this is a materially
   different, lower-confidence comparison and must not be presented
   the same way as a named peer match.
-- Revenue: MARKET DATA's "revenue" is trailing-twelve-months (TTM), a
+- Revenue: COMPANY SNAPSHOT's "revenue" is trailing-twelve-months (TTM), a
   rolling 12-month total — different from any fiscal-year revenue figure
   in SEC filing excerpts. If both appear, label each explicitly (e.g.
   "TTM Revenue: $318.27B" vs "FY2025 Revenue: $281.72B") — presenting
@@ -153,14 +176,18 @@ DATE: {datetime.now().strftime('%B %d, %Y')}
 CONVERSATION HISTORY:
 {conversation_context}
 
-MARKET DATA:
-{market_context}
+COMPANY SNAPSHOT:
+{snapshot_context}
 
-SEC FILING DATA:
-{sec_context}
+HISTORICAL FINANCIALS (only relevant if the question asks about
+multi-year trends — otherwise ignore this section):
+{financial_history_context}
 
 QUANTITATIVE SIGNALS:
-{quant_context if quant_context else "No quantitative signals available."}"""
+{quant_context if quant_context else "No quantitative signals available."}
+
+SEC FILING DATA:
+{sec_context}"""
 
     queue = token_queue_var.get()
     answer = ""
