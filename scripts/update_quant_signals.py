@@ -42,11 +42,11 @@ import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import Json, execute_values
 
-from src.tools.snapshot_reader import get_stock_snapshot
-from src.tools.valuation_reader import get_valuation_inputs
-from src.tools.risk_reader import get_risk_inputs
-from src.tools.consensus_reader import get_consensus_snapshot, get_consensus_trend
-from src.tools.quality_reader import get_quality_inputs_from_db
+from src.readers.snapshot_reader import get_stock_snapshot
+from src.readers.valuation_reader import get_valuation_inputs
+from src.readers.risk_reader import get_risk_inputs
+from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
+from src.readers.quality_reader import get_quality_inputs_from_db
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
 from src.quant.risk_signal import risk_signal

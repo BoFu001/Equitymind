@@ -18,7 +18,7 @@ from src.agent.formatters.sec_formatter import format_sec_chunks
 from src.agent.formatters.conversation_formatter import format_conversation_context
 from src.agent.formatters.quant_signals_formatter import format_quant_signals
 from src.agent.formatters.financial_history_formatter import format_financial_history
-from src.tools.financial_history_reader import get_financial_history_rows
+from src.readers.financial_history_reader import get_financial_history_rows
 from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
