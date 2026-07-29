@@ -5,6 +5,7 @@ load_dotenv()
 
 # LLM
 LLM_MODEL = "gpt-4o"
+LLM_MODEL_LIGHT = "gpt-4o-mini"  # for simple, low-stakes tasks (e.g. company name normalization) — cheaper/faster, no complex reasoning needed
 
 # Conversation history — number of messages to include in LLM context
 # 6 messages = 3 exchanges (1 exchange = 1 user + 1 assistant)

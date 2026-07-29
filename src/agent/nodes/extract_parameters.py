@@ -8,7 +8,7 @@ import json
 
 from openai import OpenAI
 
-from config import OPENAI_API_KEY, LLM_MODEL, CONVERSATION_HISTORY_LIMIT
+from config import OPENAI_API_KEY, LLM_MODEL_LIGHT, CONVERSATION_HISTORY_LIMIT
 from langgraph.config import get_stream_writer
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
@@ -59,7 +59,7 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
 {{"tickers": [], "year": null}}"""
 
     response = client.chat.completions.create(
-        model=LLM_MODEL,
+        model=LLM_MODEL_LIGHT,
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
     )
@@ -67,7 +67,7 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
     content = response.choices[0].message.content.strip()
 
     if not content:
-        gprint(f"  [extract_parameters] Empty response from {LLM_MODEL}, using defaults")
+        gprint(f"  [extract_parameters] Empty response from {LLM_MODEL_LIGHT}, using defaults")
         return {"tickers": [], "year": None}
 
     try:

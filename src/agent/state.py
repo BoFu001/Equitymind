@@ -27,6 +27,12 @@ class AgentState(TypedDict):
     # Extracted parameters
     tickers: Optional[list[str]]            # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
     year: Optional[str]                     # e.g. "2025" or None for latest    
+
+    # Which data sources/signals this question actually needs — decided once,
+    # after tickers are confirmed, before fetch_all_data. snapshot is always
+    # fetched regardless (basic company info any question may reference) and
+    # is not part of this list. See determine_data_scope.py.
+    signals_needed: Optional[list[str]]     # subset of: valuation, momentum, risk, quality, consensus, news, financial_history
     
     # News and sentiment
     news: Optional[list]                    # recent news articles with sentiment scores
@@ -83,6 +89,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "enriched_query": None,
         "tickers":     [],
         "year":        None,
+        "signals_needed": [],
         "news":        [],
         "chunks":      [],
         "stock_snapshots": {},

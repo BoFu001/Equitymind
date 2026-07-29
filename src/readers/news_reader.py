@@ -45,7 +45,7 @@ import yfinance as yf
 from datetime import datetime, timedelta
 from openai import OpenAI
 
-from config import FINLIGHT_API_KEY, OPENAI_API_KEY
+from config import FINLIGHT_API_KEY, OPENAI_API_KEY, LLM_MODEL_LIGHT
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -112,7 +112,7 @@ Examples:
 Reply with ONLY the common name itself, no other text.'''
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=LLM_MODEL_LIGHT,
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
     )

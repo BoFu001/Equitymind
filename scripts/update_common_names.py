@@ -48,6 +48,7 @@ from pathlib import Path
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
+from config import LLM_MODEL_LIGHT
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -78,7 +79,7 @@ Examples:
 Reply with ONLY the common name itself, no other text.'''
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=LLM_MODEL_LIGHT,
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
     )

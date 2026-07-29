@@ -6,7 +6,7 @@ Node: Handle Greeting
 
 from openai import OpenAI
 
-from config import OPENAI_API_KEY, APP_NAME, LLM_MODEL, CONVERSATION_HISTORY_LIMIT
+from config import OPENAI_API_KEY, APP_NAME, LLM_MODEL_LIGHT, CONVERSATION_HISTORY_LIMIT
 from langgraph.config import get_stream_writer
 from core.context import token_queue_var
 from src.agent.state import AgentState
@@ -46,7 +46,7 @@ Keep the response concise and contextual. Use markdown and emojis where appropri
     answer = ""
 
     response = client.chat.completions.create(
-        model=LLM_MODEL,
+        model=LLM_MODEL_LIGHT,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
         stream=True,
