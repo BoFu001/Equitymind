@@ -12,7 +12,7 @@ from config import OPENAI_API_KEY, LLM_MODEL, CONVERSATION_HISTORY_LIMIT
 from langgraph.config import get_stream_writer
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.formatters import format_conversation_context
+from src.agent.formatters.conversation_formatter import format_conversation_context
 from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)

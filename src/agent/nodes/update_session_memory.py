@@ -8,7 +8,7 @@ from openai import OpenAI
 
 from config import OPENAI_API_KEY, APP_NAME, LLM_MODEL, CONVERSATION_HISTORY_LIMIT
 from src.agent.state import AgentState
-from src.agent.formatters import format_conversation_context
+from src.agent.formatters.conversation_formatter import format_conversation_context
 from colors import gprint, rprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)

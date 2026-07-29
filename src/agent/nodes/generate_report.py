@@ -13,8 +13,11 @@ from langgraph.config import get_stream_writer
 from core.context import token_queue_var
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.formatters import format_stock_snapshot, format_sec_chunks, format_conversation_context, format_quant_signals
-from src.agent.formatters import format_financial_history
+from src.agent.formatters.snapshot_formatter import format_stock_snapshot
+from src.agent.formatters.sec_formatter import format_sec_chunks
+from src.agent.formatters.conversation_formatter import format_conversation_context
+from src.agent.formatters.quant_signals_formatter import format_quant_signals
+from src.agent.formatters.financial_history_formatter import format_financial_history
 from src.tools.financial_history_reader import get_financial_history_rows
 from colors import gprint
 

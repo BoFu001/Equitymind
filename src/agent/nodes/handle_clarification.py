@@ -15,7 +15,7 @@ from langgraph.config import get_stream_writer
 from core.context import token_queue_var
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.formatters import format_conversation_context
+from src.agent.formatters.conversation_formatter import format_conversation_context
 from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
