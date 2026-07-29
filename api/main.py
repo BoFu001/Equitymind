@@ -50,7 +50,7 @@ async def lifespan(app: FastAPI):
 
     # Pre-load FinBERT so the first user request is not slow.
     try:
-        from src.tools.news_sentiment import get_news_and_sentiment  # noqa: F401
+        from src.quant.news_sentiment_signal import finbert  # noqa: F401
         logger.info("FinBERT sentiment model loaded.")
     except Exception as exc:
         logger.warning("FinBERT pre-warm skipped: %s", exc)
