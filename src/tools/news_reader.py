@@ -153,12 +153,11 @@ def _warn_if_downgraded(articles: list) -> None:
     has_companies_field = any(a.get("companies") is not None for a in articles)
     if not has_companies_field:
         print(
-            "  [news_reader] \u26a0\ufe0f WARNING: no 'companies' field in "
+            "  [news_reader] WARNING: no 'companies' field in "
             "response — this suggests the finlight subscription may have "
             "reverted to the free tier (e.g. payment issue). Check your "
             "billing at https://app.finlight.me/"
         )
-
 
 # ─────────────────────────────────────────────
 # Main entry point: fetch + filter

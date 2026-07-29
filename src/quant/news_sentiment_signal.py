@@ -24,6 +24,7 @@ finbert = pipeline(
     "text-classification",
     model="ProsusAI/finbert",
     tokenizer="ProsusAI/finbert",
+    truncation=True,
 )
 
 # Below this article count, the sentiment signal is flagged as low
@@ -40,7 +41,16 @@ def _score_article(title: str, summary: str) -> tuple[str, float]:
     Returns (label, score) — label is "positive"/"negative"/"neutral",
     score is the model's confidence in that label (0.0 to 1.0).
     """
-    text = f"{title}. {summary}"[:512]
+    # No manual character-count truncation here — the pipeline's
+    # truncation=True (see module-level `finbert = pipeline(...)`)
+    # truncates by actual TOKEN count (BERT's real 512-token limit),
+    # not by an approximated character count. A fixed [:512] character
+    # slice was cutting text far shorter than the model could actually
+    # handle (roughly 350-400 English words fit in 512 tokens, vs. only
+    # ~80-100 words in 512 characters) — 2026-07-27, discovered while
+    # investigating FinBERT misclassifications on longer article
+    # summaries.
+    text = f"{title}. {summary}"
     try:
         result = finbert(text)[0]
         return result["label"], round(result["score"], 4)
