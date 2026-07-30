@@ -117,7 +117,7 @@ def quant_engine(state: AgentState) -> dict:
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_risk"].format(ticker=ticker)})
             risk_inputs = all_risk_inputs.get(ticker)
-            risk = risk_signal(data, risk_inputs)
+            risk = risk_signal(risk_inputs)
             if risk is not None:
                 signals["risk"] = risk
                 mprint(

@@ -402,10 +402,9 @@ class TestRiskSignalNormalCase:
         (beta_true=1.5), so raw_beta should recover ~1.5, and adjusted_beta
         should reflect the Blume adjustment formula exactly.
         """
-        market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=504, beta_true=1.5)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result is not None
         assert result["beta"] is not None
@@ -416,10 +415,9 @@ class TestRiskSignalNormalCase:
 
     def test_each_sub_score_in_range(self):
         """Each independent sub-signal score must fall within [-1.0, +1.0]."""
-        market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=504, beta_true=1.0)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result is not None
         assert -1.0 <= result["beta"]["beta_score"] <= 1.0
@@ -433,10 +431,9 @@ class TestRiskSignalNormalCase:
         VaR, and Max Drawdown each answer a different risk question and
         must remain independent, not averaged into one number.
         """
-        market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=504, beta_true=1.0)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result is not None
         assert "risk_score" not in result
@@ -444,10 +441,9 @@ class TestRiskSignalNormalCase:
 
     def test_low_confidence_false_with_full_window(self):
         """A full 504-day (2-year) window should not be flagged low_confidence."""
-        market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=504)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result["low_confidence"] is False
 
@@ -459,10 +455,9 @@ class TestRiskSignalMissingMarketData:
         VaR, and Max Drawdown should still compute normally, and the
         composite score should re-normalise over the remaining three.
         """
-        market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=504, include_market=False)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result is not None
         assert result["beta"] is None
@@ -476,10 +471,9 @@ class TestRiskSignalMissingMarketData:
         ^TNX unavailable (risk_free_rate=None) should not crash — Sharpe
         falls back to RISK_FREE_RATE_FALLBACK instead of failing.
         """
-        market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=504, risk_free_rate=None)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result is not None
         assert result["sharpe"] is not None
@@ -488,16 +482,14 @@ class TestRiskSignalMissingMarketData:
 class TestRiskSignalInsufficientData:
     def test_returns_none_when_risk_inputs_is_none(self):
         """get_risk_inputs() itself failed (e.g. network error) -> None."""
-        market_data = {"ticker": "TEST"}
-        result = risk_signal(market_data, None)
+        result = risk_signal(None)
         assert result is None
 
     def test_returns_none_below_min_trading_days(self):
         """Fewer than MIN_TRADING_DAYS (60) -> too noisy to report, return None."""
-        market_data = {"ticker": "TEST"}
         risk_inputs = make_risk_inputs(n_days=MIN_TRADING_DAYS - 1)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result is None
 
@@ -506,11 +498,10 @@ class TestRiskSignalInsufficientData:
         Between MIN_TRADING_DAYS (60) and LOW_CONFIDENCE_THRESHOLD (252):
         computable, but flagged as low_confidence.
         """
-        market_data = {"ticker": "TEST"}
         n_days = (MIN_TRADING_DAYS + LOW_CONFIDENCE_THRESHOLD) // 2
         risk_inputs = make_risk_inputs(n_days=n_days)
 
-        result = risk_signal(market_data, risk_inputs)
+        result = risk_signal(risk_inputs)
 
         assert result is not None
         assert result["low_confidence"] is True

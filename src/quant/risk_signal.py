@@ -15,8 +15,8 @@ risk) scale for consistency, but they are NOT averaged into one number —
 see risk_signal()'s docstring for why.
 
 This is a pure function — it takes already-fetched data as input and
-performs no I/O itself. Data fetching lives in market_data.get_risk_inputs(),
-called separately by quant_engine.py, keeping this file testable without
+performs no I/O itself. Data fetching lives in risk_reader.get_risk_inputs(),
+called separately by fetch_data.py, keeping this file testable without
 mocking any network calls (same pattern as valuation_signal.py and
 momentum_signal.py).
 
@@ -330,13 +330,13 @@ def _compute_max_drawdown(prices: pd.Series) -> dict:
 # MAIN FUNCTION: risk_signal
 # ─────────────────────────────────────────────
 
-def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
+def risk_signal(risk_inputs: dict | None) -> dict | None:
     """
     Compute risk signals from price history data.
 
     Pure function — takes already-fetched data, performs no I/O. Data
-    fetching is done separately by market_data.get_risk_inputs(), called
-    by quant_engine.py before this function runs (same pattern as
+    fetching is done separately by risk_reader.get_risk_inputs(), called
+    by fetch_data.py before this function runs (same pattern as
     valuation_signal.py and momentum_signal.py).
 
     IMPORTANT — no composite score: Beta, Sharpe, VaR, and Max Drawdown
@@ -357,11 +357,12 @@ def risk_signal(market_data: dict, risk_inputs: dict | None) -> dict | None:
     Sharpe, VaR, and Max Drawdown are unaffected and computed normally,
     since each is independent and does not depend on the others.
 
+    2026-07-30: removed the unused market_data parameter (a leftover
+    from before the data-source decoupling — every signal used to
+    receive the same shared snapshot dict, but this function never
+    actually read anything from it).
+
     Args:
-        market_data: dict from get_stock_snapshot() — not used for
-                     calculations directly, but accepted for interface
-                     consistency with valuation_signal()/momentum_signal(),
-                     and to access the ticker for logging/detail messages.
         risk_inputs: dict from get_risk_inputs(), expected keys:
             - stock_prices:   pd.Series of daily closing prices
             - market_prices:  pd.Series | None (^GSPC)
