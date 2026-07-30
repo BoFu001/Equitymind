@@ -69,7 +69,7 @@ def quant_engine(state: AgentState) -> dict:
     all_risk_inputs       = state.get("risk_inputs") or {}
     all_quality_inputs    = state.get("quality_inputs") or {}
     all_consensus_inputs  = state.get("consensus_inputs") or {}
-    signals_needed        = state.get("signals_needed") or list(VALID_DATA_SCOPES)
+    data_scope            = state.get("data_scope") or list(VALID_DATA_SCOPES)
 
     for ticker in stock_snapshots:
         gprint(f"  [quant_engine] Computing signals for {ticker}")
@@ -77,7 +77,7 @@ def quant_engine(state: AgentState) -> dict:
         signals = {}
 
         # ── Step 1: Valuation Signal ──────────────────────────────────────
-        if "valuation" not in signals_needed:
+        if "valuation" not in data_scope:
             signals["valuation"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_valuation"].format(ticker=ticker)})
@@ -94,7 +94,7 @@ def quant_engine(state: AgentState) -> dict:
                 mprint(f"  [valuation] insufficient data")
 
         # ── Step 2: Momentum Signal ───────────────────────────────────────
-        if "momentum" not in signals_needed:
+        if "momentum" not in data_scope:
             signals["momentum"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_momentum"].format(ticker=ticker)})
@@ -112,7 +112,7 @@ def quant_engine(state: AgentState) -> dict:
                 mprint(f"  [momentum] insufficient data")
 
         # ── Step 3: Risk Signal ───────────────────────────────────────────
-        if "risk" not in signals_needed:
+        if "risk" not in data_scope:
             signals["risk"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_risk"].format(ticker=ticker)})
@@ -131,7 +131,7 @@ def quant_engine(state: AgentState) -> dict:
                 mprint(f"  [risk] insufficient data")
 
         # ── Step 4: Quality Signal ────────────────────────────────────────
-        if "quality" not in signals_needed:
+        if "quality" not in data_scope:
             signals["quality"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_quality"].format(ticker=ticker)})
@@ -152,7 +152,7 @@ def quant_engine(state: AgentState) -> dict:
         # (distinct from a future Management Risk Sentiment Signal, which
         # will measure sentiment in 10-K risk factor sections — hence the
         # explicit "news_" prefix, not a generic "sentiment" key)
-        if "news" not in signals_needed:
+        if "news" not in data_scope:
             signals["news_sentiment"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_news_sentiment"].format(ticker=ticker)})
@@ -173,7 +173,7 @@ def quant_engine(state: AgentState) -> dict:
                 mprint(f"  [news_sentiment] insufficient data")
 
         # ── Step 6: Consensus Signal ──────────────────────────────────────
-        if "consensus" not in signals_needed:
+        if "consensus" not in data_scope:
             signals["consensus"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_consensus"].format(ticker=ticker)})

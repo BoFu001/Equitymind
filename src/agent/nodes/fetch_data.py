@@ -1,7 +1,7 @@
 """
 src/agent/nodes/fetch_data.py
 Data Acquisition Node — fetches only the data determine_data_scope
-decided this question needs (state["signals_needed"]), for downstream
+decided this question needs (state["data_scope"]), for downstream
 signal computation (quant_engine) and report generation
 (generate_report). snapshot and SEC filing data are always fetched
 regardless (see module-level functions below).
@@ -145,7 +145,7 @@ def _fetch_financial_history(ticker: str) -> list:
     project's data-layer/compute-layer/display-layer separation
     (fetch_data owns all data acquisition; generate_report should
     only consume already-fetched state and format it). Also makes this
-    signal controllable by determine_data_scope's signals_needed, the
+    signal controllable by determine_data_scope's data_scope, the
     same way as valuation/risk/quality/consensus/news.
     """
     writer = get_stream_writer()
@@ -198,11 +198,11 @@ def _fetch_sec_data(ticker: str, question: str) -> list:
 async def fetch_data(state: AgentState) -> dict:
     """
     Fetches only the data sources determine_data_scope decided this
-    question needs (state["signals_needed"]), plus snapshot and SEC
+    question needs (state["data_scope"]), plus snapshot and SEC
     filing data which are always fetched regardless (basic company
     info and filing excerpts any question may reference).
 
-    Falls back to fetching ALL signals if signals_needed is missing
+    Falls back to fetching ALL signals if data_scope is missing
     or empty (e.g. determine_data_scope failed) — a full-analysis
     default is the safe degradation, matching that node's own
     fallback behavior.
@@ -220,8 +220,8 @@ async def fetch_data(state: AgentState) -> dict:
     question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
     gprint(f"  [fetch_data] question: {question}")
     tickers = state.get("tickers") or []
-    signals_needed = state.get("signals_needed") or list(VALID_DATA_SCOPES)
-    gprint(f"  [fetch_data] signals_needed: {signals_needed}")
+    data_scope = state.get("data_scope") or list(VALID_DATA_SCOPES)
+    gprint(f"  [fetch_data] data_scope: {data_scope}")
 
     all_stock_snapshots   = {}
     all_valuation         = {}
@@ -237,17 +237,17 @@ async def fetch_data(state: AgentState) -> dict:
             "snapshot": asyncio.to_thread(_fetch_stock_snapshot, ticker),
             "sec":      asyncio.to_thread(_fetch_sec_data, ticker, question),
         }
-        if "valuation" in signals_needed:
+        if "valuation" in data_scope:
             tasks["valuation"] = asyncio.to_thread(_fetch_valuation_inputs, ticker)
-        if "risk" in signals_needed:
+        if "risk" in data_scope:
             tasks["risk"] = asyncio.to_thread(_fetch_risk_inputs, ticker)
-        if "quality" in signals_needed:
+        if "quality" in data_scope:
             tasks["quality"] = asyncio.to_thread(_fetch_quality_inputs, ticker)
-        if "consensus" in signals_needed:
+        if "consensus" in data_scope:
             tasks["consensus"] = asyncio.to_thread(_fetch_consensus_inputs, ticker)
-        if "news" in signals_needed:
+        if "news" in data_scope:
             tasks["news"] = asyncio.to_thread(_fetch_news, ticker)
-        if "financial_history" in signals_needed:
+        if "financial_history" in data_scope:
             tasks["financial_history"] = asyncio.to_thread(_fetch_financial_history, ticker)
 
         results = dict(zip(tasks.keys(), await asyncio.gather(*tasks.values())))

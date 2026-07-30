@@ -27,11 +27,11 @@ confirmed present (see graph.py's route_after_extract). The DISCOVERY
 path does not call this node — discovery_suggest must already
 identify which signals a discovery question needs (e.g. "quality
 stocks with low valuation" implies Quality + Valuation) in order to
-build its SQL filter, so that node produces signals_needed itself
+build its SQL filter, so that node produces data_scope itself
 rather than duplicating the same classification here.
 
 snapshot (company name, price, market cap, etc.) is NOT part of
-signals_needed — it is always fetched regardless, since almost any
+data_scope — it is always fetched regardless, since almost any
 question may reference basic company info in its answer.
 """
 
@@ -65,7 +65,7 @@ VALID_DATA_SCOPES = [
 def determine_data_scope(state: AgentState) -> dict:
     """
     Classifies which of the 7 optional data sources/signals this
-    question needs. Returns {"signals_needed": [...]}.
+    question needs. Returns {"data_scope": [...]}.
 
     Defaults to ALL 7 signals if the LLM call fails or returns
     unparseable output — a full-analysis fallback is the safe
@@ -98,11 +98,11 @@ Rules:
 
 User question: {question}
 
-Reply with ONLY valid JSON, a single key "signals_needed" with a list of the applicable values from: {VALID_DATA_SCOPES}. No markdown, no explanation. Examples:
-{{"signals_needed": ["valuation", "momentum", "risk", "quality", "consensus", "news", "financial_history"]}}
-{{"signals_needed": ["consensus"]}}
-{{"signals_needed": ["news"]}}
-{{"signals_needed": ["valuation", "quality"]}}"""
+Reply with ONLY valid JSON, a single key "data_scope" with a list of the applicable values from: {VALID_DATA_SCOPES}. No markdown, no explanation. Examples:
+{{"data_scope": ["valuation", "momentum", "risk", "quality", "consensus", "news", "financial_history"]}}
+{{"data_scope": ["consensus"]}}
+{{"data_scope": ["news"]}}
+{{"data_scope": ["valuation", "quality"]}}"""
 
     response = client.chat.completions.create(
         model=LLM_MODEL_LIGHT,
@@ -114,23 +114,23 @@ Reply with ONLY valid JSON, a single key "signals_needed" with a list of the app
 
     if not content:
         gprint(f"  [determine_data_scope] Empty response from {LLM_MODEL_LIGHT}, defaulting to all signals")
-        return {"signals_needed": list(VALID_DATA_SCOPES)}
+        return {"data_scope": list(VALID_DATA_SCOPES)}
 
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
         gprint(f"  [determine_data_scope] Invalid JSON: {content}, defaulting to all signals")
-        return {"signals_needed": list(VALID_DATA_SCOPES)}
+        return {"data_scope": list(VALID_DATA_SCOPES)}
 
-    signals_needed = data.get("signals_needed", [])
+    data_scope = data.get("data_scope", [])
     # Drop anything the model returned that isn't a recognized value,
     # rather than trusting it blindly — downstream fetch_data
     # dispatches on these strings directly.
-    signals_needed = [s for s in signals_needed if s in VALID_DATA_SCOPES]
+    data_scope = [s for s in data_scope if s in VALID_DATA_SCOPES]
 
-    if not signals_needed:
+    if not data_scope:
         gprint(f"  [determine_data_scope] No valid signals parsed, defaulting to all signals")
-        return {"signals_needed": list(VALID_DATA_SCOPES)}
+        return {"data_scope": list(VALID_DATA_SCOPES)}
 
-    gprint(f"  [determine_data_scope] Signals needed: {signals_needed}")
-    return {"signals_needed": signals_needed}
+    gprint(f"  [determine_data_scope] Data scope: {data_scope}")
+    return {"data_scope": data_scope}

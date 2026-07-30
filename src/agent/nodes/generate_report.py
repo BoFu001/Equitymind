@@ -29,7 +29,7 @@ from colors import gprint
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Signal-specific formatting notes, one entry per optional signal —
-# only the ones in signals_needed are included in the final prompt,
+# only the ones in data_scope are included in the final prompt,
 # so a narrow question (e.g. only Consensus) doesn't carry rules
 # about Valuation P/E, Max Drawdown, or F-Score that don't apply
 # to anything actually shown.
@@ -127,7 +127,7 @@ def generate_report(state: AgentState) -> dict:
     question              = state.get("contextualized_question") or state["question"]
     tickers               = state.get("tickers") or []
     messages              = state.get("messages") or []
-    signals_needed        = state.get("signals_needed") or list(VALID_DATA_SCOPES)
+    data_scope        = state.get("data_scope") or list(VALID_DATA_SCOPES)
     all_stock_snapshots   = state.get("stock_snapshots") or {}
     all_chunks            = state.get("chunks") or {}
     quant_signals         = state.get("quant_signals") or {}
@@ -160,19 +160,19 @@ def generate_report(state: AgentState) -> dict:
         # end state, deferred until this routing node existed.
         signals = quant_signals.get(t, {})
         objective_parts = []
-        if "valuation" in signals_needed:
+        if "valuation" in data_scope:
             objective_parts.append(format_valuation(signals.get("valuation")))
-        if "momentum" in signals_needed:
+        if "momentum" in data_scope:
             objective_parts.append(format_momentum(signals.get("momentum")))
-        if "risk" in signals_needed:
+        if "risk" in data_scope:
             objective_parts.append(format_risk(signals.get("risk")))
-        if "quality" in signals_needed:
+        if "quality" in data_scope:
             objective_parts.append(format_quality(signals.get("quality")))
 
         subjective_parts = []
-        if "news" in signals_needed:
+        if "news" in data_scope:
             subjective_parts.append(format_news_sentiment(signals.get("news_sentiment")))
-        if "consensus" in signals_needed:
+        if "consensus" in data_scope:
             subjective_parts.append(format_consensus(signals.get("consensus")))
 
         if objective_parts or subjective_parts:
@@ -188,7 +188,7 @@ def generate_report(state: AgentState) -> dict:
         # 2026-07-27 — a report-generation node calling a database
         # reader directly violated the data-layer/display-layer
         # separation). Skipped entirely when not needed.
-        if "financial_history" in signals_needed:
+        if "financial_history" in data_scope:
             financial_history_parts.append(format_financial_history(all_financial_history.get(t, []), t))
 
     snapshot_context = "".join(snapshot_parts)
@@ -211,7 +211,7 @@ def generate_report(state: AgentState) -> dict:
     )
 
     signal_specific_notes = "".join(
-        SIGNAL_NOTES[s] for s in signals_needed if s in SIGNAL_NOTES
+        SIGNAL_NOTES[s] for s in data_scope if s in SIGNAL_NOTES
     )
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.

@@ -32,7 +32,7 @@ class AgentState(TypedDict):
     # after tickers are confirmed, before fetch_data. snapshot is always
     # fetched regardless (basic company info any question may reference) and
     # is not part of this list. See determine_data_scope.py.
-    signals_needed: Optional[list[str]]     # subset of: valuation, momentum, risk, quality, consensus, news, financial_history
+    data_scope: Optional[list[str]]         # subset of: valuation, momentum, risk, quality, consensus, news (computed signals), financial_history (raw data display, not a computed signal)
     
     # News and sentiment
     news: Optional[list]                    # recent news articles with sentiment scores
@@ -90,7 +90,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "enriched_query": None,
         "tickers":     [],
         "year":        None,
-        "signals_needed": [],
+        "data_scope":  [],
         "news":        [],
         "chunks":      [],
         "stock_snapshots": {},
