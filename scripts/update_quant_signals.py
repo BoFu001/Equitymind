@@ -132,11 +132,11 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
     quant_signals.quality_period_end), not by this function — this
     function only knows how to skip, not why.
     """
-    market_data = get_stock_snapshot(ticker)
-    if not market_data:
+    snapshot = get_stock_snapshot(ticker)
+    if not snapshot:
         return None
 
-    # valuation_signal() fetched independently of market_data as of
+    # valuation_signal() fetched independently of snapshot as of
     # 2026-07-27 -- see valuation_reader.py for why (same principle
     # already applied to consensus_reader.py).
     valuation_inputs = get_valuation_inputs(ticker)
@@ -146,7 +146,7 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
 
     # consensus_signal() needs both pieces merged into one dict -- see
     # consensus_reader.py and consensus_signal.py for why these are
-    # fetched independently of market_data rather than shared with it.
+    # fetched independently of snapshot rather than shared with it.
     consensus_snapshot = get_consensus_snapshot(ticker)
     consensus_trend = get_consensus_trend(ticker)
     consensus_data = (
@@ -156,7 +156,7 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
 
     val_result       = valuation_signal(valuation_inputs) if valuation_inputs else None
     mom_result       = momentum_signal(ticker)
-    risk_result      = risk_signal(market_data, risk_inputs)
+    risk_result      = risk_signal(risk_inputs)
     consensus_result = consensus_signal(consensus_data)
 
     valuation_score      = _to_float(val_result.get("valuation_score") if val_result else None)
