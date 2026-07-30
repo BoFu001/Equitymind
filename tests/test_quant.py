@@ -22,10 +22,10 @@ from src.quant.valuation_signal import (
 # Helper — build mock market data dicts
 # ─────────────────────────────────────────────
 
-def make_market_data(**kwargs) -> dict:
+def make_valuation_inputs(**kwargs) -> dict:
     """
-    Return a minimal market data dict for testing.
-    All fields mirror those returned by get_market_data_tool.
+    Return a minimal valuation_inputs dict for testing.
+    All fields mirror those returned by get_valuation_inputs().
     Override any field via keyword arguments.
     """
     defaults = {
@@ -49,7 +49,7 @@ class TestTier1:
 
     def test_fairly_valued(self):
         """P/E and P/B both equal peer average → score near zero."""
-        data   = make_market_data()
+        data   = make_valuation_inputs()
         result = valuation_signal(data)
         assert result is not None
         assert result["method"]          == "pe_pb"
@@ -59,7 +59,7 @@ class TestTier1:
 
     def test_undervalued(self):
         """P/E and P/B well below peer average → undervalued."""
-        data   = make_market_data(pe_ratio=5.0, price_to_book=1.0)
+        data   = make_valuation_inputs(pe_ratio=5.0, price_to_book=1.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["method"]          == "pe_pb"
@@ -68,7 +68,7 @@ class TestTier1:
 
     def test_overvalued(self):
         """P/E and P/B well above peer average → overvalued."""
-        data   = make_market_data(pe_ratio=300.0, price_to_book=100.0)
+        data   = make_valuation_inputs(pe_ratio=300.0, price_to_book=100.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["method"]          == "pe_pb"
@@ -77,27 +77,27 @@ class TestTier1:
 
     def test_detail_string_non_empty(self):
         """Result must include a non-empty plain-English detail string."""
-        result = valuation_signal(make_market_data())
+        result = valuation_signal(make_valuation_inputs())
         assert result is not None
         assert "detail" in result
         assert len(result["detail"]) > 0
 
     def test_pe_vs_peers_string_present(self):
         """pe_vs_peers should describe the comparison as a readable string."""
-        result = valuation_signal(make_market_data())
+        result = valuation_signal(make_valuation_inputs())
         assert result is not None
         assert result["pe_vs_peers"] is not None
         assert "vs peer avg" in result["pe_vs_peers"]
 
     def test_stale_benchmark_is_bool(self):
         """stale_benchmark must be a boolean."""
-        result = valuation_signal(make_market_data())
+        result = valuation_signal(make_valuation_inputs())
         assert result is not None
         assert isinstance(result["stale_benchmark"], bool)
 
     def test_missing_pb_degrades_to_pe_only(self):
         """Missing P/B should degrade gracefully to a P/E-only score."""
-        data   = make_market_data(price_to_book=None)
+        data   = make_valuation_inputs(price_to_book=None)
         result = valuation_signal(data)
         assert result is not None
         assert result["method"] == "pe_pb"
@@ -105,7 +105,7 @@ class TestTier1:
 
     def test_zero_pb_treated_as_missing(self):
         """A P/B of exactly 0 should be treated as missing, not a real ratio."""
-        data   = make_market_data(price_to_book=0)
+        data   = make_valuation_inputs(price_to_book=0)
         result = valuation_signal(data)
         assert result is not None
         assert "P/B data unavailable" in result["detail"]
@@ -119,7 +119,7 @@ class TestTier2:
 
     def test_loss_making_company_uses_ps(self):
         """Negative P/E with available P/S → Tier 2 (reference only)."""
-        data   = make_market_data(pe_ratio=-10.0, price_to_book=None, price_to_sales=8.0)
+        data   = make_valuation_inputs(pe_ratio=-10.0, price_to_book=None, price_to_sales=8.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["method"]          == "ps_only"
@@ -128,7 +128,7 @@ class TestTier2:
 
     def test_no_pe_falls_to_tier2(self):
         """No P/E data at all → Tier 2 if P/S is available."""
-        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
+        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["method"]         == "ps_only"
@@ -136,21 +136,21 @@ class TestTier2:
 
     def test_detail_warns_reference_only(self):
         """Tier 2 detail must explicitly warn the score is for reference only."""
-        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
+        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
         result = valuation_signal(data)
         assert result is not None
         assert "reference only" in result["detail"].lower()
 
     def test_pe_vs_peers_is_none(self):
         """Tier 2 must not populate pe_vs_peers (P/E is not used)."""
-        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=6.0)
+        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=6.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["pe_vs_peers"] is None
 
     def test_stale_benchmark_present(self):
         """Tier 2 result must include stale_benchmark field."""
-        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
+        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
         result = valuation_signal(data)
         assert result is not None
         assert "stale_benchmark" in result
@@ -165,13 +165,13 @@ class TestTier3:
 
     def test_no_data_returns_none(self):
         """No P/E, P/B, or P/S → must return None to prevent hallucination."""
-        data   = make_market_data(pe_ratio=None, price_to_book=None, price_to_sales=None)
+        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=None)
         result = valuation_signal(data)
         assert result is None
 
     def test_zero_values_return_none(self):
         """Zero P/E and P/S must be treated as missing data."""
-        data   = make_market_data(pe_ratio=0, price_to_book=0, price_to_sales=0)
+        data   = make_valuation_inputs(pe_ratio=0, price_to_book=0, price_to_sales=0)
         result = valuation_signal(data)
         assert result is None
 
@@ -184,14 +184,14 @@ class TestScoreBounds:
 
     def test_score_clamped_on_extreme_cheap(self):
         """Extremely cheap stock must not produce score > +1.0."""
-        data   = make_market_data(pe_ratio=0.5, price_to_book=0.1)
+        data   = make_valuation_inputs(pe_ratio=0.5, price_to_book=0.1)
         result = valuation_signal(data)
         assert result is not None
         assert result["valuation_score"] <= 1.0
 
     def test_score_clamped_on_extreme_expensive(self):
         """Extremely expensive stock must not produce score < -1.0."""
-        data   = make_market_data(pe_ratio=5000.0, price_to_book=1000.0)
+        data   = make_valuation_inputs(pe_ratio=5000.0, price_to_book=1000.0)
         result = valuation_signal(data)
         assert result is not None
         assert result["valuation_score"] >= -1.0
@@ -220,7 +220,7 @@ class TestBenchmarkLoading:
 
     def test_unknown_ticker_uses_default_pe(self):
         """Unknown ticker must fall back to DEFAULT_PE without crashing."""
-        data   = make_market_data(ticker="UNKNOWN")
+        data   = make_valuation_inputs(ticker="UNKNOWN")
         result = valuation_signal(data)
         assert result is not None
         assert str(int(DEFAULT_PE)) in result["pe_vs_peers"]
@@ -701,8 +701,8 @@ from src.quant.consensus_signal_config import (
 )
 
 
-def make_consensus_market_data(**kwargs) -> dict:
-    """Minimal mock market_data dict for consensus signal testing."""
+def make_consensus_snapshot(**kwargs) -> dict:
+    """Minimal mock consensus snapshot dict for consensus signal testing."""
     defaults = {
         "recommendation_mean": 3.0,   # neutral "hold"
         "target_mean":         100.0,
@@ -730,20 +730,20 @@ def make_consensus_inputs(**overrides) -> dict:
 
 def make_consensus_data(snapshot: dict | None = None, trend: dict | None = None) -> dict:
     """
-    Wraps make_consensus_market_data() and make_consensus_inputs() into
+    Wraps make_consensus_snapshot() and make_consensus_inputs() into
     the {"snapshot": ..., "trend": ...} shape consensus_signal() expects
     as of 2026-07-27 (single-argument signature — see consensus_signal.py
     for why snapshot and trend are now fetched independently rather than
     passed as two separate arguments).
 
-    snapshot=None uses make_consensus_market_data()'s defaults; pass an
+    snapshot=None uses make_consensus_snapshot()'s defaults; pass an
     explicit dict (including {}) to override. trend=None means no rating
     history available (matches consensus_signal()'s "trend independently
     unavailable" degradation path) — pass make_consensus_inputs(...) 
     explicitly when a test needs trend data.
     """
     return {
-        "snapshot": snapshot if snapshot is not None else make_consensus_market_data(),
+        "snapshot": snapshot if snapshot is not None else make_consensus_snapshot(),
         "trend": trend,
     }
 
@@ -751,9 +751,9 @@ def make_consensus_data(snapshot: dict | None = None, trend: dict | None = None)
 class TestConsensusNormalCase:
     def test_neutral_case(self):
         """Hold recommendation, no upside, stable trend -> each sub-signal neutral."""
-        market_data = make_consensus_market_data()
+        snapshot = make_consensus_snapshot()
         consensus_inputs = make_consensus_inputs()
-        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
+        result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
         assert result is not None
         assert result["recommendation_label"] == "neutral"
@@ -762,14 +762,14 @@ class TestConsensusNormalCase:
 
     def test_bullish_case(self):
         """Strong buy, large upside, improving trend -> each sub-signal bullish/improving."""
-        market_data = make_consensus_market_data(
+        snapshot = make_consensus_snapshot(
             recommendation_mean=1.2, target_mean=150.0, current_price=100.0
         )
         consensus_inputs = make_consensus_inputs(
             current={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
             oldest={"strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
+        result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
         assert result is not None
         assert result["recommendation_label"] == "bullish"
@@ -778,14 +778,14 @@ class TestConsensusNormalCase:
 
     def test_bearish_case(self):
         """Strong sell, negative upside, deteriorating trend -> each sub-signal bearish/deteriorating."""
-        market_data = make_consensus_market_data(
+        snapshot = make_consensus_snapshot(
             recommendation_mean=4.5, target_mean=70.0, current_price=100.0
         )
         consensus_inputs = make_consensus_inputs(
             current={"strongBuy": 0, "buy": 0, "hold": 5, "sell": 10, "strongSell": 5},
             oldest={"strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
+        result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
         assert result is not None
         assert result["recommendation_label"] == "bearish"
@@ -794,11 +794,11 @@ class TestConsensusNormalCase:
 
     def test_each_sub_score_in_range(self):
         """Each independent sub-signal score must fall within [-1.0, +1.0]."""
-        market_data = make_consensus_market_data(
+        snapshot = make_consensus_snapshot(
             recommendation_mean=1.0, target_mean=1000.0, current_price=100.0
         )
         consensus_inputs = make_consensus_inputs()
-        result = consensus_signal(make_consensus_data(market_data, consensus_inputs))
+        result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
         assert -1.0 <= result["recommendation_score"] <= 1.0
         assert -1.0 <= result["upside_score"] <= 1.0
@@ -812,19 +812,19 @@ class TestConsensusNormalCase:
         (current standing / future price target / recent directional
         change) and must remain independent, not averaged into one number.
         """
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), make_consensus_inputs()))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), make_consensus_inputs()))
         assert result is not None
         assert "consensus_score" not in result
         assert "consensus_label" not in result
 
     def test_detail_string_non_empty(self):
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), make_consensus_inputs()))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), make_consensus_inputs()))
         assert result is not None
         assert len(result["detail"]) > 0
 
     def test_detail_includes_bias_disclosure(self):
         """Every result must disclose the systematic optimism bias in analyst ratings."""
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), make_consensus_inputs()))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), make_consensus_inputs()))
         assert result is not None
         assert "optimism bias" in result["detail"]
 
@@ -836,7 +836,7 @@ class TestConsensusTrendCalculation:
             current={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
             oldest={"strongBuy": 0, "buy": 5, "hold": 15, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), consensus_inputs))
 
         assert result["trend_score"] > 0
 
@@ -846,7 +846,7 @@ class TestConsensusTrendCalculation:
             current={"strongBuy": 0, "buy": 5, "hold": 15, "sell": 0, "strongSell": 0},
             oldest={"strongBuy": 15, "buy": 5, "hold": 0, "sell": 0, "strongSell": 0},
         )
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), consensus_inputs))
 
         assert result["trend_score"] < 0
 
@@ -860,7 +860,7 @@ class TestConsensusTrendCalculation:
             current={"strongBuy": 6, "buy": 22, "hold": 16, "sell": 1, "strongSell": 2},  # total 47
             oldest={"strongBuy": 7, "buy": 25, "hold": 14, "sell": 1, "strongSell": 1},   # total 48
         )
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), consensus_inputs))
 
         assert result is not None
         assert result["trend_score"] is not None
@@ -874,7 +874,7 @@ class TestConsensusMissingData:
         and upside are independent and unaffected, since there is no
         composite score to reweight (each sub-signal stands on its own).
         """
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), None))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), None))
 
         assert result is not None
         assert result["trend_score"] is None
@@ -890,47 +890,47 @@ class TestConsensusMissingData:
         consensus_inputs = {"periods": [
             {"period": "0m", "strongBuy": 5, "buy": 10, "hold": 5, "sell": 0, "strongSell": 0}
         ]}
-        result = consensus_signal(make_consensus_data(make_consensus_market_data(), consensus_inputs))
+        result = consensus_signal(make_consensus_data(make_consensus_snapshot(), consensus_inputs))
 
         assert result is not None
         assert result["trend_score"] is None
 
     def test_missing_recommendation_mean_returns_none(self):
         """No recommendation_mean at all -> entire signal returns None."""
-        market_data = make_consensus_market_data(recommendation_mean=None)
-        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
+        snapshot = make_consensus_snapshot(recommendation_mean=None)
+        result = consensus_signal(make_consensus_data(snapshot, make_consensus_inputs()))
         assert result is None
 
     def test_missing_target_mean_returns_none(self):
         """No target_mean at all -> entire signal returns None."""
-        market_data = make_consensus_market_data(target_mean=None)
-        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
+        snapshot = make_consensus_snapshot(target_mean=None)
+        result = consensus_signal(make_consensus_data(snapshot, make_consensus_inputs()))
         assert result is None
 
 
 class TestConsensusDisclosures:
     def test_low_confidence_flagged_when_analyst_count_below_threshold(self):
-        market_data = make_consensus_market_data(analyst_count=MIN_ANALYST_COUNT - 1)
-        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
+        snapshot = make_consensus_snapshot(analyst_count=MIN_ANALYST_COUNT - 1)
+        result = consensus_signal(make_consensus_data(snapshot, make_consensus_inputs()))
 
         assert result["low_confidence"] is True
 
     def test_low_confidence_not_flagged_when_analyst_count_sufficient(self):
-        market_data = make_consensus_market_data(analyst_count=MIN_ANALYST_COUNT + 10)
-        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
+        snapshot = make_consensus_snapshot(analyst_count=MIN_ANALYST_COUNT + 10)
+        result = consensus_signal(make_consensus_data(snapshot, make_consensus_inputs()))
 
         assert result["low_confidence"] is False
 
     def test_wide_dispersion_flagged(self):
         """target_high > 3x target_low should trigger the dispersion warning."""
-        market_data = make_consensus_market_data(target_high=400.0, target_low=100.0)
-        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
+        snapshot = make_consensus_snapshot(target_high=400.0, target_low=100.0)
+        result = consensus_signal(make_consensus_data(snapshot, make_consensus_inputs()))
 
         assert result["wide_dispersion"] is True
 
     def test_narrow_dispersion_not_flagged(self):
-        market_data = make_consensus_market_data(target_high=110.0, target_low=90.0)
-        result = consensus_signal(make_consensus_data(market_data, make_consensus_inputs()))
+        snapshot = make_consensus_snapshot(target_high=110.0, target_low=90.0)
+        result = consensus_signal(make_consensus_data(snapshot, make_consensus_inputs()))
 
         assert result["wide_dispersion"] is False
 
