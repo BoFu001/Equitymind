@@ -20,15 +20,15 @@ NODE_PROGRESS = {
     "extract":                             "Pinpointing the company...",
     "determine_data_scope":                "Planning the analysis...",
     # ──────────────────────────────────────────────────────────────
-    "fetch_data":                      "Collecting company data...",
+    "fetch_data":                          "Collecting company data...",
     "sec_retrieve":                        "Reading {ticker} annual report...",                    # sub_progress
     "sec_fetch":                           "Downloading {ticker} annual report from SEC...",       # sub_progress
-    "market_data_snapshot":                "Fetching {ticker}'s stock data...",                    # sub_progress
-    "market_data_valuation":               "Checking {ticker}'s valuation ratios...",              # sub_progress
-    "market_data_risk_history":            "Checking {ticker}'s risk history...",                  # sub_progress
-    "market_data_financial_statements":    "Reviewing {ticker}'s financial statements...",         # sub_progress
+    "snapshot_fetch":                      "Fetching {ticker}'s stock data...",                    # sub_progress
+    "valuation_fetch":                     "Checking {ticker}'s valuation ratios...",              # sub_progress
+    "risk_fetch":                          "Checking {ticker}'s risk history...",                  # sub_progress
+    "quality_fetch":                       "Reviewing {ticker}'s financial statements...",         # sub_progress
     "financial_history":                   "Checking {ticker}'s historical financials...",         # sub_progress
-    "market_data_analyst_ratings":         "Checking analyst ratings for {ticker}...",             # sub_progress
+    "consensus_fetch":                     "Checking analyst ratings for {ticker}...",             # sub_progress
     "news_data":                           "Reading news for {ticker}...",                         # sub_progress
     # ──────────────────────────────────────────────────────────────
     "generate_report":                     "Generating investment report...",

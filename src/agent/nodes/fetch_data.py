@@ -1,25 +1,25 @@
 """
-src/agent/fetch_data.py
-
-Data Acquisition Node — fetches all data needed for downstream signal
-computation (quant_engine) and report generation (generate_report).
-
-No LLM calls — pure, deterministic data fetching. For every ticker
-identified in the question, unconditionally fetches market data, news,
-and SEC filing excerpts from all three underlying data sources
-(yfinance, finlight, SEC EDGAR).
-
-This replaced an earlier "smart tool selection" design where an LLM
-agent loop decided which data sources to call per question. That design
-was removed because: (1) quant_engine's signal engines depend on these
-same three data sources regardless of question phrasing — Valuation,
-Risk, Quality, and Consensus all require market_data internally, so
-letting an LLM's tool-selection judgement skip market_data caused
-quant_engine's blanket "no market_data available" check to skip ALL
-signals, including ones (News Sentiment) that didn't actually need the
-skipped data; and (2) the three data sources are cheap enough (free or
-low-cost APIs) that unconditional fetching costs little relative to the
-reliability gained from removing an unpredictable LLM decision point.
+src/agent/nodes/fetch_data.py
+Data Acquisition Node — fetches only the data determine_data_scope
+decided this question needs (state["signals_needed"]), for downstream
+signal computation (quant_engine) and report generation
+(generate_report). snapshot and SEC filing data are always fetched
+regardless (see module-level functions below).
+No LLM calls — pure, deterministic data fetching, dispatched by a
+dict of {name: coroutine} built per request (see fetch_data()).
+History: an earlier "smart tool selection" design let an LLM agent
+loop decide which data sources to call per question. That design was
+removed at the time because every signal engine shared a single,
+undifferentiated data dict — skipping it for one signal silently
+skipped ALL signals downstream, including ones (e.g. News Sentiment)
+that didn't actually need the skipped data. The fix at the time was to
+fetch everything unconditionally, removing the unpredictable decision
+point entirely. This node's current design (2026-07-29) reintroduces
+per-signal selectivity, now that each signal has its own independent
+reader (see src/readers/) with no shared state between them — the
+condition that made the original agent-loop approach unsafe no longer
+holds, so a single-shot classifier (determine_data_scope, not a loop)
+can safely decide which sources to skip.
 """
 
 import asyncio
@@ -46,7 +46,7 @@ from colors import gprint, bprint
 
 def _fetch_stock_snapshot(ticker: str) -> dict | None:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_snapshot"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["snapshot_fetch"].format(ticker=ticker)})
 
     data = get_stock_snapshot(ticker)
     if not data:
@@ -68,7 +68,7 @@ def _fetch_valuation_inputs(ticker: str) -> dict | None:
     independently fetchable).
     """
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_valuation"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["valuation_fetch"].format(ticker=ticker)})
 
     data = get_valuation_inputs(ticker)
     bprint(f"  [_fetch_valuation_inputs] Fetched for {ticker}")
@@ -81,7 +81,7 @@ def _fetch_valuation_inputs(ticker: str) -> dict | None:
 
 def _fetch_risk_inputs(ticker: str) -> dict | None:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_risk_history"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["risk_fetch"].format(ticker=ticker)})
 
     data = get_risk_inputs(ticker)
     bprint(f"  [_fetch_risk_inputs] Fetched for {ticker}")
@@ -97,7 +97,7 @@ def _fetch_quality_inputs(ticker: str) -> dict | None:
     # live — see src/tools/quality_reader.py for why, and
     # why there is deliberately no live-yfinance fallback here.
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_financial_statements"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["quality_fetch"].format(ticker=ticker)})
 
     data = get_quality_inputs_from_db(ticker)
     bprint(f"  [_fetch_quality_inputs] Fetched for {ticker}")
@@ -122,7 +122,7 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
     be None independently (consensus_signal() degrades gracefully).
     """
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_analyst_ratings"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["consensus_fetch"].format(ticker=ticker)})
 
     snapshot = get_consensus_snapshot(ticker)
     if not snapshot:
