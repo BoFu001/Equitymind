@@ -81,7 +81,7 @@ def build_graph():
     graph.add_node("explain_concept",        explain_concept)
     graph.add_node("extract",                extract_parameters)
     graph.add_node("determine_data_scope",   determine_data_scope)
-    graph.add_node("fetch_data",         fetch_data)
+    graph.add_node("fetch_data",             fetch_data)
     graph.add_node("generate_report",        generate_report) 
     graph.add_node("out_of_scope",           handle_out_of_scope)
     graph.add_node("greeting",               handle_greeting)
@@ -96,9 +96,9 @@ def build_graph():
         "classify_top_intent",
         route_after_top_intent,
         {
-            "out_of_scope":       "out_of_scope",
-            "greeting":           "greeting",
-            "explain_concept":    "explain_concept",
+            "out_of_scope":        "out_of_scope",
+            "greeting":            "greeting",
+            "explain_concept":     "explain_concept",
             "classify_sub_intent": "classify_sub_intent",
         }
     )
@@ -128,7 +128,7 @@ def build_graph():
         "clarification",
         route_after_clarification,
         {
-            "discovery_suggest":  "discovery_suggest",
+            "discovery_suggest":     "discovery_suggest",
             "update_session_memory": "update_session_memory",
         }
     )
@@ -138,7 +138,7 @@ def build_graph():
     graph.add_edge("contextualize_question", "classify_top_intent")
     graph.add_edge("discovery_suggest",      "fetch_data")
     graph.add_edge("determine_data_scope",   "fetch_data")
-    graph.add_edge("fetch_data",         "quant_engine")
+    graph.add_edge("fetch_data",             "quant_engine")
     graph.add_edge("quant_engine",           "generate_report")
     graph.add_edge("generate_report",        "update_session_memory")
     graph.add_edge("explain_concept",        "update_session_memory")
