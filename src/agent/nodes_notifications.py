@@ -20,7 +20,7 @@ NODE_PROGRESS = {
     "extract":                             "Pinpointing the company...",
     "determine_data_scope":                "Planning the analysis...",
     # ──────────────────────────────────────────────────────────────
-    "fetch_all_data":                      "Collecting company data...",
+    "fetch_data":                      "Collecting company data...",
     "sec_retrieve":                        "Reading {ticker} annual report...",                    # sub_progress
     "sec_fetch":                           "Downloading {ticker} annual report from SEC...",       # sub_progress
     "market_data_snapshot":                "Fetching {ticker}'s stock data...",                    # sub_progress

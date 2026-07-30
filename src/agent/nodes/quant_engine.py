@@ -3,11 +3,11 @@ src/agent/quant_engine.py
 
 Quant Engine Node — Layer 2 Quantitative Intelligence.
 
-Sits between fetch_all_data (data acquisition) and generate_report (language generation).
+Sits between fetch_data (data acquisition) and generate_report (language generation).
 Reads ALL inputs from state (stock_snapshots, risk_inputs, quality_inputs,
 consensus_inputs, news) — performs NO data fetching of its own. This node
 is pure computation only, consistent with the data-layer/compute-layer
-separation: fetch_all_data is solely responsible for I/O, quant_engine is
+separation: fetch_data is solely responsible for I/O, quant_engine is
 solely responsible for turning that data into signals.
 
 No LLM calls, no network calls — pure Python computation. Fast, deterministic, fully testable.
@@ -46,7 +46,7 @@ def quant_engine(state: AgentState) -> dict:
 
     Args:
         state: AgentState — expects state["stock_snapshots"] to be populated
-               by fetch_all_data before this node runs.
+               by fetch_data before this node runs.
 
     Returns:
         {"quant_signals": {ticker: {signal_name: result, ...}, ...}}
@@ -156,7 +156,7 @@ def quant_engine(state: AgentState) -> dict:
             signals["news_sentiment"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_news_sentiment"].format(ticker=ticker)})
-            # News is always pre-fetched and pre-filtered by fetch_all_data
+            # News is always pre-fetched and pre-filtered by fetch_data
             # (see src/readers/news_reader.py) — this function only scores and
             # aggregates, it no longer needs company_name for filtering.
             news_articles = all_news.get(ticker) or []

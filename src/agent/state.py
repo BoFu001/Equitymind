@@ -29,7 +29,7 @@ class AgentState(TypedDict):
     year: Optional[str]                     # e.g. "2025" or None for latest    
 
     # Which data sources/signals this question actually needs — decided once,
-    # after tickers are confirmed, before fetch_all_data. snapshot is always
+    # after tickers are confirmed, before fetch_data. snapshot is always
     # fetched regardless (basic company info any question may reference) and
     # is not part of this list. See determine_data_scope.py.
     signals_needed: Optional[list[str]]     # subset of: valuation, momentum, risk, quality, consensus, news, financial_history
@@ -44,12 +44,12 @@ class AgentState(TypedDict):
     stock_snapshots: Optional[dict]         # price, P/E, revenue etc from yfinance
     valuation_inputs: Optional[dict]        # pe_ratio, price_to_book, price_to_sales — for Valuation Signal
 
-    # Inputs for quant_engine signal calculations (fetched by fetch_all_data,
+    # Inputs for quant_engine signal calculations (fetched by fetch_data,
     # consumed by quant_engine — quant_engine performs no I/O of its own)
     risk_inputs: Optional[dict]             # price history, market benchmark, risk-free rate — for Risk Signal
     quality_inputs: Optional[dict]          # financial statements — for Quality Signal
     consensus_inputs: Optional[dict]        # analyst rating history — for Consensus Signal
-    financial_history_data: Optional[dict]  # multi-year financials (all 26 metrics) — for HISTORICAL FINANCIALS prompt section, fetched by fetch_all_data (moved from generate_report.py 2026-07-27, see fetch_all_data.py)
+    financial_history_data: Optional[dict]  # multi-year financials (all 26 metrics) — for HISTORICAL FINANCIALS prompt section, fetched by fetch_data (moved from generate_report.py 2026-07-27, see fetch_data.py)
 
     # Quantitative signals — Layer 2
     quant_signals: Optional[dict]           # computed by quant_engine node

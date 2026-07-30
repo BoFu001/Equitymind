@@ -16,7 +16,7 @@ by generate_report.py.
 
 NOTE: this "always concatenate all 6" design is a product of the
 current "fetch everything unconditionally" architecture (see
-fetch_all_data.py's docstring) — it is expected to change once a
+fetch_data.py's docstring) — it is expected to change once a
 future "which data does this question need" routing node
 (determine_data_needs) exists. Once that node can decide, e.g., that
 a question needs only Consensus, this function's assumption that all

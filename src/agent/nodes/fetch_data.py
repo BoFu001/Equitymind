@@ -1,5 +1,5 @@
 """
-src/agent/fetch_all_data.py
+src/agent/fetch_data.py
 
 Data Acquisition Node — fetches all data needed for downstream signal
 computation (quant_engine) and report generation (generate_report).
@@ -46,7 +46,7 @@ from colors import gprint, bprint
 
 def _fetch_stock_snapshot(ticker: str) -> dict | None:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_snapshot"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_snapshot"].format(ticker=ticker)})
 
     data = get_stock_snapshot(ticker)
     if not data:
@@ -68,7 +68,7 @@ def _fetch_valuation_inputs(ticker: str) -> dict | None:
     independently fetchable).
     """
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_valuation"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_valuation"].format(ticker=ticker)})
 
     data = get_valuation_inputs(ticker)
     bprint(f"  [_fetch_valuation_inputs] Fetched for {ticker}")
@@ -81,7 +81,7 @@ def _fetch_valuation_inputs(ticker: str) -> dict | None:
 
 def _fetch_risk_inputs(ticker: str) -> dict | None:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_risk_history"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_risk_history"].format(ticker=ticker)})
 
     data = get_risk_inputs(ticker)
     bprint(f"  [_fetch_risk_inputs] Fetched for {ticker}")
@@ -97,7 +97,7 @@ def _fetch_quality_inputs(ticker: str) -> dict | None:
     # live — see src/tools/quality_reader.py for why, and
     # why there is deliberately no live-yfinance fallback here.
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_financial_statements"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_financial_statements"].format(ticker=ticker)})
 
     data = get_quality_inputs_from_db(ticker)
     bprint(f"  [_fetch_quality_inputs] Fetched for {ticker}")
@@ -122,7 +122,7 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
     be None independently (consensus_signal() degrades gracefully).
     """
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["market_data_analyst_ratings"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["market_data_analyst_ratings"].format(ticker=ticker)})
 
     snapshot = get_consensus_snapshot(ticker)
     if not snapshot:
@@ -143,13 +143,13 @@ def _fetch_financial_history(ticker: str) -> list:
     Moved here from generate_report.py on 2026-07-27 — a report
     generation node calling a database reader directly violated the
     project's data-layer/compute-layer/display-layer separation
-    (fetch_all_data owns all data acquisition; generate_report should
+    (fetch_data owns all data acquisition; generate_report should
     only consume already-fetched state and format it). Also makes this
     signal controllable by determine_data_scope's signals_needed, the
     same way as valuation/risk/quality/consensus/news.
     """
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["financial_history"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["financial_history"].format(ticker=ticker)})
 
     rows = get_financial_history_rows(ticker)
     bprint(f"  [_fetch_financial_history] Fetched for {ticker}")
@@ -162,7 +162,7 @@ def _fetch_financial_history(ticker: str) -> list:
 
 def _fetch_news(ticker: str) -> list:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["news_data"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["news_data"].format(ticker=ticker)})
 
     articles = fetch_company_news(ticker)
     bprint(f"  [_fetch_news] Fetched for {ticker}")
@@ -179,9 +179,9 @@ def _fetch_sec_data(ticker: str, question: str) -> list:
     try:
         chunks = retrieve(question, ticker)
         if chunks:
-            writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["sec_retrieve"].format(ticker=ticker)})
+            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_retrieve"].format(ticker=ticker)})
         else:
-            writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
+            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
             chunks = fetch_embed_store_retrieve(question, ticker)
     except Exception as e:
         bprint(f"  [_fetch_sec_data] Could not fetch SEC data for {ticker}: {e}")
@@ -195,7 +195,7 @@ def _fetch_sec_data(ticker: str, question: str) -> list:
 # Main node: unconditional fetch for every ticker
 # ─────────────────────────────────────────────
 
-async def fetch_all_data(state: AgentState) -> dict:
+async def fetch_data(state: AgentState) -> dict:
     """
     Fetches only the data sources determine_data_scope decided this
     question needs (state["signals_needed"]), plus snapshot and SEC
@@ -213,15 +213,15 @@ async def fetch_all_data(state: AgentState) -> dict:
     number of tasks differs from one call to the next.
     """
     writer = get_stream_writer()
-    writer({"type": "progress", "node": "fetch_all_data", "message": NODE_PROGRESS["fetch_all_data"]})
+    writer({"type": "progress", "node": "fetch_data", "message": NODE_PROGRESS["fetch_data"]})
 
     # Priority: enriched_query (clarification flow) > contextualized_question
     # (context-dependent follow-ups) > raw question (self-contained messages)
     question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
-    gprint(f"  [fetch_all_data] question: {question}")
+    gprint(f"  [fetch_data] question: {question}")
     tickers = state.get("tickers") or []
     signals_needed = state.get("signals_needed") or list(VALID_SIGNALS)
-    gprint(f"  [fetch_all_data] signals_needed: {signals_needed}")
+    gprint(f"  [fetch_data] signals_needed: {signals_needed}")
 
     all_stock_snapshots   = {}
     all_valuation         = {}
@@ -269,7 +269,7 @@ async def fetch_all_data(state: AgentState) -> dict:
         if results.get("financial_history"):
             all_financial_history[ticker] = results["financial_history"]
 
-    gprint(f"  [fetch_all_data] Completed for {len(tickers)} ticker(s)")
+    gprint(f"  [fetch_data] Completed for {len(tickers)} ticker(s)")
 
     return {
         "stock_snapshots":        all_stock_snapshots,

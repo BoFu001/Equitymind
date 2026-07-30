@@ -12,7 +12,7 @@ from src.agent.nodes.discovery_suggest import discovery_suggest
 from src.agent.nodes.generate_report import generate_report
 from src.agent.nodes.handle_no_ticker import handle_no_ticker
 from src.agent.nodes.handle_clarification import handle_clarification
-from src.agent.nodes.fetch_all_data import fetch_all_data
+from src.agent.nodes.fetch_data import fetch_data
 import json
 
 @pytest.fixture(autouse=True)
@@ -36,8 +36,8 @@ def mock_stream_writer():
 
 
 @pytest.fixture(autouse=True)
-def mock_fetch_all_data_writer():
-    with patch('src.agent.nodes.fetch_all_data.get_stream_writer') as mock:
+def mock_fetch_data_writer():
+    with patch('src.agent.nodes.fetch_data.get_stream_writer') as mock:
         mock.return_value = MagicMock()
         yield
 
@@ -356,22 +356,22 @@ def make_llm_response(finish_reason, tool_calls=None, content=""):
     return response
 
 
-@patch('src.agent.nodes.fetch_all_data.get_consensus_trend', return_value={"periods": [{"period": "0m", "strongBuy": 5, "buy": 3, "hold": 1, "sell": 0, "strongSell": 0}]})
-@patch('src.agent.nodes.fetch_all_data.get_consensus_snapshot', return_value={"recommendation_mean": 2.0, "target_mean": 150.0, "current_price": 140.0, "target_high": 160.0, "target_low": 140.0, "analyst_count": 10})
-@patch('src.agent.nodes.fetch_all_data.get_quality_inputs_from_db', return_value={"current_year": {}, "prior_year": {}})
-@patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value={"stock_prices": [1, 2, 3]})
-@patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[{"title": "Apple news", "summary": "", "url": "", "published": ""}])
-@patch('src.agent.nodes.fetch_all_data.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
-@patch('src.agent.nodes.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
-def test_fetch_all_data_fetches_everything_unconditionally(*_):
+@patch('src.agent.nodes.fetch_data.get_consensus_trend', return_value={"periods": [{"period": "0m", "strongBuy": 5, "buy": 3, "hold": 1, "sell": 0, "strongSell": 0}]})
+@patch('src.agent.nodes.fetch_data.get_consensus_snapshot', return_value={"recommendation_mean": 2.0, "target_mean": 150.0, "current_price": 140.0, "target_high": 160.0, "target_low": 140.0, "analyst_count": 10})
+@patch('src.agent.nodes.fetch_data.get_quality_inputs_from_db', return_value={"current_year": {}, "prior_year": {}})
+@patch('src.agent.nodes.fetch_data.get_risk_inputs', return_value={"stock_prices": [1, 2, 3]})
+@patch('src.agent.nodes.fetch_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.nodes.fetch_data.fetch_company_news', return_value=[{"title": "Apple news", "summary": "", "url": "", "published": ""}])
+@patch('src.agent.nodes.fetch_data.retrieve', return_value=[{"chunk": {"text": "Risk factors...", "filing_type": "10-K", "section": "1A", "filing_date": "2024"}, "score": 0.9}])
+@patch('src.agent.nodes.fetch_data.fetch_embed_store_retrieve', return_value=[])
+def test_fetch_data_fetches_everything_unconditionally(*_):
     """
-    fetch_all_data no longer uses an LLM to decide what to fetch — every
+    fetch_data no longer uses an LLM to decide what to fetch — every
     ticker gets stock_snapshots, news, SEC chunks, risk_inputs, quality_inputs,
     and consensus_inputs unconditionally, regardless of question phrasing.
     This replaces the old "smart tool selection" test that checked a
     simple price question only triggered get_stock_snapshot — that selective
-    behaviour was deliberately removed (see fetch_all_data.py docstring).
+    behaviour was deliberately removed (see fetch_data.py docstring).
 
     NOTE: mocks return non-empty dicts (not {}), since real get_xxx_inputs
     functions return either None (total failure) or a dict with at least
@@ -380,7 +380,7 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
     result, but not representative of a realistic partial-success case.
     """
     state = make_state(question="What is Apple's P/E ratio?", tickers=["AAPL"])
-    result = asyncio.run(fetch_all_data(state))
+    result = asyncio.run(fetch_data(state))
 
     assert "AAPL" in result["stock_snapshots"]
     assert "AAPL" in result["news"]
@@ -390,18 +390,18 @@ def test_fetch_all_data_fetches_everything_unconditionally(*_):
     assert "AAPL" in result["consensus_inputs"]
 
 
-@patch('src.agent.nodes.fetch_all_data.get_consensus_trend', return_value={"periods": []})
-@patch('src.agent.nodes.fetch_all_data.get_consensus_snapshot', return_value={"recommendation_mean": 2.0, "target_mean": 150.0, "current_price": 140.0, "target_high": 160.0, "target_low": 140.0, "analyst_count": 10})
-@patch('src.agent.nodes.fetch_all_data.get_quality_inputs_from_db', return_value={})
-@patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value=None)
-@patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
-@patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[])
-@patch('src.agent.nodes.fetch_all_data.retrieve', return_value=[])
-@patch('src.agent.nodes.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
-def test_fetch_all_data_full_analysis_question(*_):
+@patch('src.agent.nodes.fetch_data.get_consensus_trend', return_value={"periods": []})
+@patch('src.agent.nodes.fetch_data.get_consensus_snapshot', return_value={"recommendation_mean": 2.0, "target_mean": 150.0, "current_price": 140.0, "target_high": 160.0, "target_low": 140.0, "analyst_count": 10})
+@patch('src.agent.nodes.fetch_data.get_quality_inputs_from_db', return_value={})
+@patch('src.agent.nodes.fetch_data.get_risk_inputs', return_value=None)
+@patch('src.agent.nodes.fetch_data.get_stock_snapshot', return_value={"current_price": 200.0, "company_name": "Apple"})
+@patch('src.agent.nodes.fetch_data.fetch_company_news', return_value=[])
+@patch('src.agent.nodes.fetch_data.retrieve', return_value=[])
+@patch('src.agent.nodes.fetch_data.fetch_embed_store_retrieve', return_value=[])
+def test_fetch_data_full_analysis_question(*_):
     """A full-analysis question fetches everything, same as a simple one — no branching."""
     state = make_state(question="Analyse Apple", tickers=["AAPL"])
-    result = asyncio.run(fetch_all_data(state))
+    result = asyncio.run(fetch_data(state))
 
     assert "AAPL" in result["stock_snapshots"]
     assert "stock_snapshots" in result
@@ -409,18 +409,18 @@ def test_fetch_all_data_full_analysis_question(*_):
     assert "chunks" in result
 
 
-@patch('src.agent.nodes.fetch_all_data.get_consensus_trend', return_value=None)
-@patch('src.agent.nodes.fetch_all_data.get_consensus_snapshot', return_value=None)
-@patch('src.agent.nodes.fetch_all_data.get_quality_inputs_from_db', return_value=None)
-@patch('src.agent.nodes.fetch_all_data.get_risk_inputs', return_value=None)
-@patch('src.agent.nodes.fetch_all_data.get_stock_snapshot', return_value=None)
-@patch('src.agent.nodes.fetch_all_data.fetch_company_news', return_value=[])
-@patch('src.agent.nodes.fetch_all_data.retrieve', return_value=[])
-@patch('src.agent.nodes.fetch_all_data.fetch_embed_store_retrieve', return_value=[])
-def test_fetch_all_data_returns_state_fields(*_):
-    """fetch_all_data must always return all six state fields, even if every fetch fails."""
+@patch('src.agent.nodes.fetch_data.get_consensus_trend', return_value=None)
+@patch('src.agent.nodes.fetch_data.get_consensus_snapshot', return_value=None)
+@patch('src.agent.nodes.fetch_data.get_quality_inputs_from_db', return_value=None)
+@patch('src.agent.nodes.fetch_data.get_risk_inputs', return_value=None)
+@patch('src.agent.nodes.fetch_data.get_stock_snapshot', return_value=None)
+@patch('src.agent.nodes.fetch_data.fetch_company_news', return_value=[])
+@patch('src.agent.nodes.fetch_data.retrieve', return_value=[])
+@patch('src.agent.nodes.fetch_data.fetch_embed_store_retrieve', return_value=[])
+def test_fetch_data_returns_state_fields(*_):
+    """fetch_data must always return all six state fields, even if every fetch fails."""
     state = make_state(question="Hello", tickers=["AAPL"])
-    result = asyncio.run(fetch_all_data(state))
+    result = asyncio.run(fetch_data(state))
     assert "chunks" in result
     assert "stock_snapshots" in result
     assert "news" in result

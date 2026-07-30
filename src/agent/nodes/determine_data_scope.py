@@ -4,7 +4,7 @@ src/agent/nodes/determine_data_scope.py
 Node: Determine Data Scope
 
 Decides which data sources/signals a question actually needs, so
-fetch_all_data / quant_engine / generate_report can skip unneeded
+fetch_data / quant_engine / generate_report can skip unneeded
 work instead of unconditionally fetching, computing, and formatting
 all six signals for every request.
 
@@ -14,7 +14,7 @@ determined by the question's text alone and doesn't depend on any
 intermediate result, so an iterative/multi-step decision process adds
 cost and latency without adding accuracy. An earlier attempt at
 LLM-driven data-source selection (an agent loop deciding which tools
-to call before fetch_all_data) was abandoned because quant_engine's
+to call before fetch_data) was abandoned because quant_engine's
 signal engines shared a single market_data dict at the time — skipping
 it for one signal silently skipped ALL signals downstream, including
 ones that didn't actually need it. That coupling no longer exists
@@ -124,7 +124,7 @@ Reply with ONLY valid JSON, a single key "signals_needed" with a list of the app
 
     signals_needed = data.get("signals_needed", [])
     # Drop anything the model returned that isn't a recognized value,
-    # rather than trusting it blindly — downstream fetch_all_data
+    # rather than trusting it blindly — downstream fetch_data
     # dispatches on these strings directly.
     signals_needed = [s for s in signals_needed if s in VALID_SIGNALS]
 

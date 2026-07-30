@@ -183,7 +183,7 @@ def generate_report(state: AgentState) -> dict:
                 ticker_quant_text += "\n  Market Sentiment & Opinion (subjective, not objective calculations):\n" + "".join(subjective_parts)
             quant_parts.append(ticker_quant_text)
 
-        # Historical financials: fetched by fetch_all_data.py's
+        # Historical financials: fetched by fetch_data.py's
         # _fetch_financial_history() (moved there from this file on
         # 2026-07-27 — a report-generation node calling a database
         # reader directly violated the data-layer/display-layer

@@ -27,7 +27,7 @@ def contextualize_question(state: AgentState) -> dict:
     This exists because classifiers and downstream nodes should never have
     to guess what a pronoun or an implicit reference points to — that
     guessing is exactly what caused follow-up questions to be misrouted
-    to explain_concept instead of the data-backed fetch_all_data path.
+    to explain_concept instead of the data-backed fetch_data path.
 
     The original state["question"] is preserved for session memory and
     conversation history — only a new field, contextualized_question, is

@@ -73,7 +73,7 @@ def _get_common_name(ticker: str) -> str:
     common case. This module resolves the full legal name itself in that
     fallback case (rather than requiring the caller to supply it), so
     that news fetching has no dependency on any other data source
-    (e.g. fetch_all_data's stock_snapshot) and can run fully in parallel
+    (e.g. fetch_data's stock_snapshot) and can run fully in parallel
     with it.
     """
     try:

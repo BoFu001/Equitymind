@@ -168,9 +168,9 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
     fetching is done separately by consensus_reader.get_consensus_snapshot()
     (for recommendation_mean, target_mean, current_price) and
     consensus_reader.get_consensus_trend() (for historical rating trend),
-    called by fetch_all_data.py, which merges both into the single
+    called by fetch_data.py, which merges both into the single
     consensus_data dict this function receives (see
-    fetch_all_data._fetch_consensus_inputs()). Both are fetched via
+    fetch_data._fetch_consensus_inputs()). Both are fetched via
     independent yfinance calls (2026-07-27: no longer shared with
     snapshot_reader.py's get_stock_snapshot() — see consensus_reader.py
     for why), so that a live user question needing only Consensus does
@@ -199,7 +199,7 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
 
     Args:
         consensus_data: dict with keys "snapshot" and "trend" (see
-            fetch_all_data._fetch_consensus_inputs()):
+            fetch_data._fetch_consensus_inputs()):
             - snapshot: dict from get_consensus_snapshot(), expected fields:
                 - recommendation_mean: float | None (1.0-5.0 scale)
                 - target_mean:         float | None
