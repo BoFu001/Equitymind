@@ -31,6 +31,8 @@ from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_t
 from src.readers.quality_reader import get_quality_inputs_from_db
 from src.readers.news_reader import fetch_company_news
 from src.readers.sec_retrieval import retrieve, fetch_embed_store_retrieve
+from src.readers.financial_history_reader import get_financial_history_rows
+from src.agent.nodes.determine_data_scope import VALID_SIGNALS
 from src.agent.state import AgentState
 
 from langgraph.config import get_stream_writer
@@ -133,6 +135,28 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
 
 
 # ─────────────────────────────────────────────
+# Historical Financials (multi-year revenue/income/balance-sheet trend)
+# ─────────────────────────────────────────────
+
+def _fetch_financial_history(ticker: str) -> list:
+    """
+    Moved here from generate_report.py on 2026-07-27 — a report
+    generation node calling a database reader directly violated the
+    project's data-layer/compute-layer/display-layer separation
+    (fetch_all_data owns all data acquisition; generate_report should
+    only consume already-fetched state and format it). Also makes this
+    signal controllable by determine_data_scope's signals_needed, the
+    same way as valuation/risk/quality/consensus/news.
+    """
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_all_data", "message": NODE_PROGRESS["financial_history"].format(ticker=ticker)})
+
+    rows = get_financial_history_rows(ticker)
+    bprint(f"  [_fetch_financial_history] Fetched for {ticker}")
+    return rows
+
+
+# ─────────────────────────────────────────────
 # News Data
 # ─────────────────────────────────────────────
 
@@ -173,22 +197,20 @@ def _fetch_sec_data(ticker: str, question: str) -> list:
 
 async def fetch_all_data(state: AgentState) -> dict:
     """
-    Fetches market data, news, and SEC filing excerpts for every ticker
-    in state["tickers"] — no LLM judgement involved in deciding what to
-    fetch.
+    Fetches only the data sources determine_data_scope decided this
+    question needs (state["signals_needed"]), plus snapshot and SEC
+    filing data which are always fetched regardless (basic company
+    info and filing excerpts any question may reference).
 
-    The 6 data sources per ticker (stock_snapshot, risk_inputs,
-    quality_inputs, consensus_inputs, news, SEC chunks) have no
-    dependencies on each other's results (see news_reader.py — company_name
-    resolution was moved inside that module for exactly this reason), so
-    they are fetched concurrently via asyncio.gather + asyncio.to_thread.
-    asyncio.to_thread propagates the current contextvars context to the
-    worker thread, so get_stream_writer() inside each _fetch_xxx function
-    keeps working with no changes needed there.
+    Falls back to fetching ALL signals if signals_needed is missing
+    or empty (e.g. determine_data_scope failed) — a full-analysis
+    default is the safe degradation, matching that node's own
+    fallback behavior.
 
-    Multiple tickers (e.g. a COMPARISON question) are still fetched one
-    ticker at a time — only the 6 data sources *within* a ticker are
-    parallelized in this pass.
+    Uses a dict of {name: coroutine} rather than a fixed-position
+    tuple unpack from asyncio.gather, since the set of tasks now
+    varies per request — a fixed unpack would break as soon as the
+    number of tasks differs from one call to the next.
     """
     writer = get_stream_writer()
     writer({"type": "progress", "node": "fetch_all_data", "message": NODE_PROGRESS["fetch_all_data"]})
@@ -198,49 +220,64 @@ async def fetch_all_data(state: AgentState) -> dict:
     question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
     gprint(f"  [fetch_all_data] question: {question}")
     tickers = state.get("tickers") or []
+    signals_needed = state.get("signals_needed") or list(VALID_SIGNALS)
+    gprint(f"  [fetch_all_data] signals_needed: {signals_needed}")
 
-    all_stock_snapshots = {}
-    all_valuation       = {}
-    all_risk            = {}
-    all_quality         = {}
-    all_consensus       = {}
-    all_news            = {}
-    all_chunks          = {}
+    all_stock_snapshots   = {}
+    all_valuation         = {}
+    all_risk              = {}
+    all_quality           = {}
+    all_consensus         = {}
+    all_news              = {}
+    all_chunks            = {}
+    all_financial_history = {}
 
     for ticker in tickers:
-        stock_snapshot, valuation_inputs, risk_inputs, quality_inputs, consensus_inputs, news_articles, sec_chunks = await asyncio.gather(
-            asyncio.to_thread(_fetch_stock_snapshot, ticker),
-            asyncio.to_thread(_fetch_valuation_inputs, ticker),
-            asyncio.to_thread(_fetch_risk_inputs, ticker),
-            asyncio.to_thread(_fetch_quality_inputs, ticker),
-            asyncio.to_thread(_fetch_consensus_inputs, ticker),
-            asyncio.to_thread(_fetch_news, ticker),
-            asyncio.to_thread(_fetch_sec_data, ticker, question),
-        )
+        tasks = {
+            "snapshot": asyncio.to_thread(_fetch_stock_snapshot, ticker),
+            "sec":      asyncio.to_thread(_fetch_sec_data, ticker, question),
+        }
+        if "valuation" in signals_needed:
+            tasks["valuation"] = asyncio.to_thread(_fetch_valuation_inputs, ticker)
+        if "risk" in signals_needed:
+            tasks["risk"] = asyncio.to_thread(_fetch_risk_inputs, ticker)
+        if "quality" in signals_needed:
+            tasks["quality"] = asyncio.to_thread(_fetch_quality_inputs, ticker)
+        if "consensus" in signals_needed:
+            tasks["consensus"] = asyncio.to_thread(_fetch_consensus_inputs, ticker)
+        if "news" in signals_needed:
+            tasks["news"] = asyncio.to_thread(_fetch_news, ticker)
+        if "financial_history" in signals_needed:
+            tasks["financial_history"] = asyncio.to_thread(_fetch_financial_history, ticker)
 
-        if stock_snapshot:
-            all_stock_snapshots[ticker] = stock_snapshot
-        if valuation_inputs:
-            all_valuation[ticker] = valuation_inputs
-        if risk_inputs:
-            all_risk[ticker] = risk_inputs
-        if quality_inputs:
-            all_quality[ticker] = quality_inputs
-        if consensus_inputs:
-            all_consensus[ticker] = consensus_inputs
-        if news_articles:
-            all_news[ticker] = news_articles
-        if sec_chunks:
-            all_chunks[ticker] = sec_chunks
+        results = dict(zip(tasks.keys(), await asyncio.gather(*tasks.values())))
+
+        if results.get("snapshot"):
+            all_stock_snapshots[ticker] = results["snapshot"]
+        if results.get("valuation"):
+            all_valuation[ticker] = results["valuation"]
+        if results.get("risk"):
+            all_risk[ticker] = results["risk"]
+        if results.get("quality"):
+            all_quality[ticker] = results["quality"]
+        if results.get("consensus"):
+            all_consensus[ticker] = results["consensus"]
+        if results.get("news"):
+            all_news[ticker] = results["news"]
+        if results.get("sec"):
+            all_chunks[ticker] = results["sec"]
+        if results.get("financial_history"):
+            all_financial_history[ticker] = results["financial_history"]
 
     gprint(f"  [fetch_all_data] Completed for {len(tickers)} ticker(s)")
 
     return {
-        "stock_snapshots":   all_stock_snapshots,
-        "valuation_inputs":  all_valuation,
-        "risk_inputs":       all_risk,
-        "quality_inputs":    all_quality,
-        "consensus_inputs":  all_consensus,
-        "news":              all_news,
-        "chunks":            all_chunks,
+        "stock_snapshots":        all_stock_snapshots,
+        "valuation_inputs":       all_valuation,
+        "risk_inputs":            all_risk,
+        "quality_inputs":         all_quality,
+        "consensus_inputs":       all_consensus,
+        "news":                   all_news,
+        "chunks":                 all_chunks,
+        "financial_history_data": all_financial_history,
     }

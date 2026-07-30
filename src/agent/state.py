@@ -49,6 +49,7 @@ class AgentState(TypedDict):
     risk_inputs: Optional[dict]             # price history, market benchmark, risk-free rate — for Risk Signal
     quality_inputs: Optional[dict]          # financial statements — for Quality Signal
     consensus_inputs: Optional[dict]        # analyst rating history — for Consensus Signal
+    financial_history_data: Optional[dict]  # multi-year financials (all 26 metrics) — for HISTORICAL FINANCIALS prompt section, fetched by fetch_all_data (moved from generate_report.py 2026-07-27, see fetch_all_data.py)
 
     # Quantitative signals — Layer 2
     quant_signals: Optional[dict]           # computed by quant_engine node
@@ -97,6 +98,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "risk_inputs": {},
         "quality_inputs": {},
         "consensus_inputs": {},
+        "financial_history_data": {},
         "quant_signals": {},
         "answer":      "",
     }

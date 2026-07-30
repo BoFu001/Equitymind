@@ -7,6 +7,7 @@ from src.agent.nodes.classify_top_intent import classify_top_intent
 from src.agent.nodes.classify_sub_intent import classify_sub_intent
 from src.agent.nodes.explain_concept import explain_concept
 from src.agent.nodes.extract_parameters import extract_parameters
+from src.agent.nodes.determine_data_scope import determine_data_scope
 from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
 from src.agent.nodes.handle_greeting import handle_greeting
 from src.agent.nodes.handle_no_ticker import handle_no_ticker
@@ -56,7 +57,7 @@ def route_after_extract(state: AgentState) -> str:
     if not tickers:
         return "no_ticker"
     else:
-        return "fetch_all_data"
+        return "determine_data_scope"
 
 def route_after_clarification(state: AgentState) -> str:
     complete = state.get("clarification_complete")
@@ -79,6 +80,7 @@ def build_graph():
     graph.add_node("classify_sub_intent",    classify_sub_intent)
     graph.add_node("explain_concept",        explain_concept)
     graph.add_node("extract",                extract_parameters)
+    graph.add_node("determine_data_scope",   determine_data_scope)
     graph.add_node("fetch_all_data",         fetch_all_data)
     graph.add_node("generate_report",        generate_report) 
     graph.add_node("out_of_scope",           handle_out_of_scope)
@@ -117,8 +119,8 @@ def build_graph():
         "extract",
         route_after_extract,
         {
-            "no_ticker":      "no_ticker",
-            "fetch_all_data": "fetch_all_data",
+            "no_ticker":            "no_ticker",
+            "determine_data_scope": "determine_data_scope",
         }
     )
 
@@ -135,6 +137,7 @@ def build_graph():
     graph.add_edge(START,                    "contextualize_question")
     graph.add_edge("contextualize_question", "classify_top_intent")
     graph.add_edge("discovery_suggest",      "fetch_all_data")
+    graph.add_edge("determine_data_scope",   "fetch_all_data")
     graph.add_edge("fetch_all_data",         "quant_engine")
     graph.add_edge("quant_engine",           "generate_report")
     graph.add_edge("generate_report",        "update_session_memory")

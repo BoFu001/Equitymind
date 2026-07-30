@@ -18,6 +18,7 @@ NODE_PROGRESS = {
     "out_of_scope":                        "Let me help you with that...",
     "explain_concept":                     "Putting together an explanation...",
     "extract":                             "Pinpointing the company...",
+    "determine_data_scope":                "Planning the analysis...",
     # ──────────────────────────────────────────────────────────────
     "fetch_all_data":                      "Collecting company data...",
     "sec_retrieve":                        "Reading {ticker} annual report...",                    # sub_progress
@@ -26,6 +27,7 @@ NODE_PROGRESS = {
     "market_data_valuation":               "Checking {ticker}'s valuation ratios...",              # sub_progress
     "market_data_risk_history":            "Checking {ticker}'s risk history...",                  # sub_progress
     "market_data_financial_statements":    "Reviewing {ticker}'s financial statements...",         # sub_progress
+    "financial_history":                   "Checking {ticker}'s historical financials...",         # sub_progress
     "market_data_analyst_ratings":         "Checking analyst ratings for {ticker}...",             # sub_progress
     "news_data":                           "Reading news for {ticker}...",                         # sub_progress
     # ──────────────────────────────────────────────────────────────

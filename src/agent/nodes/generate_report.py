@@ -16,12 +16,104 @@ from src.agent.nodes_notifications import NODE_PROGRESS
 from src.agent.formatters.snapshot_formatter import format_stock_snapshot
 from src.agent.formatters.sec_formatter import format_sec_chunks
 from src.agent.formatters.conversation_formatter import format_conversation_context
-from src.agent.formatters.quant_signals_formatter import format_quant_signals
+from src.agent.formatters.valuation_formatter import format_valuation
+from src.agent.formatters.momentum_formatter import format_momentum
+from src.agent.formatters.risk_formatter import format_risk
+from src.agent.formatters.quality_formatter import format_quality
+from src.agent.formatters.news_sentiment_formatter import format_news_sentiment
+from src.agent.formatters.consensus_formatter import format_consensus
 from src.agent.formatters.financial_history_formatter import format_financial_history
-from src.readers.financial_history_reader import get_financial_history_rows
+from src.agent.nodes.determine_data_scope import VALID_SIGNALS
 from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
+
+# Signal-specific formatting notes, one entry per optional signal —
+# only the ones in signals_needed are included in the final prompt,
+# so a narrow question (e.g. only Consensus) doesn't carry rules
+# about Valuation P/E, Max Drawdown, or F-Score that don't apply
+# to anything actually shown.
+SIGNAL_NOTES = {
+    "valuation": """\
+- Valuation P/E clarification: COMPANY SNAPSHOT's "Forward P/E" is a
+  DIFFERENT figure from the "P/E" used in the Valuation signal's
+  judgment (trailing P/E). If both appear in your answer, label each
+  explicitly (e.g. "trailing P/E of 41.22 vs. Forward P/E of 35.26")
+  — never use them interchangeably or imply they are the same number.
+- Valuation: if the data includes "Compared against: X, Y, Z" (named
+  peer companies), you MUST name those specific companies in your
+  answer (e.g. "trading at a premium to peers like Microsoft, Alphabet,
+  and Meta") — do not compress this into a generic phrase like "peer
+  average" or "industry peers" with no names, even in a short answer.
+  If instead the data says "Comparison uses a broad S&P 500 average",
+  state explicitly that no company-specific peer data was available
+  and a broad market average was used instead — this is a materially
+  different, lower-confidence comparison and must not be presented
+  the same way as a named peer match.
+""",
+    "risk": """\
+- Always state the observation window for Risk metrics (e.g. "based
+  on the past 2 years of price history").
+- Max Drawdown: always state BOTH the peak/trough dates AND prices
+  (e.g. "from $257.38 on Dec 26, 2024 to $171.51 on Apr 8, 2025"), even
+  if the user only asked about timing.
+""",
+    "quality": """\
+- F-Score is always out of 9 possible points. If signals_evaluated < 9,
+  NEVER write "X/Y" using signals_evaluated as the denominator (e.g.
+  "3/7" wrongly implies a 7-point scale) — state both numbers separately:
+  "F-Score of 3 out of 9 possible points (only 7 of the 9 signals could
+  be evaluated)". If current_ratio_improving or gross_margin_improving
+  specifically show as unavailable, this is a known limitation for
+  financial institutions (banks, insurers don't report "current assets"
+  or "gross profit" the way other companies do) — say so explicitly and
+  suggest sector-specific metrics (capital adequacy ratio, net interest
+  margin) as a supplement.
+""",
+    "consensus": """\
+- Consensus Signal (analyst recommendation, upside, trend) reflects
+  HUMAN JUDGMENT, not an objective market calculation like the other
+  signals — always make this distinction clear. Analyst ratings carry
+  a well-documented systematic optimism bias ("sell" ratings are rare
+  in practice) — a bullish reading should be described as "positive
+  within a system that skews positive," not as a neutral, unbiased
+  signal. IMPORTANT: recommendation, upside, and trend are three
+  INDEPENDENT sub-signals answering different questions (current
+  standing / future price target / recent directional change) — present
+  each on its own terms using its own label (e.g. "recommendation is
+  bullish, but the trend has been deteriorating"), never average them
+  into one overall consensus verdict. The trend_label reflects the
+  analyst group's aggregate rating distribution over time, not
+  individual analyst revision tracking.
+- Analyst sentiment: use recommendation_mean — 1.0-1.5 Strong Buy,
+  1.5-2.5 Buy, 2.5-3.5 Hold, 3.5-4.5 Sell, 4.5-5.0 Strong Sell. Do not
+  call a mean above 2.5 "bullish". Always mention analyst_count. If the
+  target price range is very wide (high > 3x low), flag the divergence.
+""",
+    "news": """\
+- News Sentiment reflects MEDIA TONE (how recent news articles are
+  written about the company), not analyst opinion (Consensus) or an
+  objective financial calculation like Valuation/Momentum/Risk/Quality
+  — always make this distinction clear. A sentiment score is an
+  interpretation of language in news coverage, not a fact about the
+  company's fundamentals or future performance.
+""",
+    "financial_history": """\
+- HISTORICAL FINANCIALS data covers ONLY the date range explicitly
+  stated in its "DATA COVERAGE: X to Y" header. If the user asks
+  about a fiscal year or period OUTSIDE that stated range (e.g. the
+  data covers 2022-2026 but the user asks about 2018 or 2019), you
+  MUST NOT answer using your own training knowledge — state clearly
+  that the provided data does not cover that period and that you
+  cannot verify a figure for it. This applies even if you believe
+  you know the correct figure from general knowledge — an unverified
+  number from training data is not an acceptable substitute for data
+  this system has actually retrieved, since it cannot be checked
+  against a source. This rule applies specifically to financial
+  statement figures (revenue, EBITDA, net income, etc.) requested for
+  a specific past fiscal year or quarter.
+""",
+}
 
 
 def generate_report(state: AgentState) -> dict:
@@ -32,36 +124,94 @@ def generate_report(state: AgentState) -> dict:
     writer = get_stream_writer()
     writer({"type": "progress", "node": "report", "message": NODE_PROGRESS["generate_report"]})
 
-    question            = state.get("contextualized_question") or state["question"]
-    tickers             = state.get("tickers") or []
-    all_chunks          = state.get("chunks") or {}
-    all_stock_snapshots = state.get("stock_snapshots") or {}
-    quant_signals       = state.get("quant_signals") or {}
-    messages            = state.get("messages") or []
+    question              = state.get("contextualized_question") or state["question"]
+    tickers               = state.get("tickers") or []
+    messages              = state.get("messages") or []
+    signals_needed        = state.get("signals_needed") or list(VALID_SIGNALS)
+    all_stock_snapshots   = state.get("stock_snapshots") or {}
+    all_chunks            = state.get("chunks") or {}
+    quant_signals         = state.get("quant_signals") or {}
+    all_financial_history = state.get("financial_history_data") or {}
 
     # ── Format conversation history ──
     conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
 
-    # ── Format company snapshot ──
-    snapshot_context = "".join(format_stock_snapshot(all_stock_snapshots.get(t, {}), t) for t in tickers)
+    # ── Format company snapshot, SEC filing chunks, quant signals, and
+    # historical financials — one loop over tickers instead of four,
+    # each ticker only processed once per section ──
+    snapshot_parts = []
+    sec_parts = []
+    quant_parts = []
+    financial_history_parts = []
 
-    # ── Format SEC filing chunks ──
-    sec_context = "".join(
-        format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t) else f"\n{t}: No SEC 10-K filing available.\n"
-        for t in tickers
+    for t in tickers:
+        snapshot_parts.append(format_stock_snapshot(all_stock_snapshots.get(t, {}), t))
+
+        sec_parts.append(
+            format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t)
+            else f"\n{t}: No SEC 10-K filing available.\n"
+        )
+
+        # Quant signals: each formatter called directly and
+        # independently, only for the signals determine_data_scope
+        # decided this question needs — not going through a fixed
+        # bundler (format_quant_signals). See quant_signals_formatter.py's
+        # docstring (2026-07-27) for why this was always the planned
+        # end state, deferred until this routing node existed.
+        signals = quant_signals.get(t, {})
+        objective_parts = []
+        if "valuation" in signals_needed:
+            objective_parts.append(format_valuation(signals.get("valuation")))
+        if "momentum" in signals_needed:
+            objective_parts.append(format_momentum(signals.get("momentum")))
+        if "risk" in signals_needed:
+            objective_parts.append(format_risk(signals.get("risk")))
+        if "quality" in signals_needed:
+            objective_parts.append(format_quality(signals.get("quality")))
+
+        subjective_parts = []
+        if "news" in signals_needed:
+            subjective_parts.append(format_news_sentiment(signals.get("news_sentiment")))
+        if "consensus" in signals_needed:
+            subjective_parts.append(format_consensus(signals.get("consensus")))
+
+        if objective_parts or subjective_parts:
+            ticker_quant_text = f"\n{t} Quantitative Signals:\n"
+            if objective_parts:
+                ticker_quant_text += "\n  Objective Financial Metrics:\n" + "".join(objective_parts)
+            if subjective_parts:
+                ticker_quant_text += "\n  Market Sentiment & Opinion (subjective, not objective calculations):\n" + "".join(subjective_parts)
+            quant_parts.append(ticker_quant_text)
+
+        # Historical financials: fetched by fetch_all_data.py's
+        # _fetch_financial_history() (moved there from this file on
+        # 2026-07-27 — a report-generation node calling a database
+        # reader directly violated the data-layer/display-layer
+        # separation). Skipped entirely when not needed.
+        if "financial_history" in signals_needed:
+            financial_history_parts.append(format_financial_history(all_financial_history.get(t, []), t))
+
+    snapshot_context = "".join(snapshot_parts)
+    sec_context = "".join(sec_parts)
+    quant_context = "".join(quant_parts)
+    financial_history_context = "".join(financial_history_parts)
+
+    # ── Assemble prompt sections that should disappear entirely when
+    # empty (not even a header), rather than showing an empty section
+    # or a "No X available" placeholder ──
+    financial_history_section = (
+        "HISTORICAL FINANCIALS (only relevant if the question asks about\n"
+        "multi-year trends — otherwise ignore this section):\n"
+        f"{financial_history_context}\n\n"
+        if financial_history_context else ""
+    )
+    quant_section = (
+        f"QUANTITATIVE SIGNALS:\n{quant_context}\n\n"
+        if quant_context else ""
     )
 
-    # ── Format quant signals ──
-    quant_context = "".join(format_quant_signals(quant_signals.get(t, {}), t) for t in tickers)
-
-    # ── Format historical financials ──
-    # Fetched unconditionally (like the other data sources) as a
-    # temporary measure until determine_data_needs exists — see that
-    # node's planned design (2026-07-27) for why this should eventually
-    # be fetched only when the question asks about historical trends,
-    # not on every request.
-    financial_history_context = "".join(
-        format_financial_history(get_financial_history_rows(t), t) for t in tickers
+    signal_specific_notes = "".join(
+        SIGNAL_NOTES[s] for s in signals_needed if s in SIGNAL_NOTES
     )
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
@@ -78,9 +228,8 @@ Always include ALL tickers in the response — never drop any company from the a
 Format large numbers cleanly: $24.5B not $24,452,999,168. Round to 2 decimal places.
 Use markdown and emojis where appropriate for the format chosen.
 
-GENERAL PRINCIPLES — apply these to EVERY quantitative signal (Valuation,
-Momentum, Risk, Quality, and any future signal), not just the specific
-cases listed below:
+GENERAL PRINCIPLES — apply these to EVERY quantitative signal shown
+below, not just the specific cases listed:
 1. Every signal is a historical/backward-looking statistic, never a
    guarantee of future performance. Never phrase a score as a promise
    (e.g. not "this stock cannot fall more than X%" — instead
@@ -107,83 +256,15 @@ cases listed below:
    as such. Never cite one signal as if it explains another unless the
    data actually shows a link (e.g. Momentum does not explain a
    valuation ratio).
-Always state the observation window for Risk metrics (e.g. "based on
-the past 2 years of price history") and, when presenting Valuation and
-Quality together, remember they are ALWAYS coupled regardless of
-question scope — never state a valuation judgment without the
-accompanying Quality/F-Score context, even in a short, targeted answer.
-5. Consensus Signal (analyst recommendation, upside, trend) reflects
-   HUMAN JUDGMENT, not an objective market calculation like the other
-   signals — always make this distinction clear. Analyst ratings carry
-   a well-documented systematic optimism bias ("sell" ratings are rare
-   in practice) — a bullish reading should be described as "positive
-   within a system that skews positive," not as a neutral, unbiased
-   signal. IMPORTANT: recommendation, upside, and trend are three
-   INDEPENDENT sub-signals answering different questions (current
-   standing / future price target / recent directional change) — present
-   each on its own terms using its own label (e.g. "recommendation is
-   bullish, but the trend has been deteriorating"), never average them
-   into one overall consensus verdict. The trend_label reflects the
-   analyst group's aggregate rating distribution over time, not
-   individual analyst revision tracking.
-6. News Sentiment reflects MEDIA TONE (how recent news articles are
-   written about the company), not analyst opinion (Consensus) or an
-   objective financial calculation like Valuation/Momentum/Risk/Quality
-   — always make this distinction clear. A sentiment score is an
-   interpretation of language in news coverage, not a fact about the
-   company's fundamentals or future performance.
-7. HISTORICAL FINANCIALS data covers ONLY the date range explicitly
-   stated in its "DATA COVERAGE: X to Y" header. If the user asks
-   about a fiscal year or period OUTSIDE that stated range (e.g. the
-   data covers 2022-2026 but the user asks about 2018 or 2019), you
-   MUST NOT answer using your own training knowledge — state clearly
-   that the provided data does not cover that period and that you
-   cannot verify a figure for it. This applies even if you believe
-   you know the correct figure from general knowledge — an unverified
-   number from training data is not an acceptable substitute for data
-   this system has actually retrieved, since it cannot be checked
-   against a source. This rule applies specifically to financial
-   statement figures (revenue, EBITDA, net income, etc.) requested for
-   a specific past fiscal year or quarter.
 
-SIGNAL-SPECIFIC FORMATTING NOTES:
-- Valuation P/E clarification: COMPANY SNAPSHOT's "Forward P/E" is a
-  DIFFERENT figure from the "P/E" used in the Valuation signal's
-  judgment (trailing P/E). If both appear in your answer, label each
-  explicitly (e.g. "trailing P/E of 41.22 vs. Forward P/E of 35.26")
-  — never use them interchangeably or imply they are the same number.
-- Valuation: if the data includes "Compared against: X, Y, Z" (named
-  peer companies), you MUST name those specific companies in your
-  answer (e.g. "trading at a premium to peers like Microsoft, Alphabet,
-  and Meta") — do not compress this into a generic phrase like "peer
-  average" or "industry peers" with no names, even in a short answer.
-  If instead the data says "Comparison uses a broad S&P 500 average",
-  state explicitly that no company-specific peer data was available
-  and a broad market average was used instead — this is a materially
-  different, lower-confidence comparison and must not be presented
-  the same way as a named peer match.
-- Revenue: COMPANY SNAPSHOT's "revenue" is trailing-twelve-months (TTM), a
+SIGNAL-SPECIFIC FORMATTING NOTES (only rules for signals actually
+present in QUANTITATIVE SIGNALS/HISTORICAL FINANCIALS below apply —
+this list is pre-filtered to this question's scope):
+{signal_specific_notes}- Revenue: COMPANY SNAPSHOT's "revenue" is trailing-twelve-months (TTM), a
   rolling 12-month total — different from any fiscal-year revenue figure
   in SEC filing excerpts. If both appear, label each explicitly (e.g.
   "TTM Revenue: $318.27B" vs "FY2025 Revenue: $281.72B") — presenting
   them unlabeled reads as a contradiction, not two distinct correct figures.
-- Analyst sentiment: use recommendation_mean — 1.0–1.5 Strong Buy,
-  1.5–2.5 Buy, 2.5–3.5 Hold, 3.5–4.5 Sell, 4.5–5.0 Strong Sell. Do not
-  call a mean above 2.5 "bullish". Always mention analyst_count. If the
-  target price range is very wide (high > 3x low), flag the divergence.
-- Max Drawdown: always state BOTH the peak/trough dates AND prices
-  (e.g. "from $257.38 on Dec 26, 2024 to $171.51 on Apr 8, 2025"), even
-  if the user only asked about timing.
-- F-Score is always out of 9 possible points. If signals_evaluated < 9,
-  NEVER write "X/Y" using signals_evaluated as the denominator (e.g.
-  "3/7" wrongly implies a 7-point scale) — state both numbers separately:
-  "F-Score of 3 out of 9 possible points (only 7 of the 9 signals could
-  be evaluated)". If current_ratio_improving or gross_margin_improving
-  specifically show as unavailable, this is a known limitation for
-  financial institutions (banks, insurers don't report "current assets"
-  or "gross profit" the way other companies do) — say so explicitly and
-  suggest sector-specific metrics (capital adequacy ratio, net interest
-  margin) as a supplement.
 
 USER QUESTION: {question}
 TICKERS: {', '.join(tickers)}
@@ -195,14 +276,7 @@ CONVERSATION HISTORY:
 COMPANY SNAPSHOT:
 {snapshot_context}
 
-HISTORICAL FINANCIALS (only relevant if the question asks about
-multi-year trends — otherwise ignore this section):
-{financial_history_context}
-
-QUANTITATIVE SIGNALS:
-{quant_context if quant_context else "No quantitative signals available."}
-
-SEC FILING DATA:
+{financial_history_section}{quant_section}SEC FILING DATA:
 {sec_context}"""
 
     queue = token_queue_var.get()
