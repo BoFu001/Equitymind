@@ -15,9 +15,9 @@ Score range: -1.0 (very low quality) to +1.0 (very high quality)
 Label:       "high" / "medium" / "low"
 
 This is a pure function — it takes already-fetched data (from
-market_data.get_quality_inputs()) as input and performs no I/O itself,
-same pattern as valuation_signal.py, momentum_signal.py, and
-risk_signal.py.
+quality_reader.get_quality_inputs_from_db()) as input and performs no
+I/O itself, same pattern as valuation_signal.py, momentum_signal.py,
+and risk_signal.py.
 
 Known limitation (disclosed, not corrected): F-Score is a backward-looking
 snapshot of year-over-year accounting changes. It cannot distinguish a
@@ -168,9 +168,10 @@ def quality_signal(quality_inputs: dict | None) -> dict | None:
     Compute a quality signal (Piotroski F-Score) from financial statement data.
 
     Pure function — takes already-fetched data, performs no I/O. Data
-    fetching is done separately by market_data.get_quality_inputs(), called
-    by quant_engine.py before this function runs (same pattern as
-    valuation_signal.py, momentum_signal.py, and risk_signal.py).
+    fetching is done separately by
+    quality_reader.get_quality_inputs_from_db(), called by fetch_data.py
+    before this function runs (same pattern as valuation_signal.py,
+    momentum_signal.py, and risk_signal.py).
 
     Degradation strategy: if fewer than 2 fiscal years of statements are
     available at all, get_quality_inputs() itself returns None and this

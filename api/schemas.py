@@ -94,13 +94,13 @@ class ProgressEvent(BaseModel):
     Allows the UI to show what the agent is doing in real time.
 
     node values match the node names registered in graph.py:
-        classify_top_intent | classify_sub_intent | explain_concept |
-        extract | ensure_sec | market_data | news | report |
-        discovery_suggest | greeting | out_of_scope | clarification |
-        follow_up | no_ticker
+        contextualize_question | classify_top_intent | classify_sub_intent |
+        explain_concept | extract | determine_data_scope | fetch_data |
+        generate_report | out_of_scope | greeting | discovery_suggest |
+        no_ticker | update_session_memory | clarification | quant_engine
 
     Example:
-        {"type": "progress", "node": "fetch", "message": "Fetching SEC 10-K from EDGAR..."}
+        {"type": "progress", "node": "fetch_data", "message": "Collecting company data..."}
     """
     type: Literal["progress"] = "progress"
     node: str = Field(description="LangGraph node name that just started executing.")
