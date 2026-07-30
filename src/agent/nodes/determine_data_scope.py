@@ -51,7 +51,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 # excluded — see module docstring). Kept as a module-level constant so
 # the prompt and the post-response validation step (which drops any
 # value the model returns that isn't in this list) stay in sync.
-VALID_SIGNALS = [
+VALID_DATA_SCOPES = [
     "valuation",
     "momentum",
     "risk",
@@ -98,7 +98,7 @@ Rules:
 
 User question: {question}
 
-Reply with ONLY valid JSON, a single key "signals_needed" with a list of the applicable values from: {VALID_SIGNALS}. No markdown, no explanation. Examples:
+Reply with ONLY valid JSON, a single key "signals_needed" with a list of the applicable values from: {VALID_DATA_SCOPES}. No markdown, no explanation. Examples:
 {{"signals_needed": ["valuation", "momentum", "risk", "quality", "consensus", "news", "financial_history"]}}
 {{"signals_needed": ["consensus"]}}
 {{"signals_needed": ["news"]}}
@@ -114,23 +114,23 @@ Reply with ONLY valid JSON, a single key "signals_needed" with a list of the app
 
     if not content:
         gprint(f"  [determine_data_scope] Empty response from {LLM_MODEL_LIGHT}, defaulting to all signals")
-        return {"signals_needed": list(VALID_SIGNALS)}
+        return {"signals_needed": list(VALID_DATA_SCOPES)}
 
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
         gprint(f"  [determine_data_scope] Invalid JSON: {content}, defaulting to all signals")
-        return {"signals_needed": list(VALID_SIGNALS)}
+        return {"signals_needed": list(VALID_DATA_SCOPES)}
 
     signals_needed = data.get("signals_needed", [])
     # Drop anything the model returned that isn't a recognized value,
     # rather than trusting it blindly — downstream fetch_data
     # dispatches on these strings directly.
-    signals_needed = [s for s in signals_needed if s in VALID_SIGNALS]
+    signals_needed = [s for s in signals_needed if s in VALID_DATA_SCOPES]
 
     if not signals_needed:
         gprint(f"  [determine_data_scope] No valid signals parsed, defaulting to all signals")
-        return {"signals_needed": list(VALID_SIGNALS)}
+        return {"signals_needed": list(VALID_DATA_SCOPES)}
 
     gprint(f"  [determine_data_scope] Signals needed: {signals_needed}")
     return {"signals_needed": signals_needed}

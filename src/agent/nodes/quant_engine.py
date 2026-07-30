@@ -23,7 +23,7 @@ from colors import gprint, mprint
 from src.agent.state import AgentState
 from langgraph.config import get_stream_writer
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.nodes.determine_data_scope import VALID_SIGNALS
+from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
 
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
@@ -65,13 +65,13 @@ def quant_engine(state: AgentState) -> dict:
     quant_signals = {}
 
     all_news              = state.get("news") or {}
-    all_valuation_inputs   = state.get("valuation_inputs") or {}
+    all_valuation_inputs  = state.get("valuation_inputs") or {}
     all_risk_inputs       = state.get("risk_inputs") or {}
     all_quality_inputs    = state.get("quality_inputs") or {}
     all_consensus_inputs  = state.get("consensus_inputs") or {}
-    signals_needed        = state.get("signals_needed") or list(VALID_SIGNALS)
+    signals_needed        = state.get("signals_needed") or list(VALID_DATA_SCOPES)
 
-    for ticker, data in stock_snapshots.items():
+    for ticker in stock_snapshots:
         gprint(f"  [quant_engine] Computing signals for {ticker}")
 
         signals = {}

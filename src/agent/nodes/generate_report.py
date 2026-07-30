@@ -23,7 +23,7 @@ from src.agent.formatters.quality_formatter import format_quality
 from src.agent.formatters.news_sentiment_formatter import format_news_sentiment
 from src.agent.formatters.consensus_formatter import format_consensus
 from src.agent.formatters.financial_history_formatter import format_financial_history
-from src.agent.nodes.determine_data_scope import VALID_SIGNALS
+from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
 from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -127,7 +127,7 @@ def generate_report(state: AgentState) -> dict:
     question              = state.get("contextualized_question") or state["question"]
     tickers               = state.get("tickers") or []
     messages              = state.get("messages") or []
-    signals_needed        = state.get("signals_needed") or list(VALID_SIGNALS)
+    signals_needed        = state.get("signals_needed") or list(VALID_DATA_SCOPES)
     all_stock_snapshots   = state.get("stock_snapshots") or {}
     all_chunks            = state.get("chunks") or {}
     quant_signals         = state.get("quant_signals") or {}

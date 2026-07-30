@@ -32,7 +32,7 @@ from src.readers.quality_reader import get_quality_inputs_from_db
 from src.readers.news_reader import fetch_company_news
 from src.readers.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.readers.financial_history_reader import get_financial_history_rows
-from src.agent.nodes.determine_data_scope import VALID_SIGNALS
+from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
 from src.agent.state import AgentState
 
 from langgraph.config import get_stream_writer
@@ -220,7 +220,7 @@ async def fetch_data(state: AgentState) -> dict:
     question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
     gprint(f"  [fetch_data] question: {question}")
     tickers = state.get("tickers") or []
-    signals_needed = state.get("signals_needed") or list(VALID_SIGNALS)
+    signals_needed = state.get("signals_needed") or list(VALID_DATA_SCOPES)
     gprint(f"  [fetch_data] signals_needed: {signals_needed}")
 
     all_stock_snapshots   = {}
