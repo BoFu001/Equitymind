@@ -6,7 +6,7 @@ Node: Task Classification (Layer 2)
 
 from openai import OpenAI
 
-from config import OPENAI_API_KEY, APP_NAME, LLM_MODEL_LIGHT, CONVERSATION_HISTORY_LIMIT
+from config import OPENAI_API_KEY, APP_NAME, LLM_MODEL, CONVERSATION_HISTORY_LIMIT
 from langgraph.config import get_stream_writer
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
@@ -71,7 +71,7 @@ User question: {question}
 Reply with ONLY the category name. Nothing else."""
 
     response = client.chat.completions.create(
-        model=LLM_MODEL_LIGHT,
+        model=LLM_MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0,
     )

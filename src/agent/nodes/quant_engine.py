@@ -29,6 +29,7 @@ from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
 
 from src.quant.risk_signal import risk_signal
+from src.quant.short_signal import short_signal
 from src.quant.quality_signal import quality_signal
 from src.quant.consensus_signal import consensus_signal
 
@@ -67,6 +68,7 @@ def quant_engine(state: AgentState) -> dict:
     all_news              = state.get("news") or {}
     all_valuation_inputs  = state.get("valuation_inputs") or {}
     all_risk_inputs       = state.get("risk_inputs") or {}
+    all_short_inputs      = state.get("short_inputs") or {}
     all_quality_inputs    = state.get("quality_inputs") or {}
     all_consensus_inputs  = state.get("consensus_inputs") or {}
     data_scope            = state.get("data_scope") or list(VALID_DATA_SCOPES)
@@ -189,6 +191,24 @@ def quant_engine(state: AgentState) -> dict:
             else:
                 signals["consensus"] = None
                 mprint(f"  [consensus] insufficient data")
+
+
+        # ── Step 7: Short Signal ────────────────────────────────────────
+        if "short" not in data_scope:
+            signals["short"] = None
+        else:
+            writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_short"].format(ticker=ticker)})
+            short_inputs = all_short_inputs.get(ticker)
+            short = short_signal(short_inputs)
+            if short is not None:
+                signals["short"] = short
+                mprint(
+                    f"  [short] interest_pct={short['short_interest_pct']} "
+                    f"days_to_cover={short['days_to_cover_label']}"
+                )
+            else:
+                signals["short"] = None
+                mprint(f"  [short] insufficient data")
 
         quant_signals[ticker] = signals
 

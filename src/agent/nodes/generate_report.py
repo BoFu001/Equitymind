@@ -22,6 +22,7 @@ from src.agent.formatters.risk_formatter import format_risk
 from src.agent.formatters.quality_formatter import format_quality
 from src.agent.formatters.news_sentiment_formatter import format_news_sentiment
 from src.agent.formatters.consensus_formatter import format_consensus
+from src.agent.formatters.short_formatter import format_short
 from src.agent.formatters.financial_history_formatter import format_financial_history
 from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
 from colors import gprint
@@ -89,6 +90,23 @@ SIGNAL_NOTES = {
   1.5-2.5 Buy, 2.5-3.5 Hold, 3.5-4.5 Sell, 4.5-5.0 Strong Sell. Do not
   call a mean above 2.5 "bullish". Always mention analyst_count. If the
   target price range is very wide (high > 3x low), flag the divergence.
+""",
+    "short": """\
+- Short Interest data is a SLOW-updating signal (approximately monthly,
+  from FINRA/NASDAQ official reporting) - ALWAYS state the reporting
+  date shown in the data alongside any percentage or ratio; a number
+  with no date is not meaningfully interpretable.
+- The three components carry DIFFERENT evidentiary weight - never
+  present them with equal confidence. Short Interest level has
+  well-established peer-reviewed academic support (Asquith, Pathak and
+  Ritter 2005; Boehmer, Jones and Zhang 2008) and can be stated as a
+  primary signal. Days to Cover is a liquidity/squeeze-risk indicator
+  ONLY, not a directional predictor - its "elevated" threshold is an
+  industry-practice convention, not a peer-reviewed statistic; never
+  phrase it as "more bearish". Month-over-month change is DESCRIPTIVE
+  CONTEXT ONLY - academic evidence on whether it predicts returns is
+  mixed and inconclusive; never present it as an independent signal
+  or combine it with the other two into one verdict.
 """,
     "news": """\
 - News Sentiment reflects MEDIA TONE (how recent news articles are
@@ -159,28 +177,25 @@ def generate_report(state: AgentState) -> dict:
         # docstring (2026-07-27) for why this was always the planned
         # end state, deferred until this routing node existed.
         signals = quant_signals.get(t, {})
-        objective_parts = []
+        signal_parts = []
         if "valuation" in data_scope:
-            objective_parts.append(format_valuation(signals.get("valuation")))
+            signal_parts.append(format_valuation(signals.get("valuation")))
         if "momentum" in data_scope:
-            objective_parts.append(format_momentum(signals.get("momentum")))
+            signal_parts.append(format_momentum(signals.get("momentum")))
         if "risk" in data_scope:
-            objective_parts.append(format_risk(signals.get("risk")))
+            signal_parts.append(format_risk(signals.get("risk")))
         if "quality" in data_scope:
-            objective_parts.append(format_quality(signals.get("quality")))
+            signal_parts.append(format_quality(signals.get("quality")))
 
-        subjective_parts = []
         if "news" in data_scope:
-            subjective_parts.append(format_news_sentiment(signals.get("news_sentiment")))
+            signal_parts.append(format_news_sentiment(signals.get("news_sentiment")))
         if "consensus" in data_scope:
-            subjective_parts.append(format_consensus(signals.get("consensus")))
+            signal_parts.append(format_consensus(signals.get("consensus")))
+        if "short" in data_scope:
+            signal_parts.append(format_short(signals.get("short")))
 
-        if objective_parts or subjective_parts:
-            ticker_quant_text = f"\n{t} Quantitative Signals:\n"
-            if objective_parts:
-                ticker_quant_text += "\n  Objective Financial Metrics:\n" + "".join(objective_parts)
-            if subjective_parts:
-                ticker_quant_text += "\n  Market Sentiment & Opinion (subjective, not objective calculations):\n" + "".join(subjective_parts)
+        if signal_parts:
+            ticker_quant_text = f"\n{t} Quantitative Signals:\n" + "".join(signal_parts)
             quant_parts.append(ticker_quant_text)
 
         # Historical financials: fetched by fetch_data.py's

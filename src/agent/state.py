@@ -32,7 +32,7 @@ class AgentState(TypedDict):
     # after tickers are confirmed, before fetch_data. snapshot is always
     # fetched regardless (basic company info any question may reference) and
     # is not part of this list. See determine_data_scope.py.
-    data_scope: Optional[list[str]]         # subset of: valuation, momentum, risk, quality, consensus, news (computed signals), financial_history (raw data display, not a computed signal)
+    data_scope: Optional[list[str]]         # subset of: valuation, momentum, risk, quality, consensus, news, short (computed signals), financial_history (raw data display, not a computed signal)
     
     # News and sentiment
     news: Optional[list]                    # recent news articles with sentiment scores
@@ -50,6 +50,7 @@ class AgentState(TypedDict):
     quality_inputs: Optional[dict]          # financial statements — for Quality Signal
     consensus_inputs: Optional[dict]        # analyst rating history — for Consensus Signal
     financial_history_data: Optional[dict]  # multi-year financials (all 26 metrics) — for HISTORICAL FINANCIALS prompt section, fetched by fetch_data (moved from generate_report.py 2026-07-27, see fetch_data.py)
+    short_inputs: Optional[dict]            # short interest, days to cover, MoM change — for Short Signal, fetched by fetch_data (see short_reader.py)
 
     # Quantitative signals — Layer 2
     quant_signals: Optional[dict]           # computed by quant_engine node
@@ -99,6 +100,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "quality_inputs": {},
         "consensus_inputs": {},
         "financial_history_data": {},
+        "short_inputs": {},
         "quant_signals": {},
         "answer":      "",
     }

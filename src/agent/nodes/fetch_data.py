@@ -32,6 +32,7 @@ from src.readers.quality_reader import get_quality_inputs_from_db
 from src.readers.news_reader import fetch_company_news
 from src.readers.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.readers.financial_history_reader import get_financial_history_rows
+from src.readers.short_reader import get_short_inputs
 from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
 from src.agent.state import AgentState
 
@@ -85,6 +86,19 @@ def _fetch_risk_inputs(ticker: str) -> dict | None:
 
     data = get_risk_inputs(ticker)
     bprint(f"  [_fetch_risk_inputs] Fetched for {ticker}")
+    return data
+
+
+# ─────────────────────────────────────────────
+# Short Signal inputs (short interest, days to cover, MoM change)
+# ─────────────────────────────────────────────
+
+def _fetch_short_inputs(ticker: str) -> dict | None:
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["short_fetch"].format(ticker=ticker)})
+
+    data = get_short_inputs(ticker)
+    bprint(f"  [_fetch_short_inputs] Fetched for {ticker}")
     return data
 
 
@@ -231,6 +245,7 @@ async def fetch_data(state: AgentState) -> dict:
     all_news              = {}
     all_chunks            = {}
     all_financial_history = {}
+    all_short             = {}
 
     for ticker in tickers:
         tasks = {
@@ -249,6 +264,8 @@ async def fetch_data(state: AgentState) -> dict:
             tasks["news"] = asyncio.to_thread(_fetch_news, ticker)
         if "financial_history" in data_scope:
             tasks["financial_history"] = asyncio.to_thread(_fetch_financial_history, ticker)
+        if "short" in data_scope:
+            tasks["short"] = asyncio.to_thread(_fetch_short_inputs, ticker)
 
         results = dict(zip(tasks.keys(), await asyncio.gather(*tasks.values())))
 
@@ -268,6 +285,8 @@ async def fetch_data(state: AgentState) -> dict:
             all_chunks[ticker] = results["sec"]
         if results.get("financial_history"):
             all_financial_history[ticker] = results["financial_history"]
+        if results.get("short"):
+            all_short[ticker] = results["short"]
 
     gprint(f"  [fetch_data] Completed for {len(tickers)} ticker(s)")
 
@@ -280,4 +299,5 @@ async def fetch_data(state: AgentState) -> dict:
         "news":                   all_news,
         "chunks":                 all_chunks,
         "financial_history_data": all_financial_history,
+        "short_inputs":           all_short,
     }
