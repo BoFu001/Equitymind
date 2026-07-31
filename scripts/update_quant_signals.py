@@ -188,7 +188,7 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
 
     if not skip_quality:
         # Reads from financial_history (DB) instead of calling yfinance
-        # live — see src/tools/quality_reader.py for why.
+        # live — see src/readers/quality_reader.py for why.
         quality_inputs = get_quality_inputs_from_db(ticker)
         quality_result = quality_signal(quality_inputs)
         quality_score = _to_float(quality_result.get("quality_score") if quality_result else None)

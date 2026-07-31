@@ -1,7 +1,7 @@
 """
 src/agent/formatters/sec_formatter.py
 
-Formats SEC filing chunks (retrieved via src/tools/sec_retrieval.py's
+Formats SEC filing chunks (retrieved via src/readers/sec_retrieval.py's
 pgvector similarity search) for the LLM.
 
 Split out from the former single-file formatters.py on 2026-07-27,

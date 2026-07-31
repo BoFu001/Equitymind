@@ -7,7 +7,7 @@ ticker — the only formatter left in __init__.py until now.
 Split out on 2026-07-27, alongside the other per-signal formatters,
 so __init__.py contains no logic of its own (just re-exports),
 matching the convention used elsewhere in the project (e.g.
-src/tools/__init__.py).
+src/readers/__init__.py).
 
 Deliberately does NOT include format_stock_snapshot, format_sec_chunks,
 format_conversation_context, or format_financial_history — those are

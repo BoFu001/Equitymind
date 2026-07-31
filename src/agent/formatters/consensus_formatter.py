@@ -7,7 +7,7 @@ src/quant/consensus_signal.py for the data this consumes.
 Split out from the former single-file formatters.py on 2026-07-27 —
 first of the format_xxx() functions to be moved into its own file, one
 per data point, matching the same principle already applied to
-src/tools/ (snapshot_reader.py, risk_reader.py, consensus_reader.py,
+src/readers/ (snapshot_reader.py, risk_reader.py, consensus_reader.py,
 quality_reader.py). The rest of formatters.py's functions remain in
 __init__.py for now and will be moved out one at a time as each
 signal's data flow gets reviewed — see project notes, 2026-07-27.

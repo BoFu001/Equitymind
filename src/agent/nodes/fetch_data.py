@@ -94,7 +94,7 @@ def _fetch_risk_inputs(ticker: str) -> dict | None:
 
 def _fetch_quality_inputs(ticker: str) -> dict | None:
     # Reads from financial_history (DB) instead of calling yfinance
-    # live — see src/tools/quality_reader.py for why, and
+    # live — see src/readers/quality_reader.py for why, and
     # why there is deliberately no live-yfinance fallback here.
     writer = get_stream_writer()
     writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["quality_fetch"].format(ticker=ticker)})

@@ -951,7 +951,7 @@ def make_article(**kwargs) -> dict:
     """
     Create a minimal mock article dict for news sentiment testing.
     NOTE: as of the data-layer/compute-layer split, articles reaching
-    news_sentiment_signal() are already filtered (see src/tools/news_reader.py)
+    news_sentiment_signal() are already filtered (see src/readers/news_reader.py)
     and not yet scored — "sentiment"/"score" here represent what FinBERT
     would assign, used only to construct pre-scored fixtures for these
     aggregation-focused tests (the real function scores title+summary

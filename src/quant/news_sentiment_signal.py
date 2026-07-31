@@ -6,7 +6,7 @@ News Sentiment Signal — Layer 2 Quantitative Intelligence.
 Pure compute-layer module: scores already-fetched, already-filtered
 news articles with FinBERT and aggregates them into a single sentiment
 signal. Does no data fetching and no relevance filtering — both of
-those are handled upstream by src/tools/news_reader.py, consistent with
+those are handled upstream by src/readers/news_reader.py, consistent with
 the project's data-layer / compute-layer separation.
 
 This measures MEDIA sentiment specifically — how outlets are currently

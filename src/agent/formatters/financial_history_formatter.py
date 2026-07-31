@@ -2,7 +2,7 @@
 src/agent/formatters/financial_history_formatter.py
 
 Formats multi-year financial_history rows (see
-src/tools/financial_history_reader.py) into a plain-text
+src/readers/financial_history_reader.py) into a plain-text
 year-over-year table for the LLM.
 
 Split out from the former single-file formatters.py on 2026-07-27,
