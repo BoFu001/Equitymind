@@ -1,5 +1,5 @@
 """
-src/tools/risk_reader.py
+src/readers/risk_reader.py
 
 Fetches raw time-series data needed for Risk Signal Engine calculations
 (Beta, Sharpe Ratio, VaR, Max Drawdown) — the ticker's own price history

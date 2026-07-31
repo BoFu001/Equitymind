@@ -1,5 +1,5 @@
 """
-src/tools/news_reader.py
+src/readers/news_reader.py
 
 News Data Acquisition — fetches and filters company news, with no
 sentiment scoring. This is a pure data-layer module: it retrieves raw

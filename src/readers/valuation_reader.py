@@ -1,5 +1,5 @@
 """
-src/tools/valuation_reader.py
+src/readers/valuation_reader.py
 
 Fetches the point-in-time ratios valuation_signal() needs — a
 separate yfinance .info call from snapshot_reader.py's

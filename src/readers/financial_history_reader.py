@@ -1,5 +1,5 @@
 """
-src/tools/financial_history_reader.py
+src/readers/financial_history_reader.py
 
 Reads the FULL set of financial_history rows (all periods, all 26
 metrics) for a ticker — used when the user's question asks about

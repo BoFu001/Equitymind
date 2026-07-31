@@ -1,5 +1,5 @@
 """
-src/tools/consensus_reader.py
+src/readers/consensus_reader.py
 
 Fetches ALL data Consensus Signal Engine needs (Beta, recommendation
 trend AND the point-in-time analyst fields), independently of

@@ -1,5 +1,5 @@
 """
-src/tools/quality_reader.py
+src/readers/quality_reader.py
 
 Reads Quality signal inputs from the financial_history table (see
 scripts/init_db_financial_history.py / update_financial_history.py)

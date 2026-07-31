@@ -1,5 +1,5 @@
 """
-src/tools/snapshot_reader.py
+src/readers/snapshot_reader.py
 
 Fetches a single point-in-time snapshot of company fundamentals for
 a ticker — one yfinance .info call, shared by multiple consumers
