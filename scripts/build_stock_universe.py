@@ -2,7 +2,8 @@
 scripts/build_stock_universe.py
 
 Builds the candidate stock universe for EquityMind's Layer 2 batch signal
-computation — top 200 large-cap US stocks by market cap.
+computation — top TOP_N large-cap US stocks by market cap (see
+TOP_N below; currently 250).
 
 Data source: yfinance only. No web scraping, no third-party constituent
 APIs (FMP's legacy S&P 500/Nasdaq constituent endpoints were deprecated
@@ -11,7 +12,7 @@ in August 2025 and return 403 for all current accounts).
 CANDIDATE_POOL below is a static list of well-known large-cap US tickers
 spanning major sectors — a reasonable, broad starting universe, not an
 official index constituent list. The script ranks this pool by current
-market cap and keeps the top 200.
+market cap and keeps the top TOP_N.
 
 Every candidate is also checked via scripts/currency_check.py before
 being ranked — this universe is required to be pure-USD-reporting
