@@ -6,8 +6,8 @@ signal store — creates the quant_signals table in the same PostgreSQL
 database used for sec_chunks and financial_history.
 
 Design: each signal's COMPLETE return dict (from valuation_signal(),
-momentum_signal(), risk_signal(), quality_signal(), consensus_signal())
-is stored verbatim in a JSONB column — not hand-picked into separate
+momentum_signal(), risk_signal(), quality_signal(), consensus_signal(),
+short_signal()) is stored verbatim in a JSONB column — not hand-picked into separate
 flat columns. This guarantees the cached path and the live-computation
 path are always identical: format_valuation(), format_risk(), etc. can
 be called on either json.loads(row["valuation_data"]) or a live
@@ -53,7 +53,7 @@ Quality result was computed from (distinct from quality_computed_at,
 which only says when). Lets update_quant_signals.py skip recomputing
 Quality when financial_history has no newer annual period than this.
 Nullable — unlike financial_history's one-row-per-period design, this
-table has one row per ticker covering all 5 signals, so a missing
+table has one row per ticker covering all 6 signals, so a missing
 Quality result must not block the row's other signals from being written.
 
 Run once to create the table:
@@ -109,7 +109,13 @@ def init():
             consensus_recommendation_score  REAL,
             consensus_upside_score          REAL,
             consensus_trend_score           REAL,
-            consensus_computed_at           TIMESTAMP
+            consensus_computed_at           TIMESTAMP,
+
+            -- Short (see short_signal.py)
+            short_data                      JSONB,
+            short_interest_pct              REAL,
+            days_to_cover                   REAL,
+            short_computed_at               TIMESTAMP
         );
     """)
 

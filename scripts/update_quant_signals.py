@@ -1,11 +1,11 @@
 """
 scripts/update_quant_signals.py
 
-Quant Signal Updater for EquityMind Layer 2 — computes all 5 cacheable
-signals (Valuation, Momentum, Risk, Quality, Consensus — News Sentiment
-is deliberately excluded, see quant_signals table docstring) for every
-ticker in stock_universe.json and stores them in the quant_signals
-table (see init_db_quant_signals.py).
+Quant Signal Updater for EquityMind Layer 2 — computes all 6 cacheable
+signals (Valuation, Momentum, Risk, Quality, Consensus, Short — News
+Sentiment is deliberately excluded, see quant_signals table docstring)
+for every ticker in stock_universe.json and stores them in the
+quant_signals table (see init_db_quant_signals.py).
 
 Each signal's COMPLETE return dict is stored verbatim as JSONB — the
 exact same dict shape that quant_engine.py produces when computing
@@ -47,11 +47,13 @@ from src.readers.valuation_reader import get_valuation_inputs
 from src.readers.risk_reader import get_risk_inputs
 from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.readers.quality_reader import get_quality_inputs_from_db
+from src.readers.short_reader import get_short_inputs
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
 from src.quant.risk_signal import risk_signal
 from src.quant.quality_signal import quality_signal
 from src.quant.consensus_signal import consensus_signal
+from src.quant.short_signal import short_signal
 from scripts.currency_check import is_usd_reporter
 
 load_dotenv()
@@ -154,10 +156,13 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
         if consensus_snapshot else None
     )
 
-    val_result       = valuation_signal(valuation_inputs) if valuation_inputs else None
-    mom_result       = momentum_signal(ticker)
-    risk_result      = risk_signal(risk_inputs)
-    consensus_result = consensus_signal(consensus_data)
+    short_inputs = get_short_inputs(ticker)
+
+    val_result        = valuation_signal(valuation_inputs) if valuation_inputs else None
+    mom_result        = momentum_signal(ticker)
+    risk_result       = risk_signal(risk_inputs)
+    consensus_result  = consensus_signal(consensus_data)
+    short_result      = short_signal(short_inputs)
 
     valuation_score      = _to_float(val_result.get("valuation_score") if val_result else None)
     momentum_12_1_score  = _to_float(mom_result.get("momentum_12_1_score") if mom_result else None)
@@ -171,6 +176,9 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
     consensus_recommendation_score = _to_float(consensus_result.get("recommendation_score") if consensus_result else None)
     consensus_upside_score         = _to_float(consensus_result.get("upside_score") if consensus_result else None)
     consensus_trend_score          = _to_float(consensus_result.get("trend_score") if consensus_result else None)
+
+    short_interest_pct  = _to_float(short_result.get("short_interest_pct") if short_result else None)
+    days_to_cover       = _to_float(short_result.get("days_to_cover") if short_result else None)
 
     row = (
         ticker,
@@ -204,13 +212,16 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
         consensus_recommendation_score,
         consensus_upside_score,
         consensus_trend_score,
+        Json(short_result) if short_result else None,
+        short_interest_pct,
+        days_to_cover,
     )
 
     return row
 
 
 # Used when Quality WAS recomputed this run (skip_quality=False) —
-# writes all 5 signals, including the 3 quality_* columns.
+# writes all 6 signals, including the 3 quality_* columns.
 INSERT_SQL_WITH_QUALITY = """
     INSERT INTO quant_signals (
         ticker,
@@ -218,7 +229,8 @@ INSERT_SQL_WITH_QUALITY = """
         momentum_data, momentum_12_1_score, position_52w_score, momentum_computed_at,
         risk_data, risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score, risk_computed_at,
         quality_data, quality_score, quality_period_end, quality_computed_at,
-        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at
+        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at,
+        short_data, short_interest_pct, days_to_cover, short_computed_at
     )
     VALUES %s
     ON CONFLICT (ticker) DO UPDATE SET
@@ -243,11 +255,15 @@ INSERT_SQL_WITH_QUALITY = """
         consensus_recommendation_score = EXCLUDED.consensus_recommendation_score,
         consensus_upside_score = EXCLUDED.consensus_upside_score,
         consensus_trend_score = EXCLUDED.consensus_trend_score,
-        consensus_computed_at = NOW();
+        consensus_computed_at = NOW(),
+        short_data = EXCLUDED.short_data,
+        short_interest_pct = EXCLUDED.short_interest_pct,
+        days_to_cover = EXCLUDED.days_to_cover,
+        short_computed_at = NOW();
 """
 TEMPLATE_WITH_QUALITY = (
     "(%s, %s, %s, NOW(), %s, %s, %s, NOW(), %s, %s, %s, %s, %s, NOW(), "
-    "%s, %s, %s, NOW(), %s, %s, %s, %s, NOW())"
+    "%s, %s, %s, NOW(), %s, %s, %s, %s, NOW(), %s, %s, %s, NOW())"
 )
 
 # Used when Quality was SKIPPED this run (skip_quality=True) — the
@@ -261,6 +277,7 @@ INSERT_SQL_SKIP_QUALITY = """
         momentum_data, momentum_12_1_score, position_52w_score, momentum_computed_at,
         risk_data, risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score, risk_computed_at,
         consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at
+        short_data, short_interest_pct, days_to_cover, short_computed_at
     )
     VALUES %s
     ON CONFLICT (ticker) DO UPDATE SET
@@ -281,11 +298,15 @@ INSERT_SQL_SKIP_QUALITY = """
         consensus_recommendation_score = EXCLUDED.consensus_recommendation_score,
         consensus_upside_score = EXCLUDED.consensus_upside_score,
         consensus_trend_score = EXCLUDED.consensus_trend_score,
-        consensus_computed_at = NOW();
+        consensus_computed_at = NOW(),
+        short_data = EXCLUDED.short_data,
+        short_interest_pct = EXCLUDED.short_interest_pct,
+        days_to_cover = EXCLUDED.days_to_cover,
+        short_computed_at = NOW();
 """
 TEMPLATE_SKIP_QUALITY = (
     "(%s, %s, %s, NOW(), %s, %s, %s, NOW(), %s, %s, %s, %s, %s, NOW(), "
-    "%s, %s, %s, %s, NOW())"
+    "%s, %s, %s, %s, NOW(), %s, %s, %s, NOW())"
 )
 
 
@@ -295,7 +316,7 @@ def update_quant_signals():
 
     tickers = _load_target_tickers()
     print(f"\nUniverse size: {len(tickers)} tickers")
-    print("Computing 5 signals per ticker and writing to quant_signals...\n")
+    print("Computing 6 signals per ticker and writing to quant_signals...\n")
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
