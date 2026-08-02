@@ -28,12 +28,7 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 TOP_N = 250
 
-# ─────────────────────────────────────────────
-# Static candidate pool — well-known large-cap US tickers across sectors.
-# Not an official index list; the script ranks these by market cap and
-# keeps the top TOP_N, so this just needs to be broad enough to cover
-# the companies actually worth including.
-# ─────────────────────────────────────────────
+# Candidate pool, ranked by market cap; only USD financial reporters pass.
 CANDIDATE_POOL = [
     # Technology / Software / Internet
     "AAPL", "MSFT", "NVDA", "GOOGL", "GOOG", "META", "AMZN", "AVGO", "ORCL",
@@ -180,12 +175,11 @@ def build_stock_universe():
     print("Writing ranked universe to stock_universe table...")
     for entry in top_ranked:
         cursor.execute("""
-            INSERT INTO stock_universe (ticker, market_cap, company_name, updated_at)
-            VALUES (%s, %s, %s, NOW())
+            INSERT INTO stock_universe (ticker, market_cap, company_name)
+            VALUES (%s, %s, %s)
             ON CONFLICT (ticker) DO UPDATE SET
                 market_cap = EXCLUDED.market_cap,
-                company_name = EXCLUDED.company_name,
-                updated_at = NOW();
+                company_name = EXCLUDED.company_name;
         """, (entry["symbol"], entry["market_cap"], entry["company_name"]))
     conn.commit()
 

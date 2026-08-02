@@ -66,7 +66,7 @@ def update_peer_groups():
         if excluded:
             print(f"  [{ticker}] Excluded non-USD peers: {excluded}")
         cursor.execute(
-            "UPDATE stock_universe SET peers = %s WHERE ticker = %s",
+            "UPDATE stock_universe SET peers = %s, updated_at = NOW() WHERE ticker = %s",
             (Json(peers), ticker),
         )
         if peers:
