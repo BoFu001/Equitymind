@@ -32,24 +32,24 @@ name or ticker matching:
     The fix: match on a company's "common_name" — the short name a
     headline would actually use — precomputed via LLM for the whole
     stock universe (see scripts/update_common_names.py) and stored in
-    stock_universe.json. Matching on common_name alone (not ticker)
-    naturally avoids the ETF noise from problem 1, since those products
-    are named after the ticker, not the common name.
+    the stock_universe table. Matching on common_name alone (not
+    ticker) naturally avoids the ETF noise from problem 1, since those
+    products are named after the ticker, not the common name.
 """
 
-import json
-from pathlib import Path
-
+import os
+import psycopg2
 import requests
 import yfinance as yf
 from datetime import datetime, timedelta
 from openai import OpenAI
+from dotenv import load_dotenv
 
 from config import FINLIGHT_API_KEY, OPENAI_API_KEY, LLM_MODEL_LIGHT
 
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 client = OpenAI(api_key=OPENAI_API_KEY)
-
-UNIVERSE_PATH = Path(__file__).parent.parent / "quant" / "data" / "stock_universe.json"
 
 
 # ─────────────────────────────────────────────
@@ -61,29 +61,29 @@ def _get_common_name(ticker: str) -> str:
     Returns the short, common name a news headline would use for this
     company (e.g. "Tesla" for "Tesla, Inc.").
 
-    Looks up stock_universe.json first, since common_name is precomputed
-    there for the whole 250-ticker universe (see
-    scripts/update_common_names.py) — this is the fast, free path for
-    any ticker already in the universe, and covers the vast majority of
-    real traffic.
+    Looks up the stock_universe table first — this is the fast, free
+    path for any ticker already in the universe, and covers the vast
+    majority of real traffic.
 
     Falls back to a live yfinance lookup + LLM call only for tickers NOT
     in the universe (e.g. small-caps, recent IPOs) — this result is not
     cached, since it's expected to be an occasional exception, not the
-    common case. This module resolves the full legal name itself in that
-    fallback case (rather than requiring the caller to supply it), so
-    that news fetching has no dependency on any other data source
-    (e.g. fetch_data's stock_snapshot) and can run fully in parallel
-    with it.
+    common case.
     """
     try:
-        with open(UNIVERSE_PATH, "r") as f:
-            universe = json.load(f)
-        details = universe.get("details", {})
-        if ticker in details and "common_name" in details[ticker]:
-            print(f"  [_get_common_name] {ticker}: UNIVERSE HIT — {details[ticker]['common_name']!r}")
-            return details[ticker]["common_name"]
-    except (FileNotFoundError, json.JSONDecodeError):
+        conn = psycopg2.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT common_name FROM stock_universe WHERE ticker = %s",
+            (ticker,),
+        )
+        row = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if row and row[0]:
+            print(f"  [_get_common_name] {ticker}: UNIVERSE HIT — {row[0]!r}")
+            return row[0]
+    except Exception:
         pass
 
     # Fallback: ticker not in the precomputed universe. Resolve the full
