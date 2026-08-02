@@ -1,44 +1,31 @@
 """
 scripts/build_stock_universe.py
 
-Builds the candidate stock universe for EquityMind's Layer 2 batch signal
-computation — top TOP_N large-cap US stocks by market cap (see
-TOP_N below; currently 250).
+Ranks CANDIDATE_POOL by market cap (yfinance), keeps the top TOP_N
+USD-reporting companies, and writes ticker/market_cap/company_name to
+the stock_universe table. Tickers no longer in the top TOP_N are
+deleted (current-snapshot table, not accumulating history).
 
-Data source: yfinance only. No web scraping, no third-party constituent
-APIs (FMP's legacy S&P 500/Nasdaq constituent endpoints were deprecated
-in August 2025 and return 403 for all current accounts).
-
-CANDIDATE_POOL below is a static list of well-known large-cap US tickers
-spanning major sectors — a reasonable, broad starting universe, not an
-official index constituent list. The script ranks this pool by current
-market cap and keeps the top TOP_N.
-
-Every candidate is also checked via scripts/currency_check.py before
-being ranked — this universe is required to be pure-USD-reporting
-companies only (see 2026-07-23 removal of TSM/ASML/TM/SPOT after
-discovering their financial_history figures were in JPY/TWD/EUR, not
-USD, silently corrupting cross-company comparisons). The same check
-is reused by update_quant_signals.py and update_financial_history.py.
+common_name and peers are written separately by
+update_common_names.py and update_peer_groups.py.
 
 Usage:
     python scripts/build_stock_universe.py
-
-Output:
-    src/quant/data/stock_universe.json
 """
 
-import json
+import os
 import sys
+import psycopg2
 import yfinance as yf
-from datetime import date
 from pathlib import Path
+from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from scripts.currency_check import is_usd_reporter
 
-OUTPUT_PATH = Path(__file__).parent.parent / "src" / "quant" / "data" / "stock_universe.json"
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 TOP_N = 250
 
 # ─────────────────────────────────────────────
@@ -118,18 +105,13 @@ CANDIDATE_POOL = [
 ]
 
 
-def rank_by_market_cap(symbols: list[str], top_n: int) -> list[dict]:
+def fetch_candidate_data(symbols: list[str]) -> list[dict]:
     """
-    Fetch market cap and company name for each ticker via yfinance, and
-    return the top_n by market cap, sorted descending. Skips any ticker
-    that fails to fetch or has no market cap data.
-
-    Company name is captured here (not just market cap) so this same
-    single pass of yfinance calls can also produce a ticker<->company-name
-    lookup table — used as a fallback when extract_parameters' LLM-based
-    name-to-ticker conversion fails (e.g. for less-famous companies).
+    Fetches market cap and company name for each ticker via yfinance.
+    Skips tickers with no market cap data. No currency filtering or
+    ranking here — see filter_usd_reporters() and rank_by_market_cap().
     """
-    ranked = []
+    fetched = []
     seen = set()
     for i, symbol in enumerate(symbols):
         if symbol in seen:
@@ -140,10 +122,7 @@ def rank_by_market_cap(symbols: list[str], top_n: int) -> list[dict]:
             market_cap = info.get("marketCap")
             company_name = info.get("longName") or info.get("shortName")
             if market_cap:
-                if not is_usd_reporter(symbol):
-                    print(f"    Skipping {symbol}: non-USD financial reporting")
-                    continue
-                ranked.append({
+                fetched.append({
                     "symbol": symbol,
                     "market_cap": market_cap,
                     "company_name": company_name,
@@ -154,42 +133,66 @@ def rank_by_market_cap(symbols: list[str], top_n: int) -> list[dict]:
         if (i + 1) % 50 == 0:
             print(f"    ...processed {i + 1}/{len(symbols)}")
 
-    ranked.sort(key=lambda x: x["market_cap"], reverse=True)
+    return fetched
+
+
+def filter_usd_reporters(candidates: list[dict]) -> list[dict]:
+    """Removes candidates not reporting financials in USD."""
+    filtered = []
+    for c in candidates:
+        if is_usd_reporter(c["symbol"]):
+            filtered.append(c)
+        else:
+            print(f"    Skipping {c['symbol']}: non-USD financial reporting")
+    return filtered
+
+
+def rank_by_market_cap(candidates: list[dict], top_n: int) -> list[dict]:
+    """
+    Sorts candidates by market cap descending and returns the top_n.
+    Pure sort-and-truncate — no fetching, no filtering (see
+    fetch_candidate_data() and filter_usd_reporters() for those steps).
+    """
+    ranked = sorted(candidates, key=lambda x: x["market_cap"], reverse=True)
     return ranked[:top_n]
 
 
 def build_stock_universe():
     print("EquityMind — Stock Universe Builder")
-    print(f"Output: {OUTPUT_PATH}")
     print("=" * 50)
     print(f"\nCandidate pool: {len(CANDIDATE_POOL)} tickers")
-    print("Fetching market caps and ranking...")
+    print("Fetching market caps...")
 
-    top_ranked = rank_by_market_cap(CANDIDATE_POOL, TOP_N)
+    candidates = fetch_candidate_data(CANDIDATE_POOL)
+    candidates = filter_usd_reporters(candidates)
+    top_ranked = rank_by_market_cap(candidates, TOP_N)
+    tickers = [entry["symbol"] for entry in top_ranked]
 
-    universe = [entry["symbol"] for entry in top_ranked]
-    details = {
-        entry["symbol"]: {
-            "market_cap": entry["market_cap"],
-            "company_name": entry["company_name"],
-        }
-        for entry in top_ranked
-    }
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
 
-    output = {
-        "updated_at": str(date.today()),
-        "description": f"Top {TOP_N} US large-cap stocks by market cap, "
-                        f"selected from a static candidate pool of "
-                        f"{len(CANDIDATE_POOL)} well-known tickers.",
-        "total_tickers": len(universe),
-        "tickers": universe,
-        "details": details,
-    }
+    print("\nRemoving tickers no longer in the universe...")
+    cursor.execute("DELETE FROM stock_universe WHERE ticker != ALL(%s)", (tickers,))
+    removed = cursor.rowcount
+    conn.commit()
+    print(f"  Removed {removed} ticker(s) no longer in the top {TOP_N}.\n")
 
-    with open(OUTPUT_PATH, "w") as f:
-        json.dump(output, f, indent=2)
+    print("Writing ranked universe to stock_universe table...")
+    for entry in top_ranked:
+        cursor.execute("""
+            INSERT INTO stock_universe (ticker, market_cap, company_name, updated_at)
+            VALUES (%s, %s, %s, NOW())
+            ON CONFLICT (ticker) DO UPDATE SET
+                market_cap = EXCLUDED.market_cap,
+                company_name = EXCLUDED.company_name,
+                updated_at = NOW();
+        """, (entry["symbol"], entry["market_cap"], entry["company_name"]))
+    conn.commit()
 
-    print(f"\n✓ stock_universe.json written — {len(universe)} tickers")
+    cursor.close()
+    conn.close()
+
+    print(f"\n✓ stock_universe table updated — {len(tickers)} tickers")
 
 
 if __name__ == "__main__":
