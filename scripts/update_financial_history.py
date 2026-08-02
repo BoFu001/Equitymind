@@ -3,8 +3,8 @@ scripts/update_financial_history.py
 
 Financial History Updater for EquityMind Layer 2 — pulls both annual
 and quarterly financial statement data (income statement, cash flow,
-balance sheet) for every ticker in stock_universe.json and stores it
-in the financial_history table (see init_db_financial_history.py).
+balance sheet) for every ticker in the stock_universe table and
+stores it in financial_history (see init_db_financial_history.py).
 
 Two independent write paths, sharing the same 26-metric mapping,
 database connection, retry/timeout handling, and INSERT template.
@@ -49,7 +49,6 @@ Usage:
 Requires: yfinance, psycopg2, python-dotenv (already in project env)
 """
 
-import json
 import math
 import os
 import sys
@@ -74,21 +73,21 @@ def _load_target_tickers() -> list[str]:
     """
     Returns the UNION of the current 250-ticker universe and every
     ticker already present in financial_history — not just the current
-    universe alone. This table is deliberately append-only: a ticker
-    that once entered the universe keeps its accumulated history
-    forever, even after it later drops out of the top 250. See
+    universe alone. financial_history is append-only: a ticker that
+    once entered the universe keeps its accumulated history forever,
+    even after it later drops out of the top 250. See
     update_quant_signals.py for the opposite policy (that table IS
     synced strictly to the current universe).
     """
-    universe_path = Path(__file__).parent.parent / "src" / "quant" / "data" / "stock_universe.json"
-    with open(universe_path, "r") as f:
-        universe = json.load(f)
-    current_universe = set(universe["tickers"])
-
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
+
+    cursor.execute("SELECT ticker FROM stock_universe")
+    current_universe = {row[0] for row in cursor.fetchall()}
+
     cursor.execute("SELECT DISTINCT ticker FROM financial_history")
     already_tracked = {row[0] for row in cursor.fetchall()}
+
     cursor.close()
     conn.close()
 
