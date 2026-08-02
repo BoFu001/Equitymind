@@ -34,7 +34,7 @@ as new annual reports are filed; there is no fixed cap, and the system
 should state actual coverage to users rather than implying a fixed
 history length.
 
-26 metrics across the three statements (income statement, cash flow,
+33 metrics across the three statements (income statement, cash flow,
 balance sheet) — all sourced from the same three yfinance calls
 already made per ticker for get_quality_inputs(), so this adds no
 extra API cost beyond what the project already does. Not every
@@ -71,7 +71,7 @@ def init():
             ticker                              TEXT NOT NULL,
             period_end                          DATE NOT NULL,
 
-            -- Income statement (13 columns)
+            -- Income statement (14 columns)
             total_revenue                       NUMERIC,
             cost_of_revenue                     NUMERIC,
             gross_profit                        NUMERIC,
@@ -85,15 +85,17 @@ def init():
             net_income                          NUMERIC,
             diluted_eps                         NUMERIC,
             basic_eps                           NUMERIC,
+            interest_expense                    NUMERIC,
 
-            -- Cash flow statement (5 columns)
+            -- Cash flow statement (6 columns)
             operating_cash_flow                 NUMERIC,
             capital_expenditure                 NUMERIC,
             free_cash_flow                      NUMERIC,
             repurchase_of_capital_stock         NUMERIC,
             cash_dividends_paid                 NUMERIC,
+            depreciation_amortization_depletion NUMERIC,
 
-            -- Balance sheet (8 columns)
+            -- Balance sheet (13 columns)
             total_assets                        NUMERIC,
             total_liabilities                   NUMERIC,
             stockholders_equity                 NUMERIC,
@@ -102,6 +104,11 @@ def init():
             current_assets                      NUMERIC,
             current_liabilities                 NUMERIC,
             shares_outstanding                  NUMERIC,
+            retained_earnings                   NUMERIC,
+            net_ppe                             NUMERIC,
+            accounts_receivable                 NUMERIC,
+            inventory                           NUMERIC,
+            total_debt                          NUMERIC,
 
             period_type                         TEXT NOT NULL,
             updated_at                          TIMESTAMP NOT NULL DEFAULT NOW(),

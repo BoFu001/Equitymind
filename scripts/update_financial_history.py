@@ -35,7 +35,7 @@ period_type ('annual'/'quarterly') is written explicitly for every
 row — the column has no default (see init_db_financial_history.py) —
 so a missing value fails loudly rather than being silently guessed.
 
-26 metrics across the three statements — all sourced from the same
+33 metrics across the three statements — all sourced from the same
 three yfinance calls already made per ticker for get_quality_inputs(),
 so this adds no extra API cost beyond what the project already does.
 
@@ -99,29 +99,31 @@ def _load_target_tickers() -> list[str]:
 # (2026-07-24: quarterly has zero fields not also in annual — quarterly
 # is a strict subset), so the same mapping serves both writers.
 INCOME_STATEMENT_METRICS = {
-    "Total Revenue":                      "total_revenue",
-    "Cost Of Revenue":                    "cost_of_revenue",
-    "Gross Profit":                       "gross_profit",
-    "Research And Development":           "research_and_development",
-    "Selling General And Administration": "selling_general_and_administration",
-    "Operating Expense":                  "operating_expense",
-    "Operating Income":                   "operating_income",
-    "EBIT":                               "ebit",
-    "EBITDA":                             "ebitda",
-    "Pretax Income":                      "pretax_income",
-    "Net Income":                         "net_income",
-    "Diluted EPS":                        "diluted_eps",
-    "Basic EPS":                          "basic_eps",
+    "Total Revenue":                          "total_revenue",
+    "Cost Of Revenue":                        "cost_of_revenue",
+    "Gross Profit":                           "gross_profit",
+    "Research And Development":               "research_and_development",
+    "Selling General And Administration":     "selling_general_and_administration",
+    "Operating Expense":                      "operating_expense",
+    "Operating Income":                       "operating_income",
+    "EBIT":                                   "ebit",
+    "EBITDA":                                 "ebitda",
+    "Pretax Income":                          "pretax_income",
+    "Net Income":                             "net_income",
+    "Diluted EPS":                            "diluted_eps",
+    "Basic EPS":                              "basic_eps",
+    "Interest Expense":                       "interest_expense",
 }
 CASH_FLOW_METRICS = {
-    "Operating Cash Flow":         "operating_cash_flow",
-    "Capital Expenditure":         "capital_expenditure",
-    "Free Cash Flow":              "free_cash_flow",
-    "Repurchase Of Capital Stock": "repurchase_of_capital_stock",
-    "Cash Dividends Paid":         "cash_dividends_paid",
+    "Operating Cash Flow":                     "operating_cash_flow",
+    "Capital Expenditure":                     "capital_expenditure",
+    "Free Cash Flow":                          "free_cash_flow",
+    "Repurchase Of Capital Stock":             "repurchase_of_capital_stock",
+    "Cash Dividends Paid":                     "cash_dividends_paid",
+    "Depreciation Amortization Depletion":     "depreciation_amortization_depletion",
 }
 BALANCE_SHEET_METRICS = {
-    "Total Assets":                           "total_assets",
+    "Total Assets":                            "total_assets",
     "Total Liabilities Net Minority Interest": "total_liabilities",
     "Stockholders Equity":                     "stockholders_equity",
     "Cash And Cash Equivalents":               "cash_and_equivalents",
@@ -129,6 +131,11 @@ BALANCE_SHEET_METRICS = {
     "Current Assets":                          "current_assets",
     "Current Liabilities":                     "current_liabilities",
     "Ordinary Shares Number":                  "shares_outstanding",
+    "Retained Earnings":                       "retained_earnings",
+    "Net PPE":                                 "net_ppe",
+    "Accounts Receivable":                     "accounts_receivable",
+    "Inventory":                               "inventory",
+    "Total Debt":                              "total_debt",
 }
 
 ALL_METRICS = {**INCOME_STATEMENT_METRICS, **CASH_FLOW_METRICS, **BALANCE_SHEET_METRICS}
