@@ -63,7 +63,6 @@ import yfinance as yf
 from dotenv import load_dotenv
 from psycopg2.extras import execute_values
 
-from scripts.currency_check import is_usd_reporter
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -282,12 +281,6 @@ def update_financial_history():
 
     for i, ticker in enumerate(tickers):
         print(f"  [{i+1}/{len(tickers)}] {ticker}...", flush=True)
-
-        if not is_usd_reporter(ticker):
-            print(f"    Skipping {ticker}: non-USD financial reporting")
-            annual_failed.append(ticker)
-            quarterly_failed.append(ticker)
-            continue
 
         # ── Annual: check for new data first, skip if nothing new ──
         annual_latest_in_db = _latest_period_in_db(cursor, ticker, "annual")

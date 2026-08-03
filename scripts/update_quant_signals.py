@@ -30,7 +30,6 @@ Usage:
 Requires: yfinance, psycopg2, python-dotenv (already in project env)
 """
 
-import json
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
@@ -54,7 +53,6 @@ from src.quant.risk_signal import risk_signal
 from src.quant.quality_signal import quality_signal
 from src.quant.consensus_signal import consensus_signal
 from src.quant.short_signal import short_signal
-from scripts.currency_check import is_usd_reporter
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -145,7 +143,6 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
     # 2026-07-27 -- see valuation_reader.py for why (same principle
     # already applied to consensus_reader.py).
     valuation_inputs = get_valuation_inputs(ticker)
-
 
     risk_inputs = get_risk_inputs(ticker)
 
@@ -337,11 +334,6 @@ def update_quant_signals():
 
     for i, ticker in enumerate(tickers):
         print(f"  [{i+1}/{len(tickers)}] {ticker}...", flush=True)
-
-        if not is_usd_reporter(ticker):
-            print(f"    Skipping {ticker}: non-USD financial reporting")
-            failed_tickers.append(ticker)
-            continue
 
         skip_quality = not _quality_needs_recompute(cursor, ticker)
         if skip_quality:
