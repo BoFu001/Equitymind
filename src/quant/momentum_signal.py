@@ -40,7 +40,7 @@ IMPORTANT — known limitations (must always be disclosed, not hidden):
        during market reversals (e.g. -73% over 3 months in 2009).
 
     3. UNIVERSE LIMITATION: percentiles are computed within this
-       ~250-ticker large-cap universe only (see stock_universe.json) —
+       ~250-ticker large-cap universe only (see stock_universe table) —
        not the full US equity market. A ranking here reflects standing
        relative to other large-cap stocks, not the broader market.
 

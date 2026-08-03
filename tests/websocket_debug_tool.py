@@ -1,7 +1,9 @@
 """
-test_websocket.py
+websocket_debug_tool.py
 
-Test multi-turn WebSocket test for EquityMind.
+Manual, interactive multi-turn WebSocket debugging tool for
+EquityMind — not an automated pytest test (deliberately not named
+test_*.py or *_test.py, so pytest does not try to collect and run it).
 
 Option 1 — Run in terminal (connects directly to core, bypasses proxy):
 
@@ -11,7 +13,7 @@ Option 1 — Run in terminal (connects directly to core, bypasses proxy):
 
     Terminal 2 — Run this test:
         cd equitymind-core
-        python tests/test_websocket.py
+        python tests/websocket_debug_tool.py
 
 
 Option 2 — Run in local browser (3 terminals required):

@@ -4,7 +4,7 @@ scripts/update_quant_signals.py
 Quant Signal Updater for EquityMind Layer 2 — computes all 6 cacheable
 signals (Valuation, Momentum, Risk, Quality, Consensus, Short — News
 Sentiment is deliberately excluded, see quant_signals table docstring)
-for every ticker in stock_universe.json and stores them in the
+for every ticker in the stock_universe table and stores them in the
 quant_signals table (see init_db_quant_signals.py).
 
 Each signal's COMPLETE return dict is stored verbatim as JSONB — the
@@ -61,10 +61,13 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def _load_target_tickers() -> list[str]:
-    universe_path = Path(__file__).parent.parent / "src" / "quant" / "data" / "stock_universe.json"
-    with open(universe_path, "r") as f:
-        universe = json.load(f)
-    return universe["tickers"]
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute("SELECT ticker FROM stock_universe")
+    tickers = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    conn.close()
+    return tickers
 
 
 def _to_float(value) -> float | None:
@@ -276,7 +279,7 @@ INSERT_SQL_SKIP_QUALITY = """
         valuation_data, valuation_score, valuation_computed_at,
         momentum_data, momentum_12_1_score, position_52w_score, momentum_computed_at,
         risk_data, risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score, risk_computed_at,
-        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at
+        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at,
         short_data, short_interest_pct, days_to_cover, short_computed_at
     )
     VALUES %s

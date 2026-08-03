@@ -2,9 +2,9 @@
 Unit tests for Layer 2 Quantitative Signal Engines.
 
 All tests use mock market data — no real API calls are made.
-Benchmark values are loaded dynamically from
-src/quant/data/valuation_benchmarks.json so tests remain valid after
-benchmark updates via scripts/update_valuation_benchmarks.py.
+Peer benchmarks are computed live from mock peer_ratios in each test,
+matching valuation_signal.py's real-time architecture (no batch
+JSON snapshot).
 """
 
 
@@ -12,9 +12,7 @@ import pytest
 from src.quant.valuation_signal import (
     valuation_signal,
     DEFAULT_PE,
-    DEFAULT_PB,
     DEFAULT_PS,
-    BENCHMARKS_STALE,
 )
 
 
@@ -30,148 +28,143 @@ def make_valuation_inputs(**kwargs) -> dict:
     """
     defaults = {
         "ticker":         "AAPL",
-        "company_name":   "Test Corp",
-        "sector":         "Technology",
-        "current_price":  100.0,
-        "pe_ratio":       float(DEFAULT_PE),
-        "price_to_book":  float(DEFAULT_PB),
-        "price_to_sales": float(DEFAULT_PS),
+        "pe_ratio":       DEFAULT_PE,
+        "price_to_sales": DEFAULT_PS,
+        "peer_ratios":    {},
     }
     defaults.update(kwargs)
     return defaults
 
 
+def make_peer_ratios(*pe_values) -> dict:
+    """Builds a peer_ratios dict with the given P/E values, auto-named peers."""
+    return {f"PEER{i}": {"pe": v, "ps": v} for i, v in enumerate(pe_values)}
+
+
 # ─────────────────────────────────────────────
-# Tier 1 — P/E + P/B (most reliable)
+# Method "pe" — profitable companies
 # ─────────────────────────────────────────────
 
-class TestTier1:
+class TestMethodPE:
 
     def test_fairly_valued(self):
-        """P/E and P/B both equal peer average → score near zero."""
-        data   = make_valuation_inputs()
+        """P/E close to peer median → score near zero."""
+        data   = make_valuation_inputs(pe_ratio=25.0, peer_ratios=make_peer_ratios(24, 25, 26))
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]          == "pe_pb"
+        assert result["method"]          == "pe"
         assert result["reference_only"]  is False
         assert -0.2 <= result["valuation_score"] <= 0.2
         assert result["valuation_label"] == "fairly valued"
 
     def test_undervalued(self):
-        """P/E and P/B well below peer average → undervalued."""
-        data   = make_valuation_inputs(pe_ratio=5.0, price_to_book=1.0)
+        """P/E well below peer median → undervalued."""
+        data   = make_valuation_inputs(pe_ratio=5.0, peer_ratios=make_peer_ratios(20, 25, 30))
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]          == "pe_pb"
+        assert result["method"]          == "pe"
         assert result["valuation_score"] >  0.2
         assert result["valuation_label"] == "undervalued"
 
     def test_overvalued(self):
-        """P/E and P/B well above peer average → overvalued."""
-        data   = make_valuation_inputs(pe_ratio=300.0, price_to_book=100.0)
+        """P/E well above peer median → overvalued."""
+        data   = make_valuation_inputs(pe_ratio=60.0, peer_ratios=make_peer_ratios(20, 25, 30))
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]          == "pe_pb"
+        assert result["method"]          == "pe"
         assert result["valuation_score"] <  -0.2
         assert result["valuation_label"] == "overvalued"
 
     def test_detail_string_non_empty(self):
         """Result must include a non-empty plain-English detail string."""
-        result = valuation_signal(make_valuation_inputs())
+        data   = make_valuation_inputs(peer_ratios=make_peer_ratios(20, 25, 30))
+        result = valuation_signal(data)
         assert result is not None
         assert "detail" in result
         assert len(result["detail"]) > 0
 
-    def test_pe_vs_peers_string_present(self):
-        """pe_vs_peers should describe the comparison as a readable string."""
-        result = valuation_signal(make_valuation_inputs())
-        assert result is not None
-        assert result["pe_vs_peers"] is not None
-        assert "vs peer avg" in result["pe_vs_peers"]
-
-    def test_stale_benchmark_is_bool(self):
-        """stale_benchmark must be a boolean."""
-        result = valuation_signal(make_valuation_inputs())
-        assert result is not None
-        assert isinstance(result["stale_benchmark"], bool)
-
-    def test_missing_pb_degrades_to_pe_only(self):
-        """Missing P/B should degrade gracefully to a P/E-only score."""
-        data   = make_valuation_inputs(price_to_book=None)
+    def test_ratio_vs_peers_string_present(self):
+        """ratio_vs_peers should describe the comparison as a readable string."""
+        data   = make_valuation_inputs(peer_ratios=make_peer_ratios(20, 25, 30))
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"] == "pe_pb"
-        assert "P/B data unavailable" in result["detail"]
+        assert result["ratio_vs_peers"] is not None
+        assert "vs peer median" in result["ratio_vs_peers"]
 
-    def test_zero_pb_treated_as_missing(self):
-        """A P/B of exactly 0 should be treated as missing, not a real ratio."""
-        data   = make_valuation_inputs(price_to_book=0)
+    def test_no_peer_data_falls_back_to_default(self):
+        """No peer_ratios at all → falls back to DEFAULT_PE, no crash."""
+        data   = make_valuation_inputs(peer_ratios={})
         result = valuation_signal(data)
         assert result is not None
-        assert "P/B data unavailable" in result["detail"]
+        assert result["benchmark_ratio"] == DEFAULT_PE
+        assert result["peers_used"]      == []
+
+    def test_extreme_peer_pe_excluded_from_median(self):
+        """A peer P/E outside (3, 75) must not affect the median."""
+        data   = make_valuation_inputs(
+            pe_ratio=25.0,
+            peer_ratios=make_peer_ratios(20, 25, 30, 500),  # 500 is extreme
+        )
+        result = valuation_signal(data)
+        assert result is not None
+        assert "PEER3" not in result["peers_used"]
+        assert result["benchmark_ratio"] == 25.0  # median of 20,25,30 only
 
 
 # ─────────────────────────────────────────────
-# Tier 2 — P/S only (loss-making companies, reference only)
+# Method "ps" — loss-making companies (reference only)
 # ─────────────────────────────────────────────
 
-class TestTier2:
+class TestMethodPS:
 
     def test_loss_making_company_uses_ps(self):
-        """Negative P/E with available P/S → Tier 2 (reference only)."""
-        data   = make_valuation_inputs(pe_ratio=-10.0, price_to_book=None, price_to_sales=8.0)
+        """Negative P/E with available P/S → method "ps" (reference only)."""
+        data   = make_valuation_inputs(pe_ratio=-10.0, price_to_sales=8.0, peer_ratios=make_peer_ratios(5, 6, 7))
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]          == "ps_only"
+        assert result["method"]          == "ps"
         assert result["reference_only"]  is True
         assert result["valuation_label"] == "reference only"
 
-    def test_no_pe_falls_to_tier2(self):
-        """No P/E data at all → Tier 2 if P/S is available."""
-        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
+    def test_no_pe_falls_to_ps(self):
+        """No P/E data at all → uses P/S if available."""
+        data   = make_valuation_inputs(pe_ratio=None, price_to_sales=5.0, peer_ratios=make_peer_ratios(4, 5, 6))
         result = valuation_signal(data)
         assert result is not None
-        assert result["method"]         == "ps_only"
+        assert result["method"]         == "ps"
         assert result["reference_only"] is True
 
     def test_detail_warns_reference_only(self):
-        """Tier 2 detail must explicitly warn the score is for reference only."""
-        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
+        """P/S-path detail must explicitly warn the score is for reference only."""
+        data   = make_valuation_inputs(pe_ratio=None, price_to_sales=5.0, peer_ratios=make_peer_ratios(4, 5, 6))
         result = valuation_signal(data)
         assert result is not None
         assert "reference only" in result["detail"].lower()
 
-    def test_pe_vs_peers_is_none(self):
-        """Tier 2 must not populate pe_vs_peers (P/E is not used)."""
-        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=6.0)
+    def test_no_peer_data_falls_back_to_default_ps(self):
+        """No peer_ratios at all → falls back to DEFAULT_PS, no crash."""
+        data   = make_valuation_inputs(pe_ratio=None, price_to_sales=5.0, peer_ratios={})
         result = valuation_signal(data)
         assert result is not None
-        assert result["pe_vs_peers"] is None
-
-    def test_stale_benchmark_present(self):
-        """Tier 2 result must include stale_benchmark field."""
-        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=5.0)
-        result = valuation_signal(data)
-        assert result is not None
-        assert "stale_benchmark" in result
-        assert isinstance(result["stale_benchmark"], bool)
+        assert result["benchmark_ratio"] == DEFAULT_PS
+        assert result["peers_used"]      == []
 
 
 # ─────────────────────────────────────────────
-# Tier 3 — No usable data → returns None
+# No usable data → returns None
 # ─────────────────────────────────────────────
 
-class TestTier3:
+class TestNoData:
 
     def test_no_data_returns_none(self):
-        """No P/E, P/B, or P/S → must return None to prevent hallucination."""
-        data   = make_valuation_inputs(pe_ratio=None, price_to_book=None, price_to_sales=None)
+        """No P/E or P/S → must return None to prevent hallucination."""
+        data   = make_valuation_inputs(pe_ratio=None, price_to_sales=None)
         result = valuation_signal(data)
         assert result is None
 
     def test_zero_values_return_none(self):
         """Zero P/E and P/S must be treated as missing data."""
-        data   = make_valuation_inputs(pe_ratio=0, price_to_book=0, price_to_sales=0)
+        data   = make_valuation_inputs(pe_ratio=0, price_to_sales=0)
         result = valuation_signal(data)
         assert result is None
 
@@ -184,50 +177,34 @@ class TestScoreBounds:
 
     def test_score_clamped_on_extreme_cheap(self):
         """Extremely cheap stock must not produce score > +1.0."""
-        data   = make_valuation_inputs(pe_ratio=0.5, price_to_book=0.1)
+        data   = make_valuation_inputs(pe_ratio=0.5, peer_ratios=make_peer_ratios(20, 25, 30))
         result = valuation_signal(data)
         assert result is not None
         assert result["valuation_score"] <= 1.0
 
     def test_score_clamped_on_extreme_expensive(self):
-        """Extremely expensive stock must not produce score < -1.0."""
-        data   = make_valuation_inputs(pe_ratio=5000.0, price_to_book=1000.0)
+        """Extremely expensive stock (but within the 3-75 filter) must not produce score < -1.0."""
+        data   = make_valuation_inputs(pe_ratio=70.0, peer_ratios=make_peer_ratios(5, 6, 7))
         result = valuation_signal(data)
         assert result is not None
         assert result["valuation_score"] >= -1.0
 
 
 # ─────────────────────────────────────────────
-# JSON benchmark loading
+# Default constants
 # ─────────────────────────────────────────────
 
-class TestBenchmarkLoading:
+class TestDefaults:
 
     def test_default_pe_is_positive_number(self):
-        """DEFAULT_PE must be a positive number loaded from JSON."""
+        """DEFAULT_PE must be a positive number."""
         assert isinstance(DEFAULT_PE, (int, float))
         assert DEFAULT_PE > 0
-
-    def test_default_pb_is_positive_number(self):
-        """DEFAULT_PB must be a positive number loaded from JSON."""
-        assert isinstance(DEFAULT_PB, (int, float))
-        assert DEFAULT_PB > 0
 
     def test_default_ps_is_positive_number(self):
         """DEFAULT_PS must be a positive number."""
         assert isinstance(DEFAULT_PS, (int, float))
         assert DEFAULT_PS > 0
-
-    def test_unknown_ticker_uses_default_pe(self):
-        """Unknown ticker must fall back to DEFAULT_PE without crashing."""
-        data   = make_valuation_inputs(ticker="UNKNOWN")
-        result = valuation_signal(data)
-        assert result is not None
-        assert str(int(DEFAULT_PE)) in result["pe_vs_peers"]
-
-    def test_benchmarks_stale_is_bool(self):
-        """BENCHMARKS_STALE must be a boolean."""
-        assert isinstance(BENCHMARKS_STALE, bool)
 
 
 # Helpers — mock momentum benchmark entries
@@ -242,7 +219,7 @@ def make_momentum_entry(**kwargs) -> dict:
     defaults = {
         "momentum_12_1_pct":        10.0,
         "momentum_12_1_percentile": 0.5,
-        "position_52w":            0.5,
+        "position_52w":             0.5,
         "position_52w_percentile":  0.5,
     }
     defaults.update(kwargs)

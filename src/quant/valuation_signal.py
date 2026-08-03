@@ -3,299 +3,164 @@ src/quant/valuation_signal.py
 
 Valuation Signal Engine — Layer 2 Quantitative Intelligence.
 
-Assesses whether a stock is overvalued or undervalued using a two-tier
-degradation strategy based on data availability:
+Assesses whether a stock is overvalued or undervalued vs its peers,
+using one of two independent methods depending on data availability:
 
-    Tier 1 (most reliable):  P/E + P/B (vs peer group)     → method = "pe_pb"
-    Tier 2 (reference only): P/S ratio (loss-making firms) → method = "ps_only"
-    Tier 3 (no data):        Returns None — caller must handle gracefully
+    Method "pe" (profitable companies):  P/E vs peer P/E median
+    Method "ps" (loss-making companies): P/S vs peer P/S median
+    No data: Returns None — caller must handle gracefully
 
-P/E and P/B are independent valuation lenses (earnings-based vs
-book-value-based) — combined via a 0.6/0.4 weighted score. PEG was
-removed: it is mathematically derived from P/E (PEG = P/E / growth),
-so combining it with P/E double-counts the same underlying information
-rather than adding independent evidence — a pattern professional
-multi-factor value models (e.g. AQR) avoid, generally preferring
-independent ratios (P/E, P/B, EV/Sales, cash flow yield) over PEG.
+Both methods return the SAME set of keys (ratio, benchmark_ratio,
+ratio_vs_peers, valuation_score, valuation_label, method,
+reference_only, peers_used, detail) — method tells the caller which
+ratio "ratio" actually is, so downstream code (report generation)
+never needs to branch on which fields exist, only on what they mean.
 
-Analyst target price ("upside") was also removed from this signal — it
-reflects human analyst judgment, not an objective market multiple, and
-now lives in the separate Consensus Signal, keeping Valuation a purely
-mechanical, objective measure.
+Peer ratios are computed live from valuation_reader's peer_ratios
+(each peer's own yfinance ratios, fetched at request time), not from
+a precomputed batch snapshot. Extreme P/E values (outside 3-150) are
+filtered before taking the median — loss-making or bubble-valuation
+outliers are not representative comparison points.
+
+If a company has positive earnings, P/E is used (the standard,
+most-used valuation lens). If not, P/S is used instead — P/E is
+mathematically undefined for a loss-making company, and professional
+practice consistently substitutes P/S (or EV/Revenue) in this case,
+not P/B (P/S reflects revenue, a more stable base than book value,
+which can itself be distorted by buybacks or write-downs for a
+struggling company).
 
 Score range: -1.0 (severely overvalued) to +1.0 (severely undervalued)
 Label:       "overvalued" / "fairly valued" / "undervalued" / "reference only" / None
 
 Academic references:
-    - P/E and P/B relative valuation: Damodaran (2012), Investment Valuation
-    - Independent multi-factor value composites: Asness, Frazzini & Pedersen,
-      "Quality Minus Junk" (AQR); Fama & French value factor methodology
+    - P/E relative valuation: Damodaran (2012), Investment Valuation
     - P/S for loss-making firms: Fisher (1984), Super Stocks
 """
 
+import statistics
 
-import json
-from pathlib import Path
-from datetime import date
-
-# ─────────────────────────────────────────────
-# Load valuation benchmarks from JSON
-# Updated daily by scripts/update_valuation_benchmarks.py — peer
-# IDENTITY (which companies) comes from peer_groups.json instead,
-# refreshed separately/infrequently by scripts/update_peer_groups.py
-# (see that script's docstring for why these were split).
-# ─────────────────────────────────────────────
-_VALUATION_BENCHMARKS_PATH = Path(__file__).parent / "data" / "valuation_benchmarks.json"
-
-def _load_valuation_benchmarks() -> dict:
-    """Load valuation benchmarks from JSON file."""
-    with open(_VALUATION_BENCHMARKS_PATH) as f:
-        return json.load(f)
-
-_VALUATION_BENCHMARKS = _load_valuation_benchmarks()
-_BENCHMARKS_DATA = _VALUATION_BENCHMARKS.get("benchmarks", {})
-DEFAULT_PE       = _VALUATION_BENCHMARKS.get("default_pe", 25.54)
-DEFAULT_PB       = _VALUATION_BENCHMARKS.get("default_pb", 5.44)
-DEFAULT_PS       = _VALUATION_BENCHMARKS.get("default_ps", 3.70)  
-
-# ── Staleness check ──────────────────────────
-def _benchmarks_are_stale() -> bool:
-    """Warn if benchmarks are more than 90 days old."""
-    updated_at = _VALUATION_BENCHMARKS.get("updated_at", "")
-    if not updated_at:
-        return True
-    try:
-        updated = date.fromisoformat(updated_at)
-        return (date.today() - updated).days > 90
-    except ValueError:
-        return True
-
-BENCHMARKS_STALE = _benchmarks_are_stale()
+DEFAULT_PE = 25.54  # S&P 500 P/E, GuruFocus, as of 2026-07-06
+DEFAULT_PS = 3.70   # S&P 500 P/S, GuruFocus/S&P Dow Jones Indices, as of 2026-06-15
 
 
-def _get_benchmark_pe(ticker: str) -> float:
+def _peer_median(peer_ratios: dict, key: str, lo: float, hi: float) -> tuple[float | None, list[str]]:
     """
-    Look up benchmark P/E for a ticker from valuation_benchmarks.json.
-    Falls back to DEFAULT_PE if ticker not found.
+    Computes the median of one ratio (key: "pe" or "ps") across peers,
+    after filtering to (lo, hi) to exclude loss-making/extreme-outlier
+    values. Returns (median, peers_used) — peers_used is the subset
+    that actually passed the filter.
     """
-    entry = _BENCHMARKS_DATA.get(ticker)
-    if entry:
-        return entry["benchmark_pe"]
-    return DEFAULT_PE
+    values = []
+    used = []
+    for symbol, ratios in peer_ratios.items():
+        v = ratios.get(key)
+        if isinstance(v, (int, float)) and lo < v < hi:
+            values.append(v)
+            used.append(symbol)
+    if not values:
+        return None, []
+    return round(statistics.median(values), 2), sorted(used)
 
 
-def _get_benchmark_pb(ticker: str) -> float:
+def _label(score: float, reference_only: bool) -> str:
+    """Map numeric score to human-readable label."""
+    if reference_only:
+        return "reference only"
+    if score > 0.2:
+        return "undervalued"
+    if score < -0.2:
+        return "overvalued"
+    return "fairly valued"
+
+
+def _build_result(ratio: float, benchmark: float, peers_used: list[str],
+                   method: str, ratio_name: str, reference_only: bool,
+                   extra_detail: str = "") -> dict:
     """
-    Look up benchmark P/B for a ticker from valuation_benchmarks.json.
-    Falls back to DEFAULT_PB if ticker not found.
+    Shared result-builder for both methods — guarantees pe and ps
+    paths return the identical set of keys, so downstream code never
+    branches on which fields exist, only on what "method" says they mean.
     """
-    entry = _BENCHMARKS_DATA.get(ticker)
-    if entry:
-        return entry["benchmark_pb"]
-    return DEFAULT_PB
+    score = (benchmark - ratio) / benchmark
+    score = round(max(-1.0, min(1.0, score)), 4)
+    label = _label(score, reference_only)
 
+    peers_note = f" (compared against: {', '.join(peers_used)})" if peers_used else ""
+    generic_note = "" if peers_used else " Comparison uses a broad S&P 500 average."
 
-def _get_peers_used(ticker: str) -> list[str]:
-    """
-    Look up which named peer companies actually contributed to this
-    ticker's benchmark P/E/P/B (see update_valuation_benchmarks.py —
-    this is the subset of FMP's peer list that had valid, non-extreme
-    data, not necessarily the full peer group). Returns [] if the
-    ticker fell back to Damodaran or the global default — in that
-    case there is no specific peer company to name.
-    """
-    entry = _BENCHMARKS_DATA.get(ticker)
-    if entry:
-        return entry.get("peers_used", [])
-    return []
-
-
-
+    return {
+        "ratio":            ratio,
+        "benchmark_ratio":  benchmark,
+        "ratio_vs_peers":   f"{ratio} vs peer median {benchmark}",
+        "valuation_score":  score,
+        "valuation_label":  label,
+        "method":           method,
+        "reference_only":   reference_only,
+        "peers_used":       peers_used,
+        "detail": (
+            f"{extra_detail.strip()} "
+            f"{ratio_name} of {ratio} vs peer median {benchmark}{peers_note} "
+            f"(score={round((benchmark - ratio) / benchmark, 2)}). "
+            f"→ {label}."
+            f"{generic_note}"
+        ).strip(),
+    }
 
 
 def valuation_signal(valuation_inputs: dict) -> dict | None:
     """
     Compute a valuation signal from valuation_reader.get_valuation_inputs().
 
-    Uses a two-tier degradation strategy based on data availability.
-    Returns None if no meaningful valuation can be computed, allowing
-    the report layer to skip valuation entirely and avoid hallucination.
-
-    Fetched independently of snapshot_reader.py as of 2026-07-27 — see
-    valuation_reader.py for why (same principle already applied to
-    consensus_reader.py: every signal's data point should be
-    independently fetchable).
+    Uses P/E if the company is profitable, P/S if not. Returns None
+    if neither is usable, allowing the report layer to skip valuation
+    entirely and avoid hallucination.
 
     Args:
         valuation_inputs: dict from get_valuation_inputs(), expected fields:
             - pe_ratio:               float | None  (trailing P/E)
-            - price_to_book:          float | None  (P/B ratio)
             - price_to_sales:         float | None  (P/S ratio)
             - ticker:                 str
+            - peer_ratios:            dict — symbol -> {"pe": ..., "ps": ...}
 
     Returns:
-        dict with keys:
-            - valuation_score:   float (-1.0 to +1.0) or None
-            - valuation_label:   str or None
-            - method:            str — which tier was used
-            - reference_only:    bool — True means Tier 2 (P/S), use with caution
-            - stale_benchmark:   bool — True if benchmarks are more than 90 days old
-            - pe_vs_peers:       str | None — e.g. "36.3 vs peer avg 37.3"
-            - detail:            str — plain English explanation of the score
-        or None if no data available (Tier 3)
+        dict with keys (identical shape regardless of method):
+            - ratio:             float — the ratio actually used (P/E or P/S)
+            - benchmark_ratio:   float — peer median (or S&P 500 default)
+            - ratio_vs_peers:    str
+            - valuation_score:   float (-1.0 to +1.0)
+            - valuation_label:   str
+            - method:            str — "pe" or "ps", tells you what "ratio" is
+            - reference_only:    bool — True means P/S was used (loss-making company)
+            - peers_used:        list[str]
+            - detail:            str
+        or None if no data available
     """
 
-    pe            = valuation_inputs.get("pe_ratio")
-    pb            = valuation_inputs.get("price_to_book")
-    ps            = valuation_inputs.get("price_to_sales")
-    ticker        = valuation_inputs.get("ticker") or ""
+    pe          = valuation_inputs.get("pe_ratio")
+    ps          = valuation_inputs.get("price_to_sales")
+    peer_ratios = valuation_inputs.get("peer_ratios") or {}
 
     # Defensive type check: yfinance has, in practice, returned a
     # non-numeric string (e.g. "Infinity") for these ratio fields when
     # a company's EPS is near zero — a genuine mathematical edge case
     # of the P/E ratio, not a data error (confirmed for BILL,
     # 2026-07-24). Without this check, the comparisons below (pe > 0,
-    # etc.) crash with a TypeError instead of gracefully degrading to
-    # the next tier.
+    # etc.) crash with a TypeError instead of gracefully degrading.
     if not isinstance(pe, (int, float)):
         pe = None
-    if not isinstance(pb, (int, float)):
-        pb = None
     if not isinstance(ps, (int, float)):
         ps = None
 
-    sector_pe = _get_benchmark_pe(ticker)
-    sector_pb = _get_benchmark_pb(ticker)
-    sector_ps = DEFAULT_PS
-
-    def _label(score: float, reference_only: bool) -> str:
-        """Map numeric score to human-readable label."""
-        if reference_only:
-            return "reference only"
-        if score > 0.2:
-            return "undervalued"
-        if score < -0.2:
-            return "overvalued"
-        return "fairly valued"
-
-    # ────────────────────────────────────────────────────────────────────────
-    # TIER 1: P/E + P/B (most reliable)
-    # Requires: positive P/E
-    # Best for: profitable, well-covered large/mid-cap stocks
-    #
-    # P/E and P/B are two genuinely independent valuation lenses (earnings-based
-    # vs book-value-based) — unlike PEG, which is mathematically derived from
-    # P/E itself (PEG = P/E / growth rate) and so double-counts the same
-    # information if combined with P/E in a weighted score. Analyst target
-    # price ("upside") has also been removed from this signal — it reflects
-    # human analyst judgment, not an objective market multiple, and now lives
-    # in the separate Consensus Signal so the two remain independently
-    # interpretable (agreement between them is meaningful; so is disagreement).
-    #
-    # If P/B is unavailable, this tier degrades gracefully to P/E alone
-    # rather than failing outright — same dynamic-reweighting pattern used
-    # in risk_signal.py and quality_signal.py when a sub-component is missing.
-    # ────────────────────────────────────────────────────────────────────────
     if pe and pe > 0:
+        pe_median, peers_used = _peer_median(peer_ratios, "pe", 3, 75)
+        benchmark = pe_median if pe_median is not None else DEFAULT_PE
+        return _build_result(pe, benchmark, peers_used, "pe", "P/E", reference_only=False)
 
-        # P/E score: positive = cheaper than peers, negative = more expensive
-        pe_score = (sector_pe - pe) / sector_pe
-        pe_score = max(-1.0, min(1.0, pe_score))
-
-        pb_score = None
-        if pb and pb > 0:
-            pb_score = (sector_pb - pb) / sector_pb
-            pb_score = max(-1.0, min(1.0, pb_score))
-
-        if pb_score is not None:
-            score  = round(0.6 * pe_score + 0.4 * pb_score, 4)
-            pb_detail = f"P/B of {pb} vs peer average {sector_pb} (pb_score={round(pb_score,2)})"
-        else:
-            score  = round(pe_score, 4)
-            pb_detail = "P/B data unavailable — score based on P/E alone"
-
-        label = _label(score, reference_only=False)
-
-        peers_used = _get_peers_used(ticker)
-        peers_note = f" (compared against: {', '.join(peers_used)})" if peers_used else ""
-
-        # No named peer group means the benchmark fell back to either
-        # Damodaran's industry average or the global S&P 500 default
-        # (see _get_benchmark_pe/_get_peers_used) — either way, this is
-        # not a company-specific peer comparison, and the report should
-        # say so rather than silently presenting it as equivalent to a
-        # real peer match (2026-07-27: confirmed ~110-120/250 tickers
-        # currently fall into this case, not a rare edge case).
-        generic_benchmark_note = (
-            "" if peers_used else " Comparison uses a broad S&P 500 average."
-        )
-
-        return {
-            # Raw benchmark values, exposed as independent fields (not
-            # just baked into the pe_vs_peers string or detail text) so
-            # the report layer can display them directly -- same
-            # principle already applied to consensus_signal.py's raw
-            # inputs (2026-07-27).
-            "pe":              pe,
-            "pb":              pb,
-            "benchmark_pe":    sector_pe,
-            "benchmark_pb":    sector_pb,
-
-            "valuation_score": score,
-            "valuation_label": label,
-            "method":          "pe_pb",
-            "reference_only":  False,
-            "stale_benchmark": BENCHMARKS_STALE,
-            "pe_vs_peers": f"{pe} vs peer avg {sector_pe}",
-            "peers_used": peers_used,
-            "detail": (
-                f"P/E of {pe} vs peer average {sector_pe}{peers_note} "
-                f"(pe_score={round(pe_score,2)}), "
-                f"{pb_detail}. "
-                f"Composite: {score} → {label}."
-                f"{generic_benchmark_note}"
-            ),
-        }
-
-    # ────────────────────────────────────────────────────────────────────────
-    # TIER 2: P/S only (reference only — loss-making companies)
-    # Requires: positive P/S ratio
-    # Best for: revenue-generating but unprofitable companies (early-stage)
-    # WARNING: P/S ignores profitability — use with caution
-    # ────────────────────────────────────────────────────────────────────────
     if ps and ps > 0:
+        ps_median, peers_used = _peer_median(peer_ratios, "ps", 0, 100)
+        benchmark = ps_median if ps_median is not None else DEFAULT_PS
+        extra = " No usable P/E data available for this company (loss-making)."
+        return _build_result(ps, benchmark, peers_used, "ps", "P/S", reference_only=True, extra_detail=extra)
 
-        # P/S score: lower P/S relative to peers = cheaper on revenue basis
-        ps_score = (sector_ps - ps) / sector_ps
-        ps_score = max(-1.0, min(1.0, ps_score))
-
-        score = round(ps_score, 4)
-        label = _label(score, reference_only=True)
-
-        return {
-            "valuation_score": score,
-            "valuation_label": label,
-            "method":          "ps_only",
-            "reference_only":  True,
-            "stale_benchmark": BENCHMARKS_STALE,
-            "pe_vs_peers":    None,
-            # No named peer comparison here — this tier uses the
-            # global P/S default, not a peer-specific benchmark (see
-            # module docstring: Tier 2 is for loss-making companies
-            # where P/E-based peer comparison isn't meaningful).
-            "peers_used":     [],
-            "detail": (
-                f"No usable P/E data available for this company. "
-                f"P/S of {ps} vs default average {sector_ps} "
-                f"(ps_score={round(ps_score,2)}). "
-                f"This score is for reference only and does not reflect "
-                f"profitability or long-term sustainability."
-            ),
-        }
-
-    # ────────────────────────────────────────────────────────────────────────
-    # TIER 3: No usable data — return None
-    # The report layer must handle None gracefully and skip valuation entirely
-    # This prevents hallucination when data is unavailable
-    # ────────────────────────────────────────────────────────────────────────
     return None

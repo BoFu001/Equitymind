@@ -4,7 +4,7 @@ scripts/update_momentum_benchmarks.py
 Momentum Benchmark Updater for EquityMind Layer 2 Quant Engine.
 
 Computes two independent, academically-validated momentum sub-signals for
-every ticker in stock_universe.json, using yfinance only (no FMP — this
+every ticker in the stock_universe table, using yfinance only (no FMP — this
 script does not touch the FMP daily quota at all):
 
     1. 12-1 Month Momentum (Jegadeesh & Titman, 1993)
@@ -39,7 +39,7 @@ IMPORTANT — known limitations (must be disclosed to users, not hidden):
 Usage:
     python scripts/update_momentum_benchmarks.py
 
-Run whenever stock_universe.json is refreshed, or periodically (e.g.
+Run whenever the stock_universe table is refreshed, or periodically (e.g.
 monthly) — unlike peer_benchmarks.json, this has no FMP quota constraint,
 so it can be run more frequently if desired.
 
@@ -47,10 +47,16 @@ Requires: yfinance, numpy (already in the project's environment)
 """
 
 import json
+import os
 from datetime import date
 from pathlib import Path
 
+import psycopg2
 import yfinance as yf
+from dotenv import load_dotenv
+
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 OUTPUT_PATH = Path(__file__).parent.parent / "src" / "quant" / "data" / "momentum_benchmarks.json"
 
@@ -65,10 +71,13 @@ MIN_TRADING_DAYS = 200
 
 
 def _load_target_tickers() -> list[str]:
-    universe_path = Path(__file__).parent.parent / "src" / "quant" / "data" / "stock_universe.json"
-    with open(universe_path, "r") as f:
-        universe = json.load(f)
-    return universe["tickers"]
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute("SELECT ticker FROM stock_universe")
+    tickers = [row[0] for row in cursor.fetchall()]
+    cursor.close()
+    conn.close()
+    return tickers
 
 
 def compute_momentum_raw(ticker: str) -> dict | None:

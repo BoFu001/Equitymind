@@ -41,16 +41,16 @@ SIGNAL_NOTES = {
   judgment (trailing P/E). If both appear in your answer, label each
   explicitly (e.g. "trailing P/E of 41.22 vs. Forward P/E of 35.26")
   — never use them interchangeably or imply they are the same number.
-- Valuation: if the data includes "Compared against: X, Y, Z" (named
-  peer companies), you MUST name those specific companies in your
-  answer (e.g. "trading at a premium to peers like Microsoft, Alphabet,
-  and Meta") — do not compress this into a generic phrase like "peer
+- Valuation: if the data includes "(peers: X, Y, Z)" (named peer
+  companies), you MUST name those specific companies in your answer
+  (e.g. "trading at a premium to peers like Microsoft, Alphabet, and
+  Meta") — do not compress this into a generic phrase like "peer
   average" or "industry peers" with no names, even in a short answer.
-  If instead the data says "Comparison uses a broad S&P 500 average",
-  state explicitly that no company-specific peer data was available
-  and a broad market average was used instead — this is a materially
-  different, lower-confidence comparison and must not be presented
-  the same way as a named peer match.
+  If instead the data says "S&P 500 average...(no peer-specific data
+  available)", state explicitly that no company-specific peer data was
+  available and a broad market average was used instead — this is a
+  materially different, lower-confidence comparison and must not be
+  presented the same way as a named peer match.
 """,
     "risk": """\
 - Always state the observation window for Risk metrics (e.g. "based
@@ -250,8 +250,8 @@ below, not just the specific cases listed:
    (e.g. not "this stock cannot fall more than X%" — instead
    "historically, losses have not exceeded X% under normal conditions").
 2. If a signal's data is partially missing or a caveat flag is present
-   (low_confidence, reference_only, stale_benchmark, signals_evaluated
-   < 9, stress_tested=False, Beta=None, etc.), explicitly disclose what
+   (low_confidence, reference_only, signals_evaluated < 9,
+   stress_tested=False, Beta=None, etc.), explicitly disclose what
    is missing or uncertain — never silently present a partial or
    qualified signal as if it were complete and unconditional.
 3. Present each signal and sub-signal on its own terms — do not label
