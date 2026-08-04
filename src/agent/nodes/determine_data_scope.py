@@ -6,7 +6,7 @@ Node: Determine Data Scope
 Decides which data sources/signals a question actually needs, so
 fetch_data / quant_engine / generate_report can skip unneeded
 work instead of unconditionally fetching, computing, and formatting
-all eight signals for every request.
+all nine data sources for every request.
 
 A single, one-shot classification (same pattern as extract_parameters
 and classify_sub_intent), NOT an agent loop — the answer is fully
@@ -47,11 +47,12 @@ from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-# The 8 signals/data sources this node can select from (snapshot is
+# The 9 signals/data sources this node can select from (snapshot is
 # excluded — see module docstring). Kept as a module-level constant so
 # the prompt and the post-response validation step (which drops any
 # value the model returns that isn't in this list) stay in sync.
 VALID_DATA_SCOPES = [
+    "sec_filing",
     "valuation",
     "momentum",
     "risk",
@@ -65,10 +66,10 @@ VALID_DATA_SCOPES = [
 
 def determine_data_scope(state: AgentState) -> dict:
     """
-    Classifies which of the 8 optional data sources/signals this
+    Classifies which of the 9 optional data sources/signals this
     question needs. Returns {"data_scope": [...]}.
 
-    Defaults to ALL 8 signals if the LLM call fails or returns
+    Defaults to ALL 9 if the LLM call fails or returns
     unparseable output — a full-analysis fallback is the safe
     degradation here (matches current unconditional-fetch behavior),
     not an empty list, since silently answering with less data than
@@ -91,21 +92,23 @@ Available data sources:
 - news: recent news sentiment — for questions about recent news, headlines, or media coverage.
 - financial_history: multi-year revenue/income/balance-sheet trend data — for questions asking how a specific financial figure has changed over multiple years or a specific past fiscal year/quarter.
 - short: short interest percentage, days to cover, and month-over-month change in shares sold short — for questions about short selling, whether a stock is heavily shorted, or short squeeze risk.
+- sec_filing: business overview, risk factors, and management discussion & analysis (MD&A) from the company's 10-K — for questions asking what the company's 10-K says about its business, risks, or management's commentary. Does not cover financial statements, executive compensation, or other 10-K sections.
 
 Rules:
 - Select ONLY the data sources the question actually needs to be answered well.
-- If the question asks for a full/complete/comprehensive analysis, or doesn't specify a narrow focus, select ALL 8.
+- If the question asks for a full/complete/comprehensive analysis, or doesn't specify a narrow focus, select ALL 9.
 - If the question is narrow (e.g. only about analyst opinions, or only about recent news), select only the relevant one(s).
 - Company snapshot data (price, market cap, sector) is always included separately and should NOT be listed here.
 
 User question: {question}
 
 Reply with ONLY valid JSON, a single key "data_scope" with a list of the applicable values from: {VALID_DATA_SCOPES}. No markdown, no explanation. Examples:
-{{"data_scope": ["valuation", "momentum", "risk", "quality", "consensus", "news", "financial_history", "short"]}}
+{{"data_scope": ["valuation", "momentum", "risk", "quality", "consensus", "news", "financial_history", "short", "sec_filing"]}}
 {{"data_scope": ["consensus"]}}
 {{"data_scope": ["news"]}}
 {{"data_scope": ["valuation", "quality"]}}
-{{"data_scope": ["short"]}}"""
+{{"data_scope": ["short"]}}
+{{"data_scope": ["sec_filing"]}}"""
 
     response = client.chat.completions.create(
         model=LLM_MODEL_LIGHT,
@@ -132,6 +135,7 @@ Reply with ONLY valid JSON, a single key "data_scope" with a list of the applica
     data_scope = [s for s in data_scope if s in VALID_DATA_SCOPES]
 
     if not data_scope:
+        gprint(f"  [determine_data_scope] DEBUG raw content from LLM: {content}")
         gprint(f"  [determine_data_scope] No valid signals parsed, defaulting to all signals")
         return {"data_scope": list(VALID_DATA_SCOPES)}
 

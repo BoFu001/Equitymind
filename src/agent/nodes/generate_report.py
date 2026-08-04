@@ -145,7 +145,7 @@ def generate_report(state: AgentState) -> dict:
     question              = state.get("contextualized_question") or state["question"]
     tickers               = state.get("tickers") or []
     messages              = state.get("messages") or []
-    data_scope        = state.get("data_scope") or list(VALID_DATA_SCOPES)
+    data_scope            = state.get("data_scope") or list(VALID_DATA_SCOPES)
     all_stock_snapshots   = state.get("stock_snapshots") or {}
     all_chunks            = state.get("chunks") or {}
     quant_signals         = state.get("quant_signals") or {}
@@ -164,11 +164,6 @@ def generate_report(state: AgentState) -> dict:
 
     for t in tickers:
         snapshot_parts.append(format_stock_snapshot(all_stock_snapshots.get(t, {}), t))
-
-        sec_parts.append(
-            format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t)
-            else f"\n{t}: No SEC 10-K filing available.\n"
-        )
 
         # Quant signals: each formatter called directly and
         # independently, only for the signals determine_data_scope
@@ -205,6 +200,15 @@ def generate_report(state: AgentState) -> dict:
         # separation). Skipped entirely when not needed.
         if "financial_history" in data_scope:
             financial_history_parts.append(format_financial_history(all_financial_history.get(t, []), t))
+        # SEC filing chunks: fetched by fetch_data.py only when
+        # "sec_filing" is in data_scope. Skipped entirely when not
+        # needed, matching the pattern used by every other conditional
+        # section above.
+        if "sec_filing" in data_scope:
+            sec_parts.append(
+                format_sec_chunks(all_chunks.get(t, []), t) if all_chunks.get(t)
+                else f"\n{t}: No SEC 10-K filing found.\n"
+            )
 
     snapshot_context = "".join(snapshot_parts)
     sec_context = "".join(sec_parts)
@@ -223,6 +227,10 @@ def generate_report(state: AgentState) -> dict:
     quant_section = (
         f"QUANTITATIVE SIGNALS:\n{quant_context}\n\n"
         if quant_context else ""
+    )
+    sec_section = (
+        f"SEC FILING DATA:\n{sec_context}"
+        if sec_context else ""
     )
 
     signal_specific_notes = "".join(
@@ -291,8 +299,7 @@ CONVERSATION HISTORY:
 COMPANY SNAPSHOT:
 {snapshot_context}
 
-{financial_history_section}{quant_section}SEC FILING DATA:
-{sec_context}"""
+{financial_history_section}{quant_section}{sec_section}"""
 
     queue = token_queue_var.get()
     answer = ""

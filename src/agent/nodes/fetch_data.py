@@ -3,8 +3,8 @@ src/agent/nodes/fetch_data.py
 Data Acquisition Node — fetches only the data determine_data_scope
 decided this question needs (state["data_scope"]), for downstream
 signal computation (quant_engine) and report generation
-(generate_report). snapshot and SEC filing data are always fetched
-regardless (see module-level functions below).
+(generate_report). snapshot is always fetched regardless (see
+module-level functions below).
 No LLM calls — pure, deterministic data fetching, dispatched by a
 dict of {name: coroutine} built per request (see fetch_data()).
 History: an earlier "smart tool selection" design let an LLM agent
@@ -25,13 +25,13 @@ can safely decide which sources to skip.
 import asyncio
 
 from src.readers.snapshot_reader import get_stock_snapshot
+from src.readers.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.readers.valuation_reader import get_valuation_inputs
 from src.readers.momentum_reader import get_momentum_inputs
 from src.readers.risk_reader import get_risk_inputs
-from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.readers.quality_reader import get_quality_inputs_from_db
+from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.readers.news_reader import fetch_company_news
-from src.readers.sec_retrieval import retrieve, fetch_embed_store_retrieve
 from src.readers.financial_history_reader import get_financial_history_rows
 from src.readers.short_reader import get_short_inputs
 from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
@@ -59,6 +59,28 @@ def _fetch_stock_snapshot(ticker: str) -> dict | None:
 
 
 # ─────────────────────────────────────────────
+# SEC Filing Retrieval
+# ─────────────────────────────────────────────
+
+def _fetch_sec_data(ticker: str, question: str) -> list:
+    writer = get_stream_writer()
+
+    try:
+        chunks = retrieve(question, ticker)
+        if chunks:
+            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_retrieve"].format(ticker=ticker)})
+        else:
+            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
+            chunks = fetch_embed_store_retrieve(question, ticker)
+    except Exception as e:
+        bprint(f"  [_fetch_sec_data] Could not fetch SEC data for {ticker}: {e}")
+        return []
+
+    bprint(f"  [_fetch_sec_data] Fetched for {ticker}")
+    return chunks
+
+
+# ─────────────────────────────────────────────
 # Valuation Signal inputs (pe_ratio, price_to_book, price_to_sales)
 # ─────────────────────────────────────────────
 
@@ -78,19 +100,6 @@ def _fetch_valuation_inputs(ticker: str) -> dict | None:
 
 
 # ─────────────────────────────────────────────
-# Risk Signal inputs (2y price history, market benchmark, risk-free rate)
-# ─────────────────────────────────────────────
-
-def _fetch_risk_inputs(ticker: str) -> dict | None:
-    writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["risk_fetch"].format(ticker=ticker)})
-
-    data = get_risk_inputs(ticker)
-    bprint(f"  [_fetch_risk_inputs] Fetched for {ticker}")
-    return data
-
-
-# ─────────────────────────────────────────────
 # Momentum Signal inputs (precomputed universe percentiles)
 # ─────────────────────────────────────────────
 
@@ -104,15 +113,15 @@ def _fetch_momentum_inputs(ticker: str) -> dict | None:
 
 
 # ─────────────────────────────────────────────
-# Short Signal inputs (short interest, days to cover, MoM change)
+# Risk Signal inputs (2y price history, market benchmark, risk-free rate)
 # ─────────────────────────────────────────────
 
-def _fetch_short_inputs(ticker: str) -> dict | None:
+def _fetch_risk_inputs(ticker: str) -> dict | None:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["short_fetch"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["risk_fetch"].format(ticker=ticker)})
 
-    data = get_short_inputs(ticker)
-    bprint(f"  [_fetch_short_inputs] Fetched for {ticker}")
+    data = get_risk_inputs(ticker)
+    bprint(f"  [_fetch_risk_inputs] Fetched for {ticker}")
     return data
 
 
@@ -163,6 +172,19 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
 
 
 # ─────────────────────────────────────────────
+# News Data
+# ─────────────────────────────────────────────
+
+def _fetch_news(ticker: str) -> list:
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["news_data"].format(ticker=ticker)})
+
+    articles = fetch_company_news(ticker)
+    bprint(f"  [_fetch_news] Fetched for {ticker}")
+    return articles
+
+
+# ─────────────────────────────────────────────
 # Historical Financials (multi-year revenue/income/balance-sheet trend)
 # ─────────────────────────────────────────────
 
@@ -185,38 +207,16 @@ def _fetch_financial_history(ticker: str) -> list:
 
 
 # ─────────────────────────────────────────────
-# News Data
+# Short Signal inputs (short interest, days to cover, MoM change)
 # ─────────────────────────────────────────────
 
-def _fetch_news(ticker: str) -> list:
+def _fetch_short_inputs(ticker: str) -> dict | None:
     writer = get_stream_writer()
-    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["news_data"].format(ticker=ticker)})
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["short_fetch"].format(ticker=ticker)})
 
-    articles = fetch_company_news(ticker)
-    bprint(f"  [_fetch_news] Fetched for {ticker}")
-    return articles
-
-
-# ─────────────────────────────────────────────
-# SEC Filing Retrieval
-# ─────────────────────────────────────────────
-
-def _fetch_sec_data(ticker: str, question: str) -> list:
-    writer = get_stream_writer()
-
-    try:
-        chunks = retrieve(question, ticker)
-        if chunks:
-            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_retrieve"].format(ticker=ticker)})
-        else:
-            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
-            chunks = fetch_embed_store_retrieve(question, ticker)
-    except Exception as e:
-        bprint(f"  [_fetch_sec_data] Could not fetch SEC data for {ticker}: {e}")
-        return []
-
-    bprint(f"  [_fetch_sec_data] Fetched for {ticker}")
-    return chunks
+    data = get_short_inputs(ticker)
+    bprint(f"  [_fetch_short_inputs] Fetched for {ticker}")
+    return data
 
 
 # ─────────────────────────────────────────────
@@ -226,9 +226,9 @@ def _fetch_sec_data(ticker: str, question: str) -> list:
 async def fetch_data(state: AgentState) -> dict:
     """
     Fetches only the data sources determine_data_scope decided this
-    question needs (state["data_scope"]), plus snapshot and SEC
-    filing data which are always fetched regardless (basic company
-    info and filing excerpts any question may reference).
+    question needs (state["data_scope"]), plus snapshot data which is
+    always fetched regardless (basic company info any question may
+    reference).
 
     Falls back to fetching ALL signals if data_scope is missing
     or empty (e.g. determine_data_scope failed) — a full-analysis
@@ -252,21 +252,22 @@ async def fetch_data(state: AgentState) -> dict:
     gprint(f"  [fetch_data] data_scope: {data_scope}")
 
     all_stock_snapshots   = {}
+    all_chunks            = {}
     all_valuation         = {}
     all_momentum          = {}
     all_risk              = {}
     all_quality           = {}
     all_consensus         = {}
     all_news              = {}
-    all_chunks            = {}
     all_financial_history = {}
     all_short             = {}
 
     for ticker in tickers:
         tasks = {
             "snapshot": asyncio.to_thread(_fetch_stock_snapshot, ticker),
-            "sec":      asyncio.to_thread(_fetch_sec_data, ticker, question),
         }
+        if "sec_filing" in data_scope:
+            tasks["sec"] = asyncio.to_thread(_fetch_sec_data, ticker, question)
         if "valuation" in data_scope:
             tasks["valuation"] = asyncio.to_thread(_fetch_valuation_inputs, ticker)
         if "momentum" in data_scope:
@@ -288,6 +289,8 @@ async def fetch_data(state: AgentState) -> dict:
 
         if results.get("snapshot"):
             all_stock_snapshots[ticker] = results["snapshot"]
+        if results.get("sec"):
+            all_chunks[ticker] = results["sec"]
         if results.get("valuation"):
             all_valuation[ticker] = results["valuation"]
         if results.get("momentum"):
@@ -300,8 +303,6 @@ async def fetch_data(state: AgentState) -> dict:
             all_consensus[ticker] = results["consensus"]
         if results.get("news"):
             all_news[ticker] = results["news"]
-        if results.get("sec"):
-            all_chunks[ticker] = results["sec"]
         if results.get("financial_history"):
             all_financial_history[ticker] = results["financial_history"]
         if results.get("short"):
@@ -311,13 +312,13 @@ async def fetch_data(state: AgentState) -> dict:
 
     return {
         "stock_snapshots":        all_stock_snapshots,
+        "chunks":                 all_chunks,
         "valuation_inputs":       all_valuation,
         "momentum_inputs":        all_momentum,
         "risk_inputs":            all_risk,
         "quality_inputs":         all_quality,
         "consensus_inputs":       all_consensus,
         "news":                   all_news,
-        "chunks":                 all_chunks,
         "financial_history_data": all_financial_history,
         "short_inputs":           all_short,
     }
