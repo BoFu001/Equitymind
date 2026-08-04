@@ -19,7 +19,7 @@ copied from.
 
 Signals that return None (e.g. quality_signal() with <2 fiscal years
 of data, risk_signal() with <60 trading days of price history,
-momentum_signal() for a ticker missing from momentum_benchmarks.json)
+momentum_signal() for a ticker missing from momentum_benchmarks table)
 are stored as NULL — this is a legitimate, expected outcome, not an
 error, and downstream format_xxx(None) functions already handle it
 ("Insufficient data.").
@@ -43,6 +43,7 @@ from psycopg2.extras import Json, execute_values
 
 from src.readers.snapshot_reader import get_stock_snapshot
 from src.readers.valuation_reader import get_valuation_inputs
+from src.readers.momentum_reader import get_momentum_inputs
 from src.readers.risk_reader import get_risk_inputs
 from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.readers.quality_reader import get_quality_inputs_from_db
@@ -143,6 +144,7 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
     # 2026-07-27 -- see valuation_reader.py for why (same principle
     # already applied to consensus_reader.py).
     valuation_inputs = get_valuation_inputs(ticker)
+    momentum_inputs = get_momentum_inputs(ticker)
 
     risk_inputs = get_risk_inputs(ticker)
 
@@ -159,7 +161,7 @@ def _compute_ticker_row(ticker: str, skip_quality: bool = False) -> tuple | None
     short_inputs = get_short_inputs(ticker)
 
     val_result        = valuation_signal(valuation_inputs) if valuation_inputs else None
-    mom_result        = momentum_signal(ticker)
+    mom_result        = momentum_signal(momentum_inputs)
     risk_result       = risk_signal(risk_inputs)
     consensus_result  = consensus_signal(consensus_data)
     short_result      = short_signal(short_inputs)

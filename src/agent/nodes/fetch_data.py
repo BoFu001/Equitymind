@@ -26,6 +26,7 @@ import asyncio
 
 from src.readers.snapshot_reader import get_stock_snapshot
 from src.readers.valuation_reader import get_valuation_inputs
+from src.readers.momentum_reader import get_momentum_inputs
 from src.readers.risk_reader import get_risk_inputs
 from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
 from src.readers.quality_reader import get_quality_inputs_from_db
@@ -86,6 +87,19 @@ def _fetch_risk_inputs(ticker: str) -> dict | None:
 
     data = get_risk_inputs(ticker)
     bprint(f"  [_fetch_risk_inputs] Fetched for {ticker}")
+    return data
+
+
+# ─────────────────────────────────────────────
+# Momentum Signal inputs (precomputed universe percentiles)
+# ─────────────────────────────────────────────
+
+def _fetch_momentum_inputs(ticker: str) -> dict | None:
+    writer = get_stream_writer()
+    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["momentum_fetch"].format(ticker=ticker)})
+
+    data = get_momentum_inputs(ticker)
+    bprint(f"  [_fetch_momentum_inputs] Fetched for {ticker}")
     return data
 
 
@@ -239,6 +253,7 @@ async def fetch_data(state: AgentState) -> dict:
 
     all_stock_snapshots   = {}
     all_valuation         = {}
+    all_momentum          = {}
     all_risk              = {}
     all_quality           = {}
     all_consensus         = {}
@@ -254,6 +269,8 @@ async def fetch_data(state: AgentState) -> dict:
         }
         if "valuation" in data_scope:
             tasks["valuation"] = asyncio.to_thread(_fetch_valuation_inputs, ticker)
+        if "momentum" in data_scope:
+            tasks["momentum"] = asyncio.to_thread(_fetch_momentum_inputs, ticker)
         if "risk" in data_scope:
             tasks["risk"] = asyncio.to_thread(_fetch_risk_inputs, ticker)
         if "quality" in data_scope:
@@ -273,6 +290,8 @@ async def fetch_data(state: AgentState) -> dict:
             all_stock_snapshots[ticker] = results["snapshot"]
         if results.get("valuation"):
             all_valuation[ticker] = results["valuation"]
+        if results.get("momentum"):
+            all_momentum[ticker] = results["momentum"]
         if results.get("risk"):
             all_risk[ticker] = results["risk"]
         if results.get("quality"):
@@ -293,6 +312,7 @@ async def fetch_data(state: AgentState) -> dict:
     return {
         "stock_snapshots":        all_stock_snapshots,
         "valuation_inputs":       all_valuation,
+        "momentum_inputs":        all_momentum,
         "risk_inputs":            all_risk,
         "quality_inputs":         all_quality,
         "consensus_inputs":       all_consensus,

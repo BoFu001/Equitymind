@@ -67,6 +67,7 @@ def quant_engine(state: AgentState) -> dict:
 
     all_news              = state.get("news") or {}
     all_valuation_inputs  = state.get("valuation_inputs") or {}
+    all_momentum_inputs   = state.get("momentum_inputs") or {}
     all_risk_inputs       = state.get("risk_inputs") or {}
     all_short_inputs      = state.get("short_inputs") or {}
     all_quality_inputs    = state.get("quality_inputs") or {}
@@ -100,7 +101,8 @@ def quant_engine(state: AgentState) -> dict:
             signals["momentum"] = None
         else:
             writer({"type": "sub_progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_momentum"].format(ticker=ticker)})
-            mom = momentum_signal(ticker)
+            momentum_inputs = all_momentum_inputs.get(ticker)
+            mom = momentum_signal(momentum_inputs)
             if mom is not None:
                 signals["momentum"] = mom
                 mprint(

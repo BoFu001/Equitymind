@@ -28,6 +28,4 @@ def format_momentum(mom: dict | None) -> str:
     text = f"  Momentum - 12-1 Month Return: {mom['momentum_12_1_label']} ({mom['momentum_12_1_pct']}%, percentile={mom['momentum_12_1_percentile']})\n"
     text += f"  Momentum - 52-Week High Position: {mom['position_52w_label']} ({round(mom['position_52w']*100)}% of 52w range, percentile={mom['position_52w_percentile']})\n"
     text += f"  {mom['detail']}\n"
-    if mom.get("stale_benchmark"):
-        text += f"  Note: Momentum benchmarks may be outdated (>90 days old).\n"
     return text

@@ -40,12 +40,13 @@ class AgentState(TypedDict):
     # Retrieval
     chunks: Optional[list]                  # retrieved chunks from pgvector
 
-    # Stock snapshots
+    # Stock snapshot (always fetched regardless of data_scope)
     stock_snapshots: Optional[dict]         # price, P/E, revenue etc from yfinance
-    valuation_inputs: Optional[dict]        # pe_ratio, price_to_book, price_to_sales — for Valuation Signal
 
     # Inputs for quant_engine signal calculations (fetched by fetch_data,
     # consumed by quant_engine — quant_engine performs no I/O of its own)
+    valuation_inputs: Optional[dict]        # pe_ratio, price_to_book, price_to_sales — for Valuation Signal
+    momentum_inputs: Optional[dict]         # precomputed universe percentiles — for Momentum Signal
     risk_inputs: Optional[dict]             # price history, market benchmark, risk-free rate — for Risk Signal
     quality_inputs: Optional[dict]          # financial statements — for Quality Signal
     consensus_inputs: Optional[dict]        # analyst rating history — for Consensus Signal
@@ -96,6 +97,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "chunks":      [],
         "stock_snapshots": {},
         "valuation_inputs": {},
+        "momentum_inputs": {},
         "risk_inputs": {},
         "quality_inputs": {},
         "consensus_inputs": {},

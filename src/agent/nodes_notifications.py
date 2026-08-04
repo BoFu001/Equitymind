@@ -25,6 +25,7 @@ NODE_PROGRESS = {
     "sec_fetch":                           "Downloading {ticker} annual report from SEC...",       # sub_progress
     "snapshot_fetch":                      "Fetching {ticker}'s stock data...",                    # sub_progress
     "valuation_fetch":                     "Checking {ticker}'s valuation ratios...",              # sub_progress
+    "momentum_fetch":                      "Checking {ticker}'s momentum data...",                 # sub_progress
     "risk_fetch":                          "Checking {ticker}'s risk history...",                  # sub_progress
     "short_fetch":                         "Checking {ticker}'s short interest...",                # sub_progress
     "quality_fetch":                       "Reviewing {ticker}'s financial statements...",         # sub_progress
@@ -46,5 +47,5 @@ NODE_PROGRESS = {
     "quant_quality":                       "Computing quality signal for {ticker}...",             # sub_progress
     "quant_news_sentiment":                "Computing news sentiment signal for {ticker}...",      # sub_progress
     "quant_consensus":                     "Computing consensus signal for {ticker}...",           # sub_progress
-    "quant_short":                          "Computing short signal for {ticker}...",               # sub_progress
+    "quant_short":                         "Computing short signal for {ticker}...",               # sub_progress
 }

@@ -46,10 +46,7 @@ so it can be run more frequently if desired.
 Requires: yfinance, numpy (already in the project's environment)
 """
 
-import json
 import os
-from datetime import date
-from pathlib import Path
 
 import psycopg2
 import yfinance as yf
@@ -57,8 +54,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
-
-OUTPUT_PATH = Path(__file__).parent.parent / "src" / "quant" / "data" / "momentum_benchmarks.json"
 
 # ~1 month and ~12 months in trading days (US market convention)
 TRADING_DAYS_PER_MONTH = 22
@@ -168,9 +163,23 @@ def compute_percentile_ranks(raw_data: dict) -> tuple[dict, dict]:
     return momentum_percentiles, position_percentiles
 
 
+INSERT_SQL = """
+    INSERT INTO momentum_benchmarks (
+        ticker, momentum_12_1_pct, momentum_12_1_percentile,
+        position_52w, position_52w_percentile, updated_at
+    )
+    VALUES (%s, %s, %s, %s, %s, NOW())
+    ON CONFLICT (ticker) DO UPDATE SET
+        momentum_12_1_pct = EXCLUDED.momentum_12_1_pct,
+        momentum_12_1_percentile = EXCLUDED.momentum_12_1_percentile,
+        position_52w = EXCLUDED.position_52w,
+        position_52w_percentile = EXCLUDED.position_52w_percentile,
+        updated_at = NOW();
+"""
+
+
 def update_momentum_benchmarks():
     print("EquityMind — Momentum Benchmark Updater")
-    print(f"Output: {OUTPUT_PATH}")
     print("=" * 50)
 
     tickers = _load_target_tickers()
@@ -190,39 +199,48 @@ def update_momentum_benchmarks():
     print("Computing percentile ranks across the universe...")
     momentum_percentiles, position_percentiles = compute_percentile_ranks(raw_data)
 
-    benchmarks = {}
-    for ticker in tickers:
+    def _to_float(value):
+        # numpy.float64 passed straight to psycopg2 gets rendered as
+        # "np.float64(0.5)" in the SQL text, which Postgres tries to
+        # parse as a schema-qualified identifier ("np"."float64(...)"),
+        # failing every write — same issue documented in
+        # update_quant_signals.py's _to_float().
+        return None if value is None else float(value)
+
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM momentum_benchmarks WHERE ticker != ALL(%s)", (tickers,))
+    conn.commit()
+
+    write_success = 0
+    print("Writing to momentum_benchmarks table...")
+    for i, ticker in enumerate(tickers):
         raw = raw_data.get(ticker)
         if raw is None:
-            benchmarks[ticker] = None
             continue
-        benchmarks[ticker] = {
-            "momentum_12_1_pct":        round(raw["momentum_12_1_pct"] * 100, 2) if raw["momentum_12_1_pct"] is not None else None,
-            "momentum_12_1_percentile": momentum_percentiles.get(ticker),
-            "position_52w":             round(raw["position_52w"], 4) if raw["position_52w"] is not None else None,
-            "position_52w_percentile":  position_percentiles.get(ticker),
-        }
+        row = (
+            ticker,
+            _to_float(round(raw["momentum_12_1_pct"] * 100, 2)) if raw["momentum_12_1_pct"] is not None else None,
+            _to_float(momentum_percentiles.get(ticker)),
+            _to_float(round(raw["position_52w"], 4)) if raw["position_52w"] is not None else None,
+            _to_float(position_percentiles.get(ticker)),
+        )
+        try:
+            cursor.execute(INSERT_SQL, row)
+            conn.commit()
+            write_success += 1
+        except Exception as e:
+            print(f"    DB write failed for {ticker}: {e}")
+            conn.rollback()
 
-    output = {
-        "updated_at": str(date.today()),
-        "source": "yfinance price history (1y) — no FMP dependency",
-        "universe_size": len(tickers),
-        "computed_count": computed_count,
-        "notes": (
-            "Percentiles are computed within this 250-ticker large-cap "
-            "universe only, not the broader market. Both signals reflect "
-            "portfolio/group-level academic findings (Jegadeesh & Titman "
-            "1993; George & Hwang 2004), not per-stock predictions. Recent "
-            "(2014-2024) real-world performance of 12-1 momentum has been "
-            "notably weaker than historical averages."
-        ),
-        "benchmarks": benchmarks,
-    }
+        if (i + 1) % 50 == 0:
+            print(f"  ...written {i + 1}/{len(tickers)}")
 
-    with open(OUTPUT_PATH, "w") as f:
-        json.dump(output, f, indent=4)
+    cursor.close()
+    conn.close()
 
-    print(f"\n✓ momentum_benchmarks.json updated — {computed_count}/{len(tickers)} tickers computed")
+    print(f"\n✓ momentum_benchmarks table updated — {write_success}/{len(tickers)} tickers written")
 
 
 if __name__ == "__main__":
