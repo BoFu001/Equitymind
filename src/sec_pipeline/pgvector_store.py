@@ -11,7 +11,7 @@ Functions:
 import psycopg2
 from psycopg2.extras import execute_values
 from config import DATABASE_URL, PGVECTOR_BATCH_SIZE
-from src.sec_pipeline.types import EmbeddedSecChunk, RetrievedChunk, SecChunk
+from src.sec_pipeline.sec_types import EmbeddedSecChunk, RetrievedChunk, SecChunk
 
 
 def get_connection():

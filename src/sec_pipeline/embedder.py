@@ -1,7 +1,7 @@
 import time
 from openai import OpenAI
 from config import OPENAI_API_KEY, EMBEDDING_BATCH_SIZE
-from src.sec_pipeline.types import SecChunk, EmbeddedSecChunk
+from src.sec_pipeline.sec_types import SecChunk, EmbeddedSecChunk
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -10,7 +10,7 @@ EMBEDDING_MODEL = "text-embedding-3-small"
 
 def embed_chunks(chunks: list[SecChunk]) -> list[EmbeddedSecChunk]:
     """
-    Takes chunks from sec_loader.
+    Takes chunks from sec_downloader.
     Adds 'embedding' field to each chunk.
     Returns chunks with embeddings.
     """

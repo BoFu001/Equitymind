@@ -1,7 +1,7 @@
-from src.sec_pipeline.sec_loader import ingest_sec_filing
+from src.sec_pipeline.sec_downloader import download_and_chunk_filing
 from src.sec_pipeline.embedder import embed_chunks
 from src.sec_pipeline.pgvector_store import upsert_chunks, query
-from src.sec_pipeline.types import RetrievedChunk
+from src.sec_pipeline.sec_types import RetrievedChunk
 
 
 def retrieve(question: str, ticker: str, top_k: int = 5) -> list[RetrievedChunk]:
@@ -27,7 +27,7 @@ def fetch_embed_store_retrieve(question: str, ticker: str, top_k: int = 5) -> li
     print(f"  [fetch_embed_store_retrieve] Fetching {ticker} from SEC EDGAR...")
 
     # Step 1: Download and chunk
-    chunks = ingest_sec_filing(ticker)
+    chunks = download_and_chunk_filing(ticker)
 
     if not chunks:
         print(f"  [fetch_embed_store_retrieve] No 10-K data for {ticker} — skipping embed/store")

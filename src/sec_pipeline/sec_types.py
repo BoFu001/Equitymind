@@ -4,7 +4,7 @@ src/vectorstore/types.py
 Type definitions for SEC filing data flow.
 
 Data flow:
-    ingest_sec_filing()  → list[SecChunk]
+    download_and_chunk_filing()  → list[SecChunk]
     embed_chunks()       → list[EmbeddedSecChunk]
     upsert_chunks()      → None (stores to PostgreSQL)
     query()              → list[RetrievedChunk]
@@ -16,7 +16,7 @@ from typing import TypedDict
 class SecChunk(TypedDict):
     """
     A single SEC filing chunk after download and splitting.
-    Produced by ingest_sec_filing(), consumed by embed_chunks().
+    Produced by download_and_chunk_filing(), consumed by embed_chunks().
     """
     ticker:        str
     filing_type:   str
