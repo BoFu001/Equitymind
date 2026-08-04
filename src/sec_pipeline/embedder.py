@@ -1,7 +1,7 @@
 import time
 from openai import OpenAI
 from config import OPENAI_API_KEY, EMBEDDING_BATCH_SIZE
-from src.vectorstore.types import SecChunk, EmbeddedSecChunk
+from src.sec_pipeline.types import SecChunk, EmbeddedSecChunk
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 

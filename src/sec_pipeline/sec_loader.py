@@ -2,7 +2,7 @@ from edgar import Company, set_identity
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import re
 from config import CHUNK_SIZE, CHUNK_OVERLAP
-from src.vectorstore.types import SecChunk
+from src.sec_pipeline.types import SecChunk
 
 set_identity("Bo Fu bofu001@gmail.com")
 

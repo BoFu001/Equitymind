@@ -1,7 +1,7 @@
-from src.ingestion.sec_loader import ingest_sec_filing
-from src.embeddings.embedder import embed_chunks
-from src.vectorstore.pgvector_store import upsert_chunks, query
-from src.vectorstore.types import RetrievedChunk
+from src.sec_pipeline.sec_loader import ingest_sec_filing
+from src.sec_pipeline.embedder import embed_chunks
+from src.sec_pipeline.pgvector_store import upsert_chunks, query
+from src.sec_pipeline.types import RetrievedChunk
 
 
 def retrieve(question: str, ticker: str, top_k: int = 5) -> list[RetrievedChunk]:
