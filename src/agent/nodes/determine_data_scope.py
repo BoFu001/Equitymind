@@ -84,6 +84,7 @@ def determine_data_scope(state: AgentState) -> dict:
 data sources are needed to answer the user's question about a stock.
 
 Available data sources:
+- sec_filing: business overview, risk factors, and management discussion & analysis (MD&A) from the company's 10-K — for questions asking what the company's 10-K says about its business, risks, or management's commentary. Does not cover financial statements, executive compensation, or other 10-K sections.
 - valuation: P/E, P/B ratios and how they compare to peers — for questions about whether a stock is over/undervalued, expensive, or cheap.
 - momentum: 12-month price return and 52-week high/low position — for questions about price trend, momentum, or recent performance.
 - risk: Beta, Sharpe Ratio, Value at Risk, Max Drawdown — for questions about volatility, risk, or downside.
@@ -92,7 +93,6 @@ Available data sources:
 - news: recent news sentiment — for questions about recent news, headlines, or media coverage.
 - financial_history: multi-year revenue/income/balance-sheet trend data — for questions asking how a specific financial figure has changed over multiple years or a specific past fiscal year/quarter.
 - short: short interest percentage, days to cover, and month-over-month change in shares sold short — for questions about short selling, whether a stock is heavily shorted, or short squeeze risk.
-- sec_filing: business overview, risk factors, and management discussion & analysis (MD&A) from the company's 10-K — for questions asking what the company's 10-K says about its business, risks, or management's commentary. Does not cover financial statements, executive compensation, or other 10-K sections.
 
 Rules:
 - Select ONLY the data sources the question actually needs to be answered well.
@@ -103,7 +103,7 @@ Rules:
 User question: {question}
 
 Reply with ONLY valid JSON, a single key "data_scope" with a list of the applicable values from: {VALID_DATA_SCOPES}. No markdown, no explanation. Examples:
-{{"data_scope": ["valuation", "momentum", "risk", "quality", "consensus", "news", "financial_history", "short", "sec_filing"]}}
+{{"data_scope": ["sec_filing", "valuation", "momentum", "risk", "quality", "consensus", "news", "financial_history", "short"]}}
 {{"data_scope": ["consensus"]}}
 {{"data_scope": ["news"]}}
 {{"data_scope": ["valuation", "quality"]}}
