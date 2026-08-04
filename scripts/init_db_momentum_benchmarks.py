@@ -1,7 +1,7 @@
 """
 scripts/init_db_momentum_benchmarks.py
 
-Creates the momentum_benchmarks table — replaces momentum_benchmarks.json.
+Creates the momentum_benchmarks table.
 Written by update_momentum_benchmarks.py, read by momentum_signal.py.
 
 Run once to create the table:
