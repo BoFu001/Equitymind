@@ -25,7 +25,7 @@ can safely decide which sources to skip.
 import asyncio
 
 from src.readers.snapshot_reader import get_stock_snapshot
-from src.readers.sec_retrieval import retrieve, fetch_embed_store_retrieve
+from src.readers.sec_reader import retrieve, fetch_embed_store_retrieve
 from src.readers.valuation_reader import get_valuation_inputs
 from src.readers.momentum_reader import get_momentum_inputs
 from src.readers.risk_reader import get_risk_inputs
