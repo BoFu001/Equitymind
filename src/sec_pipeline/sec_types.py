@@ -1,12 +1,12 @@
 """
-src/vectorstore/types.py
+src/sec_pipeline/sec_types.py
 
 Type definitions for SEC filing data flow.
 
 Data flow:
     download_and_chunk_filing()  → list[SecChunk]
     embed_chunks()       → list[EmbeddedSecChunk]
-    upsert_chunks()      → None (stores to PostgreSQL)
+    insert_chunks()      → None (stores to PostgreSQL)
     query()              → list[RetrievedChunk]
 """
 
@@ -29,7 +29,7 @@ class SecChunk(TypedDict):
 class EmbeddedSecChunk(SecChunk, total=False):
     """
     SecChunk with embedding added.
-    Produced by embed_chunks(), consumed by upsert_chunks().
+    Produced by embed_chunks(), consumed by insert_chunks().
     """
     embedding: list[float]
 

@@ -1,6 +1,6 @@
 from src.sec_pipeline.sec_downloader import download_and_chunk_filing
 from src.sec_pipeline.embedder import embed_chunks
-from src.sec_pipeline.pgvector_store import upsert_chunks, query
+from src.sec_pipeline.pgvector_store import insert_chunks, query
 from src.sec_pipeline.sec_types import RetrievedChunk
 
 
@@ -40,7 +40,7 @@ def fetch_embed_store_retrieve(question: str, ticker: str, top_k: int = 5) -> li
     print(f"  [fetch_embed_store_retrieve] Embedded {len(embedded_chunks)} chunks")
 
     # Step 3: Store in PostgreSQL
-    upsert_chunks(embedded_chunks)
+    insert_chunks(embedded_chunks)
     print(f"  [fetch_embed_store_retrieve] Stored in PostgreSQL")
 
     # Step 4: Retrieve

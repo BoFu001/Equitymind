@@ -1,10 +1,10 @@
 """
-src/vectorstore/pgvector_store.py
+src/sec_pipeline/pgvector_store.py
 
 PostgreSQL + pgvector vector store for EquityMind.
 
 Functions:
-    upsert_chunks(chunks)              — batch insert with transaction
+    insert_chunks(chunks)              — batch insert with transaction
     query(embedding, ticker, top_k)    — vector similarity search
 """
 
@@ -19,13 +19,13 @@ def get_connection():
     return psycopg2.connect(DATABASE_URL)
 
 
-def upsert_chunks(chunks: list[EmbeddedSecChunk]) -> None:
+def insert_chunks(chunks: list[EmbeddedSecChunk]) -> None:
     """
     Batch insert chunks into sec_chunks table.
     Uses a single transaction — all chunks inserted or none (rollback on error).
     This guarantees data integrity — no partial data.
     """
-    print(f"Upserting {len(chunks)} chunks to pgvector...")
+    print(f"Inserting {len(chunks)} chunks to pgvector...")
 
     # Build rows for batch insert — flat structure, no metadata nesting
     rows = []
@@ -58,10 +58,10 @@ def upsert_chunks(chunks: list[EmbeddedSecChunk]) -> None:
                 batch,
                 template="(%s, %s, %s, %s, %s, %s, %s::vector)"
             )
-            print(f"  {min(i + PGVECTOR_BATCH_SIZE, len(rows))}/{len(rows)} upserted")
+            print(f"  {min(i + PGVECTOR_BATCH_SIZE, len(rows))}/{len(rows)} inserted")
 
         conn.commit()  # ← all chunks committed atomically
-        print("Upsert complete.")
+        print("Insert complete.")
 
     except Exception as e:
         conn.rollback()  # ← if anything fails, nothing saved
