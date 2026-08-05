@@ -20,8 +20,8 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 def extract_parameters(state: AgentState) -> dict:
     """
-    Extracts ticker(s) and year from the user's question.
-    Returns primary ticker, list of all tickers, and year.
+    Extracts ticker(s) from the user's question.
+    Returns the list of all tickers mentioned.
     """
 
     writer = get_stream_writer()
@@ -35,11 +35,10 @@ def extract_parameters(state: AgentState) -> dict:
     conversation_context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT, max_chars=200)
 
     prompt = f"""You are a financial data extractor.
-Extract the stock ticker(s) and year from the user question.
+Extract the stock ticker(s) from the user question.
 
 Rules:
 - tickers: list of ALL stock ticker symbols. Convert ANY company name to its ticker symbol. If no company or ticker mentioned, return [].
-- year: the year mentioned. If not mentioned, return null.
 - If the user refers to a previously discussed company using a pronoun ("this", "it", "that") instead of naming it, include the ticker from LAST TICKERS FROM PREVIOUS TURN below, IN ADDITION TO any newly named company in the current question. Example: if LAST TICKERS = ["GOOGL"] and the user asks "is this better than Tesla?", return ["GOOGL", "TSLA"] — both the referenced company and the newly named one.
 - If the user refers to the whole previous list ("last", "those", "them", "the suggested ones"), return all of LAST TICKERS FROM PREVIOUS TURN.
 - Examples of conversions: Apple → AAPL, Microsoft → MSFT, Tesla → TSLA, NVIDIA → NVDA, Google → GOOGL, Amazon → AMZN, Alibaba → BABA, Meta → META, Samsung → 005930.KS, Tencent → 0700.HK
@@ -52,11 +51,11 @@ LAST TICKERS FROM PREVIOUS TURN:
 {last_tickers if last_tickers else "None"}
 
 Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example:
-{{"tickers": ["AAPL"], "year": null}}
-{{"tickers": ["AAPL", "MSFT"], "year": null}}
-{{"tickers": ["BABA"], "year": null}}
-{{"tickers": ["AMZN"], "year": null}}
-{{"tickers": [], "year": null}}"""
+{{"tickers": ["AAPL"]}}
+{{"tickers": ["AAPL", "MSFT"]}}
+{{"tickers": ["BABA"]}}
+{{"tickers": ["AMZN"]}}
+{{"tickers": []}}"""
 
     response = client.chat.completions.create(
         model=LLM_MODEL_LIGHT,
@@ -68,16 +67,15 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
 
     if not content:
         gprint(f"  [extract_parameters] Empty response from {LLM_MODEL_LIGHT}, using defaults")
-        return {"tickers": [], "year": None}
+        return {"tickers": []}
 
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
-            gprint(f"  [extract_parameters] Invalid JSON: {content}")
-            return {"tickers": [], "year": None}
+        gprint(f"  [extract_parameters] Invalid JSON: {content}")
+        return {"tickers": []}
 
     tickers = data.get("tickers", [])
-    year    = str(data.get("year")) if data.get("year") else None
 
-    gprint(f"  [extract_parameters] Tickers: {tickers}, Year: {year}")
-    return {"tickers": tickers, "year": year}
+    gprint(f"  [extract_parameters] Tickers: {tickers}")
+    return {"tickers": tickers}

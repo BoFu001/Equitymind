@@ -54,7 +54,6 @@ def make_state(**kwargs) -> AgentState:
         "top_intent": None,
         "sub_intent": None,
         "tickers": [], 
-        "year": None,
         "chunks": None,
         "stock_snapshots": None,
         "news": None,
@@ -146,13 +145,14 @@ def test_extract_parameters_aapl():
     state = make_state(question="What are Apple's biggest risks?")
     result = extract_parameters(state)
     assert result["tickers"] == ["AAPL"]
-    assert result["year"] is None
 
-def test_extract_parameters_with_year():
+def test_extract_parameters_mentions_year_in_question():
+    """Year mentioned in the question is no longer extracted as a
+    separate field — the ticker extraction should still work fine
+    alongside it."""
     state = make_state(question="What were Microsoft's risks in 2024?")
     result = extract_parameters(state)
     assert result["tickers"] == ["MSFT"]
-    assert result["year"] == "2024"
 
 def test_extract_parameters_no_ticker():
     state = make_state(question="Find me a low risk stock")

@@ -26,7 +26,6 @@ class AgentState(TypedDict):
 
     # Extracted parameters
     tickers: Optional[list[str]]            # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
-    year: Optional[str]                     # e.g. "2025" or None for latest    
 
     # Which data sources/signals this question actually needs — decided once,
     # after tickers are confirmed, before fetch_data. snapshot is always
@@ -91,7 +90,6 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "clarification_complete": False,
         "enriched_query": None,
         "tickers":     [],
-        "year":        None,
         "data_scope":  [],
         "news":        [],
         "chunks":      [],
