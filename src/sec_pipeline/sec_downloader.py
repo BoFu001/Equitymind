@@ -1,4 +1,5 @@
 from edgar import Company, set_identity
+from edgar.company_reports.ten_k import TenK
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import re
 from config import CHUNK_SIZE, CHUNK_OVERLAP
@@ -19,13 +20,24 @@ splitter = RecursiveCharacterTextSplitter(
     chunk_overlap=CHUNK_OVERLAP,
 )
 
-def get_latest_tenk(ticker: str):
-    c = Company(ticker)
-    filings = c.get_filings(form="10-K")
-    for f in filings:
-        if f.form == "10-K":
-            return f.obj(), str(f.filing_date)
-    raise ValueError(f"No standard 10-K found for {ticker}")
+def get_latest_tenk(ticker: str) -> tuple[TenK | None, str | None]:
+    """
+    Fetches the latest 10-K for this ticker from SEC EDGAR. Returns
+    (None, None) on any failure (no 10-K found, network error, etc.)
+    instead of raising — callers only need to check for None rather
+    than writing their own try/except.
+    """
+    try:
+        c = Company(ticker)
+        filings = c.get_filings(form="10-K")
+        for f in filings:
+            if f.form == "10-K":
+                return f.obj(), str(f.filing_date)
+        print(f"No standard 10-K found for {ticker}")
+        return None, None
+    except Exception as e:
+        print(f"Could not check EDGAR for {ticker}: {e}")
+        return None, None
 
 
 def clean_text(text: str) -> str:
@@ -49,18 +61,16 @@ def chunk_text(text: str, ticker: str, filing_type: str, filing_date: str, secti
     ]
 
 
-def download_and_chunk_filing(ticker: str, filing_type: str = "10-K") -> list[SecChunk]:
+def download_and_chunk_filing(tenk: TenK, filing_date: str, ticker: str, filing_type: str = "10-K") -> list[SecChunk]:
+    """
+    Cleans and chunks an already-fetched TenK object. Takes tenk and
+    filing_date as parameters (rather than a bare ticker) so a caller
+    that already called get_latest_tenk() to check freshness can pass
+    that same result straight through, instead of this function
+    fetching the same filing a second time.
+    """
     print(f"\n{'='*50}")
     print(f"Processing {ticker}...")
-
-    try:
-        tenk, filing_date = get_latest_tenk(ticker)
-    except ValueError as e:
-        print(f"  No 10-K filing found for {ticker}: {e}")
-        return []
-    except Exception as e:
-        print(f"  Unexpected error fetching {ticker}: {e}")
-        return []
 
     all_chunks = []
     for section_key, (attr, label) in SECTIONS.items():

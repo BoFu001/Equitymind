@@ -1,6 +1,7 @@
 from src.sec_pipeline.sec_downloader import download_and_chunk_filing
+from edgar.company_reports.ten_k import TenK
 from src.sec_pipeline.embedder import embed_chunks
-from src.sec_pipeline.pgvector_store import insert_chunks, query
+from src.sec_pipeline.pgvector_store import insert_chunks, delete_chunks, query
 from src.sec_pipeline.sec_types import RetrievedChunk
 
 
@@ -17,17 +18,21 @@ def retrieve(question: str, ticker: str, top_k: int = 5) -> list[RetrievedChunk]
     return query(question_vector, ticker=ticker, top_k=top_k)
 
 
-def fetch_embed_store_retrieve(question: str, ticker: str, top_k: int = 5) -> list[RetrievedChunk]:
+def fetch_embed_store_retrieve(question: str, ticker: str, tenk: TenK, filing_date: str, top_k: int = 5) -> list[RetrievedChunk]:
     """
-    Dynamically fetches SEC filing for a ticker not in PostgreSQL.
-    Downloads, embeds, stores, then retrieves relevant chunks.
+    Embeds, stores, then retrieves relevant chunks for an already-
+    fetched TenK object. tenk and filing_date come from the caller's
+    own get_latest_tenk() call — this function does not fetch the
+    filing itself, so callers must fetch it first (e.g. to check
+    freshness) and pass the result straight through here, rather
+    than fetching the same filing twice.
     Transaction guarantees all chunks stored or none — data integrity.
     """
 
-    print(f"  [fetch_embed_store_retrieve] Fetching {ticker} from SEC EDGAR...")
+    print(f"  [fetch_embed_store_retrieve] Processing {ticker}...")
 
-    # Step 1: Download and chunk
-    chunks = download_and_chunk_filing(ticker)
+    # Step 1: Chunk the already-fetched filing
+    chunks = download_and_chunk_filing(tenk, filing_date, ticker)
 
     if not chunks:
         print(f"  [fetch_embed_store_retrieve] No 10-K data for {ticker} — skipping embed/store")
@@ -39,7 +44,10 @@ def fetch_embed_store_retrieve(question: str, ticker: str, top_k: int = 5) -> li
     embedded_chunks = embed_chunks(chunks)
     print(f"  [fetch_embed_store_retrieve] Embedded {len(embedded_chunks)} chunks")
 
-    # Step 3: Store in PostgreSQL
+    # Step 3: Delete any existing chunks for this ticker, then store
+    # the freshly downloaded ones — unconditional, so old and new
+    # chunks never coexist (a no-op if nothing was stored before).
+    delete_chunks(ticker)
     insert_chunks(embedded_chunks)
     print(f"  [fetch_embed_store_retrieve] Stored in PostgreSQL")
 

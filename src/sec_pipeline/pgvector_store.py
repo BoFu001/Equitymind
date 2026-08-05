@@ -19,6 +19,39 @@ def get_connection():
     return psycopg2.connect(DATABASE_URL)
 
 
+def get_stored_filing_date(ticker: str) -> str | None:
+    """
+    Returns the filing_date currently stored for this ticker's 10-K
+    chunks, or None if nothing is stored yet.
+    """
+    conn   = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT filing_date FROM sec_chunks WHERE ticker = %s LIMIT 1",
+        (ticker,)
+    )
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return row[0] if row else None
+
+
+def delete_chunks(ticker: str) -> None:
+    """
+    Deletes all stored chunks for this ticker. Called unconditionally
+    before inserting a freshly downloaded filing, so old and new
+    chunks never coexist — a new filing's chunk count and content
+    rarely lines up 1:1 with the old one, so overwriting existing
+    rows in place is not viable; deleting first and re-inserting is.
+    """
+    conn   = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM sec_chunks WHERE ticker = %s", (ticker,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
 def insert_chunks(chunks: list[EmbeddedSecChunk]) -> None:
     """
     Batch insert chunks into sec_chunks table.
@@ -65,7 +98,7 @@ def insert_chunks(chunks: list[EmbeddedSecChunk]) -> None:
 
     except Exception as e:
         conn.rollback()  # ← if anything fails, nothing saved
-        print(f"  [pgvector] Upsert failed, rolled back: {e}")
+        print(f"  [pgvector] Insert failed, rolled back: {e}")
         raise
 
     finally:

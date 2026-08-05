@@ -26,6 +26,9 @@ import asyncio
 
 from src.readers.snapshot_reader import get_stock_snapshot
 from src.readers.sec_reader import retrieve, fetch_embed_store_retrieve
+from src.sec_pipeline.pgvector_store import get_stored_filing_date
+from src.sec_pipeline.sec_downloader import get_latest_tenk
+from src.sec_pipeline.sec_types import RetrievedChunk
 from src.readers.valuation_reader import get_valuation_inputs
 from src.readers.momentum_reader import get_momentum_inputs
 from src.readers.risk_reader import get_risk_inputs
@@ -62,21 +65,49 @@ def _fetch_stock_snapshot(ticker: str) -> dict | None:
 # SEC Filing Retrieval
 # ─────────────────────────────────────────────
 
-def _fetch_sec_data(ticker: str, question: str) -> list:
+def _fetch_sec_data(ticker: str, question: str) -> list[RetrievedChunk]:
+    """
+    Checks whether stored SEC data is behind the latest 10-K on EDGAR
+    before trusting it — sec_chunks has no automatic refresh, so a
+    stale filing would otherwise be served indefinitely.
+
+    Only returns data whose freshness has just been confirmed: the
+    five cases are no stored data (fetch), stored data matching
+    EDGAR (retrieve), stored data older than EDGAR (fetch), and two
+    "cannot verify" cases (EDGAR unreachable) that return empty
+    rather than risk stale or unconfirmed data.
+    """
     writer = get_stream_writer()
 
     try:
-        chunks = retrieve(question, ticker)
-        if chunks:
-            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_retrieve"].format(ticker=ticker)})
-        else:
-            writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
-            chunks = fetch_embed_store_retrieve(question, ticker)
-    except Exception as e:
-        bprint(f"  [_fetch_sec_data] Could not fetch SEC data for {ticker}: {e}")
-        return []
+        stored_date = get_stored_filing_date(ticker)
+        tenk, edgar_date = get_latest_tenk(ticker)
 
-    bprint(f"  [_fetch_sec_data] Fetched for {ticker}")
+        if stored_date is None:
+            if edgar_date is None:
+                chunks = []
+                bprint(f"  [_fetch_sec_data] No stored data, and EDGAR check failed for {ticker} -> returning empty")
+            else:
+                writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
+                chunks = fetch_embed_store_retrieve(question, ticker, tenk, edgar_date)
+                bprint(f"  [_fetch_sec_data] No stored data for {ticker} -> fetched via fetch_embed_store_retrieve")
+        else:
+            if edgar_date is not None:
+                if stored_date == edgar_date:
+                    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_retrieve"].format(ticker=ticker)})
+                    chunks = retrieve(question, ticker)
+                    bprint(f"  [_fetch_sec_data] Stored data for {ticker} was up to date -> retrieved")
+                else:
+                    writer({"type": "sub_progress", "node": "fetch_data", "message": NODE_PROGRESS["sec_fetch"].format(ticker=ticker)})
+                    chunks = fetch_embed_store_retrieve(question, ticker, tenk, edgar_date)
+                    bprint(f"  [_fetch_sec_data] Stored data for {ticker} was stale -> fetched via fetch_embed_store_retrieve")
+            else:
+                chunks = []
+                bprint(f"  [_fetch_sec_data] Stored data exists for {ticker} but freshness could not be verified (EDGAR check failed) -> returning empty")
+    except Exception as e:
+        chunks = []
+        bprint(f"  [_fetch_sec_data] Could not fetch SEC data for {ticker}: {e}")
+
     return chunks
 
 
