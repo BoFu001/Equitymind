@@ -30,6 +30,10 @@ FINLIGHT_API_KEY = os.getenv("FINLIGHT_API_KEY")
 # Database
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+# Internal pipeline trigger (used by Kestra, not exposed to external developers —
+# separate from api/auth.py's future portal-based API key system)
+PIPELINE_TRIGGER_SECRET = os.getenv("PIPELINE_TRIGGER_SECRET")
+
 # Batch sizes
 EMBEDDING_BATCH_SIZE = 100
 PGVECTOR_BATCH_SIZE  = 100
