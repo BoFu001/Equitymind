@@ -64,14 +64,34 @@ def _run_script_in_background(run_id: str, script_path: str) -> None:
     several minutes (e.g. update_momentum_benchmarks.py processes
     ~250 tickers) — the HTTP response has already returned by the
     time this finishes.
+
+    The script's own stdout is captured and re-emitted line by line
+    with a [PIPELINE] prefix, rather than letting it print directly —
+    this lets a Railway log filter on "[PIPELINE]" surface the full
+    run (including per-ticker progress lines like "processed 50/250"),
+    not just the start/finish summary. Without this, those progress
+    lines print unprefixed and get lost among concurrent user-query
+    logs, which was the whole point of adding the prefix in the first
+    place.
     """
-    process = subprocess.run(["python", script_path])
+    process = subprocess.Popen(
+        ["python", script_path],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+    )
+
+    for line in process.stdout:
+        logger.info("[PIPELINE] %s", line.rstrip())
+
+    process.wait()
 
     _RUNS[run_id]["status"] = "success" if process.returncode == 0 else "failed"
     _RUNS[run_id]["returncode"] = process.returncode
     _RUNS[run_id]["finished_at"] = datetime.now(timezone.utc).isoformat()
 
-    logger.info("Pipeline run %s (%s) finished with status: %s", run_id, script_path, _RUNS[run_id]["status"])
+    logger.info("[PIPELINE] Run %s (%s) finished with status: %s", run_id, script_path, _RUNS[run_id]["status"])
 
 
 @router.post("/internal/run-pipeline/{script_name}")
@@ -99,7 +119,7 @@ async def run_pipeline_script(script_name: str, x_pipeline_secret: str = Header(
         "returncode": None,
     }
 
-    logger.info("Triggering pipeline script: %s (run_id=%s)", script_path, run_id)
+    logger.info("[PIPELINE] Triggering: %s (run_id=%s)", script_path, run_id)
 
     import asyncio
     asyncio.get_event_loop().run_in_executor(None, _run_script_in_background, run_id, script_path)
