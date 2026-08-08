@@ -13,19 +13,16 @@ Usage:
     python scripts/build_stock_universe.py
 """
 
-import os
 import sys
 import psycopg2
 import yfinance as yf
 from pathlib import Path
-from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from scripts.currency_check import is_usd_reporter
+from config import DATABASE_URL
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 TOP_N = 250
 
 # Candidate pool, ranked by market cap; only USD financial reporters pass.
@@ -166,11 +163,14 @@ def build_stock_universe():
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
+    # Snapshot before/after against the actual DB state, so a failed insert isn't misreported as "arrived".
+    cursor.execute("SELECT ticker FROM stock_universe")
+    previous_tickers = {row[0] for row in cursor.fetchall()}
+
     print("\nRemoving tickers no longer in the universe...")
     cursor.execute("DELETE FROM stock_universe WHERE ticker != ALL(%s)", (tickers,))
     removed = cursor.rowcount
     conn.commit()
-    print(f"  Removed {removed} ticker(s) no longer in the top {TOP_N}.\n")
 
     print("Writing ranked universe to stock_universe table...")
     for entry in top_ranked:
@@ -182,6 +182,14 @@ def build_stock_universe():
                 company_name = EXCLUDED.company_name;
         """, (entry["symbol"], entry["market_cap"], entry["company_name"]))
     conn.commit()
+
+    cursor.execute("SELECT ticker FROM stock_universe")
+    current_tickers = {row[0] for row in cursor.fetchall()}
+    departed = sorted(previous_tickers - current_tickers)
+    arrived = sorted(current_tickers - previous_tickers)
+    print(f"  Removed {removed} ticker(s) no longer in the top {TOP_N}.")
+    print(f"  Departed: {departed if departed else 'none'}")
+    print(f"  Arrived: {arrived if arrived else 'none'}\n")
 
     cursor.close()
     conn.close()

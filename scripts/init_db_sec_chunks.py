@@ -11,13 +11,15 @@ Usage:
     python scripts/init_db_sec_chunks.py
 """
 
-import os
+
+import sys
+from pathlib import Path
 
 import psycopg2
-from dotenv import load_dotenv
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config import DATABASE_URL
+
 
 
 def init():

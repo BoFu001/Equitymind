@@ -9,23 +9,17 @@ Usage:
     python scripts/update_peer_groups.py
 """
 
-import os
 import sys
 import json
 import psycopg2
 import requests
 from pathlib import Path
-from dotenv import load_dotenv
 from psycopg2.extras import Json
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from scripts.currency_check import is_usd_reporter
-
-load_dotenv()
-
-FMP_API_KEY = os.getenv("FMP_API_KEY")
-DATABASE_URL = os.getenv("DATABASE_URL")
+from config import FMP_API_KEY, DATABASE_URL
 
 
 def _load_target_tickers(cursor) -> list[str]:

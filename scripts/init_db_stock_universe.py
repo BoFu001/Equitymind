@@ -17,12 +17,14 @@ Run once to create the table:
     python scripts/init_db_stock_universe.py
 """
 
-import os
-import psycopg2
-from dotenv import load_dotenv
+import sys
+from pathlib import Path
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+import psycopg2
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config import DATABASE_URL
+
 
 
 def init():

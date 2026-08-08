@@ -12,7 +12,6 @@ Usage:
     python scripts/update_common_names.py
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -20,12 +19,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import psycopg2
 from openai import OpenAI
-from dotenv import load_dotenv
 from config import LLM_MODEL
+from config import DATABASE_URL, OPENAI_API_KEY
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
