@@ -23,6 +23,7 @@ future portal-based API keys, which serve external paying
 developers, not internal infrastructure.
 """
 
+import asyncio
 import subprocess
 import logging
 import uuid
@@ -121,7 +122,6 @@ async def run_pipeline_script(script_name: str, x_pipeline_secret: str = Header(
 
     logger.info("[PIPELINE] Triggering: %s (run_id=%s)", script_path, run_id)
 
-    import asyncio
     asyncio.get_event_loop().run_in_executor(None, _run_script_in_background, run_id, script_path)
 
     return {"status": "started", "script": script_name, "run_id": run_id}

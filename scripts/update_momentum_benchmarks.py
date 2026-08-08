@@ -46,14 +46,16 @@ so it can be run more frequently if desired.
 Requires: yfinance, numpy (already in the project's environment)
 """
 
-import os
+
+import sys
+from pathlib import Path
 
 import psycopg2
 import yfinance as yf
-from dotenv import load_dotenv
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config import DATABASE_URL
+
 
 # ~1 month and ~12 months in trading days (US market convention)
 TRADING_DAYS_PER_MONTH = 22
@@ -87,7 +89,7 @@ def compute_momentum_raw(ticker: str) -> dict | None:
     try:
         hist = yf.Ticker(ticker).history(period="1y")
     except Exception as e:
-        print(f"    Skipping {ticker}: {e}")
+        print(f"    Skipping {ticker}: {e}", flush=True)
         return None
 
     if hist is None or len(hist) < MIN_TRADING_DAYS:
@@ -179,24 +181,24 @@ INSERT_SQL = """
 
 
 def update_momentum_benchmarks():
-    print("EquityMind — Momentum Benchmark Updater")
-    print("=" * 50)
+    print("EquityMind — Momentum Benchmark Updater", flush=True)
+    print("=" * 50, flush=True)
 
     tickers = _load_target_tickers()
-    print(f"\nUniverse size: {len(tickers)} tickers")
-    print("Fetching price history and computing raw momentum values...\n")
+    print(f"\nUniverse size: {len(tickers)} tickers", flush=True)
+    print("Fetching price history and computing raw momentum values...\n", flush=True)
 
     raw_data = {}
     for i, ticker in enumerate(tickers):
         result = compute_momentum_raw(ticker)
         raw_data[ticker] = result
         if (i + 1) % 50 == 0:
-            print(f"  ...processed {i + 1}/{len(tickers)}")
+            print(f"  ...processed {i + 1}/{len(tickers)}", flush=True)
 
     computed_count = sum(1 for v in raw_data.values() if v is not None)
-    print(f"\nSuccessfully computed raw values for {computed_count}/{len(tickers)} tickers")
+    print(f"\nSuccessfully computed raw values for {computed_count}/{len(tickers)} tickers", flush=True)
 
-    print("Computing percentile ranks across the universe...")
+    print("Computing percentile ranks across the universe...", flush=True)
     momentum_percentiles, position_percentiles = compute_percentile_ranks(raw_data)
 
     def _to_float(value):
@@ -214,7 +216,7 @@ def update_momentum_benchmarks():
     conn.commit()
 
     write_success = 0
-    print("Writing to momentum_benchmarks table...")
+    print("Writing to momentum_benchmarks table...", flush=True)
     for i, ticker in enumerate(tickers):
         raw = raw_data.get(ticker)
         if raw is None:
@@ -231,16 +233,16 @@ def update_momentum_benchmarks():
             conn.commit()
             write_success += 1
         except Exception as e:
-            print(f"    DB write failed for {ticker}: {e}")
+            print(f"    DB write failed for {ticker}: {e}", flush=True)
             conn.rollback()
 
         if (i + 1) % 50 == 0:
-            print(f"  ...written {i + 1}/{len(tickers)}")
+            print(f"  ...written {i + 1}/{len(tickers)}", flush=True)
 
     cursor.close()
     conn.close()
 
-    print(f"\n✓ momentum_benchmarks table updated — {write_success}/{len(tickers)} tickers written")
+    print(f"\n✓ momentum_benchmarks table updated — {write_success}/{len(tickers)} tickers written", flush=True)
 
 
 if __name__ == "__main__":

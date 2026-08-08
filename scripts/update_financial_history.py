@@ -50,7 +50,6 @@ Requires: yfinance, psycopg2, python-dotenv (already in project env)
 """
 
 import math
-import os
 import sys
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
@@ -60,12 +59,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import psycopg2
 import yfinance as yf
-from dotenv import load_dotenv
 from psycopg2.extras import execute_values
+from config import DATABASE_URL
 
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def _load_target_tickers() -> list[str]:
@@ -276,6 +273,8 @@ def update_financial_history():
     total_rows = 0
     annual_failed = []
     quarterly_failed = []
+    annual_fetched = []
+    quarterly_fetched = []
     annual_skipped = 0
     quarterly_skipped = 0
 
@@ -305,6 +304,7 @@ def update_financial_history():
                     execute_values(cursor, INSERT_SQL, annual_rows)
                     conn.commit()
                     total_rows += len(annual_rows)
+                    annual_fetched.append(ticker)
                 except Exception as e:
                     print(f"    DB write failed for {ticker} (annual): {e}")
                     annual_failed.append(ticker)
@@ -338,6 +338,7 @@ def update_financial_history():
                     execute_values(cursor, INSERT_SQL, quarterly_rows)
                     conn.commit()
                     total_rows += len(quarterly_rows)
+                    quarterly_fetched.append(ticker)
                 except Exception as e:
                     print(f"    DB write failed for {ticker} (quarterly): {e}")
                     quarterly_failed.append(ticker)
@@ -356,11 +357,11 @@ def update_financial_history():
 
     print(f"\n✓ financial_history updated — {total_rows} rows written across {len(tickers)} tickers")
     print(f"  Annual — skipped (no new data): {annual_skipped}")
-    print(f"  Annual — fetched: {len(tickers) - annual_skipped - len(annual_failed)}")
+    print(f"  Annual — fetched: {annual_fetched if annual_fetched else 'none'}")
     if annual_failed:
         print(f"  Annual — failed: {annual_failed}")
     print(f"  Quarterly — skipped (no new data): {quarterly_skipped}")
-    print(f"  Quarterly — fetched: {len(tickers) - quarterly_skipped - len(quarterly_failed)}")
+    print(f"  Quarterly — fetched: {quarterly_fetched if quarterly_fetched else 'none'}")
     if quarterly_failed:
         print(f"  Quarterly — failed: {quarterly_failed}")
 

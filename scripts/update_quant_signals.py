@@ -30,15 +30,16 @@ Usage:
 Requires: yfinance, psycopg2, python-dotenv (already in project env)
 """
 
-import os
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import psycopg2
-from dotenv import load_dotenv
+
+from config import PIPELINE_THROTTLE_SECONDS
 from psycopg2.extras import Json, execute_values
 
 from src.readers.snapshot_reader import get_stock_snapshot
@@ -54,9 +55,8 @@ from src.quant.risk_signal import risk_signal
 from src.quant.quality_signal import quality_signal
 from src.quant.consensus_signal import consensus_signal
 from src.quant.short_signal import short_signal
+from config import DATABASE_URL
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def _load_target_tickers() -> list[str]:
@@ -313,6 +313,10 @@ TEMPLATE_SKIP_QUALITY = (
 
 
 def update_quant_signals():
+    """
+    See the throttle comment inside the main loop below for why
+    PIPELINE_THROTTLE_SECONDS exists.
+    """
     print("EquityMind — Quant Signals Updater")
     print("=" * 50)
 
@@ -336,6 +340,10 @@ def update_quant_signals():
 
     for i, ticker in enumerate(tickers):
         print(f"  [{i+1}/{len(tickers)}] {ticker}...", flush=True)
+
+        # Throttle for Railway only — avoids yfinance rate limits.
+        if PIPELINE_THROTTLE_SECONDS > 0:
+            time.sleep(PIPELINE_THROTTLE_SECONDS)
 
         skip_quality = not _quality_needs_recompute(cursor, ticker)
         if skip_quality:
