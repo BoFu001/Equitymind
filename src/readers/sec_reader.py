@@ -5,7 +5,7 @@ from src.sec_pipeline.pgvector_store import insert_chunks, delete_chunks, query
 from src.sec_pipeline.sec_types import RetrievedChunk
 
 
-def retrieve(question: str, ticker: str, top_k: int = 5) -> list[RetrievedChunk]:
+def retrieve(question: str, ticker: str) -> list[RetrievedChunk]:
     """
     Retrieve relevant chunks from pgvector for a given question and ticker.
     Used when data already exists in PostgreSQL.
@@ -15,10 +15,10 @@ def retrieve(question: str, ticker: str, top_k: int = 5) -> list[RetrievedChunk]
     question_vector = embedded_question[0]["embedding"]
 
     # Query pgvector filtered by ticker
-    return query(question_vector, ticker=ticker, top_k=top_k)
+    return query(question_vector, ticker=ticker)
 
 
-def fetch_embed_store_retrieve(question: str, ticker: str, tenk: TenK, filing_date: str, top_k: int = 5) -> list[RetrievedChunk]:
+def fetch_embed_store_retrieve(question: str, ticker: str, tenk: TenK, filing_date: str) -> list[RetrievedChunk]:
     """
     Embeds, stores, then retrieves relevant chunks for an already-
     fetched TenK object. tenk and filing_date come from the caller's
@@ -52,4 +52,4 @@ def fetch_embed_store_retrieve(question: str, ticker: str, tenk: TenK, filing_da
     print(f"  [fetch_embed_store_retrieve] Stored in PostgreSQL")
 
     # Step 4: Retrieve
-    return retrieve(question, ticker, top_k)
+    return retrieve(question, ticker)

@@ -16,13 +16,10 @@ avoids a single file accumulating multiple unrelated responsibilities
 (2026-07-27 refactor).
 """
 
-import os
 
 import psycopg2
-from dotenv import load_dotenv
+from config import DATABASE_URL
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 # financial_history's 26 stored metrics, in column order — grouped by
 # statement (income statement / cash flow / balance sheet), matching

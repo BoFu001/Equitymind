@@ -6,13 +6,10 @@ target ticker's own P/E and P/S, plus the same ratios for each of
 its peers (from stock_universe.peers), all via yfinance.
 """
 
-import os
 import psycopg2
 import yfinance as yf
-from dotenv import load_dotenv
+from config import DATABASE_URL
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def _get_peers(ticker: str) -> list[str]:

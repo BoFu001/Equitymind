@@ -51,13 +51,10 @@ directly comparable, so mixing them within the universe at once
 would make cross-ticker Quality comparisons meaningless).
 """
 
-import os
 
 import psycopg2
-from dotenv import load_dotenv
+from config import DATABASE_URL
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 # The 9 fields quality_signal()'s F-Score calculations actually read
 # from current/prior — confirmed 2026-07-27 by grepping quality_signal.py

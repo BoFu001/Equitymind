@@ -10,12 +10,9 @@ every other reader in this project — only fetches; it does not
 compute anything itself.
 """
 
-import os
 import psycopg2
-from dotenv import load_dotenv
+from config import DATABASE_URL
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def get_momentum_inputs(ticker: str) -> dict | None:

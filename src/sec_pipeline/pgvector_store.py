@@ -5,12 +5,12 @@ PostgreSQL + pgvector vector store for EquityMind.
 
 Functions:
     insert_chunks(chunks)              — batch insert with transaction
-    query(embedding, ticker, top_k)    — vector similarity search
+    query(embedding, ticker)           — vector similarity search
 """
 
 import psycopg2
 from psycopg2.extras import execute_values
-from config import DATABASE_URL, PGVECTOR_BATCH_SIZE
+from config import DATABASE_URL, PGVECTOR_BATCH_SIZE, SEC_TOP_K
 from src.sec_pipeline.sec_types import EmbeddedSecChunk, RetrievedChunk, SecChunk
 
 
@@ -106,10 +106,11 @@ def insert_chunks(chunks: list[EmbeddedSecChunk]) -> None:
         conn.close()
 
 
-def query(question_embedding: list[float], ticker: str = None, top_k: int = 5) -> list[RetrievedChunk]:
+def query(question_embedding: list[float], ticker: str = None) -> list[RetrievedChunk]:
     """
-    Find top_k most similar chunks for a given question embedding and ticker.
-    Uses cosine similarity (<=> operator from pgvector).
+    Find the SEC_TOP_K most similar chunks for a given question
+    embedding and ticker. Uses cosine similarity (<=> operator from
+    pgvector).
     """
     conn   = get_connection()
     cursor = conn.cursor()
@@ -123,7 +124,7 @@ def query(question_embedding: list[float], ticker: str = None, top_k: int = 5) -
         ORDER BY embedding <=> %s::vector
         LIMIT %s
         """,
-        (question_embedding, ticker, question_embedding, top_k)
+        (question_embedding, ticker, question_embedding, SEC_TOP_K)
     )
 
     rows = cursor.fetchall()

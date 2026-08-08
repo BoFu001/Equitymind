@@ -37,18 +37,15 @@ name or ticker matching:
     products are named after the ticker, not the common name.
 """
 
-import os
 import psycopg2
 import requests
 import yfinance as yf
 from datetime import datetime, timedelta
 from openai import OpenAI
-from dotenv import load_dotenv
 
 from config import FINLIGHT_API_KEY, OPENAI_API_KEY, LLM_MODEL_LIGHT
+from config import DATABASE_URL
 
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
