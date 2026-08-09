@@ -29,12 +29,17 @@ def get_latest_tenk(ticker: str) -> tuple[TenK | None, str | None]:
     """
     try:
         c = Company(ticker)
-        filings = c.get_filings(form="10-K")
-        for f in filings:
-            if f.form == "10-K":
-                return f.obj(), str(f.filing_date)
-        print(f"No standard 10-K found for {ticker}")
-        return None, None
+        # form="10-K" matches 10-K/A by prefix, and amendments carry only
+        # Part III (no Item 1), so they must be excluded by exact match.
+        # Iteration order is not a documented guarantee, so take the
+        # newest filing_date explicitly rather than the first hit.
+        filings = [f for f in c.get_filings(form="10-K") if f.form == "10-K"]
+        if not filings:
+            print(f"No standard 10-K found for {ticker}")
+            return None, None
+        else:
+            latest = max(filings, key=lambda f: f.filing_date)
+            return latest.obj(), str(latest.filing_date)
     except Exception as e:
         print(f"Could not check EDGAR for {ticker}: {e}")
         return None, None
