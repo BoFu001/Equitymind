@@ -44,9 +44,9 @@ silently rely on a generic (non-peer-specific) valuation benchmark
 (see valuation_signal.py's DEFAULT_PE/DEFAULT_PB fallback), which would
 pollute screening queries with lower-confidence data if persisted.
 
-Refresh cadence differs per signal group (see each *_computed_at
-column): Valuation/Momentum are price-driven (daily); Risk/Quality/
-Consensus are slower-moving (weekly) — see update_quant_signals.py.
+All six signals are recomputed on every run, so each *_computed_at
+column records when that run happened rather than distinguishing one
+signal group's cadence from another's.
 
 quality_period_end: which financial_history period_end the cached
 Quality result was computed from (distinct from quality_computed_at,
