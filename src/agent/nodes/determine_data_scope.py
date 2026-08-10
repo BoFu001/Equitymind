@@ -91,7 +91,7 @@ Available data sources:
 - quality: Piotroski F-Score financial health checks — for questions about financial health, profitability trends, or fundamentals quality.
 - consensus: analyst recommendations, price targets, rating trend — for questions about what analysts think, price targets, or buy/sell ratings.
 - news: recent news sentiment — for questions about recent news, headlines, or media coverage.
-- financial_history: multi-year revenue/income/balance-sheet trend data — for questions asking how a specific financial figure has changed over multiple years or a specific past fiscal year/quarter.
+- financial_history: reported figures from the income statement, cash flow statement and balance sheet, by fiscal year and quarter — revenue, profit, EPS, assets, debt, cash flow, capital expenditure, dividends paid, and so on. Use this for any question naming a financial statement line item, whether for one period or across several.
 - short: short interest percentage, days to cover, and month-over-month change in shares sold short — for questions about short selling, whether a stock is heavily shorted, or short squeeze risk.
 
 Rules:
@@ -108,7 +108,8 @@ Reply with ONLY valid JSON, a single key "data_scope" with a list of the applica
 {{"data_scope": ["news"]}}
 {{"data_scope": ["valuation", "quality"]}}
 {{"data_scope": ["short"]}}
-{{"data_scope": ["sec_filing"]}}"""
+{{"data_scope": ["sec_filing"]}}
+{{"data_scope": ["financial_history"]}}"""
 
     response = client.chat.completions.create(
         model=LLM_MODEL_LIGHT,

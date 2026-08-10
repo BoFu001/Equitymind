@@ -7,8 +7,10 @@ year-over-year table for the LLM.
 
 Split out from the former single-file formatters.py on 2026-07-27,
 alongside the per-signal formatters. Not tied to any quant signal —
-this displays raw historical financials for trend questions
-(e.g. "Apple's revenue over the last few years").
+this displays reported figures for any question naming a financial
+statement line item, whether for a single period ("dividends paid
+last fiscal year") or across several ("revenue over the last few
+years").
 
 Shows ALL 26 stored metrics (2026-07-27 revision) — an earlier version
 of this function only showed total_revenue and net_income, on the
@@ -90,19 +92,19 @@ def format_financial_history(rows: list, ticker: str) -> str:
     annual_rows = [r for r in rows if r["period_type"] == "annual"]
     quarterly_rows = [r for r in rows if r["period_type"] == "quarterly"]
 
-    # Explicit coverage range, stated up front — added 2026-07-27 after
-    # real testing showed the LLM would answer questions about years
-    # outside this range (e.g. "Ford's EBITDA in 2018" when the data
-    # here only goes back to 2022) using its own training knowledge
-    # instead of stating the data doesn't cover that year. Listing the
-    # years alone wasn't enough to prevent this — an explicit "coverage
-    # is X to Y" statement, paired with a prompt-level rule (see
-    # generate_report.py), is needed to make the boundary unambiguous.
-    all_period_ends = [r["period_end"] for r in rows]
-    earliest = min(all_period_ends)
-    latest = max(all_period_ends)
-
-    text = f"\n{ticker} Historical Financials (DATA COVERAGE: {earliest} to {latest} ONLY — do not answer questions about periods outside this range using outside knowledge; state that the data doesn't cover that period instead):\n"
+    # An exhaustive-list statement, not a date range. The 2026-07-27
+    # version declared "DATA COVERAGE: {min} to {max}", which fixed the
+    # original problem (the model answered "Ford's EBITDA in 2018" from
+    # training knowledge when nothing was listed for 2018) but created
+    # another: a year inside the span was treated as one that should
+    # have figures, even where every metric reads N/A. Availability is
+    # a per-figure fact — the source publishes EPS ahead of the full
+    # statements, banks report no cost of revenue, the oldest annual
+    # column comes back empty — so no span can express it. The header
+    # keeps only the part that testing showed was needed (this list is
+    # complete) and leaves each metric to speak for itself. Paired with
+    # a prompt-level rule, see generate_report.py.
+    text = f"\n{ticker} Historical Financials — this is every period held; within each, a metric shown as N/A is genuinely unavailable:\n"
 
     if annual_rows:
         text += "  Annual (fiscal year end):\n"

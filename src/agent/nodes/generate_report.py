@@ -29,12 +29,14 @@ from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-# Signal-specific formatting notes, one entry per optional signal —
-# only the ones in data_scope are included in the final prompt,
-# so a narrow question (e.g. only Consensus) doesn't carry rules
-# about Valuation P/E, Max Drawdown, or F-Score that don't apply
-# to anything actually shown.
-SIGNAL_NOTES = {
+# Presentation rules keyed by data_scope entry — only the ones in
+# data_scope are included in the final prompt, so a narrow question
+# (e.g. only Consensus) doesn't carry rules about Valuation P/E, Max
+# Drawdown, or F-Score that don't apply to anything actually shown.
+# Not every entry is a quant signal: financial_history and sec_filing
+# are data sources, which is why this is keyed by scope rather than
+# by signal.
+DATA_SCOPE_NOTES = {
     "valuation": """\
 - Valuation P/E clarification: COMPANY SNAPSHOT's "Forward P/E" is a
   DIFFERENT figure from the "P/E" used in the Valuation signal's
@@ -116,21 +118,45 @@ SIGNAL_NOTES = {
   interpretation of language in news coverage, not a fact about the
   company's fundamentals or future performance.
 """,
+    # No sec_filing note yet — pending a systematic review of what SEC
+    # free text can get wrong, rather than one rule per failure found.
+    # Known failure, reproduced twice on 2026-08-10: asked for ADP's
+    # fiscal 2023 R&D, the model answered $1.276 billion, which the
+    # filing attributes to fiscal 2024 in a three-year series ("fiscal
+    # years ended June 30, 2026, 2025 and 2024 ... $1.405bn, $1.388bn,
+    # $1.276bn"). The filing holds nothing for fiscal 2023 — position in
+    # the series is the only thing tying each figure to a year.
     "financial_history": """\
-- HISTORICAL FINANCIALS data covers ONLY the date range explicitly
-  stated in its "DATA COVERAGE: X to Y" header. If the user asks
-  about a fiscal year or period OUTSIDE that stated range (e.g. the
-  data covers 2022-2026 but the user asks about 2018 or 2019), you
-  MUST NOT answer using your own training knowledge — state clearly
-  that the provided data does not cover that period and that you
-  cannot verify a figure for it. This applies even if you believe
-  you know the correct figure from general knowledge — an unverified
-  number from training data is not an acceptable substitute for data
-  this system has actually retrieved, since it cannot be checked
-  against a source. This rule applies specifically to financial
-  statement figures (revenue, EBITDA, net income, etc.) requested for
-  a specific past fiscal year or quarter.
+- HISTORICAL FINANCIALS lists every period this system holds for the
+  company, and within each period every metric is either a figure or
+  "N/A". "N/A" means the number is not available — not zero, not
+  approximately something, not a value to supply from your own
+  knowledge.
+- Judge availability PER FIGURE, never per year. A period appearing in
+  the list does not mean every metric for it is present: the data
+  source publishes EPS ahead of the full statements, banks report no
+  cost of revenue, and companies paying no dividend have no dividend
+  line. Equally, a metric being present for one period says nothing
+  about the next.
+- If the user asks for a figure that reads N/A, or for a period not in
+  the list at all, state that the data does not contain it and that
+  you cannot verify a value for it. This applies even if you believe
+  you know the correct figure — an unverified number from training
+  data cannot be checked against a source, so it is not an acceptable
+  substitute for data this system actually retrieved. It applies to
+  financial statement figures (revenue, EBITDA, net income, etc.) for
+  any specific past fiscal year or quarter.
 """,
+    # Known unresolved behaviour: when the newest period held has a
+    # figure of N/A and the question uses a relative reference ("last
+    # fiscal year", "most recent quarter"), the model quotes the newest
+    # period that does carry a figure without saying the newer one is
+    # empty — reading as though nothing newer had been filed. Tried and
+    # reverted on 2026-08-10: an explicit rule for relative references,
+    # naming the newest period in the formatter header, and
+    # temperature=0. None held across repeated runs (roughly one in
+    # four either way), so none is in the code. The figure given is
+    # correct throughout; only the disclosure is missing.
 }
 
 
@@ -219,8 +245,9 @@ def generate_report(state: AgentState) -> dict:
     # empty (not even a header), rather than showing an empty section
     # or a "No X available" placeholder ──
     financial_history_section = (
-        "HISTORICAL FINANCIALS (only relevant if the question asks about\n"
-        "multi-year trends — otherwise ignore this section):\n"
+        "HISTORICAL FINANCIALS (reported figures by fiscal year and\n"
+        "quarter — the source for any question naming a financial\n"
+        "statement line item, for one period or across several):\n"
         f"{financial_history_context}\n\n"
         if financial_history_context else ""
     )
@@ -233,8 +260,8 @@ def generate_report(state: AgentState) -> dict:
         if sec_context else ""
     )
 
-    signal_specific_notes = "".join(
-        SIGNAL_NOTES[s] for s in data_scope if s in SIGNAL_NOTES
+    scope_notes = "".join(
+        DATA_SCOPE_NOTES[s] for s in data_scope if s in DATA_SCOPE_NOTES
     )
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
@@ -280,10 +307,9 @@ below, not just the specific cases listed:
    data actually shows a link (e.g. Momentum does not explain a
    valuation ratio).
 
-SIGNAL-SPECIFIC FORMATTING NOTES (only rules for signals actually
-present in QUANTITATIVE SIGNALS/HISTORICAL FINANCIALS below apply —
-this list is pre-filtered to this question's scope):
-{signal_specific_notes}- Revenue: COMPANY SNAPSHOT's "revenue" is trailing-twelve-months (TTM), a
+FORMATTING NOTES FOR THE DATA BELOW (pre-filtered to this question's
+scope, so every rule here applies to something actually shown):
+{scope_notes}- Revenue: COMPANY SNAPSHOT's "revenue" is trailing-twelve-months (TTM), a
   rolling 12-month total — different from any fiscal-year revenue figure
   in SEC filing excerpts. If both appear, label each explicitly (e.g.
   "TTM Revenue: $318.27B" vs "FY2025 Revenue: $281.72B") — presenting
