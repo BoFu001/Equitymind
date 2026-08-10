@@ -18,7 +18,7 @@ from psycopg2.extras import Json
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from scripts.currency_check import is_usd_reporter
+from scripts.filing_check import is_usd_reporter
 from config import FMP_API_KEY, DATABASE_URL
 
 

@@ -1,10 +1,11 @@
 """
 scripts/build_stock_universe.py
 
-Ranks CANDIDATE_POOL by market cap (yfinance), keeps the top TOP_N
-USD-reporting companies, and writes ticker/market_cap/company_name to
-the stock_universe table. Tickers no longer in the top TOP_N are
-deleted (current-snapshot table, not accumulating history).
+Ranks CANDIDATE_POOL by market cap (yfinance), keeps the top TOP_N,
+and writes ticker/market_cap/company_name to the stock_universe table.
+Candidates must report in USD and file 10-K — see the note above
+CANDIDATE_POOL. Tickers no longer in the top TOP_N are deleted
+(current-snapshot table, not accumulating history).
 
 common_name and peers are written separately by
 update_common_names.py and update_peer_groups.py.
@@ -20,27 +21,34 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from scripts.currency_check import is_usd_reporter
+from scripts.filing_check import is_usd_reporter, files_20f_only
 from config import DATABASE_URL
 
 TOP_N = 250
 
-# Candidate pool, ranked by market cap; only USD financial reporters pass.
+# Candidate pool, ranked by market cap. Two requirements: USD financial
+# reporting (so F-Score comparisons are meaningful) and 10-K filing (so
+# Item 1 is available for overview embeddings). Foreign private issuers
+# file 20-F, not 10-K, and are dropped by filter_domestic_filers().
+# Known cases already removed from this list: ARM, GFS, MNDY.
+# Dual-class listings are represented once, by the voting share
+# (GOOGL, not GOOG): both classes share one 10-K and one set of
+# financials, so a second entry would duplicate every signal and
+# occupy a slot in Discovery's results.
 CANDIDATE_POOL = [
     # Technology / Software / Internet
-    "AAPL", "MSFT", "NVDA", "GOOGL", "GOOG", "META", "AMZN", "AVGO", "ORCL",
+    "AAPL", "MSFT", "NVDA", "GOOGL", "META", "AMZN", "AVGO", "ORCL",
     "CRM", "AMD", "INTU", "IBM", "NOW", "ADBE", "CSCO", "QCOM", "TXN",
     "AMAT", "MU", "PANW", "SNPS", "CDNS", "FTNT", "ANET", "WDAY", "TEAM",
     "DDOG", "SNOW", "NET", "ZS", "CRWD", "PLTR", "UBER", "ABNB",
     "SHOP", "XYZ", "PYPL", "MELI", "BKNG", "NFLX", "DIS",
     "APP", "TTD", "DASH", "HOOD", "ROKU", "PINS", "SNAP", "U", "DOCU",
-    "OKTA", "TWLO", "HUBS", "BILL", "PCTY", "MNDY", "S", "TEM", "IOT",
+    "OKTA", "TWLO", "HUBS", "BILL", "PCTY", "S", "TEM", "IOT",
     "AXON", "PLTK", "RBLX", "EA", "TTWO", "MSTR", "APPF",
 
     # Semiconductors / Hardware
     "LRCX", "KLAC", "ADI", "MCHP", "ON", "MRVL",
     "NXPI", "SWKS", "MPWR", "STX", "WDC", "TER", "ENTG", "COHR", "SMCI",
-    "ARM", "GFS",
 
     # Automotive / EV
     "TSLA", "RIVN", "GM", "F",
@@ -101,7 +109,8 @@ def fetch_candidate_data(symbols: list[str]) -> list[dict]:
     """
     Fetches market cap and company name for each ticker via yfinance.
     Skips tickers with no market cap data. No currency filtering or
-    ranking here — see filter_usd_reporters() and rank_by_market_cap().
+    ranking here — see filter_usd_reporters(), filter_domestic_filers()
+    and rank_by_market_cap().
     """
     fetched = []
     seen = set()
@@ -131,11 +140,33 @@ def fetch_candidate_data(symbols: list[str]) -> list[dict]:
 def filter_usd_reporters(candidates: list[dict]) -> list[dict]:
     """Removes candidates not reporting financials in USD."""
     filtered = []
-    for c in candidates:
+    for i, c in enumerate(candidates):
         if is_usd_reporter(c["symbol"]):
             filtered.append(c)
         else:
             print(f"    Skipping {c['symbol']}: non-USD financial reporting")
+
+        if (i + 1) % 50 == 0:
+            print(f"    ...checked {i + 1}/{len(candidates)}")
+
+    return filtered
+
+
+def filter_domestic_filers(candidates: list[dict]) -> list[dict]:
+    """Removes foreign private issuers, which file 20-F rather than 10-K
+    and so have no Item 1 business description for overview embeddings.
+    Runs after filter_usd_reporters() because this one hits SEC EDGAR and
+    is the slower of the two."""
+    filtered = []
+    for i, c in enumerate(candidates):
+        if files_20f_only(c["symbol"]):
+            print(f"    Skipping {c['symbol']}: foreign private issuer (files 20-F)")
+        else:
+            filtered.append(c)
+
+        if (i + 1) % 50 == 0:
+            print(f"    ...checked {i + 1}/{len(candidates)}")
+
     return filtered
 
 
@@ -143,7 +174,8 @@ def rank_by_market_cap(candidates: list[dict], top_n: int) -> list[dict]:
     """
     Sorts candidates by market cap descending and returns the top_n.
     Pure sort-and-truncate — no fetching, no filtering (see
-    fetch_candidate_data() and filter_usd_reporters() for those steps).
+    fetch_candidate_data(), filter_usd_reporters() and
+    filter_domestic_filers() for those steps).
     """
     ranked = sorted(candidates, key=lambda x: x["market_cap"], reverse=True)
     return ranked[:top_n]
@@ -156,7 +188,12 @@ def build_stock_universe():
     print("Fetching market caps...")
 
     candidates = fetch_candidate_data(CANDIDATE_POOL)
+
+    print("Checking financial reporting currency...")
     candidates = filter_usd_reporters(candidates)
+
+    print("Checking annual report form (10-K vs 20-F)...")
+    candidates = filter_domestic_filers(candidates)
     top_ranked = rank_by_market_cap(candidates, TOP_N)
     tickers = [entry["symbol"] for entry in top_ranked]
 
