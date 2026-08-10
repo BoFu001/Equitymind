@@ -6,10 +6,9 @@ and quarterly financial statement data (income statement, cash flow,
 balance sheet) for every ticker in the stock_universe table and
 stores it in financial_history (see init_db_financial_history.py).
 
-Annual and quarterly share one loop, one metric mapping, and one
-INSERT template — only the three source calls and the period_type tag
-differ. Both fetch unconditionally on every run, with no check for
-whether the data has changed.
+Two write paths — annual and quarterly — sharing the same metric
+mapping and INSERT template. Both fetch unconditionally on every run,
+with no check for whether the data has changed.
 
 That check is absent by design. yfinance creates the three statements'
 columns for a new period at different times: the income statement gets
@@ -209,7 +208,12 @@ def update_financial_history():
 
     tickers = _load_target_tickers()
     print(f"\nUniverse size: {len(tickers)} tickers")
-    print("Fetching annual and quarterly statements...\n")
+
+    if not tickers:
+        # An empty list would make the delete below match every row,
+        # and nothing would be fetched to replace them.
+        print("stock_universe is empty — nothing to do.")
+        return
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
@@ -222,6 +226,8 @@ def update_financial_history():
         print(f"Removed {cursor.rowcount} row(s) for tickers no longer in the universe.")
     conn.commit()
 
+    print("Fetching annual and quarterly statements...\n")
+
     total_rows = 0
     annual_failed = []
     quarterly_failed = []
@@ -229,48 +235,84 @@ def update_financial_history():
     for i, ticker in enumerate(tickers):
         print(f"  [{i+1}/{len(tickers)}] {ticker}...", flush=True)
 
-        for period_type, extractor, failed in (
-            ("annual", _extract_annual_rows, annual_failed),
-            ("quarterly", _extract_quarterly_rows, quarterly_failed),
-        ):
-            try:
-                with ThreadPoolExecutor(max_workers=1) as executor:
-                    future = executor.submit(extractor, ticker)
-                    rows = future.result(timeout=30)
-            except FutureTimeoutError:
-                print(f"    Timed out after 30s for {ticker} ({period_type}) — skipping")
-                rows = []
-            except Exception as e:
-                print(f"    Extraction failed for {ticker} ({period_type}): {e}")
-                rows = []
+        # ── Annual ──
+        try:
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(_extract_annual_rows, ticker)
+                annual_rows = future.result(timeout=30)
+        except FutureTimeoutError:
+            print(f"    Timed out after 30s for {ticker} (annual) — skipping")
+            annual_rows = []
+        except Exception as e:
+            print(f"    Extraction failed for {ticker} (annual): {e}")
+            annual_rows = []
 
-            if not rows:
-                failed.append(ticker)
-            else:
-                try:
-                    execute_values(cursor, INSERT_SQL, rows)
-                    # Periods yfinance no longer offers are dropped, so
-                    # the table mirrors the source rather than keeping
-                    # what it used to hold.
-                    cursor.execute(
-                        """
-                        DELETE FROM financial_history
-                        WHERE ticker = %s AND period_type = %s
-                          AND period_end != ALL(%s)
-                        """,
-                        (ticker, period_type, [r[1] for r in rows]),
-                    )
-                    conn.commit()
-                    total_rows += len(rows)
-                except Exception as e:
-                    print(f"    DB write failed for {ticker} ({period_type}): {e}")
-                    failed.append(ticker)
-                    if conn.closed:
-                        print("    Connection was closed — reconnecting...")
-                        conn = psycopg2.connect(DATABASE_URL)
-                        cursor = conn.cursor()
-                    else:
-                        conn.rollback()
+        if not annual_rows:
+            annual_failed.append(ticker)
+        else:
+            try:
+                execute_values(cursor, INSERT_SQL, annual_rows)
+                # Periods yfinance no longer offers are dropped, so the
+                # table mirrors the source rather than keeping what it
+                # used to hold.
+                annual_periods = [row[1] for row in annual_rows]
+                cursor.execute(
+                    """
+                    DELETE FROM financial_history
+                    WHERE ticker = %s AND period_type = 'annual'
+                      AND period_end != ALL(%s)
+                    """,
+                    (ticker, annual_periods),
+                )
+                conn.commit()
+                total_rows += len(annual_rows)
+            except Exception as e:
+                print(f"    DB write failed for {ticker} (annual): {e}")
+                annual_failed.append(ticker)
+                if conn.closed:
+                    print("    Connection was closed — reconnecting...")
+                    conn = psycopg2.connect(DATABASE_URL)
+                    cursor = conn.cursor()
+                else:
+                    conn.rollback()
+
+        # ── Quarterly ──
+        try:
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(_extract_quarterly_rows, ticker)
+                quarterly_rows = future.result(timeout=30)
+        except FutureTimeoutError:
+            print(f"    Timed out after 30s for {ticker} (quarterly) — skipping")
+            quarterly_rows = []
+        except Exception as e:
+            print(f"    Extraction failed for {ticker} (quarterly): {e}")
+            quarterly_rows = []
+
+        if not quarterly_rows:
+            quarterly_failed.append(ticker)
+        else:
+            try:
+                execute_values(cursor, INSERT_SQL, quarterly_rows)
+                quarterly_periods = [row[1] for row in quarterly_rows]
+                cursor.execute(
+                    """
+                    DELETE FROM financial_history
+                    WHERE ticker = %s AND period_type = 'quarterly'
+                      AND period_end != ALL(%s)
+                    """,
+                    (ticker, quarterly_periods),
+                )
+                conn.commit()
+                total_rows += len(quarterly_rows)
+            except Exception as e:
+                print(f"    DB write failed for {ticker} (quarterly): {e}")
+                quarterly_failed.append(ticker)
+                if conn.closed:
+                    print("    Connection was closed — reconnecting...")
+                    conn = psycopg2.connect(DATABASE_URL)
+                    cursor = conn.cursor()
+                else:
+                    conn.rollback()
 
         # Six yfinance calls per ticker, and this API rate-limits.
         if PIPELINE_THROTTLE_SECONDS > 0:
