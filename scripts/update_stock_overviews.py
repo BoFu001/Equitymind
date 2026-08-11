@@ -75,8 +75,22 @@ write a concise company overview (150-200 words) that captures:
 - Industry/theme classification (multiple applicable tags, e.g. technology, \
 e-commerce, cloud computing)
 
-Public perception must be grounded in brands, products, or programs explicitly \
-named in the 10-K text below. Do not introduce outside knowledge.
+Two rules govern every claim in the overview:
+
+1. RETAIN what the text states. If the 10-K text names a specific product, \
+brand, technology, strategic initiative, or figure that is relevant to the \
+company's business or identity, include it — even if it appears only once, \
+appears in a long list alongside other items, or appears late in a long \
+filing. Do not omit a real, named detail just to keep the overview short; \
+prioritize which details to keep, but do not silently drop ones that are \
+clearly material to the company's business (flagship products, named \
+strategic principles, core brands).
+
+2. DO NOT ADD what the text does not state. Never supply a specific number, \
+percentage, ranking, or comparison that is not written in the text below, \
+even if you believe you know the correct or current figure from other \
+sources. If the text doesn't give a number, describe the fact qualitatively \
+instead of inventing or recalling one.
 
 10-K Business Description:
 {business_text}
