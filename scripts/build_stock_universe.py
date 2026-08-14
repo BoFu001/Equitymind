@@ -130,13 +130,13 @@ def fetch_candidate_data(symbols: list[str]) -> list[dict]:
                     "company_name": company_name,
                 })
         except Exception as e:
-            print(f"    Skipping {symbol}: {e}")
+            print(f"    Skipping {symbol}: {e}", flush=True)
 
         if PIPELINE_THROTTLE_SECONDS > 0:
             time.sleep(PIPELINE_THROTTLE_SECONDS)
 
         if (i + 1) % 50 == 0:
-            print(f"    ...processed {i + 1}/{len(symbols)}")
+            print(f"    ...processed {i + 1}/{len(symbols)}", flush=True)
     return fetched
 
 
@@ -147,10 +147,10 @@ def filter_usd_reporters(candidates: list[dict]) -> list[dict]:
         if is_usd_reporter(c["symbol"]):
             filtered.append(c)
         else:
-            print(f"    Skipping {c['symbol']}: non-USD financial reporting")
+            print(f"    Skipping {c['symbol']}: non-USD financial reporting", flush=True)
 
         if (i + 1) % 50 == 0:
-            print(f"    ...checked {i + 1}/{len(candidates)}")
+            print(f"    ...checked {i + 1}/{len(candidates)}", flush=True)
 
     return filtered
 
@@ -163,12 +163,12 @@ def filter_domestic_filers(candidates: list[dict]) -> list[dict]:
     filtered = []
     for i, c in enumerate(candidates):
         if files_20f_only(c["symbol"]):
-            print(f"    Skipping {c['symbol']}: foreign private issuer (files 20-F)")
+            print(f"    Skipping {c['symbol']}: foreign private issuer (files 20-F)", flush=True)
         else:
             filtered.append(c)
 
         if (i + 1) % 50 == 0:
-            print(f"    ...checked {i + 1}/{len(candidates)}")
+            print(f"    ...checked {i + 1}/{len(candidates)}", flush=True)
 
     return filtered
 
@@ -185,17 +185,17 @@ def rank_by_market_cap(candidates: list[dict], top_n: int) -> list[dict]:
 
 
 def build_stock_universe():
-    print("EquityMind — Stock Universe Builder")
-    print("=" * 50)
-    print(f"\nCandidate pool: {len(CANDIDATE_POOL)} tickers")
-    print("Fetching market caps...")
+    print("EquityMind — Stock Universe Builder", flush=True)
+    print("=" * 50, flush=True)
+    print(f"\nCandidate pool: {len(CANDIDATE_POOL)} tickers", flush=True)
+    print("Fetching market caps...", flush=True)
 
     candidates = fetch_candidate_data(CANDIDATE_POOL)
 
-    print("Checking financial reporting currency...")
+    print("Checking financial reporting currency...", flush=True)
     candidates = filter_usd_reporters(candidates)
 
-    print("Checking annual report form (10-K vs 20-F)...")
+    print("Checking annual report form (10-K vs 20-F)...", flush=True)
     candidates = filter_domestic_filers(candidates)
     top_ranked = rank_by_market_cap(candidates, TOP_N)
     tickers = [entry["symbol"] for entry in top_ranked]
@@ -207,12 +207,12 @@ def build_stock_universe():
     cursor.execute("SELECT ticker FROM stock_universe")
     previous_tickers = {row[0] for row in cursor.fetchall()}
 
-    print("\nRemoving tickers no longer in the universe...")
+    print("\nRemoving tickers no longer in the universe...", flush=True)
     cursor.execute("DELETE FROM stock_universe WHERE ticker != ALL(%s)", (tickers,))
     removed = cursor.rowcount
     conn.commit()
 
-    print("Writing ranked universe to stock_universe table...")
+    print("Writing ranked universe to stock_universe table...", flush=True)
     for entry in top_ranked:
         cursor.execute("""
             INSERT INTO stock_universe (ticker, market_cap, company_name)
@@ -227,14 +227,14 @@ def build_stock_universe():
     current_tickers = {row[0] for row in cursor.fetchall()}
     departed = sorted(previous_tickers - current_tickers)
     arrived = sorted(current_tickers - previous_tickers)
-    print(f"  Removed {removed} ticker(s) no longer in the top {TOP_N}.")
-    print(f"  Departed: {departed if departed else 'none'}")
-    print(f"  Arrived: {arrived if arrived else 'none'}\n")
+    print(f"  Removed {removed} ticker(s) no longer in the top {TOP_N}.", flush=True)
+    print(f"  Departed: {departed if departed else 'none'}", flush=True)
+    print(f"  Arrived: {arrived if arrived else 'none'}\n", flush=True)
 
     cursor.close()
     conn.close()
 
-    print(f"\n✓ stock_universe table updated — {len(tickers)} tickers")
+    print(f"\n✓ stock_universe table updated — {len(tickers)} tickers", flush=True)
 
 
 if __name__ == "__main__":

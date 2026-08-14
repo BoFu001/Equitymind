@@ -142,37 +142,37 @@ def fetch_business_text(ticker: str, stored_filing_date: str | None) -> tuple[st
         # filing_date — iteration order is not a documented guarantee.
         filings = [f for f in Company(ticker).get_filings(form="10-K") if f.form == "10-K"]
     except Exception as e:
-        print(f"    Skipping {ticker}: EDGAR lookup failed — {e}")
+        print(f"    Skipping {ticker}: EDGAR lookup failed — {e}", flush=True)
         return None, None
 
     if not filings:
-        print(f"    Skipping {ticker}: no 10-K on file")
+        print(f"    Skipping {ticker}: no 10-K on file", flush=True)
         return None, None
     else:
         latest = max(filings, key=lambda f: f.filing_date)
 
     filing_date = str(latest.filing_date)
     if stored_filing_date == filing_date:
-        print(f"    {ticker}: overview already built from the {filing_date} 10-K")
+        print(f"    {ticker}: overview already built from the {filing_date} 10-K", flush=True)
         return None, None
 
     try:
         text = str(getattr(latest.obj(), "business", "") or "")
     except Exception as e:
-        print(f"    Skipping {ticker}: could not parse filing — {e}")
+        print(f"    Skipping {ticker}: could not parse filing — {e}", flush=True)
         return None, None
 
     if len(text) < MIN_BUSINESS_CHARS:
-        print(f"    Skipping {ticker}: Item 1 only {len(text)} chars")
+        print(f"    Skipping {ticker}: Item 1 only {len(text)} chars", flush=True)
         return None, None
     elif _is_raw_html(text):
-        print(f"    Skipping {ticker}: Item 1 is unparsed HTML ({len(text):,d} chars)")
+        print(f"    Skipping {ticker}: Item 1 is unparsed HTML ({len(text):,d} chars)", flush=True)
         return None, None
     elif _is_cross_reference_index(text):
-        print(f"    Skipping {ticker}: Item 1 is a cross-reference index")
+        print(f"    Skipping {ticker}: Item 1 is a cross-reference index", flush=True)
         return None, None
     elif len(text) > MAX_BUSINESS_CHARS:
-        print(f"    Skipping {ticker}: Item 1 unexpectedly large ({len(text):,d} chars)")
+        print(f"    Skipping {ticker}: Item 1 unexpectedly large ({len(text):,d} chars)", flush=True)
         return None, None
     else:
         return text, filing_date
@@ -198,15 +198,15 @@ def embed_overview(text: str) -> list[float]:
 
 
 def update_stock_overviews():
-    print("EquityMind — Stock Overview Updater")
-    print("=" * 50)
+    print("EquityMind — Stock Overview Updater", flush=True)
+    print("=" * 50, flush=True)
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
     targets = _load_target_tickers(cursor)
-    print(f"\nUniverse size: {len(targets)} tickers")
-    print("Checking each ticker's latest 10-K against its stored overview...\n")
+    print(f"\nUniverse size: {len(targets)} tickers", flush=True)
+    print("Checking each ticker's latest 10-K against its stored overview...\n", flush=True)
 
     written = 0
     skipped = []
@@ -228,7 +228,7 @@ def update_stock_overviews():
             overview = generate_overview(business_text)
             embedding = embed_overview(overview)
         except Exception as e:
-            print(f"    Skipping {ticker}: generation failed — {e}")
+            print(f"    Skipping {ticker}: generation failed — {e}", flush=True)
             skipped.append(ticker)
             continue
 
@@ -249,17 +249,17 @@ def update_stock_overviews():
             conn.commit()  # per ticker — a 30-minute run should never lose work
             written += 1
         except Exception as e:
-            print(f"    DB write failed for {ticker}: {e}")
+            print(f"    DB write failed for {ticker}: {e}", flush=True)
             skipped.append(ticker)
             conn.rollback()
 
     cursor.close()
     conn.close()
 
-    print(f"\n✓ stock_universe table updated — {written} overview(s) written")
+    print(f"\n✓ stock_universe table updated — {written} overview(s) written", flush=True)
     if skipped:
-        print(f"  No usable Item 1 for {len(skipped)}: {', '.join(skipped)}")
-        print("  These keep a NULL overview and are excluded from theme search.")
+        print(f"  No usable Item 1 for {len(skipped)}: {', '.join(skipped)}", flush=True)
+        print("  These keep a NULL overview and are excluded from theme search.", flush=True)
 
 
 if __name__ == "__main__":

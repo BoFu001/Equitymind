@@ -47,23 +47,23 @@ def fetch_peer_symbols(ticker: str) -> list[str]:
 
 
 def update_peer_groups():
-    print("EquityMind — Peer Group Name Updater")
-    print("=" * 50)
+    print("EquityMind — Peer Group Name Updater", flush=True)
+    print("=" * 50, flush=True)
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     tickers = _load_target_tickers(cursor)
-    print(f"\nTickers needing peers: {len(tickers)}")
+    print(f"\nTickers needing peers: {len(tickers)}", flush=True)
     if tickers:
-        print(f"  {tickers}")
-    print("Fetching peer group names from FMP...\n")
+        print(f"  {tickers}", flush=True)
+    print("Fetching peer group names from FMP...\n", flush=True)
     fmp_hit_count = 0
     for i, ticker in enumerate(tickers):
         raw_peers = fetch_peer_symbols(ticker)
         peers = [p for p in raw_peers if is_usd_reporter(p)]
         excluded = [p for p in raw_peers if p not in peers]
-        print(f"  [{ticker}] peers: {peers}")
+        print(f"  [{ticker}] peers: {peers}", flush=True)
         if excluded:
-            print(f"  [{ticker}] Excluded non-USD peers: {excluded}")
+            print(f"  [{ticker}] Excluded non-USD peers: {excluded}", flush=True)
         cursor.execute(
             "UPDATE stock_universe SET peers = %s, updated_at = NOW() WHERE ticker = %s",
             (Json(peers), ticker),
@@ -71,12 +71,12 @@ def update_peer_groups():
         if peers:
             fmp_hit_count += 1
         if (i + 1) % 50 == 0:
-            print(f"  ...processed {i + 1}/{len(tickers)}")
+            print(f"  ...processed {i + 1}/{len(tickers)}", flush=True)
             conn.commit()
     conn.commit()
     cursor.close()
     conn.close()
-    print(f"\n✓ stock_universe table updated — {fmp_hit_count}/{len(tickers)} new tickers now have an FMP peer group")
+    print(f"\n✓ stock_universe table updated — {fmp_hit_count}/{len(tickers)} new tickers now have an FMP peer group", flush=True)
 
 
 if __name__ == "__main__":

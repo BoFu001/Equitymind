@@ -55,8 +55,8 @@ Reply with ONLY the common name itself, no other text.'''
 
 
 def update_common_names():
-    print("EquityMind — Common Name Updater")
-    print("=" * 50)
+    print("EquityMind — Common Name Updater", flush=True)
+    print("=" * 50, flush=True)
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
@@ -69,20 +69,20 @@ def update_common_names():
     cursor.execute("SELECT ticker, company_name FROM stock_universe WHERE common_name IS NULL")
     rows = cursor.fetchall()
 
-    print(f"\nTickers needing a common_name: {len(rows)}")
+    print(f"\nTickers needing a common_name: {len(rows)}", flush=True)
     if rows:
-        print(f"  {[ticker for ticker, _ in rows]}")
-    print("Extracting common names via LLM...\n")
+        print(f"  {[ticker for ticker, _ in rows]}", flush=True)
+    print("Extracting common names via LLM...\n", flush=True)
 
     written = 0
 
     for i, (ticker, company_name) in enumerate(rows):
         if not company_name:
-            print(f"  [{ticker}] No company_name available — skipping")
+            print(f"  [{ticker}] No company_name available — skipping", flush=True)
             continue
 
         common_name = extract_common_name(company_name)
-        print(f"  [{ticker}] {company_name!r} -> {common_name!r}")
+        print(f"  [{ticker}] {company_name!r} -> {common_name!r}", flush=True)
         cursor.execute(
             "UPDATE stock_universe SET common_name = %s WHERE ticker = %s",
             (common_name, ticker),
@@ -90,14 +90,14 @@ def update_common_names():
         written += 1
 
         if (i + 1) % 25 == 0:
-            print(f"  ...processed {i + 1}/{len(rows)}")
+            print(f"  ...processed {i + 1}/{len(rows)}", flush=True)
             conn.commit()
 
     conn.commit()
     cursor.close()
     conn.close()
 
-    print(f"\n✓ stock_universe table updated — {written} new common_name(s) written")
+    print(f"\n✓ stock_universe table updated — {written} new common_name(s) written", flush=True)
 
 if __name__ == "__main__":
     update_common_names()
