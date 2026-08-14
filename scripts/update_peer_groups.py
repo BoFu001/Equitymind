@@ -39,10 +39,12 @@ def fetch_peer_symbols(ticker: str) -> list[str]:
     try:
         r = requests.get(url, timeout=10)
         if r.status_code != 200:
+            print(f"    [{ticker}] FMP returned status {r.status_code}", flush=True)
             return []
         peers = json.loads(r.text)
         return [p.get("symbol") for p in peers if p.get("symbol") and p.get("symbol") != ticker]
-    except Exception:
+    except Exception as e:
+        print(f"    [{ticker}] FMP request failed: {e}", flush=True)
         return []
 
 
