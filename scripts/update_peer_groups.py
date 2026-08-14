@@ -57,19 +57,39 @@ def update_peer_groups():
         print(f"  {tickers}", flush=True)
     print("Fetching peer group names from FMP...\n", flush=True)
     fmp_hit_count = 0
+    still_empty_count = 0
     for i, ticker in enumerate(tickers):
         raw_peers = fetch_peer_symbols(ticker)
         peers = [p for p in raw_peers if is_usd_reporter(p)]
         excluded = [p for p in raw_peers if p not in peers]
-        print(f"  [{ticker}] peers: {peers}", flush=True)
         if excluded:
             print(f"  [{ticker}] Excluded non-USD peers: {excluded}", flush=True)
-        cursor.execute(
-            "UPDATE stock_universe SET peers = %s, updated_at = NOW() WHERE ticker = %s",
-            (Json(peers), ticker),
-        )
-        if peers:
+
+        if not peers:
+            # Empty result — whether from the FMP call failing, a
+            # genuine no-peers response, or every candidate getting
+            # filtered out for non-USD reporting — is deliberately
+            # left NULL rather than written as []. Writing [] would
+            # make this ticker look "already processed" and permanently
+            # exempt it from the WHERE peers IS NULL retry logic in
+            # _load_target_tickers(), so a transient FMP failure (like
+            # HAL's on 2026-08-14, confirmed by a manual re-fetch minutes
+            # later returning 8 real peers) would never self-correct.
+            # Leaving it NULL means every future run retries it for
+            # free — including tickers with no real peers (e.g. SPCX,
+            # a pre-IPO company), which costs a wasted FMP call each day
+            # but means the day FMP does add real peer data, it gets
+            # picked up automatically with no manual intervention.
+            print(f"  [{ticker}] no peers after filtering — leaving NULL for retry next run", flush=True)
+            still_empty_count += 1
+        else:
+            print(f"  [{ticker}] peers: {peers}", flush=True)
+            cursor.execute(
+                "UPDATE stock_universe SET peers = %s, updated_at = NOW() WHERE ticker = %s",
+                (Json(peers), ticker),
+            )
             fmp_hit_count += 1
+
         if (i + 1) % 50 == 0:
             print(f"  ...processed {i + 1}/{len(tickers)}", flush=True)
             conn.commit()
@@ -77,6 +97,8 @@ def update_peer_groups():
     cursor.close()
     conn.close()
     print(f"\n✓ stock_universe table updated — {fmp_hit_count}/{len(tickers)} new tickers now have an FMP peer group", flush=True)
+    if still_empty_count:
+        print(f"  {still_empty_count} ticker(s) left NULL (empty result) — will retry next run", flush=True)
 
 
 if __name__ == "__main__":
