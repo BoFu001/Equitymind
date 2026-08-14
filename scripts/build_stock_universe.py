@@ -15,6 +15,7 @@ Usage:
 """
 
 import sys
+import time
 import psycopg2
 import yfinance as yf
 from pathlib import Path
@@ -22,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from scripts.filing_check import is_usd_reporter, files_20f_only
-from config import DATABASE_URL
+from config import DATABASE_URL, PIPELINE_THROTTLE_SECONDS
 
 TOP_N = 250
 
@@ -131,9 +132,11 @@ def fetch_candidate_data(symbols: list[str]) -> list[dict]:
         except Exception as e:
             print(f"    Skipping {symbol}: {e}")
 
+        if PIPELINE_THROTTLE_SECONDS > 0:
+            time.sleep(PIPELINE_THROTTLE_SECONDS)
+
         if (i + 1) % 50 == 0:
             print(f"    ...processed {i + 1}/{len(symbols)}")
-
     return fetched
 
 

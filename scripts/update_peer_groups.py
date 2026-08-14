@@ -23,7 +23,13 @@ from config import FMP_API_KEY, DATABASE_URL
 
 
 def _load_target_tickers(cursor) -> list[str]:
-    cursor.execute("SELECT ticker FROM stock_universe")
+    # Only tickers missing peers — a company's business-similarity peer
+    # group doesn't change day to day, and FMP's quota (250 requests/day)
+    # is shared with the whole universe, so re-fetching all 250 existing
+    # tickers every day could starve newly-added tickers of quota before
+    # they're even reached. Only new (or previously-failed, still-NULL)
+    # tickers need processing.
+    cursor.execute("SELECT ticker FROM stock_universe WHERE peers IS NULL")
     return [row[0] for row in cursor.fetchall()]
 
 
@@ -43,20 +49,19 @@ def fetch_peer_symbols(ticker: str) -> list[str]:
 def update_peer_groups():
     print("EquityMind — Peer Group Name Updater")
     print("=" * 50)
-
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
-
     tickers = _load_target_tickers(cursor)
-    print(f"\nUniverse size: {len(tickers)} tickers")
+    print(f"\nTickers needing peers: {len(tickers)}")
+    if tickers:
+        print(f"  {tickers}")
     print("Fetching peer group names from FMP...\n")
-
     fmp_hit_count = 0
-
     for i, ticker in enumerate(tickers):
         raw_peers = fetch_peer_symbols(ticker)
         peers = [p for p in raw_peers if is_usd_reporter(p)]
         excluded = [p for p in raw_peers if p not in peers]
+        print(f"  [{ticker}] peers: {peers}")
         if excluded:
             print(f"  [{ticker}] Excluded non-USD peers: {excluded}")
         cursor.execute(
@@ -65,16 +70,13 @@ def update_peer_groups():
         )
         if peers:
             fmp_hit_count += 1
-
         if (i + 1) % 50 == 0:
             print(f"  ...processed {i + 1}/{len(tickers)}")
             conn.commit()
-
     conn.commit()
     cursor.close()
     conn.close()
-
-    print(f"\n✓ stock_universe table updated — {fmp_hit_count}/{len(tickers)} tickers have an FMP peer group")
+    print(f"\n✓ stock_universe table updated — {fmp_hit_count}/{len(tickers)} new tickers now have an FMP peer group")
 
 
 if __name__ == "__main__":

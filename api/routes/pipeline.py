@@ -35,18 +35,25 @@ from config import PIPELINE_TRIGGER_SECRET
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
-
 # Only scripts explicitly listed here can be triggered — never accept
 # an arbitrary script name from the request, to avoid becoming an
 # arbitrary-code-execution endpoint.
-# Only the three daily-cadence scripts (Stage 3 + Stage 4) are
-# exposed here. Stage 2's low-frequency scripts (build_stock_universe,
-# update_common_names, update_peer_groups — every few months, per
-# the pipeline operating instructions) are run manually, not through
-# this automated daily trigger.
+# All seven pipeline scripts run daily as of 2026-08-11, in the
+# execution order below (enforced by Kestra, not by this dict's
+# ordering — see the module docstring). build_stock_universe,
+# update_common_names, update_peer_groups, and update_stock_overviews
+# used to run manually every few months; they're now daily because
+# market_cap needs to stay current for Discovery's ranking queries,
+# and the other three are incremental (only process newly-added
+# tickers), so daily runs cost almost nothing beyond a ticker's first
+# day in the universe.
 ALLOWED_SCRIPTS = {
-    "update_financial_history": "scripts/update_financial_history.py",
+    "build_stock_universe": "scripts/build_stock_universe.py",
+    "update_common_names": "scripts/update_common_names.py",
+    "update_peer_groups": "scripts/update_peer_groups.py",
+    "update_stock_overviews": "scripts/update_stock_overviews.py",
     "update_momentum_benchmarks": "scripts/update_momentum_benchmarks.py",
+    "update_financial_history": "scripts/update_financial_history.py",
     "update_quant_signals": "scripts/update_quant_signals.py",
 }
 

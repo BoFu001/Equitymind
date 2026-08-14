@@ -61,10 +61,20 @@ def update_common_names():
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT ticker, company_name FROM stock_universe")
+    # Only tickers missing a common_name — existing ones don't change
+    # (a company's short news-headline name is effectively permanent),
+    # so re-running this for the whole universe every day would waste
+    # an LLM call per ticker for nothing. Only newly-added tickers (or
+    # any that failed last run and are still NULL) need processing.
+    cursor.execute("SELECT ticker, company_name FROM stock_universe WHERE common_name IS NULL")
     rows = cursor.fetchall()
-    print(f"\nUniverse size: {len(rows)} tickers")
+
+    print(f"\nTickers needing a common_name: {len(rows)}")
+    if rows:
+        print(f"  {[ticker for ticker, _ in rows]}")
     print("Extracting common names via LLM...\n")
+
+    written = 0
 
     for i, (ticker, company_name) in enumerate(rows):
         if not company_name:
@@ -72,10 +82,12 @@ def update_common_names():
             continue
 
         common_name = extract_common_name(company_name)
+        print(f"  [{ticker}] {company_name!r} -> {common_name!r}")
         cursor.execute(
             "UPDATE stock_universe SET common_name = %s WHERE ticker = %s",
             (common_name, ticker),
         )
+        written += 1
 
         if (i + 1) % 25 == 0:
             print(f"  ...processed {i + 1}/{len(rows)}")
@@ -85,8 +97,7 @@ def update_common_names():
     cursor.close()
     conn.close()
 
-    print(f"\n✓ stock_universe table updated with common_name for {len(rows)} tickers")
-
+    print(f"\n✓ stock_universe table updated — {written} new common_name(s) written")
 
 if __name__ == "__main__":
     update_common_names()
