@@ -13,6 +13,8 @@ from config import OPENAI_API_KEY, LLM_MODEL, DATABASE_URL
 from src.agent.state import AgentState
 from src.sec_pipeline.embedder import EMBEDDING_MODEL
 from colors import gprint, rprint
+from langgraph.config import get_stream_writer
+from src.agent.nodes_notifications import NODE_PROGRESS
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -344,6 +346,14 @@ def compute_percentiles(values: dict[str, float], order: str) -> dict[str, float
     (e.g. cheapest valuation), largest value if order="descending" (e.g.
     highest net income).
 
+    Ties get identical percentiles (fractional ranking): tickers sharing
+    the same real value are grouped together and all assigned the AVERAGE
+    of the rank positions their group occupies, rather than being split
+    across adjacent ranks by an arbitrary tiebreaker (e.g. ticker order).
+    Example: values [100, 90, 90, 80] (descending) — the two 90s would
+    occupy ranks 1 and 2 (0-indexed) if untied; tied, they both get the
+    average rank 1.5, so both receive the same percentile.
+
     A single ticker returns percentile 1.0 for itself (no meaningful
     ranking possible with n=1, but this avoids a divide-by-zero on
     (n-1)).
@@ -351,19 +361,41 @@ def compute_percentiles(values: dict[str, float], order: str) -> dict[str, float
     if not values:
         return {}
 
-    reverse = (order == "descending")
-    ranked_tickers = sorted(values.keys(), key=lambda t: values[t], reverse=reverse)
-
-    n = len(ranked_tickers)
+    n = len(values)
     if n == 1:
-        return {ranked_tickers[0]: 1.0}
+        ticker = next(iter(values))
+        return {ticker: 1.0}
 
-    return {
-        ticker: (n - 1 - rank) / (n - 1)
-        for rank, ticker in enumerate(ranked_tickers)
-    }
+    if order == "descending":
+        sorted_tickers = sorted(values.keys(), key=lambda t: -values[t])
+    else:
+        sorted_tickers = sorted(values.keys(), key=lambda t: values[t])
 
-def filter_complete_candidates(tickers: list[str], fields: list[RankField]) -> list[str]:
+    # Group tickers by identical value, in sorted order — each group is
+    # a contiguous run of ranks that all share the same real value.
+    groups = []
+    current_group = [sorted_tickers[0]]
+    for ticker in sorted_tickers[1:]:
+        if values[ticker] == values[current_group[-1]]:
+            current_group.append(ticker)
+        else:
+            groups.append(current_group)
+            current_group = [ticker]
+    groups.append(current_group)
+
+    percentiles = {}
+    rank = 0
+    for group in groups:
+        group_size = len(group)
+        avg_rank = rank + (group_size - 1) / 2
+        percentile = (n - 1 - avg_rank) / (n - 1)
+        for ticker in group:
+            percentiles[ticker] = percentile
+        rank += group_size
+
+    return percentiles
+
+def filter_complete_candidates(tickers: list[str], fields: list[RankField]) -> tuple[list[str], dict[str, dict[str, float]]]:
     """
     Before any ranking happens, keep only tickers that have a real value
     on EVERY field this query will use — like requiring both a language
@@ -374,16 +406,31 @@ def filter_complete_candidates(tickers: list[str], fields: list[RankField]) -> l
 
     Implemented as a set intersection across all fields' "has a value"
     sets — a ticker survives only if it appears in every field's set.
+
+    Also returns field_values — {field_name: {ticker: value}} — the
+    data already fetched while checking completeness, spanning the
+    ORIGINAL tickers (not yet narrowed down). The caller must subset
+    this to complete_tickers before using it for percentile math.
+    Safe to reuse now that compute_percentiles uses fractional ranking
+    for ties, so subsetting an already-fetched dict and re-querying the
+    database both produce identical percentiles regardless of dict
+    iteration order.
     """
     if not fields:
-        return tickers
+        return tickers, {}
 
     eligible = set(tickers)
+    field_values = {}
     for field in fields:
         values = fetch_field_values(tickers, field.name)
+        field_values[field.name] = values
+        missing = set(tickers) - set(values.keys())
+        if missing:
+            gprint(f"  [filter_complete_candidates] {field.name}: excluded {sorted(missing)} (missing this field)")
         eligible &= set(values.keys())
 
-    return [t for t in tickers if t in eligible]
+    complete_tickers = [t for t in tickers if t in eligible]
+    return complete_tickers, field_values
 
 def group_fields_by_priority(fields: list[RankField]) -> list[list[RankField]]:
     """
@@ -435,11 +482,12 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
         values = fetch_field_values(tickers, field.name)
         ranked = sorted(values.keys(), key=lambda t: values[t], reverse=(field.order == "descending"))
         count = field.count
+        gprint(f"  [execute_stage] single field: {field.name} ({field.order}) | pool: {len(tickers)} -> {len(values)} | count: {count} | top: {ranked[:3]}")
     else:
-        complete_tickers = filter_complete_candidates(tickers, stage)
+        complete_tickers, field_values = filter_complete_candidates(tickers, stage)
         all_percentiles = {}
         for field in stage:
-            values = fetch_field_values(complete_tickers, field.name)
+            values = {t: field_values[field.name][t] for t in complete_tickers}
             percentiles = compute_percentiles(values, field.order)
             for ticker, pct in percentiles.items():
                 all_percentiles.setdefault(ticker, []).append(pct)
@@ -447,6 +495,8 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
         averaged = {ticker: sum(pcts) / len(pcts) for ticker, pcts in all_percentiles.items()}
         ranked = sorted(averaged.keys(), key=lambda t: averaged[t], reverse=True)
         count = stage[0].count
+        field_names = [f.name for f in stage]
+        gprint(f"  [execute_stage] averaged fields: {field_names} | pool: {len(tickers)} -> {len(complete_tickers)} | count: {count} | top: {ranked[:3]}")
 
     return ranked[:count] if count else ranked
 
@@ -454,8 +504,12 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
 def discovery_experiment(state: AgentState) -> dict:
     from src.agent.nodes.discovery_experiment_count import determine_stage_counts
 
+    # writer = get_stream_writer()
+    # writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
+
     question = input("Enter question: ")
     query = extract_discovery_query(question)
+
     if query.industry is None:
         tickers = get_all_tickers()
     else:
