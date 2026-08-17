@@ -106,45 +106,156 @@ CANDIDATE_POOL = [
 ]
 
 
-def fetch_candidate_data(symbols: list[str]) -> list[dict]:
+# Retry exists to catch the occasional dropped request, not to outlast a
+# rate-limit window — those run for minutes (17 on 2026-08-17, ~6 on
+# 2026-08-14), so no delay short enough to be worth waiting would clear
+# one. The stored-value fallback is what actually protects the universe;
+# this just avoids using it for a blip.
+RETRY_DELAY_SECONDS = 3
+
+# Once this many tickers in a row have failed even after a retry, the
+# limit is clearly sustained and retrying the remaining candidates only
+# adds RETRY_DELAY_SECONDS each to a run that will fall back regardless.
+# Retries stop for the rest of the run; the fallback still applies.
+RETRY_GIVEUP_AFTER = 10
+
+
+def _load_stored_market_caps(cursor) -> dict[str, tuple[int, str]]:
+    """The universe's own last-known values, used when yfinance will not
+    answer. Every current member has a market cap, so this covers every
+    ticker that could be deleted by a failed run."""
+    cursor.execute("""
+        SELECT ticker, market_cap, company_name
+        FROM stock_universe
+        WHERE market_cap IS NOT NULL
+    """)
+    return {row[0]: (row[1], row[2]) for row in cursor.fetchall()}
+
+
+def _fetch_one(symbol: str) -> tuple[int, str] | None:
+    """One attempt. Returns None if no usable market cap came back.
+
+    Rate limiting shows up two ways — an exception, and a 200 response
+    with no marketCap field — so both are treated as the same failure
+    rather than only the first being noticed."""
+    try:
+        info = yf.Ticker(symbol).info
+    except Exception as e:
+        print(f"    {symbol}: {e}", flush=True)
+        return None
+
+    market_cap = info.get("marketCap")
+    company_name = info.get("longName") or info.get("shortName")
+
+    if market_cap:
+        return market_cap, company_name
+    else:
+        print(f"    {symbol}: response contained no marketCap", flush=True)
+        return None
+
+
+def fetch_candidate_data(
+    symbols: list[str],
+    stored: dict[str, tuple[int, str]],
+) -> tuple[list[dict], list[str], list[str]]:
     """
-    Fetches market cap and company name for each ticker via yfinance.
-    Skips tickers with no market cap data. No currency filtering or
-    ranking here — see filter_usd_reporters(), filter_domestic_filers()
-    and rank_by_market_cap().
+    Fetches market cap and company name for each ticker via yfinance,
+    retrying once and falling back to the stored value.
+
+    A failed fetch used to drop the ticker from the candidate list
+    entirely, which rank_by_market_cap() could not distinguish from a
+    company too small to make the top TOP_N — so the universe write
+    deleted it, along with its overview, tags and peer group. On
+    2026-08-17 a rate-limit window that began in this script's first
+    second removed AAPL, MSFT, NVDA, GOOGL, META and nine others from
+    the universe this way. Falling back to the last known market cap
+    treats a failure as "unknown, assume unchanged" rather than "worth
+    nothing": a company's market cap does not move enough in a day to
+    change its ranking materially, and every current member has a
+    stored value, so no existing member can now be deleted by a fetch
+    failure alone.
+
+    Returns (candidates, used_stored, no_data). The two extra lists let
+    the caller report what happened — a silently short list was what
+    made the original failure invisible.
     """
     fetched = []
+    used_stored = []
+    no_data = []
     seen = set()
+    retries_enabled = True
+    consecutive_failures = 0
+
     for i, symbol in enumerate(symbols):
         if symbol in seen:
             continue
         seen.add(symbol)
-        try:
-            info = yf.Ticker(symbol).info
-            market_cap = info.get("marketCap")
-            company_name = info.get("longName") or info.get("shortName")
-            if market_cap:
-                fetched.append({
-                    "symbol": symbol,
-                    "market_cap": market_cap,
-                    "company_name": company_name,
-                })
-        except Exception as e:
-            print(f"    Skipping {symbol}: {e}", flush=True)
+
+        result = _fetch_one(symbol)
+
+        if result is None and retries_enabled:
+            time.sleep(RETRY_DELAY_SECONDS)
+            result = _fetch_one(symbol)
+
+            if result is None:
+                consecutive_failures += 1
+                if consecutive_failures >= RETRY_GIVEUP_AFTER:
+                    retries_enabled = False
+                    print(f"    {RETRY_GIVEUP_AFTER} consecutive retries failed — "
+                          f"treating the limit as sustained and skipping further "
+                          f"retries; stored values still apply", flush=True)
+            else:
+                consecutive_failures = 0
+
+        if result is not None:
+            market_cap, company_name = result
+            fetched.append({
+                "symbol": symbol,
+                "market_cap": market_cap,
+                "company_name": company_name,
+            })
+        elif symbol in stored:
+            market_cap, company_name = stored[symbol]
+            print(f"    {symbol}: using stored market cap {market_cap:,d}", flush=True)
+            fetched.append({
+                "symbol": symbol,
+                "market_cap": market_cap,
+                "company_name": company_name,
+            })
+            used_stored.append(symbol)
+        else:
+            # Never been in the universe, so there is nothing to fall
+            # back to. Dropping it is safe: it cannot delete data that
+            # was never written.
+            print(f"    {symbol}: no data and no stored value — excluded", flush=True)
+            no_data.append(symbol)
 
         if PIPELINE_THROTTLE_SECONDS > 0:
             time.sleep(PIPELINE_THROTTLE_SECONDS)
 
         if (i + 1) % 50 == 0:
             print(f"    ...processed {i + 1}/{len(symbols)}", flush=True)
-    return fetched
+
+    return fetched, used_stored, no_data
 
 
-def filter_usd_reporters(candidates: list[dict]) -> list[dict]:
-    """Removes candidates not reporting financials in USD."""
+def filter_usd_reporters(candidates: list[dict], members: set[str]) -> list[dict]:
+    """Removes candidates not reporting financials in USD.
+
+    Current universe members skip the check. is_usd_reporter() calls
+    yfinance and returns False on any failure — deliberately, since an
+    unverifiable new candidate should not be admitted — but for a company
+    already in the universe that same False means "rate limited" is read
+    as "not a USD reporter", and the ticker is dropped and then deleted
+    along with its overview, tags and peers. It passed this check when it
+    was admitted, and reporting currency does not change overnight, so
+    the stored membership is better evidence than a call that may not
+    answer. New candidates are still checked strictly."""
     filtered = []
     for i, c in enumerate(candidates):
-        if is_usd_reporter(c["symbol"]):
+        if c["symbol"] in members:
+            filtered.append(c)
+        elif is_usd_reporter(c["symbol"]):
             filtered.append(c)
         else:
             print(f"    Skipping {c['symbol']}: non-USD financial reporting", flush=True)
@@ -155,14 +266,23 @@ def filter_usd_reporters(candidates: list[dict]) -> list[dict]:
     return filtered
 
 
-def filter_domestic_filers(candidates: list[dict]) -> list[dict]:
+def filter_domestic_filers(candidates: list[dict], members: set[str]) -> list[dict]:
     """Removes foreign private issuers, which file 20-F rather than 10-K
-    and so have no Item 1 business description for overview embeddings.
-    Runs after filter_usd_reporters() because this one hits SEC EDGAR and
-    is the slower of the two."""
+    and so have no Item 1 business description. Runs after
+    filter_usd_reporters() because this one hits SEC EDGAR and is the
+    slower of the two.
+
+    Current members skip the check, for the reason given in
+    filter_usd_reporters() and for cost: this is throttled per request,
+    so re-verifying 250 members daily is most of the script's SEC
+    traffic. The one direction that would matter — a member reverting
+    from 10-K to 20-F — is rare, and would surface anyway as a missing
+    Item 1 in update_stock_overviews.py rather than silently."""
     filtered = []
     for i, c in enumerate(candidates):
-        if files_20f_only(c["symbol"]):
+        if c["symbol"] in members:
+            filtered.append(c)
+        elif files_20f_only(c["symbol"]):
             print(f"    Skipping {c['symbol']}: foreign private issuer (files 20-F)", flush=True)
         else:
             filtered.append(c)
@@ -187,21 +307,29 @@ def rank_by_market_cap(candidates: list[dict], top_n: int) -> list[dict]:
 def build_stock_universe():
     print("EquityMind — Stock Universe Builder", flush=True)
     print("=" * 50, flush=True)
-    print(f"\nCandidate pool: {len(CANDIDATE_POOL)} tickers", flush=True)
-    print("Fetching market caps...", flush=True)
-
-    candidates = fetch_candidate_data(CANDIDATE_POOL)
-
-    print("Checking financial reporting currency...", flush=True)
-    candidates = filter_usd_reporters(candidates)
-
-    print("Checking annual report form (10-K vs 20-F)...", flush=True)
-    candidates = filter_domestic_filers(candidates)
-    top_ranked = rank_by_market_cap(candidates, TOP_N)
-    tickers = [entry["symbol"] for entry in top_ranked]
 
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
+    stored = _load_stored_market_caps(cursor)
+
+    print(f"\nCandidate pool: {len(CANDIDATE_POOL)} tickers", flush=True)
+    print(f"Stored market caps available as fallback: {len(stored)}", flush=True)
+    print("Fetching market caps...", flush=True)
+
+    candidates, used_stored, no_data = fetch_candidate_data(CANDIDATE_POOL, stored)
+    fetched_count = len(candidates)
+
+    # Membership is read before any write, so it reflects yesterday's
+    # universe — which is what "already verified" means here.
+    members = set(stored)
+
+    print("Checking financial reporting currency...", flush=True)
+    candidates = filter_usd_reporters(candidates, members)
+
+    print("Checking annual report form (10-K vs 20-F)...", flush=True)
+    candidates = filter_domestic_filers(candidates, members)
+    top_ranked = rank_by_market_cap(candidates, TOP_N)
+    tickers = [entry["symbol"] for entry in top_ranked]
 
     # Snapshot before/after against the actual DB state, so a failed insert isn't misreported as "arrived".
     cursor.execute("SELECT ticker FROM stock_universe")
@@ -233,6 +361,22 @@ def build_stock_universe():
 
     cursor.close()
     conn.close()
+
+    # Market-cap sourcing summary, counted against the fetch step rather
+    # than the post-filter list, which is a different population.
+    # Printed even when empty, so its absence from a log means the
+    # section did not run rather than that nothing went wrong.
+    print(f"  Market caps fresh from yfinance: {fetched_count - len(used_stored)}", flush=True)
+    if used_stored:
+        print(f"  Used stored market cap for {len(used_stored)}: {used_stored}", flush=True)
+        print("    (yfinance would not answer — ranked on their last known value)", flush=True)
+    else:
+        print("  Used stored market cap for 0", flush=True)
+    if no_data:
+        print(f"  No data and no stored value for {len(no_data)}: {no_data}", flush=True)
+        print("    (excluded from ranking — none were universe members)", flush=True)
+    else:
+        print("  No data and no stored value for 0", flush=True)
 
     print(f"\n✓ stock_universe table updated — {len(tickers)} tickers", flush=True)
 
