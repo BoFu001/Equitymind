@@ -38,7 +38,7 @@ router = APIRouter()
 # Only scripts explicitly listed here can be triggered — never accept
 # an arbitrary script name from the request, to avoid becoming an
 # arbitrary-code-execution endpoint.
-# All seven pipeline scripts run daily as of 2026-08-11, in the
+# All eight pipeline scripts run daily as of 2026-08-17, in the
 # execution order below (enforced by Kestra, not by this dict's
 # ordering — see the module docstring). build_stock_universe,
 # update_common_names, update_peer_groups, and update_stock_overviews
@@ -52,6 +52,7 @@ ALLOWED_SCRIPTS = {
     "update_common_names": "scripts/update_common_names.py",
     "update_peer_groups": "scripts/update_peer_groups.py",
     "update_stock_overviews": "scripts/update_stock_overviews.py",
+    "update_industry_tags": "scripts/update_industry_tags.py",
     "update_momentum_benchmarks": "scripts/update_momentum_benchmarks.py",
     "update_financial_history": "scripts/update_financial_history.py",
     "update_quant_signals": "scripts/update_quant_signals.py",
