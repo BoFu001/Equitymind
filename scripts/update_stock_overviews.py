@@ -2,13 +2,17 @@
 scripts/update_stock_overviews.py
 
 Generates a plain-English business overview for every ticker in the
-stock_universe table from its latest 10-K Item 1, embeds it, and writes
-both to overview_text / overview_embedding. Discovery matches a user's
-open-ended theme ("robotics", "banking", "meat industry") against these
-embeddings — an approach chosen because sector labels cannot be
-enumerated in advance, and single-label classification misassigns
-multi-business companies (the same GICS problem that forced peer-group
-benchmarks in valuation_signal.py).
+stock_universe table from its latest 10-K Item 1 and writes it to
+overview_text. The overview is the source text for LLM industry-tag
+extraction, which Discovery uses to resolve open-ended themes
+("robotics", "banking", "meat industry") to a candidate pool.
+
+Whole-overview embedding similarity was the original mechanism and was
+replaced by tag-based retrieval on 2026-08-16 (Research Log 05):
+unbounded cosine ranking has no natural cutoff, so it admitted
+business-irrelevant companies with no boundary between them and genuine
+matches. The overview_embedding column was dropped on 2026-08-17; the
+frozen baseline lives in research/2026-08-17_embedding_snapshot/.
 
 Every ticker is checked on every run, but an overview is only
 regenerated when the company has filed a newer 10-K than the one it was
@@ -51,7 +55,6 @@ from openai import OpenAI
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.sec_pipeline.embedder import EMBEDDING_MODEL
 from config import DATABASE_URL, OPENAI_API_KEY, LLM_MODEL
 
 set_identity("Bo Fu bofu001@gmail.com")
@@ -59,8 +62,6 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 # LLM_MODEL, not LLM_MODEL_LIGHT: the lighter model tagged Amazon as
 # retail only in earlier labelling tests, missing AWS entirely.
-# EMBEDDING_MODEL is imported rather than redeclared so overview vectors
-# and Discovery's query vectors always share the same space.
 
 SEC_THROTTLE_SECONDS = 0.5
 
@@ -192,11 +193,6 @@ def generate_overview(business_text: str) -> str:
     return response.choices[0].message.content.strip()
 
 
-def embed_overview(text: str) -> list[float]:
-    response = client.embeddings.create(model=EMBEDDING_MODEL, input=text)
-    return response.data[0].embedding
-
-
 def update_stock_overviews():
     print("EquityMind — Stock Overview Updater", flush=True)
     print("=" * 50, flush=True)
@@ -226,7 +222,6 @@ def update_stock_overviews():
 
         try:
             overview = generate_overview(business_text)
-            embedding = embed_overview(overview)
         except Exception as e:
             print(f"    Skipping {ticker}: generation failed — {e}", flush=True)
             skipped.append(ticker)
@@ -237,14 +232,10 @@ def update_stock_overviews():
                 """
                 UPDATE stock_universe
                 SET overview_text = %s,
-                    overview_embedding = %s,
                     overview_filing_date = %s
                 WHERE ticker = %s
                 """,
-                # str(), not the raw list: psycopg2 renders a Python list
-                # as a Postgres array literal, which vector(1536) rejects.
-                # pgvector parses the '[0.1, 0.2, ...]' text form directly.
-                (overview, str(embedding), filing_date, ticker),
+                (overview, filing_date, ticker),
             )
             conn.commit()  # per ticker — a 30-minute run should never lose work
             written += 1

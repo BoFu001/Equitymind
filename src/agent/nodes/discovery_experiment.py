@@ -212,12 +212,69 @@ def get_all_tickers() -> list[str]:
     return tickers
 
 
+# Tags a company's own overview may phrase differently from another's.
+# Each 10-K is summarised independently, so the same concept surfaces
+# under variant spellings — "ai" and "artificial intelligence" split
+# nine companies each with only SNOW in common, which silently excluded
+# NVDA, MSFT and GOOGL from any query resolving to the longer form
+# (Research Log 05 3.6). Normalisation lives here rather than in the
+# database so that llm_tags stays the raw extraction record: changing a
+# rule takes effect on the next query with no data migration, and the
+# original wording each filing used is never overwritten.
+TAG_SYNONYMS = {
+    "ai": "artificial intelligence",
+    "property-casualty insurance": "property and casualty insurance",
+    "broadband": "broadband services",
+}
+
+
+def _build_tag_index() -> dict[str, list[str]]:
+    """Reads every company's raw tags and returns {tag: [tickers]}.
+
+    Rebuilt per call rather than cached: the aggregation is a single
+    SELECT over ~250 rows next to an LLM call that costs three orders of
+    magnitude more, and Discovery already queries this table elsewhere in
+    the same node. Caching would buy nothing and add a staleness mode.
+
+    Plural merging is a rule (strip a trailing "s" only when the singular
+    already exists as a tag in its own right, so "logistics" is left
+    alone); anything a rule cannot express goes in TAG_SYNONYMS.
+    """
+    conn = psycopg2.connect(DATABASE_URL)
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT ticker, llm_tags FROM stock_universe WHERE llm_tags IS NOT NULL"
+            )
+            rows = cursor.fetchall()
+    finally:
+        conn.close()
+
+    vocabulary = {t.strip().lower() for _, tags in rows for t in tags}
+
+    def normalise(tag: str) -> str:
+        tag = tag.strip().lower()
+        if tag in TAG_SYNONYMS:
+            return TAG_SYNONYMS[tag]
+        elif tag.endswith("s") and tag[:-1] in vocabulary:
+            return tag[:-1]
+        else:
+            return tag
+
+    index: dict[str, set[str]] = {}
+    for ticker, tags in rows:
+        for tag in tags:
+            index.setdefault(normalise(tag), set()).add(ticker)
+
+    return {tag: sorted(tickers) for tag, tickers in sorted(index.items())}
+
+
 def get_industry_tickers(industry_words: str) -> list[str]:
     """
     Tag-based retrieval: asks the LLM to pick the single closest tag
     from the deduplicated tag vocabulary (extracted from each
-    company's 10-K, merged for singular/plural variants — see
-    research/2026-08-16_tag_normalization/) and looks up the exact
+    company's 10-K by update_industry_tags.py, normalised here for
+    singular/plural and synonym variants) and looks up the exact
     ticker list for that tag.
 
     Verified (2026-08-16, Research Log 04) to produce a cleaner
@@ -229,13 +286,7 @@ def get_industry_tickers(industry_words: str) -> list[str]:
     empty list rather than falling back to embedding similarity — a
     confident "no match" is preferred over a noisy guess.
     """
-    import json
-    from pathlib import Path
-
-    tag_data_path = Path(__file__).parent.parent.parent.parent / "research" / "2026-08-16_tag_normalization" / "merged_tag_companies.json"
-    with open(tag_data_path) as f:
-        tag_data = json.load(f)
-    tag_to_tickers = {item["tag"]: item["tickers"] for item in tag_data}
+    tag_to_tickers = _build_tag_index()
     all_tags = list(tag_to_tickers.keys())
 
     tag_list_str = ", ".join(all_tags)

@@ -4,11 +4,12 @@ scripts/init_db_stock_universe.py
 Creates the stock_universe table in the same PostgreSQL database used
 for quant_signals, financial_history, and sec_chunks.
 
-Written by FOUR independent scripts, each updating only its own
+Written by FIVE independent scripts, each updating only its own
 column(s), at its own cadence:
     - build_stock_universe.py    writes: market_cap, company_name
     - update_common_names.py     writes: common_name
-    - update_stock_overviews.py  writes: overview_text, overview_embedding
+    - update_stock_overviews.py  writes: overview_text, overview_filing_date
+    - update_industry_tags.py    writes: llm_tags, tags_filing_date
     - update_peer_groups.py      writes: peers
 
 Low-frequency updates (every few months). peers is stored as JSONB
@@ -45,15 +46,19 @@ def init():
             -- Written by update_common_names.py (LLM-extracted short name)
             common_name     TEXT,
 
-            -- Written by update_stock_overviews.py (embedded Item 1 summary, and which 10-K it came from)
+            -- Written by update_stock_overviews.py (Item 1 summary, and which 10-K it came from)
             overview_text          TEXT,
-            overview_embedding     vector(1536),
             overview_filing_date   TEXT,
 
-            -- Written by update_peer_groups.py (FMP stock-peers API)
-            peers           JSONB,
+            -- Written by update_industry_tags.py (tags extracted from
+            -- overview_text, and which 10-K's overview they came from.
+            -- Tags are re-extracted only when this diverges from
+            -- overview_filing_date, so a run with no new 10-K costs nothing)
+            llm_tags           JSONB,
+            tags_filing_date   TEXT,
 
-            updated_at      TIMESTAMP
+            -- Written by update_peer_groups.py (FMP stock-peers API)
+            peers           JSONB
         );
     """)
     conn.commit()

@@ -87,7 +87,7 @@ def update_peer_groups():
         else:
             print(f"  [{ticker}] peers: {peers}", flush=True)
             cursor.execute(
-                "UPDATE stock_universe SET peers = %s, updated_at = NOW() WHERE ticker = %s",
+                "UPDATE stock_universe SET peers = %s WHERE ticker = %s",
                 (Json(peers), ticker),
             )
             fmp_hit_count += 1
