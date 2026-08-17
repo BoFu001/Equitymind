@@ -214,42 +214,57 @@ def get_all_tickers() -> list[str]:
 
 def get_industry_tickers(industry_words: str) -> list[str]:
     """
-    RAG retrieval: embed the industry words, compare against every
-    company's overview embedding, print scores for debugging, return
-    only the ticker list — the caller doesn't need to know about scores.
+    Tag-based retrieval: asks the LLM to pick the single closest tag
+    from the deduplicated tag vocabulary (extracted from each
+    company's 10-K, merged for singular/plural variants — see
+    research/2026-08-16_tag_normalization/) and looks up the exact
+    ticker list for that tag.
+
+    Verified (2026-08-16, Research Log 04) to produce a cleaner
+    candidate pool than whole-overview embedding similarity — no
+    similarity-threshold guesswork, exact lookup instead of an
+    unbounded ranking with no natural cutoff.
+
+    If the LLM finds no reasonable match in the vocabulary, returns an
+    empty list rather than falling back to embedding similarity — a
+    confident "no match" is preferred over a noisy guess.
     """
-    conn = psycopg2.connect(DATABASE_URL)
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT ticker, overview_embedding FROM stock_universe WHERE overview_embedding IS NOT NULL"
+    import json
+    from pathlib import Path
+
+    tag_data_path = Path(__file__).parent.parent.parent.parent / "research" / "2026-08-16_tag_normalization" / "merged_tag_companies.json"
+    with open(tag_data_path) as f:
+        tag_data = json.load(f)
+    tag_to_tickers = {item["tag"]: item["tickers"] for item in tag_data}
+    all_tags = list(tag_to_tickers.keys())
+
+    tag_list_str = ", ".join(all_tags)
+    prompt = f"""You are matching a user's industry/theme question to the SINGLE closest tag from a fixed vocabulary.
+
+Available tags (pick exactly one, verbatim, from this list):
+{tag_list_str}
+
+User's question: "{industry_words}"
+
+Respond with ONLY the exact tag text from the list above that best matches what the user is asking about. If nothing in the list is a reasonable match, respond with exactly: NONE
+
+Your answer (just the tag, nothing else):"""
+
+    response = client.chat.completions.create(
+        model=LLM_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0,
     )
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    answer = response.choices[0].message.content.strip()
 
-    query_vector = np.array(
-        client.embeddings.create(model=EMBEDDING_MODEL, input=industry_words).data[0].embedding
-    )
+    if answer == "NONE" or answer not in tag_to_tickers:
+        gprint(f"  [get_industry_tickers] {industry_words!r} -> no matching tag found")
+        return []
 
-    scored = []
-    for ticker, embedding in rows:
-        if isinstance(embedding, str):
-            company_vector = np.array([float(x) for x in embedding.strip("[]").split(",")])
-        else:
-            company_vector = np.array(embedding, dtype=float)
-        similarity = float(
-            np.dot(query_vector, company_vector)
-            / (np.linalg.norm(query_vector) * np.linalg.norm(company_vector))
-        )
-        scored.append((ticker, similarity))
+    tickers = tag_to_tickers[answer]
+    gprint(f"  [get_industry_tickers] {industry_words!r} -> tag: {answer!r} ({len(tickers)} tickers)")
+    return tickers
 
-    scored.sort(key=lambda pair: pair[1], reverse=True)
-
-    print(f"  [get_industry_tickers] scores for {industry_words!r} ({len(scored)} tickers):")
-    for ticker, score in scored[:20]:
-        print(f"    {ticker:6s} {score:.4f}")
-
-    return [ticker for ticker, score in scored]
 
 
 
