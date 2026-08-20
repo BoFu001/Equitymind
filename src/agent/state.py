@@ -23,6 +23,7 @@ class AgentState(TypedDict):
 
     clarification_complete: Optional[bool]  # True when clarification collected enough criteria
     enriched_query: Optional[str]           # transient — synthesized question for discovery_suggest, never persisted to messages
+    discovery_query: Optional[dict]         # the parsed DiscoveryQuery prepare_discovery produced, so discovery executes the same parse the gate judged rather than parsing again
 
     # Extracted parameters
     tickers: Optional[list[str]]            # all tickers e.g. ["AAPL"] or ["AAPL", "MSFT"]
@@ -89,6 +90,7 @@ def build_initial_state(question: str, messages: list | None = None, session_mem
         "sub_intent": None,
         "clarification_complete": False,
         "enriched_query": None,
+        "discovery_query": None,
         "tickers":     [],
         "data_scope":  [],
         "news":        [],

@@ -7,194 +7,21 @@ Node: Discovery Experiment
 import numpy as np
 import psycopg2
 from openai import OpenAI
-from pydantic import BaseModel
 
 from config import OPENAI_API_KEY, LLM_MODEL, DATABASE_URL
 from src.agent.state import AgentState
+from src.agent.discovery_types import (
+    QUANT_SIGNALS_FIELDS,
+    FINANCIAL_HISTORY_FIELDS,
+    RankField,
+    DiscoveryQuery,
+)
 from src.sec_pipeline.embedder import EMBEDDING_MODEL
 from colors import gprint, rprint
 from langgraph.config import get_stream_writer
 from src.agent.nodes_notifications import NODE_PROGRESS
 
 client = OpenAI(api_key=OPENAI_API_KEY)
-
-
-from typing import Literal
-
-QUANT_SIGNALS_FIELDS = [
-    # quant_signals — real, ranked columns only (not _data/_computed_at/_period_end)
-    "valuation_score",
-    "momentum_12_1_score", "position_52w_score",
-    "risk_beta_score", "risk_sharpe_score", "risk_var_score", "risk_drawdown_score",
-    "quality_score",
-    "consensus_recommendation_score", "consensus_upside_score", "consensus_trend_score",
-    "short_interest_pct", "days_to_cover",
-]
-
-STOCK_UNIVERSE_FIELDS = [
-    # stock_universe — single-row-per-ticker current-state table.
-    # market_cap lives here, not in financial_history: market cap is a
-    # market-data figure (price x shares outstanding), not something
-    # any of the three financial statements report, and it is a
-    # point-in-time "now" figure rather than a historical multi-period
-    # one, so it doesn't fit financial_history's per-quarter row model.
-    "market_cap",
-]
-
-FINANCIAL_HISTORY_FIELDS = [
-    # financial_history — every numeric column (not ticker/period_end/period_type/updated_at)
-    "total_revenue", "cost_of_revenue", "gross_profit",
-    "research_and_development", "selling_general_and_administration",
-    "operating_expense", "operating_income", "ebit", "ebitda", "pretax_income",
-    "net_income", "diluted_eps", "basic_eps", "interest_expense",
-    "operating_cash_flow", "capital_expenditure", "free_cash_flow",
-    "repurchase_of_capital_stock", "cash_dividends_paid",
-    "depreciation_amortization_depletion",
-    "total_assets", "total_liabilities", "stockholders_equity",
-    "cash_and_equivalents", "long_term_debt",
-    "current_assets", "current_liabilities",
-    "shares_outstanding", "retained_earnings", "net_ppe",
-    "accounts_receivable", "inventory", "total_debt",
-]
-
-VALID_FIELD_NAMES = Literal[tuple(QUANT_SIGNALS_FIELDS + STOCK_UNIVERSE_FIELDS + FINANCIAL_HISTORY_FIELDS)]
-
-
-class RankField(BaseModel):
-    """One field the user wants to rank by. name must be one of the
-    fields this system actually has data for — if the user asks about
-    something we don't track (e.g. "beautiful", "tall"), it should not
-    appear here at all, not be guessed at."""
-    name: VALID_FIELD_NAMES
-    order: str          # "ascending" or "descending"
-    count: int | None    # this field's own LIMIT, if the sentence gave one
-    priority: int         # same number across fields = averaged together;
-                           # different numbers = executed in ascending order
-
-
-class DiscoveryQuery(BaseModel):
-    industry: str | None       # user's own wording, or None if no industry mentioned
-    fields: list[RankField]    # zero or more ranking fields
-    final_count: int | None    # how many results to show at the very end,
-                                # distinct from any single field's own count
-
-
-def extract_discovery_query(question: str) -> DiscoveryQuery:
-    """
-    Turn a user's free-text question into a structured DiscoveryQuery.
-    LLM only transcribes what the sentence says — no ranking logic, no
-    judgment. If parsing fails, returns an empty query rather than raising.
-    """
-    
-    extraction_prompt = f'''You are parsing a user\'s stock question into structured
-data. Do NOT answer the question or judge anything — only faithfully transcribe
-what the sentence says. All logic (ranking, filtering) happens in code afterward.
-
-USER QUESTION: {question}
-
-Extract two things:
-
-1. industry: the user\'s own wording for any industry/theme mentioned (e.g.
-   "semiconductor stocks", "robotics companies", "healthcare"). Copy their
-   phrasing verbatim, do not translate or normalize it. If no industry is
-   mentioned, use null.
-
-2. fields: a list of ranking fields the user mentioned. Each field has:
-   - name: the field being ranked. MUST be exactly one of these values —
-     do not invent a name, do not use spaces (use underscores), and if the
-     user's question does not clearly map to any of these, leave it out of
-     the fields list entirely rather than guessing:
-     valuation_score, momentum_12_1_score, position_52w_score,
-     risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score,
-     quality_score, consensus_recommendation_score, consensus_upside_score,
-     consensus_trend_score, short_interest_pct, days_to_cover, market_cap,
-     total_revenue, cost_of_revenue, gross_profit, research_and_development,
-     selling_general_and_administration, operating_expense, operating_income,
-     ebit, ebitda, pretax_income, net_income, diluted_eps, basic_eps,
-     interest_expense, operating_cash_flow, capital_expenditure,
-     free_cash_flow, repurchase_of_capital_stock, cash_dividends_paid,
-     depreciation_amortization_depletion, total_assets, total_liabilities,
-     stockholders_equity, cash_and_equivalents, long_term_debt,
-     current_assets, current_liabilities, shares_outstanding,
-     retained_earnings, net_ppe, accounts_receivable, inventory, total_debt
-
-     When the user says something generic, map it to the closest specific
-     field: "risk" alone -> risk_beta_score; "momentum" alone ->
-     momentum_12_1_score; "consensus"/"analyst rating" alone ->
-     consensus_recommendation_score.
-   - order: "ascending" (lowest/cheapest/safest first) or "descending"
-     (highest/most/largest first) — watch for negation, e.g. "least favored
-     by analysts" is ascending on consensus, not descending
-   - count: a number if THIS SPECIFIC field has one attached in the sentence
-     (e.g. "the 10 largest" -> count=10 on the market-cap field). Otherwise null.
-   - priority: an integer. Assign this by sentence structure, not by which
-     fields are involved:
-     - If two or more fields are joined by "and"/"but", or simply listed
-       together with no containment wording ("highest net income and lowest
-       valuation", "low-risk and high-momentum stocks") -> give them the
-       SAME priority number. They will be averaged together with equal
-       weight, no field is ever treated as more important than another by
-       default.
-     - If the sentence has a containment structure ("of the 10 largest
-       companies, which has the lowest X" / "among X stocks, Y" / "X 里 Y")
-       -> give the outer (containing) field a SMALLER priority number than
-       the inner (contained) field. Lower number = executed first.
-     - A sentence can have more than two priority levels if it nests more
-       than once (e.g. "of the 20 largest, the 10 cheapest, the most
-       analyst-favored" -> three distinct priority numbers, 1/2/3).
-
-3. final_count: a number if the user asked for a specific count of final
-   results that does NOT belong to any single field (e.g. "give me 10
-   stocks with low valuation and high quality" -> the 10 applies to the
-   combined result, not to valuation or quality individually -> final_count=10,
-   and neither field gets its own count). Null if unspecified. Do not
-   confuse this with a field-specific count in a nested sentence (e.g. "of
-   the 10 largest" -> that 10 belongs to the market-cap field, not here).
-
-EXAMPLES:
-
-"Give me 10 stocks with low valuation and high quality"
-{{"industry": null, "fields": [
-  {{"name": "valuation_score", "order": "ascending", "count": null, "priority": 1}},
-  {{"name": "quality_score", "order": "descending", "count": null, "priority": 1}}
-], "final_count": 10}}
-
-"Of the 10 largest companies, which has the lowest valuation?"
-{{"industry": null, "fields": [
-  {{"name": "market_cap", "order": "descending", "count": 10, "priority": 1}},
-  {{"name": "valuation_score", "order": "ascending", "count": null, "priority": 2}}
-], "final_count": null}}
-
-"Of the 20 largest companies, the 10 with the lowest valuation, which 5 do
-analysts favor most?"
-{{"industry": null, "fields": [
-  {{"name": "market_cap", "order": "descending", "count": 20, "priority": 1}},
-  {{"name": "valuation_score", "order": "ascending", "count": 10, "priority": 2}},
-  {{"name": "consensus_recommendation_score", "order": "descending", "count": 5, "priority": 3}}
-], "final_count": null}}
-
-"Recommend some low-risk, high-momentum semiconductor stocks"
-{{"industry": "semiconductor", "fields": [
-  {{"name": "risk_beta_score", "order": "ascending", "count": null, "priority": 1}},
-  {{"name": "momentum_12_1_score", "order": "descending", "count": null, "priority": 1}}
-], "final_count": null}}
-
-Reply with ONLY valid JSON matching this shape, no markdown, no commentary:
-{{"industry": "...", "fields": [{{"name": "...", "order": "...", "count": null, "priority": 1}}], "final_count": null}}'''
-
-    extraction_response = client.responses.parse(
-        model=LLM_MODEL,
-        input=[{"role": "user", "content": extraction_prompt}],
-        temperature=0,
-        text_format=DiscoveryQuery,
-    )
-    try:
-        query = extraction_response.output_parsed
-    except Exception as e:
-        gprint(f"  [extract_discovery_query] Could not parse query: {e}")
-        query = DiscoveryQuery(industry=None, fields=[], final_count=None)
-    print(f"  [extract_discovery_query] parsed:\n\n{query.model_dump_json(indent=2)}")
-    return query
 
 
 
@@ -324,7 +151,8 @@ def get_field_source(field_name: str) -> str:
     Which table does this field live in? quant_signals holds the six
     normalized signal scores; financial_history holds the raw dollar
     figures from the three financial statements; stock_universe holds
-    market_cap (see STOCK_UNIVERSE_FIELDS above for why). Pure lookup,
+    market_cap (see STOCK_UNIVERSE_FIELDS in discovery_types.py for
+    why). Pure lookup,
     no database call — used before querying to decide which table to
     hit.
     """
@@ -539,7 +367,8 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
     pool, average them per ticker, sort by the average.
 
     count is read from whichever field in the stage carries one — by
-    design (see extract_discovery_query's prompt) only one field per
+    design (see extract_discovery_query in prepare_discovery.py)
+    only one field per
     stage should ever have a non-null count, since a multi-field
     (averaged) stage has no single field's LIMIT to apply.
     """
@@ -573,8 +402,11 @@ def discovery_experiment(state: AgentState) -> dict:
     # writer = get_stream_writer()
     # writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
 
-    question = input("Enter question: ")
-    query = extract_discovery_query(question)
+    # The parse arrives already done. prepare_discovery ran it to decide
+    # whether this question was executable at all, so re-running it here
+    # would spend a second call to reach a verdict that could differ from
+    # the one the gate acted on.
+    query = DiscoveryQuery(**state["discovery_query"])
 
     if query.industry is None:
         tickers = get_all_tickers()
@@ -592,5 +424,15 @@ def discovery_experiment(state: AgentState) -> dict:
 
 
 if __name__ == "__main__":
-    result = discovery_experiment({})
-    print(result["tickers"])
+    # Standalone harness. In the graph the parse comes from
+    # prepare_discovery; here it is produced locally so this node can
+    # still be exercised on its own.
+    question = input("Enter question: ")
+    from src.agent.nodes.prepare_discovery import extract_discovery_query
+    parsed = extract_discovery_query(question)
+
+    if not parsed.fields:
+        print("No rankable field — prepare_discovery would block this question.")
+    else:
+        result = discovery_experiment({"discovery_query": parsed.model_dump()})
+        print(result["tickers"])
