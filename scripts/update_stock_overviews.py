@@ -220,6 +220,17 @@ def update_stock_overviews():
                 skipped.append(ticker)
             continue
 
+        # The generating branch was the only silent one: skips and
+        # failures each printed a reason, while the one path that spends
+        # a model call and replaces stored text said nothing until the
+        # final count. Whether a run replaced an existing overview or
+        # wrote a first one had to be reconstructed from the database
+        # afterwards — and replacement is the case worth seeing, since
+        # regenerating from the same 10-K changed roughly 80% of the
+        # affected companies' tags on 2026-08-18 and again on 2026-08-20.
+        previous = "first time" if stored_filing_date is None else f"replacing the {stored_filing_date} version"
+        print(f"    {ticker}: generating from the {filing_date} 10-K ({previous})", flush=True)
+
         try:
             overview = generate_overview(business_text)
         except Exception as e:
@@ -239,6 +250,7 @@ def update_stock_overviews():
             )
             conn.commit()  # per ticker — a 30-minute run should never lose work
             written += 1
+            print(f"    {ticker}: written, {len(overview)} chars", flush=True)
         except Exception as e:
             print(f"    DB write failed for {ticker}: {e}", flush=True)
             skipped.append(ticker)

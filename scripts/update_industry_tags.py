@@ -97,17 +97,21 @@ def extract_tags(overview_text: str) -> list[str] | None:
         return None
 
 
-def _load_targets(cursor, regenerate_all: bool) -> list[tuple[str, str, str]]:
+def _load_targets(cursor, regenerate_all: bool) -> list[tuple[str, str, str, list | None]]:
+    """Returns (ticker, overview_text, overview_filing_date, existing_tags).
+
+    The existing tags are carried along so a re-tag can be diffed against
+    what it replaces — see the change report in update_industry_tags()."""
     if regenerate_all:
         cursor.execute("""
-            SELECT ticker, overview_text, overview_filing_date
+            SELECT ticker, overview_text, overview_filing_date, llm_tags
             FROM stock_universe
             WHERE overview_text IS NOT NULL
             ORDER BY ticker
         """)
     else:
         cursor.execute("""
-            SELECT ticker, overview_text, overview_filing_date
+            SELECT ticker, overview_text, overview_filing_date, llm_tags
             FROM stock_universe
             WHERE overview_text IS NOT NULL
               AND (tags_filing_date IS DISTINCT FROM overview_filing_date)
@@ -126,8 +130,9 @@ def update_industry_tags(regenerate_all: bool = False):
 
     written = 0
     failed = []
+    changed = []
 
-    for i, (ticker, overview_text, filing_date) in enumerate(targets, 1):
+    for i, (ticker, overview_text, filing_date, old_tags) in enumerate(targets, 1):
         print(f"  [{i}/{len(targets)}] {ticker}...", flush=True)
 
         tags = extract_tags(overview_text)
@@ -148,8 +153,29 @@ def update_industry_tags(regenerate_all: bool = False):
         written += 1
         print(f"    {tags}", flush=True)
 
+        # A company that already had tags and now has different ones is
+        # worth seeing. Tags are re-derived whenever its overview is
+        # regenerated, and the overview is regenerated from the same 10-K
+        # whenever the row is rebuilt — so a company can silently lose a
+        # tag central to its business without its filing having changed.
+        # AVGO dropped "semiconductors" for "telecommunications" this way
+        # on 2026-08-18, while its own overview text still called it a
+        # prominent player in the semiconductor industry four times over.
+        # Nothing in the run's output showed it. This diff is the signal.
+        if old_tags is not None:
+            lost = sorted(set(old_tags) - set(tags))
+            gained = sorted(set(tags) - set(old_tags))
+            if lost or gained:
+                changed.append(ticker)
+                print(f"    CHANGED — lost {lost}, gained {gained}", flush=True)
+
     print(f"\n✓ stock_universe table updated — {written} ticker(s) tagged",
           flush=True)
+    if changed:
+        print(f"  Tags CHANGED for {len(changed)}: {', '.join(changed)}",
+              flush=True)
+        print("    (re-derived from a regenerated overview — check these if "
+              "a company has gone missing from a tag query)", flush=True)
     if failed:
         print(f"  Extraction failed for {len(failed)}: {', '.join(failed)}",
               flush=True)
