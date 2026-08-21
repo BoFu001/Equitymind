@@ -1,5 +1,5 @@
 """
-src/agent/nodes/prepare_discovery.py
+src/agent/nodes/discovery_preparation.py
 
 Node: Prepare Discovery
 
@@ -347,7 +347,7 @@ def _stream(text: str) -> None:
             time.sleep(0.03)
 
 
-def prepare_discovery(state: AgentState) -> dict:
+def discovery_preparation(state: AgentState) -> dict:
     writer = get_stream_writer()
     writer({"type": "progress", "node": "clarification", "message": NODE_PROGRESS["clarification"]})
 
@@ -355,12 +355,12 @@ def prepare_discovery(state: AgentState) -> dict:
     messages = state.get("messages") or []
 
     enriched_question = _build_enriched_question(question, messages)
-    gprint(f"  [prepare_discovery] enriched question: {enriched_question}")
+    gprint(f"  [discovery_preparation] enriched question: {enriched_question}")
 
     query = extract_discovery_query(enriched_question)
 
     if query.fields:
-        gprint(f"  [prepare_discovery] executable — {len(query.fields)} field(s), industry={query.industry!r}")
+        gprint(f"  [discovery_preparation] executable — {len(query.fields)} field(s), industry={query.industry!r}")
         return {
             "clarification_complete": True,
             "enriched_query":         enriched_question,
@@ -373,7 +373,7 @@ def prepare_discovery(state: AgentState) -> dict:
         clarifying_question = _ask_for_a_field(enriched_question)
         _stream(clarifying_question)
 
-        gprint(f"  [prepare_discovery] no rankable field — asking: {clarifying_question}")
+        gprint(f"  [discovery_preparation] no rankable field — asking: {clarifying_question}")
         return {
             "clarification_complete": False,
             "answer":                 clarifying_question,
@@ -381,7 +381,7 @@ def prepare_discovery(state: AgentState) -> dict:
 
 
 if __name__ == "__main__":
-    # prepare_discovery calls get_stream_writer, and _stream reads
+    # discovery_preparation calls get_stream_writer, and _stream reads
     # token_queue_var; both exist only inside a LangGraph run. Rebinding
     # them here is enough, since each is resolved by global lookup at
     # call time — which means the node itself gets exercised, not just
@@ -416,7 +416,7 @@ if __name__ == "__main__":
 
     messages = []
 
-    print("=== prepare_discovery ===")
+    print("=== discovery_preparation ===")
     print("blank line to quit")
 
     while True:
@@ -427,7 +427,7 @@ if __name__ == "__main__":
         if isolate:
             messages = []
 
-        result = prepare_discovery({"question": q, "messages": messages})
+        result = discovery_preparation({"question": q, "messages": messages})
 
         print("\n--- RESULT ---")
         if result["clarification_complete"]:

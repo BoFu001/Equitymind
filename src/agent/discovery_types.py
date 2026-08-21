@@ -5,7 +5,7 @@ Shared vocabulary for Discovery: the fields a user can rank by, and the
 structured form of a parsed question.
 
 Lives above nodes/ because two nodes depend on it and neither owns it.
-prepare_discovery parses a question into a DiscoveryQuery; discovery
+discovery_preparation parses a question into a DiscoveryQuery; discovery
 executes one. Keeping the definitions here means the parser and the
 executor cannot drift apart, and neither has to import the other.
 

@@ -8,10 +8,8 @@ from src.agent.nodes.explain_concept import explain_concept
 from src.agent.nodes.extract_parameters import extract_parameters
 from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
 from src.agent.nodes.handle_greeting import handle_greeting
-from src.agent.nodes.discovery_suggest import discovery_suggest
 from src.agent.nodes.generate_report import generate_report
 from src.agent.nodes.handle_no_ticker import handle_no_ticker
-from src.agent.nodes.handle_clarification import handle_clarification
 from src.agent.nodes.fetch_data import fetch_data
 import json
 
@@ -20,8 +18,7 @@ def mock_stream_writer():
     node_modules = [
         "contextualize_question", "classify_top_intent", "classify_sub_intent",
         "explain_concept", "extract_parameters", "handle_out_of_scope",
-        "handle_greeting", "discovery_suggest", "handle_no_ticker",
-        "handle_clarification", "generate_report",
+        "handle_greeting", "handle_no_ticker", "generate_report",
     ]
     patchers = [
         patch(f"src.agent.nodes.{module}.get_stream_writer")
@@ -113,19 +110,25 @@ def test_classify_sub_intent_discovery():
     assert result["sub_intent"] == "DISCOVERY"
 
 def test_classify_sub_intent_stock_market():
+    """The market as a whole is not a set of companies to pick from —
+    a list of tickers would not answer it."""
     state = make_state(question="Tell me about the stock market")
     result = classify_sub_intent(state)
-    assert result["sub_intent"] == "DISCOVERY"
+    assert result["sub_intent"] == "ANALYZE_INDUSTRY"
 
 def test_classify_sub_intent_vague_sector():
     state = make_state(question="Analyse a tech company")
     result = classify_sub_intent(state)
     assert result["sub_intent"] == "DISCOVERY"
 
-def test_classify_sub_intent_clarification():
+def test_classify_sub_intent_too_vague_is_still_discovery():
+    """Vagueness is no longer the classifier's call. This request cannot
+    be executed as it stands, but deciding that belongs to
+    discovery_preparation, which parses it and asks a follow-up
+    question — so the classifier still routes it to DISCOVERY."""
     state = make_state(question="Find me a good stock")
     result = classify_sub_intent(state)
-    assert result["sub_intent"] == "CLARIFICATION"
+    assert result["sub_intent"] == "DISCOVERY"
 
 # ─────────────────────────────────────────────
 # Node: Explain Concept
@@ -251,16 +254,6 @@ def test_handle_greeting():
 
 
 
-# ─────────────────────────────────────────────
-# Node: Discovery 
-# ─────────────────────────────────────────────
-
-
-def test_discovery_suggest():
-    state = make_state(question="Find me a low risk stock")
-    result = discovery_suggest(state)
-    assert "tickers" in result
-    assert len(result["tickers"]) == 5
 
 # ─────────────────────────────────────────────
 # Node: Report
@@ -295,40 +288,6 @@ def test_handle_no_ticker_comparison():
     assert "answer" in result
     assert len(result["answer"]) > 0
     assert "compare" in result["answer"].lower()
-
-
-# ─────────────────────────────────────────────
-# Node: Clarification
-# ─────────────────────────────────────────────
-
-def test_handle_clarification_asks_question():
-    """With no criteria — should ask a question, complete should be False."""
-    state = make_state(
-        question="Find me a good stock",
-        messages=[]
-    )
-    result = handle_clarification(state)
-    assert "answer" in result
-    assert len(result["answer"]) > 0
-    assert result.get("clarification_complete") == False
-
-def test_handle_clarification_complete_with_enough_criteria():
-    """With enough criteria in history — should return clarification_complete=True."""
-    state = make_state(
-        question="long term",
-        messages=[
-            {"role": "user",      "content": "Find me a good stock"},
-            {"role": "assistant", "content": "Which sector interests you?"},
-            {"role": "user",      "content": "Technology"},
-            {"role": "assistant", "content": "What's your risk tolerance?"},
-            {"role": "user",      "content": "Medium risk"},
-            {"role": "assistant", "content": "Time horizon — short or long term?"},
-        ]
-    )
-    result = handle_clarification(state)
-    assert result.get("clarification_complete") == True
-    assert "enriched_query" in result
-    assert len(result["enriched_query"]) > 0
 
 
 # ─────────────────────────────────────────────

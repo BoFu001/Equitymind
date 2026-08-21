@@ -44,7 +44,7 @@ def update_session_memory(state: AgentState) -> dict:
 
     # ── Update clarification state ──
     # Clarifying is no longer an intent of its own — it is a state a
-    # Discovery request can be left in when prepare_discovery could not
+    # Discovery request can be left in when discovery_preparation could not
     # parse anything rankable out of it and asked a follow-up question.
     # The flag is what tells the next turn's classifiers that a bare
     # reply like "the cheapest ones" is still that Discovery request.

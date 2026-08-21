@@ -11,9 +11,9 @@ from src.agent.nodes.determine_data_scope import determine_data_scope
 from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
 from src.agent.nodes.handle_greeting import handle_greeting
 from src.agent.nodes.handle_no_ticker import handle_no_ticker
-from src.agent.nodes.discovery_experiment import discovery_experiment
+from src.agent.nodes.discovery_execution import discovery_execution
 from src.agent.nodes.update_session_memory import update_session_memory
-from src.agent.nodes.prepare_discovery import prepare_discovery
+from src.agent.nodes.discovery_preparation import discovery_preparation
 from src.agent.nodes.generate_report import generate_report
 from src.agent.nodes.fetch_data import fetch_data
 from src.agent.nodes.quant_engine import quant_engine
@@ -42,12 +42,12 @@ def route_after_sub_intent(state: AgentState) -> str:
     sub_intent = state.get("sub_intent", "")
     yprint(f"  [route_after_sub_intent] sub_intent={sub_intent}")
 
-    # Every Discovery request goes through prepare_discovery first —
+    # Every Discovery request goes through discovery_preparation first —
     # there is no longer a direct edge to discovery. Whether a request
     # is specific enough to run is decided there, by parsing it, rather
     # than guessed at by this classifier.
     if sub_intent == "DISCOVERY":
-        return "prepare_discovery"
+        return "discovery_preparation"
     else:
         return "extract"
 
@@ -61,12 +61,12 @@ def route_after_extract(state: AgentState) -> str:
     else:
         return "determine_data_scope"
 
-def route_after_prepare_discovery(state: AgentState) -> str:
+def route_after_discovery_preparation(state: AgentState) -> str:
     """Runs discovery when the request parsed into something rankable,
-    otherwise ends the turn on the follow-up question prepare_discovery
+    otherwise ends the turn on the follow-up question discovery_preparation
     already wrote into answer."""
     complete = state.get("clarification_complete")
-    yprint(f"  [route_after_prepare_discovery] complete={complete}")
+    yprint(f"  [route_after_discovery_preparation] complete={complete}")
     if complete:
         return "discovery"
     else:
@@ -90,10 +90,10 @@ def build_graph():
     graph.add_node("generate_report",        generate_report) 
     graph.add_node("out_of_scope",           handle_out_of_scope)
     graph.add_node("greeting",               handle_greeting)
-    graph.add_node("discovery",              discovery_experiment)
+    graph.add_node("discovery",              discovery_execution)
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
-    graph.add_node("prepare_discovery",      prepare_discovery)
+    graph.add_node("discovery_preparation",      discovery_preparation)
     graph.add_node("quant_engine",           quant_engine)
 
     # Conditional edge after Layer 1
@@ -113,7 +113,7 @@ def build_graph():
         "classify_sub_intent",
         route_after_sub_intent,
         {
-            "prepare_discovery": "prepare_discovery",
+            "discovery_preparation": "discovery_preparation",
             "extract":           "extract",
         }
     )
@@ -129,8 +129,8 @@ def build_graph():
     )
 
     graph.add_conditional_edges(
-        "prepare_discovery",
-        route_after_prepare_discovery,
+        "discovery_preparation",
+        route_after_discovery_preparation,
         {
             "discovery":             "discovery",
             "update_session_memory": "update_session_memory",

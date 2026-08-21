@@ -1,5 +1,5 @@
 """
-src/agent/nodes/discovery_experiment.py
+src/agent/nodes/discovery_execution.py
 
 Node: Discovery Experiment
 """
@@ -392,7 +392,7 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
     pool, average them per ticker, sort by the average.
 
     count is read from whichever field in the stage carries one — by
-    design (see extract_discovery_query in prepare_discovery.py)
+    design (see extract_discovery_query in discovery_preparation.py)
     only one field per
     stage should ever have a non-null count, since a multi-field
     (averaged) stage has no single field's LIMIT to apply.
@@ -421,13 +421,13 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
     return ranked[:count] if count else ranked
 
 
-def discovery_experiment(state: AgentState) -> dict:
-    from src.agent.nodes.discovery_experiment_count import determine_stage_counts
+def discovery_execution(state: AgentState) -> dict:
+    from src.agent.nodes.discovery_counts import determine_stage_counts
 
     writer = get_stream_writer()
     writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
 
-    # The parse arrives already done. prepare_discovery ran it to decide
+    # The parse arrives already done. discovery_preparation ran it to decide
     # whether this question was executable at all, so re-running it here
     # would spend a second call to reach a verdict that could differ from
     # the one the gate acted on.
@@ -451,7 +451,7 @@ def discovery_experiment(state: AgentState) -> dict:
 if __name__ == "__main__":
     # get_stream_writer only resolves inside a LangGraph run. Rebinding it
     # here keeps this node runnable on its own, the same way
-    # prepare_discovery does.
+    # discovery_preparation does.
     def _fake_get_stream_writer():
         def writer(event):
             pass
@@ -460,14 +460,14 @@ if __name__ == "__main__":
     globals()["get_stream_writer"] = _fake_get_stream_writer
 
     # Standalone harness. In the graph the parse comes from
-    # prepare_discovery; here it is produced locally so this node can
+    # discovery_preparation; here it is produced locally so this node can
     # still be exercised on its own.
     question = input("Enter question: ")
-    from src.agent.nodes.prepare_discovery import extract_discovery_query
+    from src.agent.nodes.discovery_preparation import extract_discovery_query
     parsed = extract_discovery_query(question)
 
     if not parsed.fields:
-        print("No rankable field — prepare_discovery would block this question.")
+        print("No rankable field — discovery_preparation would block this question.")
     else:
-        result = discovery_experiment({"discovery_query": parsed.model_dump()})
+        result = discovery_execution({"discovery_query": parsed.model_dump()})
         print(result["tickers"])
