@@ -135,9 +135,59 @@ Extract two things:
      field: "risk" alone -> risk_beta_score; "momentum" alone ->
      momentum_12_1_score; "consensus"/"analyst rating" alone ->
      consensus_recommendation_score.
-   - order: "ascending" (lowest/cheapest/safest first) or "descending"
-     (highest/most/largest first) — watch for negation, e.g. "least favored
-     by analysts" is ascending on consensus, not descending
+   - order: "ascending" (smallest value first) or "descending" (largest
+     value first). Decide this from the VALUE STORED IN THE FIELD, not
+     from the adjective the user used — for most of these fields the two
+     point the same way, but for the scores below they are opposites.
+
+     The fourteen fields ending in _score are normalised judgements, not
+     raw quantities, and every one of them is signed the same way:
+     POSITIVE ALWAYS MEANS THE FAVOURABLE END, whatever the field
+     measures. valuation_score is +1 when a company is cheap against its
+     peers and -1 when expensive; risk_*_score is +1 when risk is LOW;
+     quality_score is +1 when financials are strong; the consensus_*
+     scores are +1 when analysts are positive; the momentum and
+     position scores are +1 when the stock ranks at the top of the
+     universe.
+
+     So for a _score field, work out which END the user is asking for:
+       - the favourable end ("cheapest", "best valuation", "safest",
+         "lowest risk", "highest quality", "strongest momentum", "most
+         favoured by analysts") -> descending
+       - the unfavourable end ("most overvalued", "riskiest", "worst
+         quality", "weakest momentum", "least favoured by analysts")
+         -> ascending
+     Note that "cheapest" and "safest" take DESCENDING here, even though
+     they sound like they should be ascending: the field holds a score,
+     and a cheap or safe company scores high.
+
+     short_interest_pct and days_to_cover are the exception inside this
+     group — despite living alongside the scores they are raw figures (a
+     percentage of float, and a number of days), with no scoring applied,
+     so read them literally: "most heavily shorted" -> descending, "least
+     shorted" -> ascending.
+
+     Every other field — market_cap and the financial-statement figures —
+     is a raw quantity, read literally: "highest revenue" -> descending,
+     "least debt" -> ascending.
+     IMPORTANT — subjective overall judgements are NOT rankable fields.
+
+     Words like "worth buying", "good", "should I buy", "worth investing",
+     "promising", "attractive" express an overall judgement about a company,
+     not a single measurable dimension. They MUST NOT be mapped to any field.
+
+     consensus_recommendation_score is NOT a proxy for "worth buying" —
+     it reflects analyst opinion, not the user's own criteria.
+
+     If the question contains ONLY such a judgement and no measurable
+     criterion, return an empty fields list.
+
+     However, when the same words are paired with an explicit dimension,
+     they ARE rankable and should be mapped normally:
+       - "best valuation" -> valuation_score
+       - "best analyst rating" -> consensus_recommendation_score
+       - "attractive valuation" -> valuation_score
+
    - count: a number if THIS SPECIFIC field has one attached in the sentence
      (e.g. "the 10 largest" -> count=10 on the market-cap field). Otherwise null.
    - priority: an integer. Assign this by sentence structure, not by which
@@ -167,28 +217,48 @@ Extract two things:
 EXAMPLES:
 
 "Give me 10 stocks with low valuation and high quality"
+(both wanted at their favourable end, so both descending — a cheap
+company scores HIGH on valuation_score)
 {{"industry": null, "fields": [
-  {{"name": "valuation_score", "order": "ascending", "count": null, "priority": 1}},
+  {{"name": "valuation_score", "order": "descending", "count": null, "priority": 1}},
   {{"name": "quality_score", "order": "descending", "count": null, "priority": 1}}
 ], "final_count": 10}}
 
 "Of the 10 largest companies, which has the lowest valuation?"
+(market_cap is a raw figure read literally; valuation_score is not —
+"lowest valuation" means cheapest, the favourable end, so descending)
 {{"industry": null, "fields": [
   {{"name": "market_cap", "order": "descending", "count": 10, "priority": 1}},
-  {{"name": "valuation_score", "order": "ascending", "count": null, "priority": 2}}
+  {{"name": "valuation_score", "order": "descending", "count": null, "priority": 2}}
 ], "final_count": null}}
 
 "Of the 20 largest companies, the 10 with the lowest valuation, which 5 do
 analysts favor most?"
 {{"industry": null, "fields": [
   {{"name": "market_cap", "order": "descending", "count": 20, "priority": 1}},
-  {{"name": "valuation_score", "order": "ascending", "count": 10, "priority": 2}},
+  {{"name": "valuation_score", "order": "descending", "count": 10, "priority": 2}},
   {{"name": "consensus_recommendation_score", "order": "descending", "count": 5, "priority": 3}}
 ], "final_count": null}}
 
+"Which healthcare companies are the most overvalued?"
+(the unfavourable end of valuation_score — an expensive company scores
+LOW — so ascending. A _score field is not always descending; which end
+the user asked for is what decides it.)
+{{"industry": "healthcare", "fields": [
+  {{"name": "valuation_score", "order": "ascending", "count": null, "priority": 1}}
+], "final_count": null}}
+
+"Which healthcare companies are worth buying?"
+(a judgement about the company overall, with no dimension named — the
+industry is still recorded, but there is nothing to rank on, so fields
+stays empty rather than being filled with the nearest plausible score)
+{{"industry": "healthcare", "fields": [], "final_count": null}}
+
 "Recommend some low-risk, high-momentum semiconductor stocks"
+(low risk is the favourable end of risk_beta_score, so descending —
+the same direction as high momentum, despite the opposite adjective)
 {{"industry": "semiconductor", "fields": [
-  {{"name": "risk_beta_score", "order": "ascending", "count": null, "priority": 1}},
+  {{"name": "risk_beta_score", "order": "descending", "count": null, "priority": 1}},
   {{"name": "momentum_12_1_score", "order": "descending", "count": null, "priority": 1}}
 ], "final_count": null}}
 
@@ -206,6 +276,18 @@ Reply with ONLY valid JSON matching this shape, no markdown, no commentary:
     except Exception as e:
         gprint(f"  [extract_discovery_query] Could not parse query: {e}")
         query = DiscoveryQuery(industry=None, fields=[], final_count=None)
+
+    # The model occasionally writes the string "null" where the schema
+    # asks for JSON null. The two are indistinguishable to a reader and
+    # opposite to the code: None means "no industry named, search the
+    # whole universe", while "null" is looked up as a tag, matches
+    # nothing, and hands Discovery an empty candidate pool. Nothing
+    # raises — the user is simply told no companies were found. Fixing
+    # this in the prompt would be one more instruction to be followed
+    # most of the time; the shape is fixed enough to settle in code.
+    if isinstance(query.industry, str) and query.industry.strip().lower() in {"null", "none", ""}:
+        query.industry = None
+
     print(f"  [extract_discovery_query] parsed:\n\n{query.model_dump_json(indent=2)}")
     return query
 
@@ -323,6 +405,15 @@ if __name__ == "__main__":
     # Carrying messages forward is what makes a multi-turn exchange
     # testable: a blocked turn is appended, so the next answer reaches
     # _build_enriched_question with something to fold in.
+    # Carrying messages forward is what a multi-turn test needs: a blocked
+    # turn leaves its clarifying question behind for the next answer to
+    # fold into. It is exactly wrong for a repeated single-turn test,
+    # though — the same question asked twice is no longer the same input
+    # once a clarification sits in front of it. --isolate clears the
+    # history each turn, so one turn can be measured on its own.
+    import sys as _sys
+    isolate = "--isolate" in _sys.argv
+
     messages = []
 
     print("=== prepare_discovery ===")
@@ -332,6 +423,9 @@ if __name__ == "__main__":
         q = input("\nEnter question: ").strip()
         if not q:
             break
+
+        if isolate:
+            messages = []
 
         result = prepare_discovery({"question": q, "messages": messages})
 

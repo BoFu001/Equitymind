@@ -43,7 +43,12 @@ def update_session_memory(state: AgentState) -> dict:
     structured["last_tickers"] = tickers
 
     # ── Update clarification state ──
-    if sub_intent == "CLARIFICATION":
+    # Clarifying is no longer an intent of its own — it is a state a
+    # Discovery request can be left in when prepare_discovery could not
+    # parse anything rankable out of it and asked a follow-up question.
+    # The flag is what tells the next turn's classifiers that a bare
+    # reply like "the cheapest ones" is still that Discovery request.
+    if sub_intent == "DISCOVERY":
         structured["in_clarification"] = not state.get("clarification_complete", False)
     else:
         structured["in_clarification"] = False

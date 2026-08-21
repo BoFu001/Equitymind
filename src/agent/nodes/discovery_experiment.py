@@ -195,10 +195,27 @@ def fetch_field_values(tickers: list[str], field_name: str) -> dict[str, float]:
     cursor = conn.cursor()
     source = get_field_source(field_name)
     if source == "quant_signals":
+        # valuation_score is not comparable across the two methods that
+        # produce it. A profitable company is scored on P/E against a
+        # peer P/E median; a loss-making one falls back to P/S, which
+        # valuation_signal.py marks reference_only precisely because the
+        # result must not be read as a valuation judgement. A low P/S
+        # usually means the market will not pay for the revenue, not
+        # that the shares are cheap: CNC, loss-making, priced at 0.18x
+        # sales against a peer median of 5.63x, scored 0.9685 and came
+        # first in a healthcare valuation query on 2026-08-20, ahead of
+        # every genuinely undervalued company below it. Excluded rather
+        # than down-weighted, since no conversion exists between a P/S
+        # discount and a P/E one. Scoped to this field: no other
+        # quant_signals column has a second method.
+        reference_only_filter = (
+            " AND COALESCE((valuation_data->>'reference_only')::boolean, false) = false"
+            if field_name == "valuation_score" else ""
+        )
         query = f"""
             SELECT ticker, {field_name}
             FROM quant_signals
-            WHERE ticker = ANY(%s) AND {field_name} IS NOT NULL
+            WHERE ticker = ANY(%s) AND {field_name} IS NOT NULL{reference_only_filter}
         """
         cursor.execute(query, (tickers,))
     elif source == "financial_history":
@@ -228,7 +245,15 @@ def fetch_field_values(tickers: list[str], field_name: str) -> dict[str, float]:
     for ticker, value in rows:
         result[ticker] = float(value)
 
-    print(f"  [fetch_field_values] {field_name}: {len(result)} values")
+    # Name who dropped out, not just how many. A company missing from a
+    # ranking is invisible in the result either way, and the reasons
+    # differ: valuation_score excludes reference_only rows on purpose,
+    # while any field can simply have no stored value. On 2026-08-20 a
+    # healthcare query lost CNC, MRNA and SNOW to the first cause and
+    # DXCM to the second, and nothing in the output said so.
+    excluded = sorted(t for t in tickers if t not in result)
+    note = f" (excluded: {', '.join(excluded)})" if excluded else ""
+    print(f"  [fetch_field_values] {field_name}: {len(result)} values{note}")
     return result
 
 
@@ -399,8 +424,8 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
 def discovery_experiment(state: AgentState) -> dict:
     from src.agent.nodes.discovery_experiment_count import determine_stage_counts
 
-    # writer = get_stream_writer()
-    # writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
+    writer = get_stream_writer()
+    writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
 
     # The parse arrives already done. prepare_discovery ran it to decide
     # whether this question was executable at all, so re-running it here
@@ -424,6 +449,16 @@ def discovery_experiment(state: AgentState) -> dict:
 
 
 if __name__ == "__main__":
+    # get_stream_writer only resolves inside a LangGraph run. Rebinding it
+    # here keeps this node runnable on its own, the same way
+    # prepare_discovery does.
+    def _fake_get_stream_writer():
+        def writer(event):
+            pass
+        return writer
+
+    globals()["get_stream_writer"] = _fake_get_stream_writer
+
     # Standalone harness. In the graph the parse comes from
     # prepare_discovery; here it is produced locally so this node can
     # still be exercised on its own.

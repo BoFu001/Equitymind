@@ -22,13 +22,17 @@ ones that didn't actually need it. That coupling no longer exists
 which is why this is being reattempted as a single-shot classifier
 rather than a loop.
 
-Runs only on the SPECIFIC_STOCK / COMPARISON path, after tickers are
-confirmed present (see graph.py's route_after_extract). The DISCOVERY
-path does not call this node — discovery_suggest must already
-identify which signals a discovery question needs (e.g. "quality
-stocks with low valuation" implies Quality + Valuation) in order to
-build its SQL filter, so that node produces data_scope itself
-rather than duplicating the same classification here.
+Both paths reach this node: SPECIFIC_STOCK / COMPARISON after tickers
+are extracted, and DISCOVERY after its candidate pool is built. The
+Discovery path used to bypass it, which meant data_scope was never set
+and fetch_data read the empty list as "fetch everything" — nine sources
+for every company in a pool that can run to a dozen or more.
+
+Scope is decided from the question, not from the ranking fields
+Discovery parsed out of it, because the two answer different questions.
+"Which healthcare companies have major recent risks" parses to
+risk_beta_score, a measure of price volatility, while what the question
+needs is sec_filing — and no numeric field maps to that at all.
 
 snapshot (company name, price, market cap, etc.) is NOT part of
 data_scope — it is always fetched regardless, since almost any
@@ -78,7 +82,10 @@ def determine_data_scope(state: AgentState) -> dict:
     writer = get_stream_writer()
     writer({"type": "progress", "node": "determine_data_scope", "message": NODE_PROGRESS["determine_data_scope"]})
 
-    question = state.get("contextualized_question") or state["question"]
+    # Same precedence as fetch_data. After a multi-turn Discovery
+    # exchange the latest message is a fragment ("the cheapest ones"),
+    # and only the enriched question still carries what was asked for.
+    question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
 
     prompt = f"""You are a financial data-scope classifier. Decide which
 data sources are needed to answer the user's question about a stock.

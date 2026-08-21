@@ -11,9 +11,9 @@ from src.agent.nodes.determine_data_scope import determine_data_scope
 from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
 from src.agent.nodes.handle_greeting import handle_greeting
 from src.agent.nodes.handle_no_ticker import handle_no_ticker
-from src.agent.nodes.discovery_suggest import discovery_suggest
+from src.agent.nodes.discovery_experiment import discovery_experiment
 from src.agent.nodes.update_session_memory import update_session_memory
-from src.agent.nodes.handle_clarification import handle_clarification
+from src.agent.nodes.prepare_discovery import prepare_discovery
 from src.agent.nodes.generate_report import generate_report
 from src.agent.nodes.fetch_data import fetch_data
 from src.agent.nodes.quant_engine import quant_engine
@@ -42,10 +42,12 @@ def route_after_sub_intent(state: AgentState) -> str:
     sub_intent = state.get("sub_intent", "")
     yprint(f"  [route_after_sub_intent] sub_intent={sub_intent}")
 
-    if sub_intent == "CLARIFICATION":
-        return "clarification"
-    elif sub_intent == "DISCOVERY":
-        return "discovery_suggest"
+    # Every Discovery request goes through prepare_discovery first —
+    # there is no longer a direct edge to discovery. Whether a request
+    # is specific enough to run is decided there, by parsing it, rather
+    # than guessed at by this classifier.
+    if sub_intent == "DISCOVERY":
+        return "prepare_discovery"
     else:
         return "extract"
 
@@ -59,11 +61,14 @@ def route_after_extract(state: AgentState) -> str:
     else:
         return "determine_data_scope"
 
-def route_after_clarification(state: AgentState) -> str:
+def route_after_prepare_discovery(state: AgentState) -> str:
+    """Runs discovery when the request parsed into something rankable,
+    otherwise ends the turn on the follow-up question prepare_discovery
+    already wrote into answer."""
     complete = state.get("clarification_complete")
-    yprint(f"  [route_after_clarification] complete={complete}")
+    yprint(f"  [route_after_prepare_discovery] complete={complete}")
     if complete:
-        return "discovery_suggest"
+        return "discovery"
     else:
         return "update_session_memory"
     
@@ -85,10 +90,10 @@ def build_graph():
     graph.add_node("generate_report",        generate_report) 
     graph.add_node("out_of_scope",           handle_out_of_scope)
     graph.add_node("greeting",               handle_greeting)
-    graph.add_node("discovery_suggest",      discovery_suggest)
+    graph.add_node("discovery",              discovery_experiment)
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
-    graph.add_node("clarification",          handle_clarification)
+    graph.add_node("prepare_discovery",      prepare_discovery)
     graph.add_node("quant_engine",           quant_engine)
 
     # Conditional edge after Layer 1
@@ -108,9 +113,8 @@ def build_graph():
         "classify_sub_intent",
         route_after_sub_intent,
         {
-            "clarification":      "clarification",
-            "discovery_suggest":  "discovery_suggest",
-            "extract":            "extract",
+            "prepare_discovery": "prepare_discovery",
+            "extract":           "extract",
         }
     )
 
@@ -125,10 +129,10 @@ def build_graph():
     )
 
     graph.add_conditional_edges(
-        "clarification",
-        route_after_clarification,
+        "prepare_discovery",
+        route_after_prepare_discovery,
         {
-            "discovery_suggest":     "discovery_suggest",
+            "discovery":             "discovery",
             "update_session_memory": "update_session_memory",
         }
     )
@@ -136,7 +140,16 @@ def build_graph():
     # Linear edges
     graph.add_edge(START,                    "contextualize_question")
     graph.add_edge("contextualize_question", "classify_top_intent")
-    graph.add_edge("discovery_suggest",      "fetch_data")
+    # Discovery reaches fetch_data through determine_data_scope rather
+    # than around it. Left to itself, fetch_data reads an empty scope as
+    # "fetch everything" — nine sources per ticker, mostly live yfinance
+    # calls, across a candidate pool that can run to a dozen companies.
+    # Scope is decided from the question rather than from the parsed
+    # ranking fields, because the two answer different questions: asked
+    # for "companies with major recent risks", the fields carry
+    # risk_beta_score, which measures price volatility, while what the
+    # question needs is sec_filing — and no numeric field maps to that.
+    graph.add_edge("discovery",              "determine_data_scope")
     graph.add_edge("determine_data_scope",   "fetch_data")
     graph.add_edge("fetch_data",             "quant_engine")
     graph.add_edge("quant_engine",           "generate_report")
