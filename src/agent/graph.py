@@ -91,9 +91,9 @@ def build_graph():
     graph.add_node("out_of_scope",           handle_out_of_scope)
     graph.add_node("greeting",               handle_greeting)
     graph.add_node("discovery",              discovery_execution)
+    graph.add_node("discovery_preparation",  discovery_preparation)
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
-    graph.add_node("discovery_preparation",  discovery_preparation)
     graph.add_node("quant_engine",           quant_engine)
 
     # Conditional edge after Layer 1
