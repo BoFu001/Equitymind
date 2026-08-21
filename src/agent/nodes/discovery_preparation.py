@@ -274,7 +274,7 @@ Reply with ONLY valid JSON matching this shape, no markdown, no commentary:
     try:
         query = extraction_response.output_parsed
     except Exception as e:
-        gprint(f"  [extract_discovery_query] Could not parse query: {e}")
+        print(f"  [extract_discovery_query] Could not parse query: {e}")
         query = DiscoveryQuery(industry=None, fields=[], final_count=None)
 
     # The model occasionally writes the string "null" where the schema
@@ -349,7 +349,7 @@ def _stream(text: str) -> None:
 
 def discovery_preparation(state: AgentState) -> dict:
     writer = get_stream_writer()
-    writer({"type": "progress", "node": "clarification", "message": NODE_PROGRESS["clarification"]})
+    writer({"type": "progress", "node": "discovery_preparation", "message": NODE_PROGRESS["discovery_preparation"]})
 
     question = state["question"]
     messages = state.get("messages") or []
@@ -368,7 +368,7 @@ def discovery_preparation(state: AgentState) -> dict:
         }
 
     else:
-        writer({"type": "sub_progress", "node": "clarification", "message": NODE_PROGRESS["clarification_sub"]})
+        writer({"type": "sub_progress", "node": "discovery_preparation", "message": NODE_PROGRESS["discovery_preparation_sub"]})
 
         clarifying_question = _ask_for_a_field(enriched_question)
         _stream(clarifying_question)

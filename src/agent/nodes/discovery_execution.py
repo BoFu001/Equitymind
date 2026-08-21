@@ -10,6 +10,7 @@ from openai import OpenAI
 
 from config import OPENAI_API_KEY, LLM_MODEL, DATABASE_URL
 from src.agent.state import AgentState
+from src.agent.nodes.discovery_counts import determine_stage_counts
 from src.agent.discovery_types import (
     QUANT_SIGNALS_FIELDS,
     FINANCIAL_HISTORY_FIELDS,
@@ -17,7 +18,7 @@ from src.agent.discovery_types import (
     DiscoveryQuery,
 )
 from src.sec_pipeline.embedder import EMBEDDING_MODEL
-from colors import gprint, rprint
+from colors import gprint
 from langgraph.config import get_stream_writer
 from src.agent.nodes_notifications import NODE_PROGRESS
 
@@ -35,7 +36,6 @@ def get_all_tickers() -> list[str]:
     conn.close()
 
     tickers = [ticker for (ticker,) in rows]
-    print(f"  [get_all_tickers] no industry specified, using all {len(tickers)} tickers")
     return tickers
 
 
@@ -136,11 +136,10 @@ Your answer (just the tag, nothing else):"""
     answer = response.choices[0].message.content.strip()
 
     if answer == "NONE" or answer not in tag_to_tickers:
-        gprint(f"  [get_industry_tickers] {industry_words!r} -> no matching tag found")
+        print(f"  [get_industry_tickers] {industry_words!r} -> no matching tag found")
         return []
 
     tickers = tag_to_tickers[answer]
-    gprint(f"  [get_industry_tickers] {industry_words!r} -> tag: {answer!r} ({len(tickers)} tickers)")
     return tickers
 
 
@@ -345,7 +344,7 @@ def filter_complete_candidates(tickers: list[str], fields: list[RankField]) -> t
         field_values[field.name] = values
         missing = set(tickers) - set(values.keys())
         if missing:
-            gprint(f"  [filter_complete_candidates] {field.name}: excluded {sorted(missing)} (missing this field)")
+            print(f"  [filter_complete_candidates] {field.name}: excluded {sorted(missing)} (missing this field)")
         eligible &= set(values.keys())
 
     complete_tickers = [t for t in tickers if t in eligible]
@@ -402,7 +401,7 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
         values = fetch_field_values(tickers, field.name)
         ranked = sorted(values.keys(), key=lambda t: values[t], reverse=(field.order == "descending"))
         count = field.count
-        gprint(f"  [execute_stage] single field: {field.name} ({field.order}) | pool: {len(tickers)} -> {len(values)} | count: {count} | top: {ranked[:3]}")
+        print(f"  [execute_stage] single field: {field.name} ({field.order}) | pool: {len(tickers)} -> {len(values)} | count: {count} | top: {ranked[:3]}")
     else:
         complete_tickers, field_values = filter_complete_candidates(tickers, stage)
         all_percentiles = {}
@@ -416,16 +415,14 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
         ranked = sorted(averaged.keys(), key=lambda t: averaged[t], reverse=True)
         count = stage[0].count
         field_names = [f.name for f in stage]
-        gprint(f"  [execute_stage] averaged fields: {field_names} | pool: {len(tickers)} -> {len(complete_tickers)} | count: {count} | top: {ranked[:3]}")
+        print(f"  [execute_stage] averaged fields: {field_names} | pool: {len(tickers)} -> {len(complete_tickers)} | count: {count} | top: {ranked[:3]}")
 
     return ranked[:count] if count else ranked
 
 
 def discovery_execution(state: AgentState) -> dict:
-    from src.agent.nodes.discovery_counts import determine_stage_counts
-
     writer = get_stream_writer()
-    writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_suggest"]})
+    writer({"type": "progress", "node": "discovery", "message": NODE_PROGRESS["discovery_execution"]})
 
     # The parse arrives already done. discovery_preparation ran it to decide
     # whether this question was executable at all, so re-running it here
@@ -435,8 +432,10 @@ def discovery_execution(state: AgentState) -> dict:
 
     if query.industry is None:
         tickers = get_all_tickers()
+        gprint(f"  [discovery_execution] no industry specified, using all {len(tickers)} tickers")
     else:
         tickers = get_industry_tickers(query.industry)
+        gprint(f"  [discovery_execution] industry={query.industry!r} -> {len(tickers)} tickers")
 
     stages = group_fields_by_priority(query.fields)
     stages_with_counts = determine_stage_counts(stages, len(tickers))

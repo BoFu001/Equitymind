@@ -7,19 +7,16 @@ Supports future internationalisation — swap NODE_PROGRESS dict for different l
 """
 
 
-# ─────────────────────────────────────────────
+# ──────────────────────────────────────────────────
 # Node progress messages — user-friendly UX language
-# ─────────────────────────────────────────────
+# ──────────────────────────────────────────────────
 NODE_PROGRESS = {
     "contextualize_question":              "Reviewing context...",
     "classify_top_intent":                 "Understanding your question...",
     "classify_sub_intent":                 "Identifying the task...",
-    "greeting":                            "Welcome! Preparing your response...",
-    "out_of_scope":                        "Let me help you with that...",
-    "explain_concept":                     "Putting together an explanation...",
     "extract":                             "Pinpointing the company...",
     "determine_data_scope":                "Planning the analysis...",
-    # ──────────────────────────────────────────────────────────────
+    # ─────────────────────────────────────────────────────────────────────────────────
     "fetch_data":                          "Collecting company data...",
     "snapshot_fetch":                      "Fetching {ticker}'s stock data...",                    # sub_progress
     "sec_retrieve":                        "Reading {ticker} annual report...",                    # sub_progress
@@ -32,14 +29,14 @@ NODE_PROGRESS = {
     "news_data":                           "Reading news for {ticker}...",                         # sub_progress
     "financial_history":                   "Checking {ticker}'s historical financials...",         # sub_progress
     "short_fetch":                         "Checking {ticker}'s short interest...",                # sub_progress
-    # ──────────────────────────────────────────────────────────────
+    # ─────────────────────────────────────────────────────────────────────────────────
     "generate_report":                     "Generating investment report...",
-    "discovery_suggest":                   "Searching for the best stocks for you...",
     "no_ticker":                           "Could not identify a stock ticker...",
-    # ──────────────────────────────────────────────────────────────
-    "clarification":                       "Reviewing your investment criteria...",
-    "clarification_sub":                   "Gathering more criteria...",                           # sub_progress
-    # ──────────────────────────────────────────────────────────────
+    # ─────────────────────────────────────────────────────────────────────────────────
+    "discovery_preparation":               "Reviewing your investment criteria...",
+    "discovery_preparation_sub":           "Gathering more criteria...",                           # sub_progress
+    "discovery_execution":                 "Searching for the best stocks for you...",
+    # ─────────────────────────────────────────────────────────────────────────────────
     "quant_engine":                        "Running quantitative signals...",
     "quant_valuation":                     "Computing valuation signal for {ticker}...",           # sub_progress
     "quant_momentum":                      "Computing momentum signal for {ticker}...",            # sub_progress
@@ -48,4 +45,8 @@ NODE_PROGRESS = {
     "quant_news_sentiment":                "Computing news sentiment signal for {ticker}...",      # sub_progress
     "quant_consensus":                     "Computing consensus signal for {ticker}...",           # sub_progress
     "quant_short":                         "Computing short signal for {ticker}...",               # sub_progress
+    # ─────────────────────────────────────────────────────────────────────────────────
+    "greeting":                            "Welcome! Preparing your response...",
+    "out_of_scope":                        "Let me help you with that...",
+    "explain_concept":                     "Putting together an explanation...",
 }

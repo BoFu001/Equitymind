@@ -5,7 +5,7 @@ src/agent/nodes/discovery_counts.py
 import json
 import math
 
-from src.agent.nodes.discovery_execution import RankField
+from src.agent.discovery_types import RankField
 
 
 def _default_stage_counts(n: int, pool_size: int) -> list[int]:
