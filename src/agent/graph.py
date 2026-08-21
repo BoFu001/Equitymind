@@ -6,7 +6,7 @@ from src.agent.nodes.contextualize_question import contextualize_question
 from src.agent.nodes.classify_top_intent import classify_top_intent
 from src.agent.nodes.classify_sub_intent import classify_sub_intent
 from src.agent.nodes.explain_concept import explain_concept
-from src.agent.nodes.extract_parameters import extract_parameters
+from src.agent.nodes.extract_tickers import extract_tickers
 from src.agent.nodes.determine_data_scope import determine_data_scope
 from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
 from src.agent.nodes.handle_greeting import handle_greeting
@@ -84,7 +84,7 @@ def build_graph():
     graph.add_node("classify_top_intent",    classify_top_intent)
     graph.add_node("classify_sub_intent",    classify_sub_intent)
     graph.add_node("explain_concept",        explain_concept)
-    graph.add_node("extract",                extract_parameters)
+    graph.add_node("extract",                extract_tickers)
     graph.add_node("determine_data_scope",   determine_data_scope)
     graph.add_node("fetch_data",             fetch_data)
     graph.add_node("generate_report",        generate_report) 
@@ -93,7 +93,7 @@ def build_graph():
     graph.add_node("discovery",              discovery_execution)
     graph.add_node("no_ticker",              handle_no_ticker) 
     graph.add_node("update_session_memory",  update_session_memory)
-    graph.add_node("discovery_preparation",      discovery_preparation)
+    graph.add_node("discovery_preparation",  discovery_preparation)
     graph.add_node("quant_engine",           quant_engine)
 
     # Conditional edge after Layer 1
@@ -114,11 +114,11 @@ def build_graph():
         route_after_sub_intent,
         {
             "discovery_preparation": "discovery_preparation",
-            "extract":           "extract",
+            "extract":               "extract",
         }
     )
 
-    # Conditional edge after Node extract_parameters
+    # Conditional edge after Node extract_tickers
     graph.add_conditional_edges(
         "extract",
         route_after_extract,

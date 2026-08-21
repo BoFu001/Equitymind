@@ -1,5 +1,5 @@
 """
-src/agent/nodes/extract_parameters.py
+src/agent/nodes/extract_tickers.py
 
 Node: Extract Parameters
 """
@@ -18,7 +18,7 @@ from colors import gprint
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
-def extract_parameters(state: AgentState) -> dict:
+def extract_tickers(state: AgentState) -> dict:
     """
     Extracts ticker(s) from the user's question.
     Returns the list of all tickers mentioned.
@@ -66,16 +66,16 @@ Reply with ONLY valid JSON. No markdown, no code fences, no explanation. Example
     content = response.choices[0].message.content.strip()
 
     if not content:
-        gprint(f"  [extract_parameters] Empty response from {LLM_MODEL_LIGHT}, using defaults")
+        gprint(f"  [extract_tickers] Empty response from {LLM_MODEL_LIGHT}, using defaults")
         return {"tickers": []}
 
     try:
         data = json.loads(content)
     except json.JSONDecodeError:
-        gprint(f"  [extract_parameters] Invalid JSON: {content}")
+        gprint(f"  [extract_tickers] Invalid JSON: {content}")
         return {"tickers": []}
 
     tickers = data.get("tickers", [])
 
-    gprint(f"  [extract_parameters] Tickers: {tickers}")
+    gprint(f"  [extract_tickers] Tickers: {tickers}")
     return {"tickers": tickers}

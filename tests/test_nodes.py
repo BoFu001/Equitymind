@@ -5,7 +5,7 @@ from src.agent.state import AgentState
 from src.agent.nodes.classify_top_intent import classify_top_intent
 from src.agent.nodes.classify_sub_intent import classify_sub_intent
 from src.agent.nodes.explain_concept import explain_concept
-from src.agent.nodes.extract_parameters import extract_parameters
+from src.agent.nodes.extract_tickers import extract_tickers
 from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
 from src.agent.nodes.handle_greeting import handle_greeting
 from src.agent.nodes.generate_report import generate_report
@@ -17,7 +17,7 @@ import json
 def mock_stream_writer():
     node_modules = [
         "contextualize_question", "classify_top_intent", "classify_sub_intent",
-        "explain_concept", "extract_parameters", "handle_out_of_scope",
+        "explain_concept", "extract_tickers", "handle_out_of_scope",
         "handle_greeting", "handle_no_ticker", "generate_report",
     ]
     patchers = [
@@ -144,47 +144,47 @@ def test_explain_concept():
 # Node: Extract Parameters
 # ─────────────────────────────────────────────
 
-def test_extract_parameters_aapl():
+def test_extract_tickers_aapl():
     state = make_state(question="What are Apple's biggest risks?")
-    result = extract_parameters(state)
+    result = extract_tickers(state)
     assert result["tickers"] == ["AAPL"]
 
-def test_extract_parameters_mentions_year_in_question():
+def test_extract_tickers_mentions_year_in_question():
     """Year mentioned in the question is no longer extracted as a
     separate field — the ticker extraction should still work fine
     alongside it."""
     state = make_state(question="What were Microsoft's risks in 2024?")
-    result = extract_parameters(state)
+    result = extract_tickers(state)
     assert result["tickers"] == ["MSFT"]
 
-def test_extract_parameters_no_ticker():
+def test_extract_tickers_no_ticker():
     state = make_state(question="Find me a low risk stock")
-    result = extract_parameters(state)
+    result = extract_tickers(state)
     assert result["tickers"] == []
 
 
 
-def test_extract_parameters_multiple_tickers():
+def test_extract_tickers_multiple_tickers():
     state = make_state(question="Compare Apple and Microsoft")
-    result = extract_parameters(state)
+    result = extract_tickers(state)
     assert result["tickers"] == ["AAPL", "MSFT"]
     
 
 
 
-def test_extract_parameters_amazon():
+def test_extract_tickers_amazon():
     state = make_state(question="Analyse Amazon")
-    result = extract_parameters(state)
+    result = extract_tickers(state)
     assert result["tickers"] == ["AMZN"]
 
-def test_extract_parameters_alibaba():
+def test_extract_tickers_alibaba():
     state = make_state(question="Analyse Alibaba")
-    result = extract_parameters(state)
+    result = extract_tickers(state)
     assert result["tickers"] == ["BABA"]
 
-def test_extract_parameters_tencent():
+def test_extract_tickers_tencent():
     state = make_state(question="Analyse Tencent")
-    result = extract_parameters(state)
+    result = extract_tickers(state)
     assert result["tickers"][0] in ["0700.HK", "TCEHY"]
 
 # ─────────────────────────────────────────────
@@ -213,7 +213,7 @@ def test_no_ticker_edge_cases():
 
         # Step 2 — extract
         extract_state = make_state(question=question, sub_intent=sub_intent)
-        extract_result = extract_parameters(extract_state)
+        extract_result = extract_tickers(extract_state)
         tickers = extract_result.get("tickers", [])
 
         print(f"\nQ: '{question}'")

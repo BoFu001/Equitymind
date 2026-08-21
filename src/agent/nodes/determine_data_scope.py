@@ -8,7 +8,7 @@ fetch_data / quant_engine / generate_report can skip unneeded
 work instead of unconditionally fetching, computing, and formatting
 all nine data sources for every request.
 
-A single, one-shot classification (same pattern as extract_parameters
+A single, one-shot classification (same pattern as extract_tickers
 and classify_sub_intent), NOT an agent loop — the answer is fully
 determined by the question's text alone and doesn't depend on any
 intermediate result, so an iterative/multi-step decision process adds
