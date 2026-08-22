@@ -24,6 +24,9 @@ from src.agent.nodes_notifications import NODE_PROGRESS
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
+# How many companies leave Discovery when the question named no number.
+DEFAULT_FINAL_COUNT = 5
+
 
 
 def get_all_tickers() -> list[str]:
@@ -443,7 +446,24 @@ def discovery_execution(state: AgentState) -> dict:
     for stage in stages_with_counts:
         tickers = execute_stage(tickers, stage)
 
-    tickers = tickers[:query.final_count] if query.final_count else tickers
+    # Caps what leaves this node, not how it narrows. A count the user
+    # gave wins; the slice returns fewer when the pool is smaller.
+    # A number the user gave is only honoured where determine_stage_counts
+    # kept it — if it was inconsistent or larger than the pool it was
+    # replaced, and a replacement is not what they asked for.
+    user_count    = stages[-1][0].count
+    adopted_count = stages_with_counts[-1][0].count
+
+    if query.final_count:
+        gprint(f"  [discovery_execution] final_count={query.final_count} given by the user")
+        tickers = tickers[:query.final_count]
+    else:
+        if user_count == adopted_count:
+            gprint(f"  [discovery_execution] no final_count; last stage kept the user's count of {user_count}")
+            tickers = tickers[:user_count]
+        else:
+            gprint(f"  [discovery_execution] no usable count from the user (asked {user_count}, ran {adopted_count}) — capping at {DEFAULT_FINAL_COUNT}")
+            tickers = tickers[:DEFAULT_FINAL_COUNT]
     return {"tickers": tickers}
 
 
