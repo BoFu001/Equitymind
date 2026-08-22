@@ -30,7 +30,9 @@ not P/B (P/S reflects revenue, a more stable base than book value,
 which can itself be distorted by buybacks or write-downs for a
 struggling company).
 
-Score range: -1.0 (severely overvalued) to +1.0 (severely undervalued)
+Score range: -1.0 (severely overvalued) to +1.0 (severely undervalued),
+             or None on the P/S path — a P/S discount and a P/E discount
+             are different quantities and must not be ranked together.
 Label:       "overvalued" / "fairly valued" / "undervalued" / "reference only" / None
 
 Academic references:
@@ -63,7 +65,7 @@ def _peer_median(peer_ratios: dict, key: str, lo: float, hi: float) -> tuple[flo
     return round(statistics.median(values), 2), sorted(used)
 
 
-def _label(score: float, reference_only: bool) -> str:
+def _label(score: float | None, reference_only: bool) -> str:
     """Map numeric score to human-readable label."""
     if reference_only:
         return "reference only"
@@ -82,10 +84,19 @@ def _build_result(ratio: float, benchmark: float, peers_used: list[str],
     paths return the identical set of keys, so downstream code never
     branches on which fields exist, only on what "method" says they mean.
     """
-    score = (benchmark - ratio) / benchmark
-    score = round(max(-1.0, min(1.0, score)), 4)
+    # No score on the P/S path. The formula is the same, but its inputs
+    # are not: a P/S discount against a peer P/S median is a different
+    # quantity from a P/E discount against a peer P/E median, and the
+    # two cannot be ranked against each other. The ratio and benchmark
+    # below still answer "how is this company priced" on its own terms.
+    if reference_only:
+        score = None
+    else:
+        score = (benchmark - ratio) / benchmark
+        score = round(max(-1.0, min(1.0, score)), 4)
     label = _label(score, reference_only)
 
+    score_note = "" if score is None else f" (score={score})"
     peers_note = f" (compared against: {', '.join(peers_used)})" if peers_used else ""
     generic_note = "" if peers_used else " Comparison uses a broad S&P 500 average."
 
@@ -100,8 +111,8 @@ def _build_result(ratio: float, benchmark: float, peers_used: list[str],
         "peers_used":       peers_used,
         "detail": (
             f"{extra_detail.strip()} "
-            f"{ratio_name} of {ratio} vs peer median {benchmark}{peers_note} "
-            f"(score={round((benchmark - ratio) / benchmark, 2)}). "
+            f"{ratio_name} of {ratio} vs peer median {benchmark}{peers_note}"
+            f"{score_note}. "
             f"→ {label}."
             f"{generic_note}"
         ).strip(),
@@ -128,7 +139,7 @@ def valuation_signal(valuation_inputs: dict) -> dict | None:
             - ratio:             float — the ratio actually used (P/E or P/S)
             - benchmark_ratio:   float — peer median (or S&P 500 default)
             - ratio_vs_peers:    str
-            - valuation_score:   float (-1.0 to +1.0)
+            - valuation_score:   float (-1.0 to +1.0), or None when method is "ps"
             - valuation_label:   str
             - method:            str — "pe" or "ps", tells you what "ratio" is
             - reference_only:    bool — True means P/S was used (loss-making company)

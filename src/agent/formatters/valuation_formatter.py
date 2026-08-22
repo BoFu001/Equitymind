@@ -28,7 +28,10 @@ def format_valuation(val: dict | None) -> str:
         comparison = f"S&P 500 average {val.get('benchmark_ratio')} (no peer-specific data available)"
 
     text  = "  Valuation:\n"
-    text += f"    {val['valuation_label'].capitalize()}{caveat} (score={val['valuation_score']})\n"
+    score = val.get("valuation_score")
+    score_note = "" if score is None else f" (score={score})"
+
+    text += f"    {val['valuation_label'].capitalize()}{caveat}{score_note}\n"
     text += f"    {ratio_name} {val.get('ratio')} vs {comparison}\n"
 
     return text

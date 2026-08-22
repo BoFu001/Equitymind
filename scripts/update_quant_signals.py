@@ -11,7 +11,7 @@ Each signal's COMPLETE return dict is stored verbatim as JSONB — the
 exact same dict shape that quant_engine.py produces when computing
 live, so format_valuation()/format_risk()/etc. work identically on a
 cached row or a fresh computation. A few scalar score columns are also
-populated for discovery_suggest's screening queries — see
+populated for Discovery's screening queries — see
 init_db_quant_signals.py for which ones and why. Scalar column names
 match their source JSONB key exactly (e.g. position_52w_score, not
 momentum_52w_score) to avoid any ambiguity about which field they were
