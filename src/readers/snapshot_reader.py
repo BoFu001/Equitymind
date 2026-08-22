@@ -32,8 +32,9 @@ import yfinance as yf
 
 def get_stock_snapshot(ticker: str) -> dict | None:
     """
-    Fetches fundamentals and technical indicators for a ticker.
-    Returns a dict with price, P/E, revenue, RSI, MACD, SMA or None if failed.
+    Returns a dict of point-in-time fundamentals — price, market cap,
+    revenue, profit margin, 52-week range, trailing EPS, dividend
+    yield, sector and industry — or None if the fetch failed.
     """
     try:
         stock = yf.Ticker(ticker)
@@ -45,7 +46,6 @@ def get_stock_snapshot(ticker: str) -> dict | None:
             "company_name":       info.get("longName", ticker),
             "current_price":      info.get("currentPrice"),
             "market_cap":         info.get("marketCap"),
-            "forward_pe":         info.get("forwardPE"),
             "revenue":            info.get("totalRevenue"),
             "profit_margin":      info.get("profitMargins"),
             "52w_high":           info.get("fiftyTwoWeekHigh"),
@@ -54,7 +54,6 @@ def get_stock_snapshot(ticker: str) -> dict | None:
             "industry":           info.get("industry"),
             # Earnings and dividends
             "eps_trailing":       info.get("trailingEps"),
-            "eps_forward":        info.get("forwardEps"),
             "dividend_yield":     info.get("dividendYield"),
         }
 

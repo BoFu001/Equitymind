@@ -38,11 +38,6 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 # by signal.
 DATA_SCOPE_NOTES = {
     "valuation": """\
-- Valuation P/E clarification: COMPANY SNAPSHOT's "Forward P/E" is a
-  DIFFERENT figure from the "P/E" used in the Valuation signal's
-  judgment (trailing P/E). If both appear in your answer, label each
-  explicitly (e.g. "trailing P/E of 41.22 vs. Forward P/E of 35.26")
-  — never use them interchangeably or imply they are the same number.
 - Valuation: if the data includes "(peers: X, Y, Z)" (named peer
   companies), you MUST name those specific companies in your answer
   (e.g. "trading at a premium to peers like Microsoft, Alphabet, and
