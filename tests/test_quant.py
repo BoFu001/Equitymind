@@ -173,26 +173,37 @@ class TestNoData:
 # Score bounds — extreme inputs must never exceed ±1.0
 # ─────────────────────────────────────────────
 
-class TestScoreBounds:
+class TestScoreShape:
+    """
+    The score is ln(peer median / ratio), so it is unbounded and
+    antisymmetric in the peer ratio. These replace the old bounds
+    tests, which asserted a [-1, +1] clip that was removed on
+    2026-08-23: the floor was collapsing every company beyond twice
+    its peer median onto one value, and 38 of them shared it.
+    """
 
-    def test_score_clamped_on_extreme_cheap(self):
-        """Extremely cheap stock must not produce score > +1.0."""
-        data   = make_valuation_inputs(pe_ratio=0.5, peer_ratios=make_peer_ratios(20, 25, 30))
-        result = valuation_signal(data)
-        assert result is not None
-        assert result["valuation_score"] <= 1.0
+    def test_symmetric_in_the_peer_ratio(self):
+        """Half the peer median and twice it are equal and opposite."""
+        cheap     = valuation_signal(make_valuation_inputs(pe_ratio=10.0, peer_ratios=make_peer_ratios(20, 20, 20)))
+        expensive = valuation_signal(make_valuation_inputs(pe_ratio=40.0, peer_ratios=make_peer_ratios(20, 20, 20)))
+        assert cheap["valuation_score"] == pytest.approx(-expensive["valuation_score"], abs=1e-4)
 
-    def test_score_clamped_on_extreme_expensive(self):
-        """Extremely expensive stock (but within the 3-75 filter) must not produce score < -1.0."""
-        data   = make_valuation_inputs(pe_ratio=70.0, peer_ratios=make_peer_ratios(5, 6, 7))
-        result = valuation_signal(data)
-        assert result is not None
-        assert result["valuation_score"] >= -1.0
+    def test_level_with_peers_scores_zero(self):
+        result = valuation_signal(make_valuation_inputs(pe_ratio=20.0, peer_ratios=make_peer_ratios(20, 20, 20)))
+        assert result["valuation_score"] == pytest.approx(0.0, abs=1e-4)
 
+    def test_expensive_tail_stays_ordered(self):
+        """
+        The property the clip destroyed: three companies well beyond
+        their peer median must still rank against each other.
+        """
+        scores = [
+            valuation_signal(make_valuation_inputs(pe_ratio=pe, peer_ratios=make_peer_ratios(20, 20, 20)))["valuation_score"]
+            for pe in (50.0, 100.0, 200.0)
+        ]
+        assert scores[0] > scores[1] > scores[2]
+        assert len(set(scores)) == 3
 
-# ─────────────────────────────────────────────
-# Default constants
-# ─────────────────────────────────────────────
 
 class TestDefaults:
 

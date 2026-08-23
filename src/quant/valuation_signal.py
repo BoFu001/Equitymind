@@ -30,8 +30,11 @@ not P/B (P/S reflects revenue, a more stable base than book value,
 which can itself be distorted by buybacks or write-downs for a
 struggling company).
 
-Score range: -1.0 (severely overvalued) to +1.0 (severely undervalued),
-             or None on the P/S path — a P/S discount and a P/E discount
+Score:       ln(peer median / this company's ratio) — positive means
+             cheaper than peers, negative means more expensive, zero
+             means level with them. Unbounded on both sides but grows
+             by doubling: nine times the median scores -2.20, not -9.
+             None on the P/S path — a P/S discount and a P/E discount
              are different quantities and must not be ranked together.
 Label:       "overvalued" / "fairly valued" / "undervalued" / "reference only" / None
 
@@ -40,6 +43,7 @@ Academic references:
     - P/S for loss-making firms: Fisher (1984), Super Stocks
 """
 
+import math
 import statistics
 
 DEFAULT_PE = 25.54  # S&P 500 P/E, GuruFocus, as of 2026-07-06
@@ -92,8 +96,17 @@ def _build_result(ratio: float, benchmark: float, peers_used: list[str],
     if reference_only:
         score = None
     else:
-        score = (benchmark - ratio) / benchmark
-        score = round(max(-1.0, min(1.0, score)), 4)
+        # A ratio is a multiplicative quantity, so the log of it is what
+        # can be compared and added. The old (benchmark - ratio) /
+        # benchmark punished the expensive side twice as hard — half the
+        # peer median scored +0.5, twice the peer median -1.0 — and the
+        # -1.0 floor then flattened everything beyond that into one
+        # value: 38 companies shared it on 2026-08-23, so "the most
+        # expensive three" had no answer. ln(benchmark / ratio) is
+        # symmetric (halving and doubling are +/-0.693) and compresses
+        # the tail by doubling rather than cutting it off, so a company
+        # at nine times the median still ranks below one at three.
+        score = round(math.log(benchmark / ratio), 4)
     label = _label(score, reference_only)
 
     score_note = "" if score is None else f" (score={score})"
@@ -139,7 +152,8 @@ def valuation_signal(valuation_inputs: dict) -> dict | None:
             - ratio:             float — the ratio actually used (P/E or P/S)
             - benchmark_ratio:   float — peer median (or S&P 500 default)
             - ratio_vs_peers:    str
-            - valuation_score:   float (-1.0 to +1.0), or None when method is "ps"
+            - valuation_score:   float — ln(benchmark / ratio), unbounded,
+                                 or None when method is "ps"
             - valuation_label:   str
             - method:            str — "pe" or "ps", tells you what "ratio" is
             - reference_only:    bool — True means P/S was used (loss-making company)
