@@ -110,7 +110,6 @@ def init():
             consensus_data                  JSONB,
             consensus_recommendation_score  REAL,
             consensus_upside_score          REAL,
-            consensus_trend_score           REAL,
             consensus_computed_at           TIMESTAMP,
 
             -- Short (see short_signal.py)

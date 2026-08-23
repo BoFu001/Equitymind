@@ -1,8 +1,8 @@
 """
 src/readers/consensus_reader.py
 
-Fetches ALL data Consensus Signal Engine needs (Beta, recommendation
-trend AND the point-in-time analyst fields), independently of
+Fetches ALL data Consensus Signal Engine needs — the point-in-time
+analyst fields and the current rating distribution — independently of
 snapshot_reader.py — even though this means recommendation_mean,
 target_mean, current_price, target_high, target_low, and
 analyst_count are fetched via a SEPARATE yfinance .info call here,
@@ -64,54 +64,43 @@ def get_consensus_snapshot(ticker: str) -> dict | None:
         return None
 
 
-def get_consensus_trend(ticker: str) -> dict | None:
+def get_rating_counts(ticker: str) -> dict | None:
     """
-    Fetches historical monthly analyst recommendation distributions needed
-    for Consensus Signal Engine calculations (recommendation trend).
+    Fetches the current period's analyst rating distribution — how many
+    analysts say Strong Buy, Buy, Hold, Sell, Strong Sell right now.
 
-    Unlike snapshot_reader.get_stock_snapshot(), this pulls a multi-period
-    history of analyst rating counts (yfinance's .recommendations, typically
-    covering the most recent ~4 months) rather than a single point-in-time
-    mean — the trend calculation needs at least 2 periods to compare.
-
-    Note: the analyst count contributing to each period can fluctuate
-    slightly month to month (e.g. individual analysts starting/stopping
-    coverage) — this is normal and handled by using proportions (weighted
-    averages), not raw counts, in the downstream trend calculation.
-
-    Returns None if fewer than 2 periods of history are available, since
-    a trend cannot be computed from a single snapshot.
+    This is a raw count, not a derived figure: it is the one piece of
+    analyst data here that needs no aggregation we cannot explain.
+    yfinance's .recommendations returns several months of history; only
+    the most recent period is read. The earlier periods fed a rating
+    trend until 2026-08-24, when it was removed — a shift in the group's
+    average rating cannot be separated from a shift in which analysts
+    are covering the stock (Apple went from 48 analysts to 44 over three
+    months), so the trend was measuring two things at once with no way
+    to tell them apart.
 
     Args:
         ticker: stock ticker symbol, e.g. "AAPL"
 
     Returns:
-        dict with keys:
-            - periods: list of dicts, each with "period" (e.g. "0m", "-1m")
-                       and counts for strongBuy/buy/hold/sell/strongSell,
-                       ordered most-recent-first (matches yfinance's own order)
-        or None if fewer than 2 periods of history are available.
+        dict with keys strongBuy, buy, hold, sell, strongSell,
+        or None if no rating data is available.
     """
     try:
-        stock = yf.Ticker(ticker)
-        recommendations = stock.recommendations
+        recommendations = yf.Ticker(ticker).recommendations
 
-        if recommendations is None or len(recommendations) < 2:
+        if recommendations is None or len(recommendations) == 0:
             return None
 
-        periods = []
-        for _, row in recommendations.iterrows():
-            periods.append({
-                "period":     row["period"],
-                "strongBuy":  int(row["strongBuy"]),
-                "buy":        int(row["buy"]),
-                "hold":       int(row["hold"]),
-                "sell":       int(row["sell"]),
-                "strongSell": int(row["strongSell"]),
-            })
-
-        return {"periods": periods}
+        row = recommendations.iloc[0]   # most recent period
+        return {
+            "strongBuy":  int(row["strongBuy"]),
+            "buy":        int(row["buy"]),
+            "hold":       int(row["hold"]),
+            "sell":       int(row["sell"]),
+            "strongSell": int(row["strongSell"]),
+        }
 
     except Exception as e:
-        print(f"  [get_consensus_trend] Error fetching {ticker}: {e}")
+        print(f"  [get_rating_counts] Error fetching {ticker}: {e}")
         return None

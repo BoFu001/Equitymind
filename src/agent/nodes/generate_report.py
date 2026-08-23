@@ -69,20 +69,18 @@ DATA_SCOPE_NOTES = {
   margin) as a supplement.
 """,
     "consensus": """\
-- Consensus Signal (analyst recommendation, upside, trend) reflects
+- Consensus Signal (analyst recommendation and upside) reflects
   HUMAN JUDGMENT, not an objective market calculation like the other
   signals — always make this distinction clear. Analyst ratings carry
   a well-documented systematic optimism bias ("sell" ratings are rare
   in practice) — a bullish reading should be described as "positive
   within a system that skews positive," not as a neutral, unbiased
-  signal. IMPORTANT: recommendation, upside, and trend are three
-  INDEPENDENT sub-signals answering different questions (current
-  standing / future price target / recent directional change) — present
-  each on its own terms using its own label (e.g. "recommendation is
-  bullish, but the trend has been deteriorating"), never average them
-  into one overall consensus verdict. The trend_label reflects the
-  analyst group's aggregate rating distribution over time, not
-  individual analyst revision tracking.
+  signal. IMPORTANT: recommendation and upside are two INDEPENDENT
+  sub-signals answering different questions (where the rating stands
+  now / how far the target price sits above the current one) — present
+  each on its own terms using its own label (e.g. "analysts rate it a
+  buy, though the target price implies only modest upside"), never
+  average them into one overall consensus verdict.
 - Analyst sentiment: use recommendation_mean — 1.0-1.5 Strong Buy,
   1.5-2.5 Buy, 2.5-3.5 Hold, 3.5-4.5 Sell, 4.5-5.0 Strong Sell. Do not
   call a mean above 2.5 "bullish". Always mention analyst_count. If the

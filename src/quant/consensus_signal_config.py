@@ -4,16 +4,10 @@ src/quant/consensus_signal_config.py
 Configuration constants for the Consensus Signal Engine (analyst sentiment).
 """
 
-# ─────────────────────────────────────────────
-# Sub-signal weights — must sum to 1.0
-# Recommendation carries the most weight because it has the largest,
-# most stable sample size (all covering analysts, every period).
-# Upside and Trend are weighted equally as secondary, more volatile inputs.
-# ─────────────────────────────────────────────
-# NOTE: sub-signals are no longer combined into a weighted composite —
-# recommendation, upside, and trend answer different questions (current
-# standing / future price target / recent directional change) and are
-# returned independently. No weights are needed.
+# NOTE: no weights here. Recommendation and upside answer different
+# questions — where the rating stands now, and how far the target price
+# sits above the current one — and are returned independently rather
+# than blended into one number.
 
 # ─────────────────────────────────────────────
 # Calibration anchors
@@ -21,10 +15,6 @@ Configuration constants for the Consensus Signal Engine (analyst sentiment).
 # Upside: 50% implied upside -> score of +1.0 (same anchor used when this
 # logic lived inside valuation_signal.py, before Consensus Signal existed)
 UPSIDE_CAP_PCT = 0.50
-
-# Trend: a 0.5-point swing in the weighted recommendation scale (1-5)
-# over the observed window -> trend_score of +-1.0
-TREND_CAP_POINTS = 0.5
 
 # ─────────────────────────────────────────────
 # Confidence / disclosure thresholds

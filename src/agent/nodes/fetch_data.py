@@ -33,7 +33,7 @@ from src.readers.valuation_reader import get_valuation_inputs
 from src.readers.momentum_reader import get_momentum_inputs
 from src.readers.risk_reader import get_risk_inputs
 from src.readers.quality_reader import get_quality_inputs_from_db
-from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
+from src.readers.consensus_reader import get_consensus_snapshot, get_rating_counts
 from src.readers.news_reader import fetch_company_news
 from src.readers.financial_history_reader import get_financial_history_rows
 from src.readers.short_reader import get_short_inputs
@@ -179,14 +179,14 @@ def _fetch_quality_inputs(ticker: str) -> dict | None:
 def _fetch_consensus_inputs(ticker: str) -> dict | None:
     """
     Fetches BOTH pieces consensus_signal() needs — the point-in-time
-    snapshot (recommendation_mean, target_mean, etc.) and the rating
-    trend history — via two independent calls (consensus_reader.py),
+    snapshot (recommendation_mean, target_mean, etc.) and the current
+    rating distribution — via two independent calls (consensus_reader.py),
     not shared with snapshot_reader.py. See consensus_reader.py's
     module docstring for why this duplicates part of what
     _fetch_stock_snapshot() also fetches.
 
     Returns None only if the snapshot portion fails — consensus_signal()
-    cannot compute anything without it. The trend portion is allowed to
+    cannot compute anything without it. The rating counts are allowed to
     be None independently (consensus_signal() degrades gracefully).
     """
     writer = get_stream_writer()
@@ -196,10 +196,10 @@ def _fetch_consensus_inputs(ticker: str) -> dict | None:
     if not snapshot:
         return None
 
-    trend = get_consensus_trend(ticker)
+    rating_counts = get_rating_counts(ticker)
 
     bprint(f"  [_fetch_consensus_inputs] Fetched for {ticker}")
-    return {"snapshot": snapshot, "trend": trend}
+    return {"snapshot": snapshot, "rating_counts": rating_counts}
 
 
 # ─────────────────────────────────────────────

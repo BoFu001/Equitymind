@@ -3,14 +3,15 @@ src/quant/consensus_signal.py
 
 Consensus Signal Engine — Layer 2 Quantitative Intelligence.
 
-Assesses professional analyst sentiment toward a stock, combining three
+Assesses professional analyst sentiment toward a stock through two
 independent sub-signals:
 
     1. Recommendation Score  — current analyst rating level (1=strong buy
                                 to 5=strong sell), converted to [-1, +1]
     2. Upside Score          — analyst mean target price vs current price
-    3. Trend Score           — how the weighted analyst rating has moved
-                                over the observed history window
+
+The current rating distribution (how many analysts say Buy, Hold, etc.)
+is passed through as a raw count alongside them.
 
 Unlike Valuation/Momentum/Risk/Quality, this signal reflects HUMAN
 JUDGMENT, not an objective market calculation — it must be presented
@@ -25,17 +26,13 @@ call is asymmetrically worse than a wrong "buy" call. A high
 recommendation score should be read as "positive within a system that
 skews positive," not as a neutral, unbiased signal.
 
-Trend Score methodology note: this is a WEIGHTED-AVERAGE-OF-THE-GROUP
-comparison (current period vs the oldest available period), not a
-true analyst-by-analyst revision tracker of the kind used by
-institutional data providers (e.g. I/B/E/S — see Barber et al. and
-similar literature on "recommendation revisions" defined per-analyst).
-The free yfinance data used here only reports aggregate counts per
-period, not which individual analyst issued which rating when — so this
-trend can be influenced by analysts starting/stopping coverage, not
-only by existing analysts changing their mind. It is a reasonable,
-transparent proxy for group-level sentiment direction, but should not be
-presented as equivalent to institutional-grade analyst revision tracking.
+A rating trend was computed here until 2026-08-24 and has been
+removed. yfinance reports only aggregate counts per period, never which
+analyst issued which rating when, so a move in the group's weighted
+average could not be separated from a change in who was covering the
+stock — Apple went from 48 analysts to 44 over three months. The
+measure answered two questions at once with no way to tell which one
+it was answering.
 
 Score range: -1.0 (bearish consensus) to +1.0 (bullish consensus)
 Label:       "bullish" / "neutral" / "bearish"
@@ -48,7 +45,6 @@ Academic reference:
 
 from src.quant.consensus_signal_config import (
     UPSIDE_CAP_PCT,
-    TREND_CAP_POINTS,
     MIN_ANALYST_COUNT,
     WIDE_TARGET_RANGE_RATIO,
     BULLISH_THRESHOLD,
@@ -76,81 +72,13 @@ def _upside_score(target_mean: float, current_price: float) -> tuple[float, floa
     return max(-1.0, min(1.0, score)), round(upside_pct * 100, 2)
 
 
-def _weighted_rating(period: dict) -> float | None:
-    """
-    Computes the analyst-count-weighted average rating for a single period,
-    on the same 1 (strong buy) to 5 (strong sell) scale as recommendation_mean.
-    Returns None if the period has zero contributing analysts.
-    """
-    total = (period["strongBuy"] + period["buy"] + period["hold"] +
-             period["sell"] + period["strongSell"])
-    if total == 0:
-        return None
-    weighted_sum = (1 * period["strongBuy"] + 2 * period["buy"] +
-                     3 * period["hold"] + 4 * period["sell"] +
-                     5 * period["strongSell"])
-    return weighted_sum / total
-
-
-def _trend_score(consensus_inputs: dict) -> tuple[float | None, str]:
-    """
-    Sub-signal 3: direction of change in the weighted analyst rating,
-    comparing the most recent period to the oldest available period.
-
-    Uses PROPORTIONS (weighted averages), not raw analyst counts, because
-    the total number of contributing analysts can fluctuate slightly
-    period to period (individual analysts starting/stopping coverage) —
-    comparing raw counts would introduce noise unrelated to actual
-    sentiment change.
-
-    Returns (trend_score, detail) or (None, reason) if a trend cannot be
-    computed (fewer than 2 usable periods).
-    """
-    periods = consensus_inputs.get("periods", [])
-    if len(periods) < 2:
-        return None, "Insufficient rating history to compute a trend (need at least 2 periods)."
-
-    current_weighted = _weighted_rating(periods[0])    # most recent (e.g. "0m")
-    oldest_weighted   = _weighted_rating(periods[-1])  # oldest available
-
-    if current_weighted is None or oldest_weighted is None:
-        return None, "Could not compute a weighted rating for the available periods (zero analysts)."
-
-    # Negative raw_trend means the weighted rating fell (moved toward "buy")
-    # i.e. sentiment improved. We negate so positive trend_score = improving.
-    raw_trend = current_weighted - oldest_weighted
-    trend_score = max(-1.0, min(1.0, -raw_trend / TREND_CAP_POINTS))
-    trend_score = round(trend_score, 4)
-    if trend_score == 0:
-        trend_score = 0.0  # avoid displaying -0.0 from floating point negative zero
-        
-    direction = (
-        "improving" if trend_score > 0.05 else
-        "deteriorating" if trend_score < -0.05 else
-        "stable"
-    )
-    oldest_period_label = periods[-1]["period"]
-    detail = (
-        f"Analyst sentiment {direction} over the observed window "
-        f"(weighted rating {oldest_weighted:.2f} -> {current_weighted:.2f}, "
-        f"from {oldest_period_label} to present). This reflects the "
-        f"group's aggregate rating distribution, not individual analyst "
-        f"revisions — it can be influenced by analysts starting or "
-        f"stopping coverage, not only by existing analysts changing "
-        f"their view."
-    )
-    return trend_score, detail
-
-
 def _sub_label(score: float) -> str:
     """
     Map a single sub-signal's numeric score to a human-readable label.
-    Used independently for recommendation, upside, and trend — each
-    sub-signal gets its own label, since combining them into one
-    composite score/label would obscure which dimension is driving
-    the reading (see module docstring: these three answer different
-    questions — current standing, future price target, and recent
-    directional change — and should not be collapsed into one number).
+    Recommendation and upside each get their own, since collapsing them
+    into one composite would hide which of the two is driving the
+    reading — they answer different questions (where the rating stands
+    now, and how far the target price sits above the current one).
     """
     if score > BULLISH_THRESHOLD:
         return "bullish"
@@ -167,8 +95,8 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
     Pure function — takes already-fetched data, performs no I/O. Data
     fetching is done separately by consensus_reader.get_consensus_snapshot()
     (for recommendation_mean, target_mean, current_price) and
-    consensus_reader.get_consensus_trend() (for historical rating trend),
-    called by fetch_data.py, which merges both into the single
+    consensus_reader.get_rating_counts() (for the current rating
+    distribution), called by fetch_data.py, which merges both into the single
     consensus_data dict this function receives (see
     fetch_data._fetch_consensus_inputs()). Both are fetched via
     independent yfinance calls (2026-07-27: no longer shared with
@@ -176,29 +104,25 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
     for why), so that a live user question needing only Consensus does
     not have to fetch data other signals would need.
 
-    IMPORTANT — no composite score: recommendation_score, upside_score,
-    and trend_score answer three genuinely different questions (current
-    standing / future price target / recent directional change) and are
-    NOT combined into a single consensus_score. Averaging them would
-    produce a number that doesn't correspond to any real question a user
-    is asking — e.g. a stock with a strongly bullish current rating but a
-    deteriorating recent trend would average out to "neutral," hiding
-    both the strong current standing AND the concerning trend. Each
-    sub-signal is returned independently with its own label, so the
-    report layer (and ultimately the user) can see the full picture
-    rather than a blended, uninterpretable average.
+    IMPORTANT — no composite score: recommendation_score and
+    upside_score answer two genuinely different questions (where the
+    rating stands now / how far the target price sits above the current
+    one) and are NOT combined into a single consensus_score. Averaging
+    them would produce a number that doesn't correspond to any real
+    question a user is asking — a stock rated Hold but carrying a target
+    price 40% above its current one would average out to something mild,
+    hiding both readings. Each sub-signal is returned independently with
+    its own label.
 
     Degradation strategy: recommendation_score and upside_score require
     only the snapshot portion (recommendation_mean, target_mean,
     current_price) — if these are missing, the whole function returns
     None, since there is no meaningful analyst signal without them.
-    trend_score is allowed to be independently unavailable (e.g.
-    insufficient rating history) — it is simply returned as None,
-    with no downstream reweighting needed since there is no composite
-    to reweight.
+    latest_rating_counts is allowed to be independently unavailable and
+    is simply returned as None.
 
     Args:
-        consensus_data: dict with keys "snapshot" and "trend" (see
+        consensus_data: dict with keys "snapshot" and "rating_counts" (see
             fetch_data._fetch_consensus_inputs()):
             - snapshot: dict from get_consensus_snapshot(), expected fields:
                 - recommendation_mean: float | None (1.0-5.0 scale)
@@ -207,7 +131,8 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
                 - target_high:         float | None
                 - target_low:          float | None
                 - analyst_count:       int | None
-            - trend: dict from get_consensus_trend(), or None
+            - rating_counts: dict from get_rating_counts() with keys
+                strongBuy/buy/hold/sell/strongSell, or None
 
     Returns:
         dict with keys:
@@ -216,11 +141,10 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
             - upside_score:      float (-1.0 to +1.0)
             - upside_pct:        float
             - upside_label:      str — "bullish" / "neutral" / "bearish"
-            - trend_score:       float | None
-            - trend_label:       str | None — "improving" / "stable" / "deteriorating"
             - low_confidence:    bool — True if analyst_count < MIN_ANALYST_COUNT
             - wide_dispersion:   bool — True if target_high > 3x target_low
-            - detail:            str — plain English explanation of all sub-signals
+            - latest_rating_counts: dict | None — current analyst split
+            - detail:            str — plain English explanation of both sub-signals
         or None if consensus_data is None, or recommendation_mean,
         target_mean, or current_price is missing from the snapshot
         (no meaningful analyst signal without them)
@@ -229,7 +153,6 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
         return None
 
     snapshot = consensus_data.get("snapshot") or {}
-    trend_data = consensus_data.get("trend")
 
     recommendation_mean   = snapshot.get("recommendation_mean")
     target_mean           = snapshot.get("target_mean")
@@ -244,33 +167,13 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
     rec_score = _recommendation_score(recommendation_mean)
     up_score, upside_pct = _upside_score(target_mean, current_price)
 
-    trend_score, trend_detail = (None, "No rating history data available.")
-    latest_rating_counts = None
-    if trend_data is not None:
-        trend_score, trend_detail = _trend_score(trend_data)
-        periods = trend_data.get("periods", [])
-        if periods:
-            # periods[0] is the most recent period (see
-            # consensus_reader.get_consensus_trend() — "ordered
-            # most-recent-first") — exposed here so the report layer
-            # can show "how many analysts currently say Buy vs Sell",
-            # not just the single averaged recommendation_mean number.
-            latest_rating_counts = {
-                "strongBuy":  periods[0]["strongBuy"],
-                "buy":        periods[0]["buy"],
-                "hold":       periods[0]["hold"],
-                "sell":       periods[0]["sell"],
-                "strongSell": periods[0]["strongSell"],
-            }
+    # Straight from the reader: how many analysts currently say Buy vs
+    # Sell, which the report layer can show instead of leaning on the
+    # single averaged recommendation_mean.
+    latest_rating_counts = consensus_data.get("rating_counts")
 
     recommendation_label = _sub_label(rec_score)
     upside_label = _sub_label(up_score)
-    trend_label = (
-        None if trend_score is None else
-        ("improving" if trend_score > 0.05 else
-         "deteriorating" if trend_score < -0.05 else
-         "stable")
-    )
 
     low_confidence = analyst_count is not None and analyst_count < MIN_ANALYST_COUNT
     wide_dispersion = (
@@ -283,7 +186,6 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
         f"(recommendation_score={round(rec_score,2)}, {recommendation_label}), "
         f"analyst target upside {upside_pct}% "
         f"(upside_score={round(up_score,2)}, {upside_label}).",
-        trend_detail,
         "Analyst ratings carry a well-documented systematic optimism bias — "
         "'sell' ratings are rare in practice, so a positive score here "
         "should be read as 'positive within a system that skews positive,' "
@@ -292,8 +194,8 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
     # low_confidence / wide_dispersion warnings are NOT duplicated into
     # detail here -- formatters.format_consensus() already surfaces both
     # as standalone Note lines using the returned booleans below.
-    # detail's job is explaining the trend calculation and disclosing
-    # the methodology bias, not restating these two flags.
+    # detail's job is disclosing the methodology bias, not restating
+    # these two flags.
 
 
     return {
@@ -302,12 +204,12 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
         # judgment is actually based on — e.g. "bullish (score=0.65)"
         # means little without knowing whether that came from 3
         # analysts or 30, or what the actual recommendation_mean was.
-        "recommendation_mean": recommendation_mean,
-        "target_mean":         target_mean,
-        "current_price":       current_price,
-        "target_high":         target_high,
-        "target_low":          target_low,
-        "analyst_count":       analyst_count,
+        "recommendation_mean":  recommendation_mean,
+        "target_mean":          target_mean,
+        "current_price":        current_price,
+        "target_high":          target_high,
+        "target_low":           target_low,
+        "analyst_count":        analyst_count,
         "latest_rating_counts": latest_rating_counts,
 
         "recommendation_score": round(rec_score, 4),
@@ -315,8 +217,6 @@ def consensus_signal(consensus_data: dict | None) -> dict | None:
         "upside_score":         round(up_score, 4),
         "upside_pct":           upside_pct,
         "upside_label":         upside_label,
-        "trend_score":          trend_score,
-        "trend_label":          trend_label,
         "low_confidence":       low_confidence,
         "wide_dispersion":      wide_dispersion,
         "detail": " ".join(detail_parts),

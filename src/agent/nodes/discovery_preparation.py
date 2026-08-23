@@ -120,7 +120,7 @@ Extract two things:
      valuation_score, momentum_12_1_score, position_52w_score,
      risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score,
      quality_score, consensus_recommendation_score, consensus_upside_score,
-     consensus_trend_score, short_interest_pct, days_to_cover, market_cap,
+     short_interest_pct, days_to_cover, market_cap,
      total_revenue, cost_of_revenue, gross_profit, research_and_development,
      selling_general_and_administration, operating_expense, operating_income,
      ebit, ebitda, pretax_income, net_income, diluted_eps, basic_eps,

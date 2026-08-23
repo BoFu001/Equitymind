@@ -44,7 +44,7 @@ from src.readers.snapshot_reader import get_stock_snapshot
 from src.readers.valuation_reader import get_valuation_inputs
 from src.readers.momentum_reader import get_momentum_inputs
 from src.readers.risk_reader import get_risk_inputs
-from src.readers.consensus_reader import get_consensus_snapshot, get_consensus_trend
+from src.readers.consensus_reader import get_consensus_snapshot, get_rating_counts
 from src.readers.quality_reader import get_quality_inputs_from_db
 from src.readers.short_reader import get_short_inputs
 from src.quant.valuation_signal import valuation_signal
@@ -107,9 +107,9 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
     # consensus_reader.py and consensus_signal.py for why these are
     # fetched independently of snapshot rather than shared with it.
     consensus_snapshot = get_consensus_snapshot(ticker)
-    consensus_trend = get_consensus_trend(ticker)
+    consensus_rating_counts = get_rating_counts(ticker)
     consensus_data = (
-        {"snapshot": consensus_snapshot, "trend": consensus_trend}
+        {"snapshot": consensus_snapshot, "rating_counts": consensus_rating_counts}
         if consensus_snapshot else None
     )
 
@@ -137,7 +137,6 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
 
     consensus_recommendation_score = _to_float(consensus_result.get("recommendation_score") if consensus_result else None)
     consensus_upside_score         = _to_float(consensus_result.get("upside_score") if consensus_result else None)
-    consensus_trend_score          = _to_float(consensus_result.get("trend_score") if consensus_result else None)
 
     short_interest_pct  = _to_float(short_result.get("short_interest_pct") if short_result else None)
     days_to_cover       = _to_float(short_result.get("days_to_cover") if short_result else None)
@@ -163,7 +162,6 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
         Json(consensus_result) if consensus_result else None,
         consensus_recommendation_score,
         consensus_upside_score,
-        consensus_trend_score,
         Json(short_result) if short_result else None,
         short_interest_pct,
         days_to_cover,
@@ -179,7 +177,7 @@ INSERT_SQL = """
         momentum_data, momentum_12_1_score, position_52w_score, momentum_computed_at,
         risk_data, risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score, risk_computed_at,
         quality_data, quality_score, quality_period_end, quality_computed_at,
-        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_trend_score, consensus_computed_at,
+        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_computed_at,
         short_data, short_interest_pct, days_to_cover, short_computed_at
     )
     VALUES %s
@@ -204,7 +202,6 @@ INSERT_SQL = """
         consensus_data = EXCLUDED.consensus_data,
         consensus_recommendation_score = EXCLUDED.consensus_recommendation_score,
         consensus_upside_score = EXCLUDED.consensus_upside_score,
-        consensus_trend_score = EXCLUDED.consensus_trend_score,
         consensus_computed_at = NOW(),
         short_data = EXCLUDED.short_data,
         short_interest_pct = EXCLUDED.short_interest_pct,
@@ -213,7 +210,7 @@ INSERT_SQL = """
 """
 TEMPLATE = (
     "(%s, %s, %s, NOW(), %s, %s, %s, NOW(), %s, %s, %s, %s, %s, NOW(), "
-    "%s, %s, %s, NOW(), %s, %s, %s, %s, NOW(), %s, %s, %s, NOW())"
+    "%s, %s, %s, NOW(), %s, %s, %s, NOW(), %s, %s, %s, NOW())"
 )
 
 

@@ -16,10 +16,10 @@ signal's data flow gets reviewed — see project notes, 2026-07-27.
 
 def format_consensus(consensus: dict | None) -> str:
     """
-    Three independent sub-signals, NOT combined into a single score
-    (recommendation/upside/trend answer different questions: current
-    standing, future price target, and recent directional change —
-    averaging them would hide the full picture).
+    Two independent sub-signals, NOT combined into a single score
+    (recommendation and upside answer different questions: where the
+    rating stands now, and how far the target price sits above the
+    current one — averaging them would hide both readings).
 
     Shows raw inputs (recommendation_mean, target price range,
     analyst_count) alongside the computed judgments, not just the
@@ -44,10 +44,6 @@ def format_consensus(consensus: dict | None) -> str:
         )
     text += f"  Consensus - Recommendation: {consensus['recommendation_label']} (score={consensus['recommendation_score']})\n"
     text += f"  Consensus - Upside: {consensus['upside_label']} ({consensus['upside_pct']}% implied by analyst target price)\n"
-    if consensus.get("trend_label") is not None:
-        text += f"  Consensus - Trend: {consensus['trend_label']} (trend_score={consensus['trend_score']})\n"
-    else:
-        text += f"  Consensus - Trend: Insufficient rating history.\n"
     text += f"  {consensus['detail']}\n"
     if consensus.get("low_confidence"):
         text += f"  Note: Low analyst sample size ({consensus['analyst_count']} analysts) — reduced confidence.\n"
