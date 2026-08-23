@@ -34,11 +34,6 @@ LOW_CONFIDENCE_THRESHOLD = 252  # ~1 year
 BLUME_RAW_WEIGHT    = 0.67
 BLUME_MARKET_WEIGHT = 0.33  # pulled toward Beta = 1.0
 
-# Normalisation anchor: adjusted Beta of 2.0 maps to score = -1.0 (max risk)
-# Adjusted Beta is compressed toward 1.0 by design, so 2.0 remains a
-# generously wide bound for the clip.
-BETA_EXTREME_ANCHOR = 2.0
-
 # ─────────────────────────────────────────────
 # Sharpe Ratio
 # ─────────────────────────────────────────────

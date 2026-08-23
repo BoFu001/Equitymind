@@ -35,7 +35,6 @@ from src.quant.risk_signal_config import (
     LOW_CONFIDENCE_THRESHOLD,
     BLUME_RAW_WEIGHT,
     BLUME_MARKET_WEIGHT,
-    BETA_EXTREME_ANCHOR,
     SHARPE_TANH_DIVISOR,
     RISK_FREE_RATE_FALLBACK,
     VAR_EXTREME_ANCHOR,
@@ -94,7 +93,8 @@ def _compute_beta(stock_returns: pd.Series, market_returns: pd.Series) -> dict |
         market_returns: daily returns for the market benchmark (^GSPC)
 
     Returns:
-        dict with raw_beta, adjusted_beta, beta_score (-1.0 to +1.0), and detail
+        dict with raw_beta, adjusted_beta, beta_score (between -1 and +1,
+        never reaching either), and detail
         or None if market_returns has no variance (degenerate case, should
         not happen in practice with real market data).
     """
@@ -113,9 +113,12 @@ def _compute_beta(stock_returns: pd.Series, market_returns: pd.Series) -> dict |
     # Blume (1971) adjustment — pulls raw Beta toward 1.0
     adjusted_beta = BLUME_RAW_WEIGHT * raw_beta + BLUME_MARKET_WEIGHT * 1.0
 
-    # Normalise to [-1, +1]: Beta=0 -> +1 (safest), Beta=1 -> 0 (neutral),
-    # Beta=BETA_EXTREME_ANCHOR (2.0) -> -1 (riskiest)
-    beta_score = max(-1.0, min(1.0, (1 - adjusted_beta) / (BETA_EXTREME_ANCHOR - 1)))
+    # tanh rather than a clip, as Sharpe does below. Beta has no upper
+    # bound, and the old floor at 2.0 flattened everything past it onto
+    # one value — six companies shared it on 2026-08-23. Not a log: Beta
+    # is an additive deviation from 1.0, and 1 - Beta is negative for
+    # exactly the companies at issue.
+    beta_score = float(np.tanh(1 - adjusted_beta))
 
     return {
         "raw_beta":      round(raw_beta, 4),
