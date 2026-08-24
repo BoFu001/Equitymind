@@ -119,7 +119,7 @@ Extract two things:
      the fields list entirely rather than guessing:
      valuation_score, momentum_12_1_score, position_52w_score,
      risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score,
-     quality_score, consensus_recommendation_score, consensus_upside_score,
+     quality_score, consensus_recommendation_mean, consensus_upside_pct,
      short_interest_pct, days_to_cover, market_cap,
      total_revenue, cost_of_revenue, gross_profit, research_and_development,
      selling_general_and_administration, operating_expense, operating_income,
@@ -134,21 +134,24 @@ Extract two things:
      When the user says something generic, map it to the closest specific
      field: "risk" alone -> risk_beta_score; "momentum" alone ->
      momentum_12_1_score; "consensus"/"analyst rating" alone ->
-     consensus_recommendation_score.
+     consensus_recommendation_mean (note its scale runs backwards: 1 is
+     strong buy, 5 is strong sell, so the most favoured companies come
+     out ascending).
    - order: "ascending" (smallest value first) or "descending" (largest
      value first). Decide this from the VALUE STORED IN THE FIELD, not
      from the adjective the user used — for most of these fields the two
      point the same way, but for the scores below they are opposites.
 
-     The fourteen fields ending in _score are normalised judgements, not
+     The eight fields ending in _score are normalised judgements, not
      raw quantities, and every one of them is signed the same way:
      POSITIVE ALWAYS MEANS THE FAVOURABLE END, whatever the field
      measures. valuation_score is +1 when a company is cheap against its
      peers and -1 when expensive; risk_*_score is +1 when risk is LOW;
-     quality_score is +1 when financials are strong; the consensus_*
-     scores are +1 when analysts are positive; the momentum and
+     quality_score is +1 when financials are strong; the momentum and
      position scores are +1 when the stock ranks at the top of the
-     universe.
+     universe. The two consensus_* fields do NOT follow this rule —
+     they are raw figures, not scores, and are covered separately
+     above.
 
      So for a _score field, work out which END the user is asking for:
        - the favourable end ("cheapest", "best valuation", "safest",
@@ -176,7 +179,7 @@ Extract two things:
      "promising", "attractive" express an overall judgement about a company,
      not a single measurable dimension. They MUST NOT be mapped to any field.
 
-     consensus_recommendation_score is NOT a proxy for "worth buying" —
+     consensus_recommendation_mean is NOT a proxy for "worth buying" —
      it reflects analyst opinion, not the user's own criteria.
 
      If the question contains ONLY such a judgement and no measurable
@@ -185,7 +188,7 @@ Extract two things:
      However, when the same words are paired with an explicit dimension,
      they ARE rankable and should be mapped normally:
        - "best valuation" -> valuation_score
-       - "best analyst rating" -> consensus_recommendation_score
+       - "best analyst rating" -> consensus_recommendation_mean, ascending
        - "attractive valuation" -> valuation_score
 
    - count: a number if THIS SPECIFIC field has one attached in the sentence
@@ -237,7 +240,7 @@ analysts favor most?"
 {{"industry": null, "fields": [
   {{"name": "market_cap", "order": "descending", "count": 20, "priority": 1}},
   {{"name": "valuation_score", "order": "descending", "count": 10, "priority": 2}},
-  {{"name": "consensus_recommendation_score", "order": "descending", "count": 5, "priority": 3}}
+  {{"name": "consensus_recommendation_mean", "order": "ascending", "count": 5, "priority": 3}}
 ], "final_count": null}}
 
 "Which healthcare companies are the most overvalued?"

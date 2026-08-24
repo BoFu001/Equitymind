@@ -10,10 +10,10 @@ quant_signals table (see init_db_quant_signals.py).
 Each signal's COMPLETE return dict is stored verbatim as JSONB — the
 exact same dict shape that quant_engine.py produces when computing
 live, so format_valuation()/format_risk()/etc. work identically on a
-cached row or a fresh computation. A few scalar score columns are also
+cached row or a fresh computation. A few scalar columns are also
 populated for Discovery's screening queries — see
-init_db_quant_signals.py for which ones and why. Scalar column names
-match their source JSONB key exactly (e.g. position_52w_score, not
+init_db_quant_signals.py for which ones and why. Column names match
+their source JSONB key exactly (e.g. position_52w_score, not
 momentum_52w_score) to avoid any ambiguity about which field they were
 copied from.
 
@@ -135,8 +135,8 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
     risk_var_score      = _to_float((risk_result.get("var") or {}).get("var_score") if risk_result else None)
     risk_drawdown_score = _to_float((risk_result.get("max_drawdown") or {}).get("drawdown_score") if risk_result else None)
 
-    consensus_recommendation_score = _to_float(consensus_result.get("recommendation_score") if consensus_result else None)
-    consensus_upside_score         = _to_float(consensus_result.get("upside_score") if consensus_result else None)
+    consensus_recommendation_mean  = _to_float(consensus_result.get("recommendation_mean") if consensus_result else None)
+    consensus_upside_pct           = _to_float(consensus_result.get("upside_pct") if consensus_result else None)
 
     short_interest_pct  = _to_float(short_result.get("short_interest_pct") if short_result else None)
     days_to_cover       = _to_float(short_result.get("days_to_cover") if short_result else None)
@@ -160,8 +160,8 @@ def _compute_ticker_row(ticker: str) -> tuple | None:
         quality_score,
         quality_period_end,
         Json(consensus_result) if consensus_result else None,
-        consensus_recommendation_score,
-        consensus_upside_score,
+        consensus_recommendation_mean,
+        consensus_upside_pct,
         Json(short_result) if short_result else None,
         short_interest_pct,
         days_to_cover,
@@ -177,7 +177,7 @@ INSERT_SQL = """
         momentum_data, momentum_12_1_score, position_52w_score, momentum_computed_at,
         risk_data, risk_beta_score, risk_sharpe_score, risk_var_score, risk_drawdown_score, risk_computed_at,
         quality_data, quality_score, quality_period_end, quality_computed_at,
-        consensus_data, consensus_recommendation_score, consensus_upside_score, consensus_computed_at,
+        consensus_data, consensus_recommendation_mean, consensus_upside_pct, consensus_computed_at,
         short_data, short_interest_pct, days_to_cover, short_computed_at
     )
     VALUES %s
@@ -200,8 +200,8 @@ INSERT_SQL = """
         quality_period_end = EXCLUDED.quality_period_end,
         quality_computed_at = NOW(),
         consensus_data = EXCLUDED.consensus_data,
-        consensus_recommendation_score = EXCLUDED.consensus_recommendation_score,
-        consensus_upside_score = EXCLUDED.consensus_upside_score,
+        consensus_recommendation_mean = EXCLUDED.consensus_recommendation_mean,
+        consensus_upside_pct = EXCLUDED.consensus_upside_pct,
         consensus_computed_at = NOW(),
         short_data = EXCLUDED.short_data,
         short_interest_pct = EXCLUDED.short_interest_pct,

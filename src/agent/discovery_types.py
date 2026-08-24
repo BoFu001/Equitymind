@@ -24,7 +24,7 @@ QUANT_SIGNALS_FIELDS = [
     "momentum_12_1_score", "position_52w_score",
     "risk_beta_score", "risk_sharpe_score", "risk_var_score", "risk_drawdown_score",
     "quality_score",
-    "consensus_recommendation_score", "consensus_upside_score",
+    "consensus_recommendation_mean", "consensus_upside_pct",
     "short_interest_pct", "days_to_cover",
 ]
 

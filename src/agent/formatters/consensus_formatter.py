@@ -16,14 +16,11 @@ signal's data flow gets reviewed — see project notes, 2026-07-27.
 
 def format_consensus(consensus: dict | None) -> str:
     """
-    Two independent sub-signals, NOT combined into a single score
-    (recommendation and upside answer different questions: where the
-    rating stands now, and how far the target price sits above the
-    current one — averaging them would hide both readings).
-
-    Shows raw inputs (recommendation_mean, target price range,
-    analyst_count) alongside the computed judgments, not just the
-    judgments alone.
+    Shows the raw analyst data and nothing derived from it: the 1-5
+    recommendation mean with its scale spelled out, the target price
+    range and how far the mean target sits above the current price, and
+    how many analysts sit in each rating bucket. What Discovery sorts on
+    is the same recommendation mean printed here.
     """
     if not consensus:
         return "  Consensus: Insufficient data.\n"
@@ -32,7 +29,8 @@ def format_consensus(consensus: dict | None) -> str:
         f"    Raw data: recommendation_mean={consensus['recommendation_mean']} "
         f"(1=Strong Buy, 5=Strong Sell), target price range "
         f"${consensus['target_low']}-${consensus['target_high']} "
-        f"(mean ${consensus['target_mean']}), based on "
+        f"(mean ${consensus['target_mean']}, {consensus['upside_pct']}% "
+        f"above the current ${consensus['current_price']}), based on "
         f"{consensus['analyst_count']} analysts.\n"
     )
     if consensus.get("latest_rating_counts"):
@@ -42,8 +40,6 @@ def format_consensus(consensus: dict | None) -> str:
             f"{rc['buy']} Buy, {rc['hold']} Hold, {rc['sell']} Sell, "
             f"{rc['strongSell']} Strong Sell.\n"
         )
-    text += f"  Consensus - Recommendation: {consensus['recommendation_label']} (score={consensus['recommendation_score']})\n"
-    text += f"  Consensus - Upside: {consensus['upside_label']} ({consensus['upside_pct']}% implied by analyst target price)\n"
     text += f"  {consensus['detail']}\n"
     if consensus.get("low_confidence"):
         text += f"  Note: Low analyst sample size ({consensus['analyst_count']} analysts) — reduced confidence.\n"

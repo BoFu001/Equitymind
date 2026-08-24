@@ -186,8 +186,8 @@ def quant_engine(state: AgentState) -> dict:
             if consensus is not None:
                 signals["consensus"] = consensus
                 mprint(
-                    f"  [consensus] recommendation={consensus['recommendation_label']} "
-                    f"upside={consensus['upside_label']}"
+                    f"  [consensus] recommendation_mean={consensus['recommendation_mean']} "
+                    f"upside={consensus['upside_pct']}%"
                 )
             else:
                 signals["consensus"] = None

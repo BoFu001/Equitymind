@@ -17,13 +17,15 @@ appears in the JSONB automatically) — this avoids the class of
 silent-drift bug already seen once in this project (company_name
 handling in news_reader.py).
 
-A small number of scalar score columns are duplicated out of each
-JSONB column specifically to support discovery_suggest's screening
-queries (e.g. "undervalued quality stocks", "high risk/high reward") —
-these need native SQL WHERE/ORDER BY, which JSONB alone does not
-support efficiently. These are the ONLY columns that must be
-remembered when a signal's scoring fields change; everything else is
-automatic via the JSONB column.
+A small number of scalar columns are duplicated out of each JSONB
+column specifically to support Discovery's screening queries (e.g.
+"undervalued quality stocks", "high risk/high reward") — these need
+native SQL WHERE/ORDER BY, which JSONB alone does not support
+efficiently. Some are derived scores, some are the raw figure itself
+(consensus_recommendation_mean is the 1-5 analyst mean, so it sorts
+ascending); the column name always says which. These are the ONLY
+columns that must be remembered when a signal's fields change;
+everything else is automatic via the JSONB column.
 
 Column names for these scalar columns match the corresponding key
 inside the signal's JSONB exactly (e.g. position_52w_score, not
@@ -108,8 +110,8 @@ def init():
 
             -- Consensus (see consensus_signal.py)
             consensus_data                  JSONB,
-            consensus_recommendation_score  REAL,
-            consensus_upside_score          REAL,
+            consensus_recommendation_mean   REAL,
+            consensus_upside_pct            REAL,
             consensus_computed_at           TIMESTAMP,
 
             -- Short (see short_signal.py)

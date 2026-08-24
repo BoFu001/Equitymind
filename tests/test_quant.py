@@ -716,17 +716,17 @@ def make_consensus_data(snapshot: dict | None = None, rating_counts: dict | None
 
 class TestConsensusNormalCase:
     def test_neutral_case(self):
-        """Hold recommendation, no upside -> both sub-signals neutral."""
+        """A hold rating and a target level with the price."""
         snapshot = make_consensus_snapshot()
         consensus_inputs = make_rating_counts()
         result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
         assert result is not None
-        assert result["recommendation_label"] == "neutral"
-        assert result["upside_label"] == "neutral"
+        assert result["recommendation_mean"] == 3.0
+        assert result["upside_pct"] == 0.0
 
     def test_bullish_case(self):
-        """Strong buy, large upside -> both sub-signals bullish."""
+        """A near-strong-buy rating and a target half again the price."""
         snapshot = make_consensus_snapshot(
             recommendation_mean=1.2, target_mean=150.0, current_price=100.0
         )
@@ -734,11 +734,11 @@ class TestConsensusNormalCase:
         result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
         assert result is not None
-        assert result["recommendation_label"] == "bullish"
-        assert result["upside_label"] == "bullish"
+        assert result["recommendation_mean"] == 1.2
+        assert result["upside_pct"] == 50.0
 
     def test_bearish_case(self):
-        """Strong sell, negative upside -> both sub-signals bearish."""
+        """A near-strong-sell rating and a target below the price."""
         snapshot = make_consensus_snapshot(
             recommendation_mean=4.5, target_mean=70.0, current_price=100.0
         )
@@ -746,8 +746,8 @@ class TestConsensusNormalCase:
         result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
         assert result is not None
-        assert result["recommendation_label"] == "bearish"
-        assert result["upside_label"] == "bearish"
+        assert result["recommendation_mean"] == 4.5
+        assert result["upside_pct"] == -30.0
 
     def test_each_sub_score_in_range(self):
         """Each independent sub-signal score must fall within [-1.0, +1.0]."""
@@ -757,8 +757,8 @@ class TestConsensusNormalCase:
         consensus_inputs = make_rating_counts()
         result = consensus_signal(make_consensus_data(snapshot, consensus_inputs))
 
-        assert -1.0 <= result["recommendation_score"] <= 1.0
-        assert -1.0 <= result["upside_score"] <= 1.0
+        assert 1.0 <= result["recommendation_mean"] <= 5.0
+        assert result["upside_pct"] == 900.0
 
     def test_no_composite_score_exists(self):
         """
@@ -799,8 +799,8 @@ class TestConsensusRatingCounts:
         """
         result = consensus_signal(make_consensus_data(rating_counts=None))
         assert result["latest_rating_counts"] is None
-        assert result["recommendation_score"] is not None
-        assert result["upside_score"] is not None
+        assert result["recommendation_mean"] is not None
+        assert result["upside_pct"] is not None
 
 
 class TestConsensusMissingFields:
