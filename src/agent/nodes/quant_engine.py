@@ -72,7 +72,9 @@ def quant_engine(state: AgentState) -> dict:
     all_short_inputs      = state.get("short_inputs") or {}
     all_quality_inputs    = state.get("quality_inputs") or {}
     all_consensus_inputs  = state.get("consensus_inputs") or {}
-    data_scope            = state.get("data_scope") or list(VALID_DATA_SCOPES)
+    data_scope            = state.get("data_scope")
+    if data_scope is None:
+        data_scope = list(VALID_DATA_SCOPES)
 
     for ticker in stock_snapshots:
         gprint(f"  [quant_engine] Computing signals for {ticker}")

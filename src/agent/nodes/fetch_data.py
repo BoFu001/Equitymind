@@ -262,7 +262,7 @@ async def fetch_data(state: AgentState) -> dict:
     reference).
 
     Falls back to fetching ALL signals if data_scope is missing
-    or empty (e.g. determine_data_scope failed) — a full-analysis
+    entirely (e.g. determine_data_scope never ran) — a full-analysis
     default is the safe degradation, matching that node's own
     fallback behavior.
 
@@ -279,7 +279,12 @@ async def fetch_data(state: AgentState) -> dict:
     question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
     gprint(f"  [fetch_data] question: {question}")
     tickers = state.get("tickers") or []
-    data_scope = state.get("data_scope") or list(VALID_DATA_SCOPES)
+    # `is None`, not falsy: a missing key means determine_data_scope
+    # never ran and everything is still wanted, while an empty list is
+    # that node saying the snapshot covers this one on its own.
+    data_scope = state.get("data_scope")
+    if data_scope is None:
+        data_scope = list(VALID_DATA_SCOPES)
     gprint(f"  [fetch_data] data_scope: {data_scope}")
 
     all_stock_snapshots   = {}

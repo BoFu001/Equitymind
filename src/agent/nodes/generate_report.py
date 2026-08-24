@@ -164,7 +164,9 @@ def generate_report(state: AgentState) -> dict:
     question              = state.get("contextualized_question") or state["question"]
     tickers               = state.get("tickers") or []
     messages              = state.get("messages") or []
-    data_scope            = state.get("data_scope") or list(VALID_DATA_SCOPES)
+    data_scope            = state.get("data_scope")
+    if data_scope is None:
+        data_scope = list(VALID_DATA_SCOPES)
     all_stock_snapshots   = state.get("stock_snapshots") or {}
     all_chunks            = state.get("chunks") or {}
     quant_signals         = state.get("quant_signals") or {}
@@ -299,6 +301,11 @@ below, not just the specific cases listed:
    as such. Never cite one signal as if it explains another unless the
    data actually shows a link (e.g. Momentum does not explain a
    valuation ratio).
+5. The data below was selected for this question and is all there is.
+   If the user asks about something that is not in it, say it was not
+   retrieved — do not answer from the snapshot instead. Price and market
+   cap do not establish whether a company is expensive, risky or well
+   run; those come from signals, and a signal that is absent is absent.
 
 FORMATTING NOTES FOR THE DATA BELOW (pre-filtered to this question's
 scope, so every rule here applies to something actually shown):

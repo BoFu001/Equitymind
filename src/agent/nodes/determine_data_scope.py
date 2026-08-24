@@ -24,9 +24,9 @@ rather than a loop.
 
 Both paths reach this node: SPECIFIC_STOCK / COMPARISON after tickers
 are extracted, and DISCOVERY after its candidate pool is built. The
-Discovery path used to bypass it, which meant data_scope was never set
-and fetch_data read the empty list as "fetch everything" — nine sources
-for every company in a pool that can run to a dozen or more.
+Discovery path used to bypass it, which left data_scope unset and sent
+fetch_data down its no-scope fallback — nine sources for every company
+in a pool that can run to a dozen or more.
 
 Scope is decided from the question, not from the ranking fields
 Discovery parsed out of it, because the two answer different questions.
@@ -73,11 +73,16 @@ def determine_data_scope(state: AgentState) -> dict:
     Classifies which of the 9 optional data sources/signals this
     question needs. Returns {"data_scope": [...]}.
 
-    Defaults to ALL 9 if the LLM call fails or returns
-    unparseable output — a full-analysis fallback is the safe
-    degradation here (matches current unconditional-fetch behavior),
-    not an empty list, since silently answering with less data than
-    available is worse than doing slightly more work than necessary.
+    Defaults to ALL 9 if the LLM call fails or returns unparseable
+    output — a full-analysis fallback matches the unconditional fetch
+    this node replaced, and answering with less than was available is
+    worse than doing more work than needed.
+
+    An empty list is not one of those cases. For a question the snapshot
+    already answers it is correct, and when it is wrong it is wrong
+    visibly: the report has nothing to work with and the user says so.
+    Fetching all nine when none were wanted is wrong invisibly — the
+    work happens, the answer reads the same, and nobody finds out.
     """
     writer = get_stream_writer()
     writer({"type": "progress", "node": "determine_data_scope", "message": NODE_PROGRESS["determine_data_scope"]})
@@ -106,6 +111,7 @@ Rules:
 - If the question asks for a full/complete/comprehensive analysis, or doesn't specify a narrow focus, select ALL 9.
 - If the question is narrow (e.g. only about analyst opinions, or only about recent news), select only the relevant one(s).
 - Company snapshot data (price, market cap, sector) is always included separately and should NOT be listed here.
+- Return an empty list when the snapshot already answers the question — "what is X trading at", "how big is X", "what sector is X in" need none of the nine.
 
 User question: {question}
 
@@ -116,7 +122,8 @@ Reply with ONLY valid JSON, a single key "data_scope" with a list of the applica
 {{"data_scope": ["valuation", "quality"]}}
 {{"data_scope": ["short"]}}
 {{"data_scope": ["sec_filing"]}}
-{{"data_scope": ["financial_history"]}}"""
+{{"data_scope": ["financial_history"]}}
+{{"data_scope": []}}"""
 
     response = client.chat.completions.create(
         model=LLM_MODEL_LIGHT,
@@ -136,15 +143,22 @@ Reply with ONLY valid JSON, a single key "data_scope" with a list of the applica
         gprint(f"  [determine_data_scope] Invalid JSON: {content}, defaulting to all signals")
         return {"data_scope": list(VALID_DATA_SCOPES)}
 
-    data_scope = data.get("data_scope", [])
+    raw_scope = data.get("data_scope", [])
     # Drop anything the model returned that isn't a recognized value,
     # rather than trusting it blindly — downstream fetch_data
     # dispatches on these strings directly.
-    data_scope = [s for s in data_scope if s in VALID_DATA_SCOPES]
+    data_scope = [s for s in raw_scope if s in VALID_DATA_SCOPES]
 
-    if not data_scope:
-        gprint(f"  [determine_data_scope] DEBUG raw content from LLM: {content}")
-        gprint(f"  [determine_data_scope] No valid signals parsed, defaulting to all signals")
+    # An empty list is an answer, not a failure. "What is Apple trading
+    # at" needs none of the nine — the price is in the snapshot, which
+    # is fetched regardless. Reading that as a parse failure fetched all
+    # nine instead: the same question asked three times on 2026-08-24
+    # took 17s, 18s and 10s, and eight of the nine went unused each time.
+    #
+    # Values that came back but none of them recognised is a different
+    # case: the model answered, and none of what it said applies here.
+    if raw_scope and not data_scope:
+        gprint(f"  [determine_data_scope] Nothing recognised in {raw_scope}, defaulting to all signals")
         return {"data_scope": list(VALID_DATA_SCOPES)}
 
     gprint(f"  [determine_data_scope] Data scope: {data_scope}")
