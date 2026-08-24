@@ -29,10 +29,31 @@ def update_session_memory(state: AgentState) -> dict:
     messages       = state.get("messages") or []
     session_memory = state.get("session_memory") or {}
 
+    # ── Update clarification state ──
+    # Clarifying is no longer an intent of its own — it is a state a
+    # Discovery request can be left in when discovery_preparation could
+    # not parse anything rankable out of it and asked a follow-up
+    # question. The flag is what tells the next turn's classifiers that
+    # a bare reply like "the cheapest ones" is still that request.
+    in_clarification = (
+        sub_intent == "DISCOVERY"
+        and not state.get("clarification_complete", False)
+    )
+
     # ── Append this turn to conversation history (single point of truth) ──
+    # The flag also goes onto the assistant's message. The session-level
+    # copy only holds the current value and is overwritten every turn,
+    # so it cannot say where the current clarification began — and
+    # discovery_preparation needs that boundary to know how much history
+    # a follow-up reply should be read against.
+    #
+    # It sits on the assistant's turn rather than the user's because
+    # only the answer knows the outcome: when the user speaks, whether
+    # the request will parse has not been decided yet.
     updated_messages = messages + [
         {"role": "user",      "content": question},
-        {"role": "assistant", "content": answer},
+        {"role": "assistant", "content": answer,
+         "in_clarification": in_clarification},
     ]
 
     # ── Get previoursly saved memory ──
@@ -42,16 +63,7 @@ def update_session_memory(state: AgentState) -> dict:
 
     structured["last_tickers"] = tickers
 
-    # ── Update clarification state ──
-    # Clarifying is no longer an intent of its own — it is a state a
-    # Discovery request can be left in when discovery_preparation could not
-    # parse anything rankable out of it and asked a follow-up question.
-    # The flag is what tells the next turn's classifiers that a bare
-    # reply like "the cheapest ones" is still that Discovery request.
-    if sub_intent == "DISCOVERY":
-        structured["in_clarification"] = not state.get("clarification_complete", False)
-    else:
-        structured["in_clarification"] = False
+    structured["in_clarification"] = in_clarification
 
     gprint(f"  [update_session_memory] in_clarification: {structured.get('in_clarification')}")
 

@@ -39,7 +39,7 @@ from typing import get_args
 
 from openai import OpenAI
 
-from config import OPENAI_API_KEY, APP_NAME, LLM_MODEL, CONVERSATION_HISTORY_LIMIT
+from config import OPENAI_API_KEY, APP_NAME, LLM_MODEL
 from langgraph.config import get_stream_writer
 from core.context import token_queue_var
 from src.agent.state import AgentState
@@ -51,6 +51,26 @@ from colors import gprint
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 FIELD_NAMES = list(get_args(VALID_FIELD_NAMES))
+
+
+def _current_exchange(messages: list) -> list:
+    """The turns since the last one that closed.
+
+    update_session_memory marks each assistant turn with whether it left
+    a Discovery request open. Everything after the most recent closed
+    turn is what the user is still working through; everything before it
+    was answered, or belonged to a different question altogether, and
+    the criteria in it are no longer theirs to be held to.
+
+    Scanning back to the start when nothing has closed is correct rather
+    than a fallback: a session that has only ever asked and re-asked is
+    one exchange, all of it current.
+    """
+    for i in range(len(messages) - 1, -1, -1):
+        msg = messages[i]
+        if msg.get("role") == "assistant" and not msg.get("in_clarification", False):
+            return messages[i + 1:]
+    return messages
 
 
 def _build_enriched_question(question: str, messages: list) -> str:
@@ -78,7 +98,11 @@ CONVERSATION (the last line is their newest message):
 
 Reply with ONLY the rewritten question."""
 
-    context = format_conversation_context(messages, CONVERSATION_HISTORY_LIMIT)
+    # No turn limit here. The exchange is already bounded by where it
+    # began, and a limit on top of that would drop the oldest turn
+    # first — which is the one that named the industry.
+    exchange = _current_exchange(messages)
+    context = format_conversation_context(exchange, len(exchange))
     full_context = context + f"USER: {question}\n"
 
     response = client.chat.completions.create(
@@ -357,23 +381,41 @@ def discovery_preparation(state: AgentState) -> dict:
     question = state["question"]
     messages = state.get("messages") or []
 
-    enriched_question = _build_enriched_question(question, messages)
-    gprint(f"  [discovery_preparation] enriched question: {enriched_question}")
+    session_memory   = state.get("session_memory") or {}
+    in_clarification = (session_memory.get("structured") or {}).get("in_clarification", False)
 
-    query = extract_discovery_query(enriched_question)
+    # Folding in the history is only right when the turn is an answer to
+    # a question this node asked. Then the reply is a fragment — "the
+    # cheapest ones" — and the industry it belongs to is one turn back.
+    #
+    # Doing it unconditionally carried the last exchange into every
+    # question after it. On 2026-08-24 "what is the stock with strongest
+    # growth rate" came back as "During the 2026 World Cup, which
+    # sport-related stock..." — an industry from three turns earlier and
+    # a phrase the user had explicitly dropped the turn before. The pool
+    # went from 250 companies to one, and the ranking that followed
+    # ranked nothing.
+    if in_clarification:
+        question_to_parse = _build_enriched_question(question, messages)
+        gprint(f"  [discovery_preparation] enriched question: {question_to_parse}")
+    else:
+        question_to_parse = question
+        gprint(f"  [discovery_preparation] new question, history not folded in")
+
+    query = extract_discovery_query(question_to_parse)
 
     if query.fields:
         gprint(f"  [discovery_preparation] executable — {len(query.fields)} field(s), industry={query.industry!r}")
         return {
             "clarification_complete": True,
-            "enriched_query":         enriched_question,
+            "enriched_query":         question_to_parse,
             "discovery_query":        query.model_dump(),
         }
 
     else:
         writer({"type": "sub_progress", "node": "discovery_preparation", "message": NODE_PROGRESS["discovery_preparation_sub"]})
 
-        clarifying_question = _ask_for_a_field(enriched_question)
+        clarifying_question = _ask_for_a_field(question_to_parse)
         _stream(clarifying_question)
 
         gprint(f"  [discovery_preparation] no rankable field — asking: {clarifying_question}")
@@ -405,19 +447,21 @@ if __name__ == "__main__":
     globals()["get_stream_writer"] = _fake_get_stream_writer
     globals()["token_queue_var"] = _FakeVar()
 
-    # Carrying messages forward is what makes a multi-turn exchange
-    # testable: a blocked turn is appended, so the next answer reaches
-    # _build_enriched_question with something to fold in.
-    # Carrying messages forward is what a multi-turn test needs: a blocked
-    # turn leaves its clarifying question behind for the next answer to
-    # fold into. It is exactly wrong for a repeated single-turn test,
-    # though — the same question asked twice is no longer the same input
-    # once a clarification sits in front of it. --isolate clears the
-    # history each turn, so one turn can be measured on its own.
+    # A blocked turn has to leave two things behind for the next one:
+    # the exchange itself, and the fact that it was a clarification.
+    # The node folds history in only when session_memory says the last
+    # turn ended on a question, so without that flag the multi-turn path
+    # is unreachable from here.
+    #
+    # Clearing both on an executable turn is what the graph does too:
+    # clarification_complete=True becomes in_clarification=False, and the
+    # next question starts clean. --isolate goes further and clears after
+    # every turn, so one question can be measured on its own.
     import sys as _sys
     isolate = "--isolate" in _sys.argv
 
     messages = []
+    in_clarification = False
 
     print("=== discovery_preparation ===")
     print("blank line to quit")
@@ -429,18 +473,32 @@ if __name__ == "__main__":
 
         if isolate:
             messages = []
+            in_clarification = False
 
-        result = discovery_preparation({"question": q, "messages": messages})
+        result = discovery_preparation({
+            "question":       q,
+            "messages":       messages,
+            "session_memory": {"structured": {"in_clarification": in_clarification}},
+        })
 
         print("\n--- RESULT ---")
         if result["clarification_complete"]:
             print("EXECUTABLE")
             print(f"  enriched_query:  {result['enriched_query']}")
             print(f"  discovery_query: {result['discovery_query']}")
-            messages = []
+            answer = "[executed]"
+            in_clarification = False
         else:
             print("BLOCKED")
-            messages = messages + [
-                {"role": "user", "content": q},
-                {"role": "assistant", "content": result["answer"]},
-            ]
+            answer = result["answer"]
+            in_clarification = True
+
+        # Nothing is cleared on an executable turn. The graph keeps the
+        # whole session and lets _current_exchange find where the last
+        # one closed — clearing here would mean the boundary is never
+        # exercised, which is the part worth testing.
+        messages = messages + [
+            {"role": "user",      "content": q},
+            {"role": "assistant", "content": answer,
+             "in_clarification": in_clarification},
+        ]
