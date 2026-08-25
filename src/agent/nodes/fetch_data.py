@@ -37,7 +37,6 @@ from src.readers.consensus_reader import get_consensus_snapshot, get_rating_coun
 from src.readers.news_reader import fetch_company_news
 from src.readers.financial_history_reader import get_financial_history_rows
 from src.readers.short_reader import get_short_inputs
-from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
 from src.agent.state import AgentState
 
 from langgraph.config import get_stream_writer
@@ -279,12 +278,11 @@ async def fetch_data(state: AgentState) -> dict:
     question = state.get("enriched_query") or state.get("contextualized_question") or state["question"]
     gprint(f"  [fetch_data] question: {question}")
     tickers = state.get("tickers") or []
-    # `is None`, not falsy: a missing key means determine_data_scope
-    # never ran and everything is still wanted, while an empty list is
-    # that node saying the snapshot covers this one on its own.
-    data_scope = state.get("data_scope")
-    if data_scope is None:
-        data_scope = list(VALID_DATA_SCOPES)
+    # No fallback for a missing key: the graph routes every path
+    # through determine_data_scope, so its absence would mean the graph
+    # itself was rewired, and a KeyError says that far more clearly than
+    # quietly fetching all nine would.
+    data_scope = state["data_scope"]
     gprint(f"  [fetch_data] data_scope: {data_scope}")
 
     all_stock_snapshots   = {}

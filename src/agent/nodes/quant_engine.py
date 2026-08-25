@@ -23,7 +23,7 @@ from colors import gprint, mprint
 from src.agent.state import AgentState
 from langgraph.config import get_stream_writer
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES, QUANT_SCOPES
+from src.agent.nodes.determine_data_scope import QUANT_SCOPES
 
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
@@ -60,9 +60,7 @@ def quant_engine(state: AgentState) -> dict:
         gprint("  [quant_engine] No market data available — skipping")
         return {"quant_signals": {}}
 
-    data_scope = state.get("data_scope")
-    if data_scope is None:
-        data_scope = list(VALID_DATA_SCOPES)
+    data_scope = state["data_scope"]
 
     # Read before the progress notification rather than after it. Every
     # branch below is gated on a scope, so when none of the seven are
