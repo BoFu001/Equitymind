@@ -55,17 +55,28 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 # excluded — see module docstring). Kept as a module-level constant so
 # the prompt and the post-response validation step (which drops any
 # value the model returns that isn't in this list) stay in sync.
-VALID_DATA_SCOPES = [
-    "sec_filing",
+# The scopes that produce a computed signal. quant_engine imports this
+# to know whether it has anything to do at all — deriving the split here
+# rather than keeping a second copy there, so adding a signal is one
+# edit and cannot leave the two lists disagreeing.
+QUANT_SCOPES = [
     "valuation",
     "momentum",
     "risk",
     "quality",
     "consensus",
     "news",
-    "financial_history",
     "short",
 ]
+
+# The scopes fetch_data retrieves and generate_report formats directly,
+# with no computation in between.
+PASSTHROUGH_SCOPES = [
+    "sec_filing",
+    "financial_history",
+]
+
+VALID_DATA_SCOPES = QUANT_SCOPES + PASSTHROUGH_SCOPES
 
 
 def determine_data_scope(state: AgentState) -> dict:
@@ -101,7 +112,7 @@ Available data sources:
 - momentum: 12-month price return and 52-week high/low position — for questions about price trend, momentum, or recent performance.
 - risk: Beta, Sharpe Ratio, Value at Risk, Max Drawdown — for questions about volatility, risk, or downside.
 - quality: Piotroski F-Score financial health checks — for questions about financial health, profitability trends, or fundamentals quality.
-- consensus: analyst recommendations, price targets, rating trend — for questions about what analysts think, price targets, or buy/sell ratings.
+- consensus: the analyst rating mean on a 1-5 scale, how many analysts sit at each rating, the mean/high/low target price, and how far the mean target is from the current price — for questions about what analysts think, price targets, or buy/sell ratings.
 - news: recent news sentiment — for questions about recent news, headlines, or media coverage.
 - financial_history: reported figures from the income statement, cash flow statement and balance sheet, by fiscal year and quarter — revenue, profit, EPS, assets, debt, cash flow, capital expenditure, dividends paid, and so on. Use this for any question naming a financial statement line item, whether for one period or across several.
 - short: short interest percentage, days to cover, and month-over-month change in shares sold short — for questions about short selling, whether a stock is heavily shorted, or short squeeze risk.
@@ -110,8 +121,9 @@ Rules:
 - Select ONLY the data sources the question actually needs to be answered well.
 - If the question asks for a full/complete/comprehensive analysis, or doesn't specify a narrow focus, select ALL 9.
 - If the question is narrow (e.g. only about analyst opinions, or only about recent news), select only the relevant one(s).
-- Company snapshot data (price, market cap, sector) is always included separately and should NOT be listed here.
-- Return an empty list when the snapshot already answers the question — "what is X trading at", "how big is X", "what sector is X in" need none of the nine.
+- A company snapshot is always included separately and must NOT be listed here. It holds one current figure for each of: company name, price, market cap, TTM revenue, profit margin, 52-week high, 52-week low, sector, industry, trailing EPS, dividend yield.
+- Return an empty list when the snapshot alone answers the question. "What is X trading at", "what is X's revenue", "what is X's profit margin", "what is X's EPS", "what is X's dividend yield", "what is X's 52-week high", "what sector is X in" need none of the nine — including the ones that sound like accounting figures. A margin or an EPS asked for on its own is the snapshot's single current number, not a trip to the financial statements.
+- Several of those figures also appear inside a signal, in a richer form. Take the signal only when the question asks for what the richer form adds — a period or a trend (financial_history), a comparison against peers (valuation), a rank against the universe (momentum). A bare current figure comes from the snapshot: "what is X's 52-week high" is the snapshot, "how close is X to its 52-week high" is momentum.
 
 User question: {question}
 

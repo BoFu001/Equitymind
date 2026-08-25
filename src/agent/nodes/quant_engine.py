@@ -23,7 +23,7 @@ from colors import gprint, mprint
 from src.agent.state import AgentState
 from langgraph.config import get_stream_writer
 from src.agent.nodes_notifications import NODE_PROGRESS
-from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
+from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES, QUANT_SCOPES
 
 from src.quant.valuation_signal import valuation_signal
 from src.quant.momentum_signal import momentum_signal
@@ -60,6 +60,20 @@ def quant_engine(state: AgentState) -> dict:
         gprint("  [quant_engine] No market data available — skipping")
         return {"quant_signals": {}}
 
+    data_scope = state.get("data_scope")
+    if data_scope is None:
+        data_scope = list(VALID_DATA_SCOPES)
+
+    # Read before the progress notification rather than after it. Every
+    # branch below is gated on a scope, so when none of the seven are
+    # present they all fall through — announcing "Running quantitative
+    # signals" first shows the user work that never happens. A scope of
+    # financial_history alone arrives here the same way an empty one
+    # does: neither produces a signal.
+    if not set(QUANT_SCOPES) & set(data_scope):
+        gprint("  [quant_engine] No signal in scope — skipping")
+        return {"quant_signals": {}}
+
     writer = get_stream_writer()
     writer({"type": "progress", "node": "quant_engine", "message": NODE_PROGRESS["quant_engine"]})
 
@@ -72,9 +86,6 @@ def quant_engine(state: AgentState) -> dict:
     all_short_inputs      = state.get("short_inputs") or {}
     all_quality_inputs    = state.get("quality_inputs") or {}
     all_consensus_inputs  = state.get("consensus_inputs") or {}
-    data_scope            = state.get("data_scope")
-    if data_scope is None:
-        data_scope = list(VALID_DATA_SCOPES)
 
     for ticker in stock_snapshots:
         gprint(f"  [quant_engine] Computing signals for {ticker}")
