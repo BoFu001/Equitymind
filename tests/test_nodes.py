@@ -10,6 +10,7 @@ from src.agent.nodes.handle_out_of_scope import handle_out_of_scope
 from src.agent.nodes.handle_greeting import handle_greeting
 from src.agent.nodes.generate_report import generate_report
 from src.agent.nodes.handle_no_ticker import handle_no_ticker
+from src.agent.nodes.determine_data_scope import VALID_DATA_SCOPES
 from src.agent.nodes.fetch_data import fetch_data
 import json
 
@@ -55,6 +56,10 @@ def make_state(**kwargs) -> AgentState:
         "stock_snapshots": None,
         "news": None,
         "answer": None,
+        # The graph always runs determine_data_scope before any node that
+        # reads this, so the nodes index it directly rather than falling
+        # back. Tests build state by hand and have to supply it too.
+        "data_scope": list(VALID_DATA_SCOPES),
     }
     defaults.update(kwargs)
     return defaults
