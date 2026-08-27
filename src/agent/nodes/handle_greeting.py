@@ -12,6 +12,7 @@ from core.context import token_queue_var
 from src.agent.state import AgentState
 from src.agent.nodes_notifications import NODE_PROGRESS
 from src.agent.formatters.conversation_formatter import format_conversation_context
+from src.agent.capabilities import CAPABILITIES
 from colors import gprint
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -31,12 +32,19 @@ def handle_greeting(state: AgentState) -> dict:
 
     prompt = f"""You are {APP_NAME}, a professional AI investment research assistant.
 
+WHAT YOU CAN BE ASKED:
+{CAPABILITIES}
+
 CONVERSATION HISTORY:
 {conversation_context}
 
 USER MESSAGE: {question}
 
-If this is the first message (no history) — introduce yourself warmly and explain what you can do.
+If this is the first message (no history) — greet them and show what they
+can ask, drawing on the questions above rather than naming features. The
+example questions are the useful part: someone reading the reply should be
+able to copy one and get a real answer back. Naming a capability ("news
+sentiment analysis") leaves them still guessing at the wording.
 If the user is saying thank you, well done, or giving positive feedback — respond naturally and briefly, then invite them to ask another question.
 If the user is saying goodbye — respond warmly and briefly.
 
@@ -48,7 +56,12 @@ Keep the response concise and contextual. Use markdown and emojis where appropri
     response = client.chat.completions.create(
         model=LLM_MODEL_LIGHT,
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.7,
+        # Low but not zero. These replies teach the user what the
+        # system does, and at 0.7 the list came back shorter or longer
+        # each time — two people asking the same thing learned different
+        # things about it. The wording still has to follow whatever
+        # language and tone the question arrived in, so not 0 either.
+        temperature=0.3,
         stream=True,
     )
 
