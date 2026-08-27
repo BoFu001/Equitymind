@@ -23,7 +23,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # ─────────────────────────────────────────────
 # LLM
 # ─────────────────────────────────────────────
-LLM_MODEL = "gpt-4o"
+LLM_MODEL = "gpt-5.2"
 LLM_MODEL_LIGHT = "gpt-4o-mini"  # for simple, low-stakes tasks (e.g. company name normalization) — cheaper/faster, no complex reasoning needed
 
 # ─────────────────────────────────────────────
