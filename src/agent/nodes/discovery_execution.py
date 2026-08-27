@@ -316,7 +316,7 @@ def compute_percentiles(values: dict[str, float], order: str) -> dict[str, float
 
     return percentiles
 
-def filter_complete_candidates(tickers: list[str], fields: list[RankField]) -> tuple[list[str], dict[str, dict[str, float]]]:
+def filter_complete_candidates(tickers: list[str], fields: list[RankField]) -> tuple[list[str], dict[str, dict[str, float]], dict[str, list[str]]]:
     """
     Before any ranking happens, keep only tickers that have a real value
     on EVERY field this query will use — like requiring both a language
@@ -338,20 +338,22 @@ def filter_complete_candidates(tickers: list[str], fields: list[RankField]) -> t
     iteration order.
     """
     if not fields:
-        return tickers, {}
+        return tickers, {}, {}
 
     eligible = set(tickers)
     field_values = {}
+    excluded_by_field = {}
     for field in fields:
         values = fetch_field_values(tickers, field.name)
         field_values[field.name] = values
-        missing = set(tickers) - set(values.keys())
+        missing = sorted(set(tickers) - set(values.keys()))
         if missing:
-            print(f"  [filter_complete_candidates] {field.name}: excluded {sorted(missing)} (missing this field)")
+            excluded_by_field[field.name] = missing
+            print(f"  [filter_complete_candidates] {field.name}: excluded {missing} (missing this field)")
         eligible &= set(values.keys())
 
     complete_tickers = [t for t in tickers if t in eligible]
-    return complete_tickers, field_values
+    return complete_tickers, field_values, excluded_by_field
 
 def group_fields_by_priority(fields: list[RankField]) -> list[list[RankField]]:
     """
@@ -378,12 +380,13 @@ def group_fields_by_priority(fields: list[RankField]) -> list[list[RankField]]:
     return stages
 
 
-def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
+def execute_stage(tickers: list[str], stage: list[RankField]) -> tuple[list[str], dict[str, list[str]]]:
     """
     Runs one stage of the ranking chain: given a candidate pool and the
     field(s) sharing this stage's priority, returns the resulting
     ordered ticker list, truncated by count if any field in the stage
-    specified one.
+    specified one, together with the tickers this stage dropped for
+    having no value, keyed by the field that dropped them.
 
     Single field: fetch real values, sort by order, done — no percentile
     math needed since there's nothing to average against.
@@ -404,9 +407,11 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
         values = fetch_field_values(tickers, field.name)
         ranked = sorted(values.keys(), key=lambda t: values[t], reverse=(field.order == "descending"))
         count = field.count
+        missing = sorted(set(tickers) - set(values.keys()))
+        excluded_by_field = {field.name: missing} if missing else {}
         print(f"  [execute_stage] single field: {field.name} ({field.order}) | pool: {len(tickers)} -> {len(values)} | count: {count} | top: {ranked[:3]}")
     else:
-        complete_tickers, field_values = filter_complete_candidates(tickers, stage)
+        complete_tickers, field_values, excluded_by_field = filter_complete_candidates(tickers, stage)
         all_percentiles = {}
         for field in stage:
             values = {t: field_values[field.name][t] for t in complete_tickers}
@@ -420,7 +425,74 @@ def execute_stage(tickers: list[str], stage: list[RankField]) -> list[str]:
         field_names = [f.name for f in stage]
         print(f"  [execute_stage] averaged fields: {field_names} | pool: {len(tickers)} -> {len(complete_tickers)} | count: {count} | top: {ranked[:3]}")
 
-    return ranked[:count] if count else ranked
+    # The exclusions ride along with the ranking. A company that never
+    # had a value for the field is absent from the result either way,
+    # and the count alone does not distinguish it from one that ranked
+    # last — the caller needs both to say what the ranking covered.
+    return (ranked[:count] if count else ranked), excluded_by_field
+
+
+def _build_note(
+    industry:     str | None,
+    pool_size:    int,
+    stages:       list[list[RankField]],
+    excluded:     dict[str, list[str]],
+    count_source: str,
+    returned:     int,
+) -> str:
+    """
+    Says how this node reached its answer, in the terms the user asked
+    the question in.
+
+    Everything here was already being printed to the terminal and thrown
+    away. A ranking reads the same whether it came from 250 companies or
+    from one, whether nineteen were dropped for having no P/E or none
+    were — and the report had no way to tell the difference. On
+    2026-08-24 a query for sport-related stocks matched a single company
+    and the answer still described it as the strongest of its kind.
+
+    Written for generate_report to read, not for the user to read
+    verbatim: the excluded tickers are named in full so the model can
+    answer "was X considered", and left to the model to decide how much
+    of it belongs in the reply.
+    """
+    noun  = "company" if pool_size == 1 else "companies"
+    scope = f"{pool_size} {noun} tagged {industry}" if industry else f"all {pool_size} {noun}"
+
+    if pool_size <= 1:
+        return (
+            f"The candidate pool was {scope} — too few to rank. "
+            f"Whatever is reported here was not selected against alternatives."
+        )
+
+    # Two shapes, and the difference matters to anyone reading the
+    # result. A single field is sorted on its own values, so the order
+    # is the order of that number. Fields sharing a stage are averaged
+    # by percentile rank, so a company can sit third while holding the
+    # highest raw value on one of them — which reads as a sorting error
+    # unless the averaging is stated.
+    described = []
+    for stage in stages:
+        if len(stage) == 1:
+            f = stage[0]
+            described.append(f"{f.name} ({f.order})")
+        else:
+            names = " and ".join(f"{f.name} ({f.order})" for f in stage)
+            described.append(f"the average of their percentile ranks on {names}")
+    criteria = " then ".join(described)
+
+    parts = [f"Ranked {scope} by {criteria}."]
+
+    if excluded:
+        for field_name, tickers in excluded.items():
+            parts.append(
+                f"{len(tickers)} were left out of the {field_name} ranking "
+                f"for having no value: {', '.join(tickers)}."
+            )
+
+    parts.append(f"{returned} returned — {count_source}.")
+
+    return " ".join(parts)
 
 
 def discovery_execution(state: AgentState) -> dict:
@@ -440,11 +512,19 @@ def discovery_execution(state: AgentState) -> dict:
         tickers = get_industry_tickers(query.industry)
         gprint(f"  [discovery_execution] industry={query.industry!r} -> {len(tickers)} tickers")
 
-    stages = group_fields_by_priority(query.fields)
-    stages_with_counts = determine_stage_counts(stages, len(tickers))
+    pool_size = len(tickers)
 
+    stages = group_fields_by_priority(query.fields)
+    stages_with_counts = determine_stage_counts(stages, pool_size)
+
+    # Accumulated across stages rather than read from the last one: a
+    # company dropped in stage one is already absent from stage two's
+    # pool, so the field that dropped it is the only record that it was
+    # ever a candidate.
+    excluded_by_field = {}
     for stage in stages_with_counts:
-        tickers = execute_stage(tickers, stage)
+        tickers, stage_excluded = execute_stage(tickers, stage)
+        excluded_by_field.update(stage_excluded)
 
     # Caps what leaves this node, not how it narrows. A count the user
     # gave wins; the slice returns fewer when the pool is smaller.
@@ -457,14 +537,28 @@ def discovery_execution(state: AgentState) -> dict:
     if query.final_count:
         gprint(f"  [discovery_execution] final_count={query.final_count} given by the user")
         tickers = tickers[:query.final_count]
+        count_source = f"you asked for {query.final_count}"
     else:
         if user_count == adopted_count:
             gprint(f"  [discovery_execution] no final_count; last stage kept the user's count of {user_count}")
             tickers = tickers[:user_count]
+            count_source = f"you asked for {user_count}"
         else:
             gprint(f"  [discovery_execution] no usable count from the user (asked {user_count}, ran {adopted_count}) — capping at {DEFAULT_FINAL_COUNT}")
             tickers = tickers[:DEFAULT_FINAL_COUNT]
-    return {"tickers": tickers}
+            count_source = f"no number was asked for, so the top {DEFAULT_FINAL_COUNT} are shown"
+
+    note = _build_note(
+        industry     = query.industry,
+        pool_size    = pool_size,
+        stages       = stages_with_counts,
+        excluded     = excluded_by_field,
+        count_source = count_source,
+        returned     = len(tickers),
+    )
+    gprint(f"  [discovery_execution] note: {note}")
+
+    return {"tickers": tickers, "discovery_note": note}
 
 
 if __name__ == "__main__":

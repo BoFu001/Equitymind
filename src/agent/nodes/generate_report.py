@@ -164,6 +164,7 @@ def generate_report(state: AgentState) -> dict:
     tickers               = state.get("tickers") or []
     messages              = state.get("messages") or []
     data_scope            = state["data_scope"]
+    discovery_note        = state.get("discovery_note")
     all_stock_snapshots   = state.get("stock_snapshots") or {}
     all_chunks            = state.get("chunks") or {}
     quant_signals         = state.get("quant_signals") or {}
@@ -247,6 +248,12 @@ def generate_report(state: AgentState) -> dict:
         f"QUANTITATIVE SIGNALS:\n{quant_context}\n\n"
         if quant_context else ""
     )
+    # Only a Discovery request has one; every other path leaves it unset
+    # and this section disappears.
+    discovery_section = (
+        f"SELECTION SCOPE (say this in your answer):\n{discovery_note}\n\n"
+        if discovery_note else ""
+    )
     sec_section = (
         f"SEC FILING DATA:\n{sec_context}"
         if sec_context else ""
@@ -263,7 +270,7 @@ Let the question determine the length and format of your response:
 - Simple factual question (e.g. "What is the P/E ratio?", "What about the risk?") → answer in 1-3 sentences with the relevant numbers. No headers, no tables.
 - Request for full analysis (e.g. "Analyse NVDA", "Give me a full report on AAPL") → generate a comprehensive structured report with headers, tables, and sections.
 - Comparison request (e.g. "Compare NVDA and AMD") → generate a structured side-by-side comparison.
-- Discovery request (e.g. "Find me a low risk stock") → rank and recommend from the candidates with real data.
+- Discovery request (e.g. "Find me a low risk stock") → rank and recommend from the candidates with real data, and open by saying what the ranking covered: how many companies it started from and what it sorted on.
 
 Always use specific numbers from the data. Never be vague.
 Always include ALL tickers in the response — never drop any company from the analysis.
@@ -298,7 +305,18 @@ below, not just the specific cases listed:
    as such. Never cite one signal as if it explains another unless the
    data actually shows a link (e.g. Momentum does not explain a
    valuation ratio).
-5. The data below was selected for this question and is all there is.
+5. When a SELECTION SCOPE section appears, the answer
+   must say what the ranking covered — how many companies it started
+   from and what it sorted on — even when the rest of the answer runs
+   to two sentences. A ranking presented without its scope reads as
+   though it were the only possible answer.
+   The rest of that section is there to draw on where it bears on the
+   question, not to recite. Name the excluded companies when asked
+   whether a particular one was considered. Say the pool was too small
+   to rank when the note says so, rather than describing the result as
+   the strongest or cheapest of its kind. And never call these
+   companies ones the user mentioned — the system selected them.
+6. The data below was selected for this question and is all there is.
    If the user asks about something that is not in it, say it was not
    retrieved — do not answer from the snapshot instead. Price and market
    cap do not establish whether a company is expensive, risky or well
@@ -322,7 +340,7 @@ CONVERSATION HISTORY:
 COMPANY SNAPSHOT:
 {snapshot_context}
 
-{financial_history_section}{quant_section}{sec_section}"""
+{discovery_section}{financial_history_section}{quant_section}{sec_section}"""
 
     queue = token_queue_var.get()
     answer = ""
