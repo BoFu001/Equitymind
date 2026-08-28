@@ -1,5 +1,18 @@
 # equitymind-core
 
+[![Live Demo](https://img.shields.io/badge/Live-EquityMind-22d3ee?logo=vercel&logoColor=white)](https://equitymind-web.vercel.app)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Agent%20Graph-8b5cf6)](https://langchain-ai.github.io/langgraph/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-WebSocket-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Bo%20Fu-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bofu/)
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
+![OpenAI](https://img.shields.io/badge/LLM-gpt--5.2-412991?logo=openai&logoColor=white)
+![SEC EDGAR](https://img.shields.io/badge/Data-SEC%20EDGAR-2f6f4e)
+![Kestra](https://img.shields.io/badge/Orchestration-Kestra-a855f7)
+![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?logo=railway&logoColor=white)
+![MSc](https://img.shields.io/badge/INM363-MSc%20Dissertation-6d28d9)
+
 The backend of EquityMind: an agentic RAG system that answers plain-English
 questions about US-listed equities with retrieved filings, computed
 quantitative signals, and an explicit account of where each answer came from.
@@ -385,3 +398,7 @@ Established over the life of the project, and worth keeping:
 - Code and comments in English throughout.
 - Patches are applied as Python here-documents with an `assert old in s` guard
   and an immediate `ast.parse` check.
+
+---
+
+© 2026 Bo Fu. All rights reserved.
