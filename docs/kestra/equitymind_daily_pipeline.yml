@@ -1,0 +1,204 @@
+id: equitymind_daily_pipeline
+namespace: equitymind
+
+triggers:
+  - id: daily_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 4 * * *"
+    timezone: "Europe/London"
+
+tasks:
+  # ─────────────────────────────────────────────────────────────
+  # Stage 1: stock_universe — membership plus every column on it.
+  # Must run first: financial_history and quant_signals both read
+  # the universe list, so a stale universe here means new tickers
+  # wait an extra day for financial/quant data.
+  #
+  # Within this stage the order is not arbitrary. Each script's
+  # trigger is followed by a wait that polls until the run reports
+  # success, so nothing starts before its predecessor has finished
+  # — Kestra owns this ordering, equitymind-core knows nothing
+  # about it (see api/routes/pipeline.py's module docstring).
+  # ─────────────────────────────────────────────────────────────
+
+  - id: trigger_stock_universe
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/build_stock_universe
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_stock_universe
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_stock_universe.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 180
+    tasks:
+      - id: check_stock_universe
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_stock_universe.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: trigger_common_names
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/update_common_names
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_common_names
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_common_names.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 60
+    tasks:
+      - id: check_common_names
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_common_names.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: trigger_peer_groups
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/update_peer_groups
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_peer_groups
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_peer_groups.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 60
+    tasks:
+      - id: check_peer_groups
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_peer_groups.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: trigger_stock_overviews
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/update_stock_overviews
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_stock_overviews
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_stock_overviews.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 180
+    tasks:
+      - id: check_stock_overviews
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_stock_overviews.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  # Tags are extracted from overview_text, so this must follow
+  # stock_overviews. Getting the order wrong costs a day, not
+  # correctness: tags_filing_date stays divergent from
+  # overview_filing_date until a later run catches up. Usually a
+  # no-op — with no new 10-K it is one query and exits in under a
+  # second — so maxIterations only needs to cover the rare full
+  # re-tag of the whole universe.
+
+  - id: trigger_industry_tags
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/update_industry_tags
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_industry_tags
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_industry_tags.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 120
+    tasks:
+      - id: check_industry_tags
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_industry_tags.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  # ─────────────────────────────────────────────────────────────
+  # Stage 2: momentum benchmarks, financial history, quant
+  # signals. Unchanged, and independent of the tag work above —
+  # it runs here only because the universe must be current first.
+  # ─────────────────────────────────────────────────────────────
+
+  - id: trigger_momentum_benchmarks
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/update_momentum_benchmarks
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_momentum_benchmarks
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_momentum_benchmarks.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 90
+    tasks:
+      - id: check_momentum_benchmarks
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_momentum_benchmarks.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: trigger_financial_history
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/update_financial_history
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_financial_history
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_financial_history.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 180
+    tasks:
+      - id: check_financial_history
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_financial_history.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: trigger_quant_signals
+    type: io.kestra.plugin.core.http.Request
+    uri: https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/update_quant_signals
+    method: POST
+    headers:
+      x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
+
+  - id: wait_for_quant_signals
+    type: io.kestra.plugin.core.flow.LoopUntil
+    condition: "{{ outputs.check_quant_signals.body | jq('.status') | first == 'success' }}"
+    checkFrequency:
+      interval: PT10S
+      maxIterations: 180
+    tasks:
+      - id: check_quant_signals
+        type: io.kestra.plugin.core.http.Request
+        uri: "https://equitymind-core.up.railway.app/api/v1/internal/run-pipeline/{{ (outputs.trigger_quant_signals.body | jq('.run_id') | first) }}"
+        method: GET
+        headers:
+          x-pipeline-secret: "{{ secret('PIPELINE_TRIGGER_SECRET') }}"
