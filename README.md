@@ -2,16 +2,16 @@
 
 [![Live Demo](https://img.shields.io/badge/Live-EquityMind-22d3ee?logo=vercel&logoColor=white)](https://equitymind-web.vercel.app)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Agent%20Graph-8b5cf6)](https://langchain-ai.github.io/langgraph/)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Agent%20Graph-818cf8)](https://langchain-ai.github.io/langgraph/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-WebSocket-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Bo%20Fu-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bofu/)
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-4169E1?logo=postgresql&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/LLM-gpt--5.2-412991?logo=openai&logoColor=white)
-![SEC EDGAR](https://img.shields.io/badge/Data-SEC%20EDGAR-2f6f4e)
-![Kestra](https://img.shields.io/badge/Orchestration-Kestra-a855f7)
-![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?logo=railway&logoColor=white)
-![MSc](https://img.shields.io/badge/INM363-MSc%20Dissertation-6d28d9)
+![SEC EDGAR](https://img.shields.io/badge/Data-SEC%20EDGAR-a78bfa)
+![Kestra](https://img.shields.io/badge/Orchestration-Kestra-c084fc)
+![Railway](https://img.shields.io/badge/Deploy-Railway-6b7280?logo=railway&logoColor=white)
+![MSc](https://img.shields.io/badge/INM363-MSc%20Dissertation-e879f9)
 
 The backend of EquityMind: an agentic RAG system that answers plain-English
 questions about US-listed equities with retrieved filings, computed
