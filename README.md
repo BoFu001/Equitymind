@@ -34,10 +34,16 @@ Every request enters the graph at `contextualize_question` and leaves at
 `update_session_memory`. Between those two, the route depends on what the
 question turns out to be.
 
-![Agent graph](docs/img/graph.png)
+<p align="center">
+  <img src="docs/img/graph.png" width="720">
+</p>
 
-Regenerate after changing the graph — the image is rendered from
-`graph.py` itself, so it cannot drift from the code:
+<p align="center">
+  <em>Figure 1. The agent graph, rendered from <code>graph.py</code>.</em>
+</p>
+
+Regenerate after changing the graph — the image comes from the compiled graph
+itself, so it cannot drift from the code:
 
 ```bash
 python3 -c "
@@ -46,9 +52,9 @@ open('docs/img/graph.png','wb').write(equitymind_graph.get_graph().draw_mermaid_
 "
 ```
 
-`draw_mermaid_png()` renders through mermaid.ink, so it needs network
-access. `draw_mermaid()` returns the diagram source as text instead, which
-can be pasted into any Mermaid renderer.
+`draw_mermaid_png()` renders through mermaid.ink and needs network access.
+`draw_mermaid()` returns the diagram source as text instead, which can be
+pasted into any Mermaid renderer.
 
 Four things about this shape are worth knowing before changing it.
 
@@ -82,57 +88,116 @@ on every path, not only the analytical ones.
 
 ---
 
-## Layout
+## Project Structure
 
+```bash
+equitymind-core/
+├── api/                                   # FastAPI app — all routes under /api/v1
+│   ├── main.py                            # app setup, router registration
+│   ├── auth.py                            # API key verification
+│   ├── schemas.py                         # request / response models
+│   └── routes/
+│       ├── query.py                       # WS   /query/stream — main path, streams tokens
+│       ├── research.py                    # POST /query/sync — blocking, for batch scripts
+│       ├── pipeline.py                    # /internal/run-pipeline/* — what Kestra calls
+│       └── health.py                      # GET  /health
+├── core/                                  # cross-layer plumbing — imports nothing from api/ or src/
+│   └── context.py                         # per-request token queue (ContextVar)
+├── src/
+│   ├── agent/
+│   │   ├── graph.py                       # graph construction and routing
+│   │   ├── state.py                       # AgentState (TypedDict)
+│   │   ├── capabilities.py                # capability list shared by the three handlers
+│   │   ├── discovery_types.py             # DiscoveryQuery, RankField, field vocabulary
+│   │   ├── nodes_notifications.py         # per-node progress strings
+│   │   ├── nodes/
+│   │   │   ├── contextualize_question.py  # rewrite the question from session history
+│   │   │   ├── classify_top_intent.py     # TASK / CONCEPT / GREETING / OUT_OF_SCOPE
+│   │   │   ├── classify_sub_intent.py     # DISCOVERY / SPECIFIC_STOCK / COMPARISON / ...
+│   │   │   ├── discovery_preparation.py   # the gate — parse, or ask for a rankable field
+│   │   │   ├── discovery_execution.py     # multi-stage ranked filtering, discovery note
+│   │   │   ├── discovery_counts.py        # how many tickers each stage passes on
+│   │   │   ├── extract_tickers.py         # ticker(s) from the question
+│   │   │   ├── determine_data_scope.py    # which of the nine sources this question needs
+│   │   │   ├── fetch_data.py              # retrieve only what the scope named
+│   │   │   ├── quant_engine.py            # run the signals over fetched data
+│   │   │   ├── generate_report.py         # the answer — streamed, seven display rules
+│   │   │   ├── explain_concept.py         # general finance questions
+│   │   │   ├── handle_greeting.py         # greeting + what the system can do
+│   │   │   ├── handle_no_ticker.py        # no company could be identified
+│   │   │   ├── handle_out_of_scope.py     # outside equities research
+│   │   │   └── update_session_memory.py   # terminal node on every path
+│   │   └── formatters/                    # retrieved data -> prompt text, one per source
+│   │       ├── snapshot_formatter.py
+│   │       ├── valuation_formatter.py
+│   │       ├── momentum_formatter.py
+│   │       ├── risk_formatter.py
+│   │       ├── quality_formatter.py
+│   │       ├── consensus_formatter.py
+│   │       ├── short_formatter.py
+│   │       ├── news_sentiment_formatter.py
+│   │       ├── sec_formatter.py
+│   │       ├── financial_history_formatter.py
+│   │       ├── quant_signals_formatter.py
+│   │       └── conversation_formatter.py
+│   ├── quant/                             # signal computation — pure functions, no I/O
+│   │   ├── valuation_signal.py            # P/E, P/B against the FMP peer median
+│   │   ├── momentum_signal.py             # 12-1 momentum, 52-week position
+│   │   ├── risk_signal.py                 # beta, Sharpe, VaR, max drawdown
+│   │   ├── quality_signal.py              # Piotroski F-Score
+│   │   ├── consensus_signal.py            # analyst ratings and target prices
+│   │   ├── short_signal.py                # short interest, days to cover
+│   │   ├── news_sentiment_signal.py       # FinBERT — never cached, always live
+│   │   └── *_signal_config.py             # thresholds for risk / quality / consensus / short
+│   ├── readers/                           # data access — one reader per source or table
+│   │   ├── snapshot_reader.py
+│   │   ├── valuation_reader.py
+│   │   ├── momentum_reader.py
+│   │   ├── risk_reader.py
+│   │   ├── quality_reader.py
+│   │   ├── consensus_reader.py
+│   │   ├── short_reader.py
+│   │   ├── news_reader.py
+│   │   ├── sec_reader.py
+│   │   └── financial_history_reader.py
+│   └── sec_pipeline/                      # 10-K ingestion
+│       ├── sec_downloader.py              # fetch and section a filing
+│       ├── sec_types.py                   # chunk types
+│       ├── embedder.py                    # OpenAI embeddings
+│       └── pgvector_store.py              # write and query sec_chunks
+├── scripts/
+│   ├── init_db_*.py                       # schema creation, five tables, idempotent
+│   ├── build_stock_universe.py            # 1. membership, market cap, company name
+│   ├── update_common_names.py             # 2. short news-headline name
+│   ├── update_peer_groups.py              # 3. FMP peer group
+│   ├── update_stock_overviews.py          # 4. 10-K Item 1 -> business overview
+│   ├── update_industry_tags.py            # 5. overview -> industry tags
+│   ├── update_momentum_benchmarks.py      # 6. momentum, 52-week position
+│   ├── update_financial_history.py        # 7. 33 metrics, annual + quarterly
+│   ├── update_quant_signals.py            # 8. six signals, precomputed
+│   └── filing_check.py                    # shared module, not a pipeline step
+├── docs/
+│   ├── data-pipeline-reference.md         # authoritative pipeline documentation
+│   ├── img/graph.png                      # generated from graph.py
+│   └── kestra/                            # copy of the flow definition — not the live one
+├── tests/
+│   ├── test_quant.py                      # signal functions
+│   ├── test_nodes.py                      # graph nodes
+│   ├── test_api.py                        # HTTP layer
+│   └── websocket_debug_tool.py            # exercise the streaming path without a browser
+├── config.py                              # model names, env vars, tuning constants
+├── colors.py                              # gprint / mprint — coloured node output
+├── conftest.py                            # pytest configuration
+├── railway.toml                           # deployment configuration
+└── requirements.txt
 ```
-api/            FastAPI application, all routes under /api/v1
-  routes/
-    query.py        WS   /query/stream         main path, streams tokens
-    research.py     POST /query/sync           same graph, one blocking
-                                               response. Used by the batch
-                                               experiment scripts.
-    pipeline.py     POST /internal/run-pipeline/{script_name}
-                    GET  /internal/run-pipeline/{run_id}
-                                               what Kestra calls. Guarded by
-                                               the x-pipeline-secret header
-                                               and an ALLOWED_SCRIPTS
-                                               whitelist.
-    health.py       GET  /health
-  auth.py       API key verification
-  schemas.py    Request/response models
 
-core/           Cross-layer plumbing. Imports nothing from api/ or src/.
-  context.py      ContextVar carrying the per-request token queue, so agent
-                  nodes can stream tokens out to a WebSocket handler in
-                  another layer without putting live objects in AgentState.
-
-src/
-  agent/
-    graph.py            Graph construction and routing
-    state.py            AgentState (TypedDict)
-    capabilities.py     Shared capability list for the three conversational
-                        handlers, phrased as copyable example questions
-    nodes_notifications.py  Progress strings pushed to the client per node
-    discovery_types.py  DiscoveryQuery, RankField, the valid field vocabulary
-    nodes/              One file per node. Nodes own progress notifications
-                        and state; they call readers and quant functions but
-                        contain no retrieval or maths themselves.
-    formatters/         Turn retrieved data into the text blocks that go into
-                        the report prompt. One per signal or data source.
-  quant/          Signal computation. Pure functions over already-fetched
-                  data — no database, no LangGraph, no network.
-  readers/        Data access. One reader per source/table.
-  sec_pipeline/   10-K download, chunking, embedding, pgvector storage
-
-scripts/        Database initialisation and the eight daily pipeline scripts.
-                filing_check.py is NOT a script — it is a shared module
-                (is_usd_reporter, files_20f_only) that build_stock_universe.py
-                and update_peer_groups.py import.
-docs/           Pipeline reference and a copy of the Kestra flow definition
-tests/          pytest suite, plus a WebSocket debug client
-config.py       Model names, environment variables, tuning constants
-colors.py       gprint / mprint — coloured console output used by nodes
-```
+Nodes are listed in the order a request passes through them, not
+alphabetically. The eight numbered scripts run in that order daily; only three
+of those orderings are load-bearing (see below). `filing_check.py` sits among
+them but is not a pipeline step — it is a shared module (`is_usd_reporter`,
+`files_20f_only`) that keeps the universe to US-reporting, 10-K-filing
+companies.
 
 The `agent → readers → quant → formatters` separation is deliberate and load
 bearing: **RAG handles fact retrieval, quant handles signal computation, and
@@ -320,37 +385,3 @@ Established over the life of the project, and worth keeping:
 - Code and comments in English throughout.
 - Patches are applied as Python here-documents with an `assert old in s` guard
   and an immediate `ast.parse` check.
-
----
-
-## Not in this repository
-
-`research/` is local-only and not committed. It holds the experiment scripts,
-frozen baselines and result files behind the design decisions above —
-including the embedding snapshot taken before `overview_embedding` was dropped,
-which is the only copy that exists.
-
-<!--
-Known documentation drift, found 2026-08-28. None of it affects behaviour;
-all of it misleads a reader:
-
-- init_db_stock_universe.py says the table is updated "every few months" —
-  daily since 2026-08-14.
-- filing_check.py says files_20f_only serves "sector overview embeddings" —
-  embeddings were dropped 2026-08-17; the real reason is that a 20-F has no
-  Item 1 to summarise at all.
-- update_momentum_benchmarks.py suggests running monthly and refers to
-  peer_benchmarks.json, which no longer exists.
-- update_common_names.py says it does not touch updated_at; that column was
-  dropped 2026-08-17.
-- init_db_quant_signals.py says quality_period_end lets the updater skip
-  recomputing Quality — that skip was removed 2026-08-10 and every ticker is
-  recomputed on every run.
-
-Also worth a look: update_common_names.py uses LLM_MODEL for
-"Tesla, Inc." -> "Tesla". update_industry_tags.py uses LLM_MODEL_LIGHT for a
-comparable restatement task and says why. If the difference is unintentional,
-the light model is the right one here.
-
-Delete this comment block once the above are addressed or recorded elsewhere.
--->
