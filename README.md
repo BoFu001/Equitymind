@@ -34,41 +34,21 @@ Every request enters the graph at `contextualize_question` and leaves at
 `update_session_memory`. Between those two, the route depends on what the
 question turns out to be.
 
+![Agent graph](docs/img/graph.png)
+
+Regenerate after changing the graph — the image is rendered from
+`graph.py` itself, so it cannot drift from the code:
+
+```bash
+python3 -c "
+from src.agent.graph import equitymind_graph
+open('docs/img/graph.png','wb').write(equitymind_graph.get_graph().draw_mermaid_png())
+"
 ```
-__start__
-    ↓
-contextualize_question          rewrite the question using session history
-    ↓
-classify_top_intent             TASK / CONCEPT / GREETING / OUT_OF_SCOPE
-    ↓
-   ┌─────────────┬──────────────┬─────────────┬──────────────┐
-   ↓             ↓              ↓             ↓              ↓
-classify_sub_intent      explain_concept  handle_greeting  handle_out_of_scope
-   ↓
-   ├── DISCOVERY ──→ discovery_preparation ──→ discovery ──┐
-   │                          │                            │
-   │                  (nothing rankable —                  │
-   │                   asks a follow-up,                   │
-   │                   turn ends here)                     │
-   │                          │                            │
-   └── SPECIFIC_STOCK / COMPARISON ──→ extract ────────────┤
-                                  │                        │
-                          (no ticker found)                │
-                                  ↓                        ↓
-                            no_ticker           determine_data_scope
-                                  │                        ↓
-                                  │                   fetch_data
-                                  │                        ↓
-                                  │                   quant_engine
-                                  │                        ↓
-                                  │                  generate_report
-                                  │                        │
-                                  └───────────┬────────────┘
-                                              ↓
-                                   update_session_memory
-                                              ↓
-                                           __end__
-```
+
+`draw_mermaid_png()` renders through mermaid.ink, so it needs network
+access. `draw_mermaid()` returns the diagram source as text instead, which
+can be pasted into any Mermaid renderer.
 
 Four things about this shape are worth knowing before changing it.
 
