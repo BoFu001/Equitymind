@@ -294,9 +294,8 @@ exhausted, timeout, killed process. Nothing to repair.
 incomplete `financial_history`. `update_quant_signals.py` recomputes every
 ticker on every run and keeps no record of which inputs it used, so a Quality
 score derived from a half-written `financial_history` looks exactly like a
-correct one and stays wrong until the next daily run overwrites it. This is
-the failure mode behind the open issue in section 7, and the reason the Stage
-2 sequence is enforced strictly rather than by convention.
+correct one and stays wrong until the next daily run overwrites it. This is why the
+Stage 2 sequence is enforced strictly rather than by convention.
 
 The general shape: **a step that records what its output was derived from can
 recover on its own; a step that just overwrites cannot.** Worth keeping in
@@ -404,7 +403,7 @@ the original three.
 | `wait_for_industry_tags` | 120 | 20 min | Added 2026-08-17. Normally a no-op finishing in under a second. The timeout only needs to cover the rare full re-tag, which took roughly 15 min for 243 tickers. |
 | `wait_for_momentum_benchmarks` | 90 | 15 min | Unchanged from 2026-08-10. |
 | `wait_for_financial_history` | 180 | 30 min | Unchanged. Actual run time ~13 min on Railway (throttle=2s). |
-| `wait_for_quant_signals` | 180 | 30 min | Unchanged. Actual run time ~17 min under normal conditions — but see section 7 for a case where a transient yfinance rate limit pushed a run to 63/250 succeeded. |
+| `wait_for_quant_signals` | 180 | 30 min | Unchanged. Actual run time ~17 min under normal conditions — see the known issue below for a run that a transient yfinance rate limit pushed to 63/250 succeeded. |
 
 `update_industry_tags.py` calls no rate-limited third-party data API — only
 OpenAI, and only for tickers whose overview actually changed — so it adds
@@ -570,39 +569,6 @@ tag, so check the target against the current vocabulary first.
 
 ## 7. Known issues
 
-### Premature success status
-
-*Open since 2026-08-10, not re-investigated 2026-08-17.*
-
-**Symptom:** on a manually-triggered run on 2026-08-10, Railway logs showed
-`update_financial_history.py` and `update_quant_signals.py` progress lines
-interleaved — quant_signals began roughly 2 minutes before financial_history
-had reached 250/250 and printed its finished-with-status-success line.
-
-**Why this matters:** quant_signals reads from financial_history for the
-Quality signal. If it starts before financial_history has finished writing all
-250 tickers, some tickers' Quality scores may be computed from a stale
-snapshot within the same run.
-
-**Not yet resolved:** the root cause is suspected to be in how
-`equitymind-core` tracks a script's actual completion state (proxy signal vs.
-true process exit code). The timeout increases applied on 2026-08-10 remain
-the only mitigation. When in doubt, cross-check row counts and timestamps
-directly:
-
-```sql
-SELECT COUNT(*), MIN(valuation_computed_at), MAX(valuation_computed_at) FROM quant_signals;
-SELECT COUNT(DISTINCT ticker), MIN(updated_at), MAX(updated_at) FROM financial_history;
-SELECT COUNT(*), MIN(updated_at), MAX(updated_at) FROM momentum_benchmarks;
-```
-
-If this affects `update_industry_tags.py` the consequence is mild and
-self-correcting: it would read `overview_text` mid-write and tag a company
-from its previous overview, leaving `tags_filing_date` matching the new
-`overview_filing_date` and the divergence check satisfied. The stale tags
-would persist until that company files again. Worth checking against this
-specific failure if a company's tags ever look inconsistent with its overview.
-
 ### Transient yfinance rate limiting during quant_signals
 
 *Observed 2026-08-14, not yet a recurring pattern.*
@@ -616,48 +582,3 @@ already throttles per-ticker but this failure occurred in `quant_signals`,
 which has its own separate call pattern (`get_stock_snapshot`,
 `get_valuation_inputs`, `get_momentum_inputs`, `get_risk_inputs`, etc. per
 ticker).
-
-### `stock_universe_backup` still present
-
-*Created 2026-08-17.*
-
-The 2026-08-17 schema change rebuilt `stock_universe` rather than altering it
-in place: the old table was renamed `stock_universe_backup`,
-`init_db_stock_universe.py` created the new one, and the data was copied
-across and verified (250 rows, symmetric difference of zero on all seven
-shared columns). Nothing reads the backup. Drop it once the daily flow has run
-cleanly for a few days:
-
-```sql
-DROP TABLE stock_universe_backup;
-```
-
-### Tag extraction can reach past the classification sentence
-
-*Open, found 2026-08-17.*
-
-The extraction prompt asks for the tags named in the overview's closing
-classification sentence. Five companies are confirmed to have picked up tags
-from elsewhere in the overview: ETN (17 tags, of which the classification
-sentence names four — the rest are business segment names and served markets),
-WAT, CRWD, MSTR and SNOW.
-
-The rate across the universe is not known. A first attempt at measuring it —
-checking whether each tag appears in the overview's last two sentences —
-produced 59/243, but that figure is unusable: several companies came back with
-every tag flagged, which happens because their classification sentence sits
-earlier than the last two. **Treat the five confirmed cases as a floor, not an
-estimate.**
-
-Two prompt revisions were tested against the five affected companies plus four
-controls with independently verified tags. Both fixed the treatment cases and
-both damaged the controls — the first dropped three of KLAC's eight verified
-tags, the second inflated every control (HOOD 4 → 9 tags) and rewrote
-`semiconductor` as `semiconductor capital equipment industry`, which breaks
-exact lookup outright. Neither was adopted.
-
-The practical impact is mostly harmless: the extra tags are almost all
-single-company entries that no realistic query would select. The exception
-worth knowing about is a company being tagged with industries it *serves*
-rather than *belongs to* — SNOW carries `healthcare`, `financial services` and
-`retail` for this reason, and so appears in the 24-company healthcare result.
