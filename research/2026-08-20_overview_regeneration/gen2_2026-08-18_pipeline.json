@@ -1,0 +1,135 @@
+{
+  "AAPL": {
+    "overview_text": "Apple Inc. is a prominent technology company known for designing, manufacturing, and marketing a wide range of consumer electronics and related services. Its core business lines include smartphones, personal computers, tablets, wearables, and accessories, with flagship products such as the iPhone, Mac, iPad, and Apple Watch. Apple also offers a variety of services, including advertising, AppleCare, cloud services, digital content platforms like the App Store, and payment services such as Apple Pay and Apple Card.\n\nDespite holding a minority market share in the global smartphone, personal computer, tablet, and wearables markets, Apple is widely recognized as a leader in innovation and design. The company is often associated with high-quality, premium products and a strong ecosystem of hardware, software, and services. Public perception of Apple is largely positive, with the brand being synonymous with cutting-edge technology and sleek design.\n\nApple operates in highly competitive markets characterized by rapid technological advancements and aggressive pricing strategies from competitors. The company is classified under several industry themes, including technology, consumer electronics, e-commerce, and cloud computing. Known for its strong emphasis on research and development, Apple continues to focus on expanding its market opportunities and maintaining its reputation for innovation.",
+    "llm_tags": [
+      "technology",
+      "consumer electronics",
+      "e-commerce",
+      "cloud computing"
+    ]
+  },
+  "ADBE": {
+    "overview_text": "Adobe Inc. is a leading technology company renowned for its innovative software solutions that empower creativity and productivity across various media types and channels. With a mission to enable everyone to create, Adobe offers a comprehensive suite of tools and platforms that cater to business professionals, consumers, creators, and marketing professionals. Its flagship products, such as Adobe Acrobat, Photoshop, Illustrator, and Premiere Pro, are integral to the creative and digital content industries. Adobe's Creative Cloud and Document Cloud services provide users with powerful applications for design, photography, video editing, and document management.\n\nIn the realm of artificial intelligence, Adobe is at the forefront, integrating AI capabilities across its product offerings to enhance user experience and productivity. The company's AI-driven solutions, including Adobe Firefly and Adobe Experience Platform, facilitate seamless content creation, marketing execution, and customer experience orchestration.\n\nAdobe is widely recognized as a market leader in digital media and digital experience solutions, with a strong reputation for innovation and reliability. The company is often associated with creativity and digital transformation, making it a trusted partner for businesses and individuals seeking to enhance their digital presence.\n\nIndustry tags for Adobe include technology, software, digital media, artificial intelligence, and cloud computing.",
+    "llm_tags": [
+      "technology",
+      "software",
+      "digital media",
+      "artificial intelligence",
+      "cloud computing"
+    ]
+  },
+  "AMD": {
+    "overview_text": "Advanced Micro Devices, Inc. (AMD) is a leading innovator in high-performance and AI computing, providing solutions that power a wide range of applications from cloud and AI infrastructure to gaming and embedded systems. AMD's core business lines include a comprehensive portfolio of AI-optimized CPUs, GPUs, networking, and software, delivering full-stack solutions that enable customers to transform data into breakthroughs. The company is recognized for its high-performance product offerings, such as semi-custom System-on-Chip (SoCs), adaptive SoCs, and accelerated processing units (APUs), which are integral to data centers, client computing, and gaming.\n\nAMD holds a strong market position as a leader in the semiconductor industry, competing primarily with Intel and Nvidia in various segments. The company is widely associated with its cutting-edge technology and innovation, particularly in AI and gaming, where its products like the AMD Ryzen™ and AMD Radeon™ series are well-regarded by consumers and professionals alike.\n\nThe company operates in several industry segments, including technology, semiconductors, AI, cloud computing, and gaming. AMD's strategic focus on AI and high-performance computing positions it as a key player in shaping the future of intelligent computing across cloud, edge, and endpoint devices. With a commitment to innovation and customer collaboration, AMD continues to expand its leadership in the semiconductor industry.",
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "ai",
+      "cloud computing",
+      "gaming"
+    ]
+  },
+  "AMZN": {
+    "overview_text": "Amazon.com, Inc. is a global leader in e-commerce and cloud computing, renowned for its customer-centric approach and innovative spirit. The company operates through three main segments: North America, International, and Amazon Web Services (AWS). Amazon's e-commerce platform offers a vast selection of products, both from its own inventory and third-party sellers, accessible via websites, mobile apps, and physical stores. It is widely recognized for its competitive pricing, fast delivery, and the popular Amazon Prime membership, which provides benefits like free shipping and access to streaming content.\n\nAWS serves developers and enterprises with a comprehensive suite of on-demand technology services, including computing, storage, and artificial intelligence. This segment positions Amazon as a formidable player in the cloud computing industry. Additionally, Amazon manufactures electronic devices such as Kindle, Fire TV, and Echo, and produces media content, further diversifying its offerings.\n\nPublic perception of Amazon is often associated with convenience, innovation, and a vast product selection. However, the company also faces scrutiny over labor practices and competitive strategies. Amazon is classified under multiple industry themes, including technology, e-commerce, cloud computing, and digital media. Its commitment to operational excellence and long-term thinking continues to drive its growth and influence across various sectors.",
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "digital media"
+    ]
+  },
+  "AVGO": {
+    "overview_text": "The company is a global technology leader specializing in semiconductor and infrastructure software solutions. With a rich history of innovation spanning over 60 years, the company has evolved through strategic acquisitions, including notable names like LSI Corporation, Broadcom Corporation, and VMware, Inc. It is recognized for its extensive portfolio of semiconductor products, which are integral to various applications such as AI data centers, wireless devices, and broadband systems. The company is a prominent player in the semiconductor industry, known for its high-performance design and integration capabilities, catering to markets that demand cutting-edge technology and quality.\n\nIn the realm of infrastructure software, the company provides solutions that simplify IT environments for large enterprises, including many Fortune 500 companies. Its software offerings cover private cloud, mainframe, cybersecurity, and enterprise software, enabling customers to modernize and secure their IT operations.\n\nPublic perception often associates the company with technological innovation and leadership in both semiconductor and software solutions. It is classified under multiple industry themes, including technology, cloud computing, cybersecurity, and telecommunications. The company's commitment to research and development, coupled with its strategic acquisitions, underscores its position as a leader in delivering advanced technology solutions to global business and government customers.",
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "cybersecurity",
+      "telecommunications"
+    ]
+  },
+  "CRM": {
+    "overview_text": "Salesforce, Inc. is a global leader in customer relationship management (CRM) technology, renowned for its comprehensive suite of AI-powered solutions that help organizations transform into agentic enterprises. Founded in 1999, Salesforce offers a unified platform, Agentforce 360, which integrates sales, service, marketing, commerce, collaboration, data management, and more, enabling businesses to deliver personalized and automated experiences. Central to its offerings is the Agentforce platform, which allows companies to deploy autonomous AI agents to enhance productivity and operational efficiency. Salesforce's commitment to core values such as trust, customer success, innovation, equality, and sustainability is well-recognized, and these principles guide its operations and public perception.\n\nSalesforce is widely perceived as a pioneer in the CRM industry, often associated with innovation and customer-centric solutions. Its acquisition of Slack and Informatica has further strengthened its market position, allowing seamless collaboration and advanced data management capabilities. The company operates primarily on a subscription model, serving businesses of all sizes globally. Salesforce is classified under technology, cloud computing, and enterprise software industries, with a strong emphasis on AI integration. Its dedication to ethical practices and sustainability is reflected in its efforts to create a positive impact on society and the environment.",
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "enterprise software"
+    ]
+  },
+  "GOOGL": {
+    "overview_text": "Alphabet Inc., led by CEO Sundar Pichai, is a diverse conglomerate with Google as its largest entity. Google operates primarily through two segments: Google Services and Google Cloud. Google Services encompasses widely recognized products such as Search, YouTube, Android, and Chrome, which are integral to daily digital experiences worldwide. Google Cloud offers infrastructure, platform, and application services, leveraging AI-optimized infrastructure to support businesses in modernizing IT systems and enhancing productivity.\n\nAlphabet is a pioneer in artificial intelligence, positioning itself as an AI-first company since 2016. Its AI advancements, including the Gemini 3 model, are embedded across its products, enhancing user experiences and driving innovation. The company is also known for its \"moonshot\" projects under Other Bets, such as Waymo's autonomous driving technology and Isomorphic Labs' AI-driven drug discovery.\n\nPublic perception of Alphabet is largely tied to its role as a leader in technology and innovation, with a strong emphasis on AI and digital accessibility. The company is often associated with its commitment to organizing the world's information and making it universally accessible. Alphabet is classified under technology, cloud computing, and artificial intelligence industries, with a reputation for pushing the boundaries of technological advancement while maintaining a focus on privacy and security.",
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "artificial intelligence"
+    ]
+  },
+  "IBM": {
+    "overview_text": "International Business Machines Corporation (IBM), founded in 1911, is a global leader in technology and consulting services, renowned for its pioneering role in hybrid cloud and artificial intelligence (AI) solutions. IBM's core business lines include software, consulting, infrastructure, and financing. The company leverages its hybrid cloud platform and AI technology to support clients' digital transformations, modernizing applications and enhancing operational efficiencies. IBM's software offerings are distinguished by their depth and innovation, enabling clients to achieve digital and AI transformations. In consulting, IBM integrates strategy, technology, and operations expertise to deliver transformative solutions across industries. The infrastructure segment focuses on hybrid cloud solutions, providing robust server and storage systems for mission-critical workloads. IBM's financing arm facilitates client acquisitions of hardware, software, and services, offering competitive financial solutions.\n\nIBM is perceived as a technology innovator, with a strong emphasis on research and development. It maintains strategic partnerships with major companies like Adobe, AWS, Microsoft, and Oracle, enhancing its market reach. The company operates in a highly competitive environment, facing competition from both large multinationals and niche players. IBM is recognized for its brand strength, technological expertise, and ability to deliver business value, positioning it as a leader in its industry. The company is associated with themes such as technology, cloud computing, AI, and consulting.",
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "ai",
+      "consulting"
+    ]
+  },
+  "INTU": {
+    "overview_text": "Intuit Inc. is a leading global financial technology company dedicated to empowering prosperity worldwide. With a robust platform that integrates artificial intelligence (AI) and human expertise, Intuit serves approximately 100 million consumers, small and mid-market businesses, and accountants globally. The company's core offerings include TurboTax, Credit Karma, QuickBooks, Mailchimp, and the Intuit Enterprise Suite, which collectively aim to enhance financial decision-making, streamline business operations, and improve financial outcomes for users.\n\nIntuit is recognized as a leader in the financial technology sector, particularly for its innovative use of AI to automate tasks and provide predictive insights. The company's strategy focuses on creating an AI-driven expert platform that connects users with AI agents and human experts to deliver comprehensive financial solutions. Intuit's products are widely associated with simplifying tax preparation, personal finance management, and business operations, making it a household name in these areas.\n\nThe company operates across several industry segments, including technology, e-commerce, cloud computing, and financial services. Intuit's commitment to data privacy, security, and responsible AI governance underpins its operations, ensuring customer trust and satisfaction. Public perception of Intuit is largely positive, with the brand being synonymous with reliability and innovation in financial management solutions.",
+    "llm_tags": [
+      "financial technology",
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "financial services"
+    ]
+  },
+  "META": {
+    "overview_text": "Meta Platforms, Inc., commonly known as Meta, is a leading technology company focused on building the future of human connection through innovative platforms and devices. The company operates two main segments: Family of Apps and Reality Labs. The Family of Apps includes well-known platforms such as Facebook, Instagram, Messenger, WhatsApp, and Threads, which facilitate social interaction, content sharing, and communication across the globe. These apps are central to Meta's advertising business, which generates the majority of its revenue by enabling marketers to reach a vast audience.\n\nMeta is also a pioneer in the development of immersive technologies through its Reality Labs segment, which focuses on virtual reality (VR) and augmented reality (AR) products. This includes the Meta Quest VR devices and AI-powered wearables like Ray-Ban Meta glasses. The company is investing heavily in AI technologies to enhance user experiences and drive the next computing platform, often referred to as the metaverse.\n\nPublic perception of Meta is closely tied to its role in social media and digital communication, with a strong emphasis on innovation in AI and immersive technologies. The company is classified under several industry themes, including technology, social media, e-commerce, and cloud computing. Despite facing significant competition and regulatory challenges, Meta continues to be a dominant force in shaping the future of digital interaction.",
+    "llm_tags": [
+      "technology",
+      "social media",
+      "e-commerce",
+      "cloud computing"
+    ]
+  },
+  "MSFT": {
+    "overview_text": "Microsoft Corporation, founded in 1975, is a leading technology company renowned for its comprehensive suite of software, services, devices, and solutions designed to empower individuals and organizations globally. The company is a dominant force in the technology sector, particularly in areas such as cloud computing, artificial intelligence (AI), productivity software, and personal computing. Microsoft's core business lines include the development and support of operating systems, server applications, business solutions, software development tools, and video games. The company also designs and sells devices like PCs, tablets, and gaming consoles, with flagship products such as Microsoft 365, Azure, Windows, and Xbox.\n\nMicrosoft is widely recognized for its commitment to innovation and digital transformation, with a strong emphasis on AI and cloud services. The Microsoft Cloud integrates various technology solutions, offering customers enhanced security, compliance, and productivity tools. Public perception often associates Microsoft with its pioneering role in personal computing and its influential software products like Windows and Office.\n\nThe company operates through three main segments: Productivity and Business Processes, Intelligent Cloud, and More Personal Computing. Microsoft is committed to sustainability, aiming to become carbon negative, water positive, and zero waste by 2030. Industry classifications for Microsoft include technology, cloud computing, AI, and gaming.",
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "ai",
+      "gaming"
+    ]
+  },
+  "NOW": {
+    "overview_text": "ServiceNow is a prominent player in the technology industry, specializing in solutions that help organizations govern, secure, and manage artificial intelligence while digitalizing and streamlining workflows. The company's core offerings include a suite of AI-powered applications and services designed to automate workflows, integrate systems, and empower employees across various cloud environments and collaboration tools. At the heart of these solutions is the ServiceNow AI Platform, which facilitates seamless workflow delivery and drives digital transformation across enterprises.\n\nServiceNow is recognized as a leader in the rapidly evolving technology landscape, particularly in the realm of AI and machine learning integration within enterprise software. The company is known for its robust platform capabilities and deep customer relationships, which position it favorably to capitalize on the growing demand for AI-enabled automation. Public perception of ServiceNow is often associated with its innovative approach to workflow automation and its commitment to enhancing productivity and collaboration within organizations.\n\nThe company operates across multiple industry sectors, including technology, customer relationship management, and various core business functions such as HR, legal, and finance. ServiceNow's products are grouped into four main areas: Technology, CRM and Industry, Core Business, and Creator and Other, each designed to address specific organizational needs. With a strong focus on customer success and a commitment to innovation, ServiceNow continues to expand its platform capabilities and strengthen its market position as a defining AI enterprise software company.",
+    "llm_tags": [
+      "technology",
+      "customer relationship management",
+      "ai",
+      "machine learning",
+      "enterprise software",
+      "workflow automation",
+      "crm",
+      "core business",
+      "creator and other"
+    ]
+  },
+  "NVDA": {
+    "overview_text": "NVIDIA Corporation, headquartered in Santa Clara, California, is a pioneering force in accelerated computing, primarily known for its graphics processing units (GPUs) and its transformative impact on artificial intelligence (AI) and data center infrastructure. The company is a leader in the technology sector, particularly in AI, gaming, and professional visualization. NVIDIA's core business lines are divided into two segments: Compute & Networking, which includes data center and automotive platforms, and Graphics, which encompasses GeForce GPUs for gaming and RTX GPUs for professional visualization.\n\nNVIDIA's market position is robust, with its GPUs powering over 78% of the supercomputers on the global TOP500 list. The company is widely recognized for its innovation in AI and gaming, with its GPUs being a staple for gamers seeking high-quality graphics and for enterprises developing AI-driven applications. Public perception often associates NVIDIA with cutting-edge technology and high-performance computing solutions.\n\nThe company's technology stack is built on the NVIDIA CUDA platform, which supports a wide range of applications from AI model training to scientific computing. NVIDIA's strategic initiatives include the development of the Blackwell architecture for data centers and the DRIVE platform for autonomous vehicles. The company is also expanding its influence in generative and agentic AI, with platforms like NVIDIA Nemotron and Cosmos.\n\nNVIDIA operates in several key markets, including data centers, gaming, professional visualization, and automotive, leveraging its unified architecture to address diverse computing needs. Despite facing intense competition and regulatory challenges, particularly in export controls, NVIDIA continues to lead in AI and graphics technology, driven by a strong commitment to research and development.",
+    "llm_tags": [
+      "ai",
+      "gaming",
+      "professional visualization",
+      "data centers",
+      "automotive"
+    ]
+  },
+  "ORCL": {
+    "overview_text": "Oracle Corporation is a global leader in enterprise information technology solutions, specializing in cloud computing, software, hardware, and services. The company offers a comprehensive suite of products and services designed to build, run, and support IT frameworks for businesses, government agencies, and educational institutions worldwide. Oracle's core offerings include Oracle Cloud Applications (OCA) and Oracle Cloud Infrastructure (OCI), which integrate AI-driven automation and analytics to enhance business processes. These cloud solutions are complemented by Oracle's robust software and hardware products, such as Oracle AI Database, Oracle Middleware, and Oracle Engineered Systems.\n\nOracle is recognized for its flexible deployment models, allowing customers to choose between cloud-based, on-premise, and hybrid solutions. This adaptability is a cornerstone of Oracle's growth strategy, positioning it as a leader in the IT industry. The company is widely associated with its innovative cloud solutions and enterprise-grade applications, which are known for their reliability, scalability, and security.\n\nPublic perception of Oracle often highlights its pioneering role in cloud computing and AI integration, with media and customers acknowledging its contributions to modernizing IT infrastructures. Oracle's industry classification spans technology, cloud computing, enterprise software, and AI, reflecting its diverse and expansive market presence. The company's ongoing investment in research and development underscores its commitment to innovation and maintaining a competitive edge in the rapidly evolving tech landscape.",
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "enterprise software",
+      "ai"
+    ]
+  }
+}

@@ -1,0 +1,2902 @@
+{
+  "query": "semiconductors",
+  "max_top20": [
+    "ADI",
+    "AMAT",
+    "AMD",
+    "AVGO",
+    "MCHP",
+    "MRVL",
+    "MU",
+    "ON",
+    "QCOM",
+    "TXN",
+    "CDNS",
+    "KLAC",
+    "MPWR",
+    "SNPS",
+    "COHR",
+    "LRCX",
+    "TER",
+    "AAPL",
+    "ABT",
+    "AME"
+  ],
+  "avg_top20": [
+    "TXN",
+    "MCHP",
+    "MPWR",
+    "AMAT",
+    "MU",
+    "ADI",
+    "MRVL",
+    "AMD",
+    "ON",
+    "AVGO",
+    "QCOM",
+    "SNPS",
+    "LRCX",
+    "KLAC",
+    "COHR",
+    "CDNS",
+    "TER",
+    "AAPL",
+    "HSY",
+    "TTWO"
+  ],
+  "top2avg_top20": [
+    "TXN",
+    "MCHP",
+    "KLAC",
+    "QCOM",
+    "ADI",
+    "AMAT",
+    "AMD",
+    "AVGO",
+    "MRVL",
+    "MU",
+    "ON",
+    "COHR",
+    "CDNS",
+    "MPWR",
+    "SNPS",
+    "LRCX",
+    "TER",
+    "AAPL",
+    "AME",
+    "HSY"
+  ],
+  "full_results": [
+    {
+      "ticker": "A",
+      "tags": [
+        "technology",
+        "life sciences",
+        "diagnostics",
+        "laboratory automation"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3012576288270487,
+      "top2avg": 0.3296182347282102
+    },
+    {
+      "ticker": "AAPL",
+      "tags": [
+        "technology",
+        "consumer electronics",
+        "e-commerce",
+        "cloud computing"
+      ],
+      "max": 0.5488501847286431,
+      "avg": 0.36828097822241546,
+      "top2avg": 0.44863558861863995
+    },
+    {
+      "ticker": "ABBV",
+      "tags": [
+        "biotechnology",
+        "pharmaceuticals",
+        "healthcare"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.2615605968337285,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "ABNB",
+      "tags": [
+        "travel",
+        "hospitality",
+        "technology",
+        "e-commerce"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2223114002260822,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "ABT",
+      "tags": [
+        "pharmaceuticals",
+        "diagnostics",
+        "nutrition",
+        "medical devices"
+      ],
+      "max": 0.4211824121450212,
+      "avg": 0.30235805821744444,
+      "top2avg": 0.36750641275210394
+    },
+    {
+      "ticker": "ADBE",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "cloud computing",
+        "digital media"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.31297473269896703,
+      "top2avg": 0.3380230975717431
+    },
+    {
+      "ticker": "ADI",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "artificial intelligence"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.5260308465800959,
+      "top2avg": 0.6742104962543185
+    },
+    {
+      "ticker": "ADP",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "business services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2911896273705371,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "AEE",
+      "tags": [
+        "utilities",
+        "energy",
+        "renewable energy",
+        "infrastructure"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2592568344483111,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "AEP",
+      "tags": [
+        "energy",
+        "utilities",
+        "infrastructure"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2723972292541893,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "AFL",
+      "tags": [
+        "insurance",
+        "financial services",
+        "healthcare"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.19898354580147104,
+      "top2avg": 0.22229903986619257
+    },
+    {
+      "ticker": "AIG",
+      "tags": [
+        "insurance",
+        "risk management",
+        "financial services",
+        "global business operations"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.18922502938570065,
+      "top2avg": 0.2287551687205409
+    },
+    {
+      "ticker": "AJG",
+      "tags": [
+        "insurance",
+        "risk management",
+        "consulting"
+      ],
+      "max": 0.2122056632317222,
+      "avg": 0.17053181444448104,
+      "top2avg": 0.18227911045187511
+    },
+    {
+      "ticker": "ALL",
+      "tags": [
+        "insurance",
+        "financial services",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2503225783666672,
+      "top2avg": 0.29930758871398677
+    },
+    {
+      "ticker": "AMAT",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "manufacturing"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.5542862774352773,
+      "top2avg": 0.6742104962543185
+    },
+    {
+      "ticker": "AMD",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "ai computing",
+        "gaming"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.4972795373495507,
+      "top2avg": 0.6742104962543185
+    },
+    {
+      "ticker": "AME",
+      "tags": [
+        "technology",
+        "aerospace",
+        "medical devices",
+        "industrial manufacturing"
+      ],
+      "max": 0.4211824121450212,
+      "avg": 0.3190476963408289,
+      "top2avg": 0.384801702326829
+    },
+    {
+      "ticker": "AMGN",
+      "tags": [
+        "biotechnology",
+        "pharmaceuticals",
+        "healthcare",
+        "oncology",
+        "cardiovascular health",
+        "immunology"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.22260606395029994,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "AMT",
+      "tags": [
+        "real estate",
+        "telecommunications",
+        "data centers"
+      ],
+      "max": 0.3749002032802986,
+      "avg": 0.31072585721138757,
+      "top2avg": 0.36302752185764964
+    },
+    {
+      "ticker": "AMZN",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "cloud computing",
+        "digital media"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.31297473269896703,
+      "top2avg": 0.3380230975717431
+    },
+    {
+      "ticker": "ANET",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "networking"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.30993470611935947,
+      "top2avg": 0.32421264286082985
+    },
+    {
+      "ticker": "AON",
+      "tags": [
+        "professional services",
+        "risk management",
+        "insurance brokerage",
+        "human resources consulting"
+      ],
+      "max": 0.22185415282457985,
+      "avg": 0.15324013770846404,
+      "top2avg": 0.18444568762713634
+    },
+    {
+      "ticker": "APP",
+      "tags": [
+        "advertising technology",
+        "technology",
+        "advertising",
+        "media"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.26559121685858755,
+      "top2avg": 0.300933918093204
+    },
+    {
+      "ticker": "AVGO",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "cloud computing",
+        "cybersecurity"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.48555831504635416,
+      "top2avg": 0.6742104962543185
+    },
+    {
+      "ticker": "AXON",
+      "tags": [
+        "technology",
+        "public safety",
+        "cloud computing",
+        "artificial intelligence"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2657753542772701,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "AXP",
+      "tags": [
+        "financial services",
+        "technology",
+        "lifestyle services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.26114130428886034,
+      "top2avg": 0.29930758871398677
+    },
+    {
+      "ticker": "AZO",
+      "tags": [
+        "retail",
+        "automotive",
+        "e-commerce",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2827054420941024,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "BA",
+      "tags": [
+        "aerospace",
+        "defense",
+        "aviation"
+      ],
+      "max": 0.2255562160033729,
+      "avg": 0.19751942597705782,
+      "top2avg": 0.21271226305783242
+    },
+    {
+      "ticker": "BAC",
+      "tags": [
+        "banking",
+        "financial services",
+        "wealth management",
+        "investment banking"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.21175841449214544,
+      "top2avg": 0.24193967456339283
+    },
+    {
+      "ticker": "BDX",
+      "tags": [
+        "medical technology",
+        "healthcare",
+        "life sciences"
+      ],
+      "max": 0.32139346199917396,
+      "avg": 0.2755376112533353,
+      "top2avg": 0.3161044694734788
+    },
+    {
+      "ticker": "BKNG",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "travel services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2603445334566789,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "BKR",
+      "tags": [
+        "energy technology",
+        "oil and gas",
+        "renewable energy",
+        "industrial technology",
+        "sustainability"
+      ],
+      "max": 0.3508009240760262,
+      "avg": 0.261265882893171,
+      "top2avg": 0.3212869710532251
+    },
+    {
+      "ticker": "BLK",
+      "tags": [
+        "investment management",
+        "financial technology",
+        "global asset management"
+      ],
+      "max": 0.2752656084795229,
+      "avg": 0.20215192113787647,
+      "top2avg": 0.23565684154004093
+    },
+    {
+      "ticker": "BMY",
+      "tags": [
+        "biotechnology",
+        "pharmaceuticals",
+        "healthcare"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.2615605968337285,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "BSX",
+      "tags": [
+        "medical technology",
+        "healthcare",
+        "innovation"
+      ],
+      "max": 0.32139346199917396,
+      "avg": 0.24906309716623817,
+      "top2avg": 0.2763926983428331
+    },
+    {
+      "ticker": "CARR",
+      "tags": [
+        "technology",
+        "energy solutions",
+        "hvac",
+        "digitalization"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2929302147725291,
+      "top2avg": 0.33189941379093235
+    },
+    {
+      "ticker": "CAT",
+      "tags": [
+        "construction",
+        "mining",
+        "energy",
+        "industrial manufacturing"
+      ],
+      "max": 0.30639045002612514,
+      "avg": 0.28177865543230474,
+      "top2avg": 0.297495570337999
+    },
+    {
+      "ticker": "CB",
+      "tags": [
+        "insurance",
+        "reinsurance",
+        "financial services",
+        "risk management"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.17186895305387867,
+      "top2avg": 0.2012733712956824
+    },
+    {
+      "ticker": "CCL",
+      "tags": [
+        "travel",
+        "leisure",
+        "hospitality"
+      ],
+      "max": 0.17139960875932828,
+      "avg": 0.13925010471301902,
+      "top2avg": 0.15114140181455374
+    },
+    {
+      "ticker": "CDNS",
+      "tags": [
+        "technology",
+        "eda",
+        "ai",
+        "semiconductor"
+      ],
+      "max": 0.7910417049827467,
+      "avg": 0.38723125379079043,
+      "top2avg": 0.5697313487456918
+    },
+    {
+      "ticker": "CI",
+      "tags": [
+        "healthcare",
+        "insurance",
+        "pharmacy benefit management"
+      ],
+      "max": 0.19440389481304832,
+      "avg": 0.15754995007724318,
+      "top2avg": 0.17337822624253815
+    },
+    {
+      "ticker": "CL",
+      "tags": [
+        "consumer goods",
+        "personal care",
+        "pet nutrition"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.2288458073266494,
+      "top2avg": 0.26843533002416853
+    },
+    {
+      "ticker": "CMCSA",
+      "tags": [
+        "technology",
+        "telecommunications",
+        "media",
+        "entertainment",
+        "theme parks"
+      ],
+      "max": 0.3749002032802986,
+      "avg": 0.28151771921401453,
+      "top2avg": 0.3616605978944677
+    },
+    {
+      "ticker": "CME",
+      "tags": [
+        "financial services",
+        "derivatives trading",
+        "market data services",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2618085779935884,
+      "top2avg": 0.29930758871398677
+    },
+    {
+      "ticker": "CMG",
+      "tags": [
+        "fast-casual dining",
+        "sustainability",
+        "digital innovation"
+      ],
+      "max": 0.30767211981409837,
+      "avg": 0.24153109637809744,
+      "top2avg": 0.2633957771156501
+    },
+    {
+      "ticker": "CMI",
+      "tags": [
+        "technology",
+        "automotive",
+        "energy"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2894899859796254,
+      "top2avg": 0.30868882079597004
+    },
+    {
+      "ticker": "CNC",
+      "tags": [
+        "healthcare",
+        "managed care",
+        "insurance"
+      ],
+      "max": 0.19440389481304832,
+      "avg": 0.15837858002978816,
+      "top2avg": 0.17337822624253815
+    },
+    {
+      "ticker": "COF",
+      "tags": [
+        "financial services",
+        "banking",
+        "credit cards",
+        "digital banking",
+        "payments"
+      ],
+      "max": 0.2693431071447827,
+      "avg": 0.2510440509574347,
+      "top2avg": 0.26667316662308577
+    },
+    {
+      "ticker": "COHR",
+      "tags": [
+        "technology",
+        "telecommunications",
+        "industrial manufacturing",
+        "semiconductor materials"
+      ],
+      "max": 0.7673118634954209,
+      "avg": 0.44291605599766026,
+      "top2avg": 0.5711060333878597
+    },
+    {
+      "ticker": "COIN",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "cloud computing",
+        "financial services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2936169782700889,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "COP",
+      "tags": [
+        "energy",
+        "oil and gas",
+        "lng",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.27528091114767916,
+      "top2avg": 0.3019566204090223
+    },
+    {
+      "ticker": "COST",
+      "tags": [
+        "retail",
+        "e-commerce",
+        "wholesale"
+      ],
+      "max": 0.29447390301596327,
+      "avg": 0.23548570099323232,
+      "top2avg": 0.25672206339223486
+    },
+    {
+      "ticker": "CPNG",
+      "tags": [
+        "retail",
+        "restaurant delivery",
+        "video streaming",
+        "fintech services",
+        "technology",
+        "e-commerce",
+        "logistics",
+        "digital entertainment",
+        "financial services"
+      ],
+      "max": 0.3667712258293027,
+      "avg": 0.2519854062493398,
+      "top2avg": 0.3575961091689698
+    },
+    {
+      "ticker": "CRM",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "ai-driven enterprise solutions"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.28150622616182325,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "CRWD",
+      "tags": [
+        "cybersecurity",
+        "technology",
+        "cloud computing",
+        "endpoint security",
+        "cloud workload security",
+        "managed security services",
+        "identity protection"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.24167999684431493,
+      "top2avg": 0.3304272137744988
+    },
+    {
+      "ticker": "CSCO",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "cybersecurity",
+        "ai"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2872509991796108,
+      "top2avg": 0.3304272137744988
+    },
+    {
+      "ticker": "CSX",
+      "tags": [
+        "transportation",
+        "logistics",
+        "rail freight"
+      ],
+      "max": 0.21800249882727818,
+      "avg": 0.19019729490784687,
+      "top2avg": 0.20801249547940875
+    },
+    {
+      "ticker": "CTAS",
+      "tags": [
+        "business services",
+        "safety and compliance",
+        "environmental sustainability"
+      ],
+      "max": 0.26673740641777277,
+      "avg": 0.23281359463855802,
+      "top2avg": 0.2552532316921643
+    },
+    {
+      "ticker": "CVS",
+      "tags": [
+        "health care",
+        "retail pharmacy",
+        "insurance",
+        "health services"
+      ],
+      "max": 0.19388448740713382,
+      "avg": 0.1756534614726025,
+      "top2avg": 0.19281826026739907
+    },
+    {
+      "ticker": "CVX",
+      "tags": [
+        "energy",
+        "oil and gas",
+        "chemicals",
+        "renewable energy",
+        "environmental sustainability"
+      ],
+      "max": 0.3909603834519698,
+      "avg": 0.25918815155733277,
+      "top2avg": 0.321026349899453
+    },
+    {
+      "ticker": "DASH",
+      "tags": [
+        "on-demand delivery",
+        "technology",
+        "e-commerce",
+        "logistics"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.259981315169708,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "DDOG",
+      "tags": [
+        "it operations management",
+        "cloud computing",
+        "ai",
+        "security",
+        "analytics",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2463757862588097,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "DE",
+      "tags": [
+        "agriculture",
+        "construction",
+        "forestry",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.24035009627069628,
+      "top2avg": 0.327405721267381
+    },
+    {
+      "ticker": "DG",
+      "tags": [
+        "retail",
+        "discount retail",
+        "consumer goods"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.2711130417114354,
+      "top2avg": 0.3017673185843285
+    },
+    {
+      "ticker": "DHR",
+      "tags": [
+        "biotechnology",
+        "life sciences",
+        "diagnostics",
+        "healthcare technology"
+      ],
+      "max": 0.31081547694778366,
+      "avg": 0.28832884185888796,
+      "top2avg": 0.2982974667359247
+    },
+    {
+      "ticker": "DIS",
+      "tags": [
+        "entertainment",
+        "media",
+        "leisure"
+      ],
+      "max": 0.245420105485448,
+      "avg": 0.21883599153892827,
+      "top2avg": 0.24255418292872827
+    },
+    {
+      "ticker": "DLR",
+      "tags": [
+        "data center",
+        "colocation",
+        "interconnection",
+        "cloud computing",
+        "real estate"
+      ],
+      "max": 0.34404030074599457,
+      "avg": 0.27693016525559466,
+      "top2avg": 0.32988963432799445
+    },
+    {
+      "ticker": "DOV",
+      "tags": [
+        "technology",
+        "manufacturing",
+        "clean energy",
+        "industrial solutions"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3116364170395871,
+      "top2avg": 0.33142941615291577
+    },
+    {
+      "ticker": "DUK",
+      "tags": [
+        "energy",
+        "utilities",
+        "renewable energy"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2665889660376425,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "DXCM",
+      "tags": [
+        "healthcare",
+        "medical device"
+      ],
+      "max": 0.36445358241230336,
+      "avg": 0.2794287386126758,
+      "top2avg": 0.2794287386126758
+    },
+    {
+      "ticker": "EA",
+      "tags": [
+        "technology",
+        "gaming",
+        "entertainment"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2956184909755997,
+      "top2avg": 0.3235836062773953
+    },
+    {
+      "ticker": "ED",
+      "tags": [
+        "utilities",
+        "energy",
+        "infrastructure",
+        "clean energy",
+        "environmental sustainability"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2570818881589176,
+      "top2avg": 0.30456118211799466
+    },
+    {
+      "ticker": "EL",
+      "tags": [
+        "beauty",
+        "luxury goods",
+        "consumer products"
+      ],
+      "max": 0.4210878438949268,
+      "avg": 0.2660061735895853,
+      "top2avg": 0.3170416665189249
+    },
+    {
+      "ticker": "ELV",
+      "tags": [
+        "healthcare",
+        "insurance",
+        "pharmacy services",
+        "managed care"
+      ],
+      "max": 0.19440389481304832,
+      "avg": 0.15807183955126672,
+      "top2avg": 0.17577775646437535
+    },
+    {
+      "ticker": "EMR",
+      "tags": [
+        "technology",
+        "industrial manufacturing",
+        "artificial intelligence"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2863745681488575,
+      "top2avg": 0.3147260786074607
+    },
+    {
+      "ticker": "EOG",
+      "tags": [
+        "energy",
+        "oil and gas exploration and production",
+        "technology-driven resource management"
+      ],
+      "max": 0.25109231634693613,
+      "avg": 0.20256312965592874,
+      "top2avg": 0.2226004236939384
+    },
+    {
+      "ticker": "EQIX",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "data center services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3025664245061835,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "ES",
+      "tags": [
+        "utilities",
+        "renewable energy",
+        "infrastructure"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2619783404821027,
+      "top2avg": 0.2830496857078159
+    },
+    {
+      "ticker": "ETN",
+      "tags": [
+        "technology",
+        "industrial manufacturing",
+        "aerospace",
+        "energy management"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2820212922507985,
+      "top2avg": 0.3147260786074607
+    },
+    {
+      "ticker": "ETR",
+      "tags": [
+        "utilities",
+        "energy",
+        "renewable energy"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2665889660376425,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "EW",
+      "tags": [
+        "medical technology",
+        "healthcare",
+        "cardiovascular disease treatment"
+      ],
+      "max": 0.32139346199917396,
+      "avg": 0.22516273009633414,
+      "top2avg": 0.25789867840611114
+    },
+    {
+      "ticker": "EXC",
+      "tags": [
+        "energy",
+        "utilities",
+        "clean technology"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.3001550350726505,
+      "top2avg": 0.32468639443550773
+    },
+    {
+      "ticker": "F",
+      "tags": [
+        "automotive",
+        "technology",
+        "sustainability"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2717264588316441,
+      "top2avg": 0.30868882079597004
+    },
+    {
+      "ticker": "FAST",
+      "tags": [
+        "industrial distribution",
+        "supply chain management",
+        "digital solutions"
+      ],
+      "max": 0.3402392038693428,
+      "avg": 0.3021724379529728,
+      "top2avg": 0.3172733931130103
+    },
+    {
+      "ticker": "FDX",
+      "tags": [
+        "transportation",
+        "logistics",
+        "e-commerce",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2647299716208544,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "FE",
+      "tags": [
+        "energy",
+        "utilities",
+        "infrastructure"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2723972292541893,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "FOXA",
+      "tags": [
+        "media",
+        "entertainment",
+        "digital streaming",
+        "consumer finance"
+      ],
+      "max": 0.26014687273915754,
+      "avg": 0.24942360909447303,
+      "top2avg": 0.25629303526021785
+    },
+    {
+      "ticker": "FTNT",
+      "tags": [
+        "cybersecurity",
+        "technology",
+        "cloud computing"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3140777533951388,
+      "top2avg": 0.3304272137744988
+    },
+    {
+      "ticker": "GD",
+      "tags": [
+        "aerospace",
+        "defense",
+        "technology",
+        "manufacturing"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2720708396053741,
+      "top2avg": 0.33142941615291577
+    },
+    {
+      "ticker": "GEV",
+      "tags": [
+        "technology",
+        "energy",
+        "sustainability"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.26577168125285505,
+      "top2avg": 0.29975665442778643
+    },
+    {
+      "ticker": "GILD",
+      "tags": [
+        "biotechnology",
+        "pharmaceuticals",
+        "healthcare innovation"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.2647506152987347,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "GM",
+      "tags": [
+        "automotive",
+        "technology",
+        "electric vehicles"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3151482493705385,
+      "top2avg": 0.3382440495141561
+    },
+    {
+      "ticker": "GOOGL",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "ai",
+        "digital advertising"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2784485194302491,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "GS",
+      "tags": [
+        "financial services",
+        "investment banking",
+        "asset management",
+        "sustainable finance"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.20770360765353513,
+      "top2avg": 0.22774013106275734
+    },
+    {
+      "ticker": "HD",
+      "tags": [
+        "retail",
+        "e-commerce",
+        "home improvement"
+      ],
+      "max": 0.29447390301596327,
+      "avg": 0.22820074906049512,
+      "top2avg": 0.25672206339223486
+    },
+    {
+      "ticker": "HIG",
+      "tags": [
+        "insurance",
+        "financial services",
+        "investment management"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.19953160573064124,
+      "top2avg": 0.22312112975994788
+    },
+    {
+      "ticker": "HLT",
+      "tags": [
+        "hospitality",
+        "travel",
+        "tourism"
+      ],
+      "max": 0.1308831948697792,
+      "avg": 0.12276300581279236,
+      "top2avg": 0.12641075346421374
+    },
+    {
+      "ticker": "HON",
+      "tags": [
+        "technology",
+        "aerospace",
+        "industrial automation",
+        "sustainability"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.27847867394416903,
+      "top2avg": 0.34527837243515547
+    },
+    {
+      "ticker": "HOOD",
+      "tags": [
+        "financial technology",
+        "brokerage services",
+        "cryptocurrency trading",
+        "wealth management"
+      ],
+      "max": 0.2752656084795229,
+      "avg": 0.19425181885471615,
+      "top2avg": 0.23838734348558807
+    },
+    {
+      "ticker": "HSY",
+      "tags": [
+        "confectionery",
+        "snacks",
+        "consumer goods"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.35502586935147334,
+      "top2avg": 0.3752977730559858
+    },
+    {
+      "ticker": "HUM",
+      "tags": [
+        "healthcare",
+        "insurance",
+        "managed care"
+      ],
+      "max": 0.19440389481304832,
+      "avg": 0.15837858002978816,
+      "top2avg": 0.17337822624253815
+    },
+    {
+      "ticker": "IBM",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "ai",
+        "consulting"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2621940562274511,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "ICE",
+      "tags": [
+        "technology",
+        "financial services",
+        "data analytics"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.260620491476283,
+      "top2avg": 0.29930758871398677
+    },
+    {
+      "ticker": "IDXX",
+      "tags": [
+        "veterinary diagnostics",
+        "water testing",
+        "healthcare technology"
+      ],
+      "max": 0.2802729516347519,
+      "avg": 0.22335222017915135,
+      "top2avg": 0.23838199535781346
+    },
+    {
+      "ticker": "INTU",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "cloud computing",
+        "financial services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2936169782700889,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "IQV",
+      "tags": [
+        "healthcare",
+        "technology",
+        "data analytics",
+        "clinical research"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.22889038889667995,
+      "top2avg": 0.27141244366084255
+    },
+    {
+      "ticker": "IR",
+      "tags": [
+        "industrial manufacturing",
+        "life sciences",
+        "clean energy"
+      ],
+      "max": 0.31081547694778366,
+      "avg": 0.29071002471824764,
+      "top2avg": 0.2959233208270342
+    },
+    {
+      "ticker": "ISRG",
+      "tags": [
+        "medical devices",
+        "robotics",
+        "healthcare innovation"
+      ],
+      "max": 0.4211824121450212,
+      "avg": 0.3072307828828474,
+      "top2avg": 0.35885919922023757
+    },
+    {
+      "ticker": "ITW",
+      "tags": [
+        "technology",
+        "manufacturing",
+        "industrial equipment"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.32399484732340916,
+      "top2avg": 0.33142941615291577
+    },
+    {
+      "ticker": "JNJ",
+      "tags": [
+        "pharmaceuticals",
+        "medical devices",
+        "healthcare"
+      ],
+      "max": 0.4211824121450212,
+      "avg": 0.30980557343908544,
+      "top2avg": 0.36750641275210394
+    },
+    {
+      "ticker": "JPM",
+      "tags": [
+        "financial services",
+        "investment banking",
+        "asset management",
+        "commercial banking"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.21415779920017658,
+      "top2avg": 0.2368636187511066
+    },
+    {
+      "ticker": "KDP",
+      "tags": [
+        "beverages",
+        "consumer goods",
+        "e-commerce"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.3204587040138796,
+      "top2avg": 0.3395191582080569
+    },
+    {
+      "ticker": "KHC",
+      "tags": [
+        "food and beverage",
+        "consumer goods",
+        "sustainability"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.2678071464448038,
+      "top2avg": 0.30280985221570966
+    },
+    {
+      "ticker": "KLAC",
+      "tags": [
+        "electronics",
+        "semiconductor",
+        "semiconductor capital equipment",
+        "semiconductor manufacturing",
+        "process control",
+        "yield management",
+        "ai infrastructure",
+        "advanced packaging"
+      ],
+      "max": 0.7910417049827467,
+      "avg": 0.45574155111244996,
+      "top2avg": 0.7215771221212898
+    },
+    {
+      "ticker": "KMB",
+      "tags": [
+        "consumer goods",
+        "personal care",
+        "sustainability"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.24489079831710972,
+      "top2avg": 0.2911830741515714
+    },
+    {
+      "ticker": "KO",
+      "tags": [
+        "beverages",
+        "consumer goods",
+        "sustainability"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.28823464797622256,
+      "top2avg": 0.33345110451283777
+    },
+    {
+      "ticker": "KR",
+      "tags": [
+        "retail",
+        "e-commerce",
+        "data analytics"
+      ],
+      "max": 0.29447390301596327,
+      "avg": 0.23223014126178168,
+      "top2avg": 0.25672206339223486
+    },
+    {
+      "ticker": "KVUE",
+      "tags": [
+        "healthcare",
+        "consumer goods",
+        "digital marketing"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.27807295825591394,
+      "top2avg": 0.31990748997734675
+    },
+    {
+      "ticker": "LLY",
+      "tags": [
+        "pharmaceuticals",
+        "biotechnology",
+        "healthcare"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.2615605968337285,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "LMT",
+      "tags": [
+        "aerospace",
+        "defense",
+        "technology",
+        "cybersecurity"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2715697384161656,
+      "top2avg": 0.3304272137744988
+    },
+    {
+      "ticker": "LOW",
+      "tags": [
+        "home improvement",
+        "retail",
+        "e-commerce",
+        "technology",
+        "sustainability"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.24616499491862287,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "LRCX",
+      "tags": [
+        "technology",
+        "semiconductor manufacturing",
+        "advanced materials"
+      ],
+      "max": 0.6521125392598328,
+      "avg": 0.46178289104256337,
+      "top2avg": 0.5184638403095266
+    },
+    {
+      "ticker": "LYV",
+      "tags": [
+        "live entertainment",
+        "music events",
+        "ticketing services",
+        "advertising"
+      ],
+      "max": 0.2179412055673802,
+      "avg": 0.2104016045040819,
+      "top2avg": 0.21650906566493727
+    },
+    {
+      "ticker": "MA",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "financial services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.29769636014797896,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "MAR",
+      "tags": [
+        "hospitality",
+        "travel",
+        "tourism",
+        "real estate",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.18456650757317544,
+      "top2avg": 0.2772717602137501
+    },
+    {
+      "ticker": "MCD",
+      "tags": [
+        "fast food",
+        "franchising",
+        "global retail",
+        "food service"
+      ],
+      "max": 0.24247359883540606,
+      "avg": 0.1931401000719347,
+      "top2avg": 0.22166217779266642
+    },
+    {
+      "ticker": "MCHP",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "embedded systems"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.6187253308080698,
+      "top2avg": 0.7538774999577862
+    },
+    {
+      "ticker": "MDB",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "artificial intelligence"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.28649045745890217,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "MDLZ",
+      "tags": [
+        "food and beverage",
+        "consumer goods",
+        "sustainability"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.2678071464448038,
+      "top2avg": 0.30280985221570966
+    },
+    {
+      "ticker": "MDT",
+      "tags": [
+        "healthcare technology",
+        "medical devices",
+        "biotechnology"
+      ],
+      "max": 0.4211824121450212,
+      "avg": 0.3259676153695745,
+      "top2avg": 0.35072768188988657
+    },
+    {
+      "ticker": "MELI",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "fintech",
+        "digital payments"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3143742151347575,
+      "top2avg": 0.3291651551540088
+    },
+    {
+      "ticker": "MET",
+      "tags": [
+        "financial services",
+        "insurance",
+        "asset management",
+        "investment"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.196745966760315,
+      "top2avg": 0.22850671363845837
+    },
+    {
+      "ticker": "META",
+      "tags": [
+        "technology",
+        "social media",
+        "virtual reality",
+        "augmented reality",
+        "artificial intelligence"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.24515637419639486,
+      "top2avg": 0.3109501339673288
+    },
+    {
+      "ticker": "MMM",
+      "tags": [
+        "technology",
+        "manufacturing",
+        "consumer goods",
+        "industrial safety"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.3237715214241016,
+      "top2avg": 0.3664927029543937
+    },
+    {
+      "ticker": "MNST",
+      "tags": [
+        "beverages",
+        "energy drinks",
+        "alcohol"
+      ],
+      "max": 0.28233779562552497,
+      "avg": 0.24903366006827976,
+      "top2avg": 0.2682462134545819
+    },
+    {
+      "ticker": "MPC",
+      "tags": [
+        "energy",
+        "refining",
+        "logistics",
+        "renewable fuels"
+      ],
+      "max": 0.25109231634693613,
+      "avg": 0.22060765124794696,
+      "top2avg": 0.24527435995538666
+    },
+    {
+      "ticker": "MPWR",
+      "tags": [
+        "semiconductor",
+        "technology"
+      ],
+      "max": 0.7910417049827467,
+      "avg": 0.5697313487456918,
+      "top2avg": 0.5697313487456918
+    },
+    {
+      "ticker": "MRK",
+      "tags": [
+        "pharmaceuticals",
+        "biotechnology",
+        "animal health",
+        "oncology",
+        "vaccines",
+        "diabetes care"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.22066572967289577,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "MRSH",
+      "tags": [
+        "insurance",
+        "reinsurance",
+        "management consulting",
+        "financial services"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.17962138975268538,
+      "top2avg": 0.21412057707212828
+    },
+    {
+      "ticker": "MRVL",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "data infrastructure"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.5182760432457091,
+      "top2avg": 0.6742104962543185
+    },
+    {
+      "ticker": "MS",
+      "tags": [
+        "financial services",
+        "wealth management",
+        "investment banking",
+        "asset management"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.19774159396336205,
+      "top2avg": 0.22774013106275734
+    },
+    {
+      "ticker": "MSFT",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "ai",
+        "productivity software",
+        "gaming"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.26537407896227794,
+      "top2avg": 0.3235836062773953
+    },
+    {
+      "ticker": "MSTR",
+      "tags": [
+        "digital asset",
+        "enterprise analytics",
+        "bitcoin",
+        "ai-powered enterprise analytics software",
+        "technology",
+        "e-commerce",
+        "cloud computing",
+        "digital finance"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2620142172662771,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "MTD",
+      "tags": [
+        "technology",
+        "manufacturing",
+        "life sciences"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.32455810308453836,
+      "top2avg": 0.33142941615291577
+    },
+    {
+      "ticker": "MU",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "cloud computing"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.5432666083816853,
+      "top2avg": 0.6742104962543185
+    },
+    {
+      "ticker": "NEE",
+      "tags": [
+        "energy",
+        "renewable energy",
+        "utilities",
+        "infrastructure"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2592568344483111,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "NET",
+      "tags": [
+        "connectivity cloud",
+        "technology",
+        "cloud computing",
+        "cybersecurity"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3002992363748807,
+      "top2avg": 0.3304272137744988
+    },
+    {
+      "ticker": "NFLX",
+      "tags": [
+        "technology",
+        "entertainment",
+        "media"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.27784311945536444,
+      "top2avg": 0.2969205489970424
+    },
+    {
+      "ticker": "NKE",
+      "tags": [
+        "athletic apparel",
+        "footwear",
+        "sports equipment",
+        "digital commerce"
+      ],
+      "max": 0.32415395334713615,
+      "avg": 0.2453291795298934,
+      "top2avg": 0.290375851623738
+    },
+    {
+      "ticker": "NOC",
+      "tags": [
+        "aerospace",
+        "defense",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.25794850620810056,
+      "top2avg": 0.2869886042560048
+    },
+    {
+      "ticker": "NOW",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "enterprise software",
+        "artificial intelligence"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.28267471138079237,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "NSC",
+      "tags": [
+        "transportation",
+        "logistics",
+        "infrastructure"
+      ],
+      "max": 0.23726043968031688,
+      "avg": 0.21776181021304478,
+      "top2avg": 0.2276314692537975
+    },
+    {
+      "ticker": "NTRS",
+      "tags": [
+        "financial services",
+        "wealth management",
+        "asset management",
+        "banking"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.20484136571367978,
+      "top2avg": 0.24193967456339283
+    },
+    {
+      "ticker": "NVDA",
+      "tags": [
+        "technology",
+        "ai",
+        "cloud computing",
+        "gaming"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.283829195431059,
+      "top2avg": 0.3235836062773953
+    },
+    {
+      "ticker": "NXPI",
+      "tags": [
+        "technology",
+        "automotive",
+        "iot",
+        "security"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2717245938240768,
+      "top2avg": 0.30868882079597004
+    },
+    {
+      "ticker": "O",
+      "tags": [
+        "real estate",
+        "investment",
+        "financial services"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.2210453183985934,
+      "top2avg": 0.22850671363845837
+    },
+    {
+      "ticker": "OKE",
+      "tags": [
+        "energy",
+        "infrastructure",
+        "sustainability"
+      ],
+      "max": 0.25109231634693613,
+      "avg": 0.22871816364341505,
+      "top2avg": 0.24417637801362652
+    },
+    {
+      "ticker": "ON",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "automotive",
+        "industrial automation"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.4898783484884036,
+      "top2avg": 0.6742104962543185
+    },
+    {
+      "ticker": "ORCL",
+      "tags": [
+        "cloud computing",
+        "enterprise software",
+        "ai integration"
+      ],
+      "max": 0.2813788326364188,
+      "avg": 0.2515505776663464,
+      "top2avg": 0.2763031528914408
+    },
+    {
+      "ticker": "ORLY",
+      "tags": [
+        "automotive",
+        "retail",
+        "e-commerce"
+      ],
+      "max": 0.29447390301596327,
+      "avg": 0.260800258622591,
+      "top2avg": 0.2817152760496333
+    },
+    {
+      "ticker": "OTIS",
+      "tags": [
+        "technology",
+        "infrastructure",
+        "manufacturing"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.30003975732871613,
+      "top2avg": 0.33142941615291577
+    },
+    {
+      "ticker": "OXY",
+      "tags": [
+        "energy",
+        "oil and gas",
+        "environmental sustainability"
+      ],
+      "max": 0.25109231634693613,
+      "avg": 0.22838157476800588,
+      "top2avg": 0.24860520188633606
+    },
+    {
+      "ticker": "PANW",
+      "tags": [
+        "cybersecurity",
+        "technology",
+        "cloud computing",
+        "ai"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2872509991796108,
+      "top2avg": 0.3304272137744988
+    },
+    {
+      "ticker": "PAYX",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "hr services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2708113231543386,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "PCAR",
+      "tags": [
+        "automotive",
+        "manufacturing",
+        "financial services"
+      ],
+      "max": 0.3144378397971947,
+      "avg": 0.2778628912666116,
+      "top2avg": 0.291697244440249
+    },
+    {
+      "ticker": "PEG",
+      "tags": [
+        "energy",
+        "utilities",
+        "clean energy"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.28673822686097516,
+      "top2avg": 0.30456118211799466
+    },
+    {
+      "ticker": "PEP",
+      "tags": [
+        "food and beverage",
+        "consumer goods",
+        "e-commerce"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.30003120248246085,
+      "top2avg": 0.3395191582080569
+    },
+    {
+      "ticker": "PFE",
+      "tags": [
+        "pharmaceuticals",
+        "biotechnology",
+        "healthcare",
+        "life sciences"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.2738743168622423,
+      "top2avg": 0.3123229451534852
+    },
+    {
+      "ticker": "PG",
+      "tags": [
+        "consumer goods",
+        "retail",
+        "sustainability"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.26711212402388307,
+      "top2avg": 0.3017673185843285
+    },
+    {
+      "ticker": "PGR",
+      "tags": [
+        "insurance",
+        "property-casualty insurance",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.20996632548057123,
+      "top2avg": 0.25038677509033236
+    },
+    {
+      "ticker": "PH",
+      "tags": [
+        "industrial manufacturing",
+        "aerospace",
+        "engineering solutions"
+      ],
+      "max": 0.3341830653551102,
+      "avg": 0.2802568153549226,
+      "top2avg": 0.3076071150306975
+    },
+    {
+      "ticker": "PLD",
+      "tags": [
+        "real estate",
+        "logistics",
+        "sustainability",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.23759193686550795,
+      "top2avg": 0.2772717602137501
+    },
+    {
+      "ticker": "PLTR",
+      "tags": [
+        "technology",
+        "data analytics",
+        "artificial intelligence"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.25377961224705436,
+      "top2avg": 0.2890462698701438
+    },
+    {
+      "ticker": "PNC",
+      "tags": [
+        "financial services",
+        "banking",
+        "asset management",
+        "corporate finance"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.2161486782994978,
+      "top2avg": 0.24193967456339283
+    },
+    {
+      "ticker": "PRU",
+      "tags": [
+        "financial services",
+        "insurance",
+        "investment management",
+        "retirement solutions"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.19001297582910287,
+      "top2avg": 0.22312112975994788
+    },
+    {
+      "ticker": "PSA",
+      "tags": [
+        "real estate",
+        "self-storage",
+        "reit"
+      ],
+      "max": 0.23765071062199053,
+      "avg": 0.20998932964863884,
+      "top2avg": 0.221886619270427
+    },
+    {
+      "ticker": "PYPL",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "financial services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.29769636014797896,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "QCOM",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "wireless communications",
+        "artificial intelligence"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.4854048509249391,
+      "top2avg": 0.6817634319797343
+    },
+    {
+      "ticker": "RBLX",
+      "tags": [
+        "technology",
+        "gaming",
+        "e-commerce",
+        "cloud computing",
+        "digital content creation"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2847262222812893,
+      "top2avg": 0.3235836062773953
+    },
+    {
+      "ticker": "RCL",
+      "tags": [
+        "travel",
+        "leisure",
+        "hospitality"
+      ],
+      "max": 0.17139960875932828,
+      "avg": 0.13925010471301902,
+      "top2avg": 0.15114140181455374
+    },
+    {
+      "ticker": "RDDT",
+      "tags": [
+        "technology",
+        "social media",
+        "digital advertising",
+        "data analytics"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.27059252024461183,
+      "top2avg": 0.3128222542757755
+    },
+    {
+      "ticker": "REGN",
+      "tags": [
+        "biotechnology",
+        "pharmaceuticals",
+        "healthcare",
+        "genetic research"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.2384840929651921,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "ROK",
+      "tags": [
+        "industrial automation",
+        "digital transformation",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3139222178459353,
+      "top2avg": 0.34527837243515547
+    },
+    {
+      "ticker": "ROST",
+      "tags": [
+        "retail",
+        "apparel",
+        "home fashion"
+      ],
+      "max": 0.23006052681535497,
+      "avg": 0.1994569498508859,
+      "top2avg": 0.2245153752919307
+    },
+    {
+      "ticker": "RSG",
+      "tags": [
+        "environmental services",
+        "waste management",
+        "recycling",
+        "sustainability innovation"
+      ],
+      "max": 0.2660276318812942,
+      "avg": 0.21899239750621183,
+      "top2avg": 0.2439549091117662
+    },
+    {
+      "ticker": "RTX",
+      "tags": [
+        "aerospace",
+        "defense",
+        "technology",
+        "engineering"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.26533630476608183,
+      "top2avg": 0.31796034647433125
+    },
+    {
+      "ticker": "SBUX",
+      "tags": [
+        "food and beverage",
+        "retail",
+        "consumer goods"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.2748633093999752,
+      "top2avg": 0.30280985221570966
+    },
+    {
+      "ticker": "SCHW",
+      "tags": [
+        "financial services",
+        "wealth management",
+        "fintech"
+      ],
+      "max": 0.30990931779938075,
+      "avg": 0.23932391145144527,
+      "top2avg": 0.2800517513593588
+    },
+    {
+      "ticker": "SHOP",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "cloud computing"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3080912427203396,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "SLB",
+      "tags": [
+        "technology",
+        "energy services",
+        "digital transformation",
+        "sustainability"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.271650311617445,
+      "top2avg": 0.31879480144964645
+    },
+    {
+      "ticker": "SNOW",
+      "tags": [
+        "cloud computing",
+        "data",
+        "artificial intelligence",
+        "ai",
+        "financial services",
+        "healthcare",
+        "retail",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.24380203678010764,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "SNPS",
+      "tags": [
+        "technology",
+        "semiconductor",
+        "cloud computing"
+      ],
+      "max": 0.7910417049827467,
+      "avg": 0.4736138433759341,
+      "top2avg": 0.5697313487456918
+    },
+    {
+      "ticker": "SO",
+      "tags": [
+        "utilities",
+        "energy",
+        "renewable energy",
+        "natural gas"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.25676028814697477,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "SPG",
+      "tags": [
+        "real estate",
+        "retail",
+        "investment management"
+      ],
+      "max": 0.21897022376850642,
+      "avg": 0.20704694209597627,
+      "top2avg": 0.21254637584368494
+    },
+    {
+      "ticker": "SPGI",
+      "tags": [
+        "financial services",
+        "data analytics",
+        "energy"
+      ],
+      "max": 0.25109231634693613,
+      "avg": 0.2281775994223828,
+      "top2avg": 0.25064325063313647
+    },
+    {
+      "ticker": "SRE",
+      "tags": [
+        "energy",
+        "utilities",
+        "infrastructure",
+        "renewable energy"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.2592568344483111,
+      "top2avg": 0.2899656240411255
+    },
+    {
+      "ticker": "STT",
+      "tags": [
+        "financial services",
+        "investment management",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.26488775067617754,
+      "top2avg": 0.29930758871398677
+    },
+    {
+      "ticker": "STX",
+      "tags": [
+        "data storage",
+        "technology",
+        "cloud computing",
+        "iot"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.27902030362744734,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "SYK",
+      "tags": [
+        "medical technology",
+        "healthcare",
+        "robotics"
+      ],
+      "max": 0.32139346199917396,
+      "avg": 0.27077778103589206,
+      "top2avg": 0.3089647241473139
+    },
+    {
+      "ticker": "SYY",
+      "tags": [
+        "food distribution",
+        "logistics",
+        "supply chain management"
+      ],
+      "max": 0.2943075823566778,
+      "avg": 0.22553224757306348,
+      "top2avg": 0.24616503724410854
+    },
+    {
+      "ticker": "T",
+      "tags": [
+        "telecommunications",
+        "technology",
+        "broadband services"
+      ],
+      "max": 0.3749002032802986,
+      "avg": 0.33475475065057253,
+      "top2avg": 0.3616605978944677
+    },
+    {
+      "ticker": "TEAM",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "ai integration",
+        "enterprise software"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.27576818137691905,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "TER",
+      "tags": [
+        "technology",
+        "robotics",
+        "semiconductor testing",
+        "automation"
+      ],
+      "max": 0.6159389363153043,
+      "avg": 0.3822831389710081,
+      "top2avg": 0.48217996441197053
+    },
+    {
+      "ticker": "TFC",
+      "tags": [
+        "financial services",
+        "banking",
+        "investment",
+        "wealth management"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.21214170577999594,
+      "top2avg": 0.24193967456339283
+    },
+    {
+      "ticker": "TGT",
+      "tags": [
+        "retail",
+        "e-commerce",
+        "consumer goods"
+      ],
+      "max": 0.3845644134001506,
+      "avg": 0.2993361800615401,
+      "top2avg": 0.3395191582080569
+    },
+    {
+      "ticker": "TJX",
+      "tags": [
+        "apparel",
+        "home fashions",
+        "e-commerce",
+        "discount retailing"
+      ],
+      "max": 0.29447390301596327,
+      "avg": 0.24131024773113244,
+      "top2avg": 0.26273181379422894
+    },
+    {
+      "ticker": "TMO",
+      "tags": [
+        "technology",
+        "healthcare",
+        "biotechnology",
+        "pharmaceuticals"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2832756957524556,
+      "top2avg": 0.33112570293391175
+    },
+    {
+      "ticker": "TMUS",
+      "tags": [
+        "telecommunications",
+        "technology",
+        "broadband"
+      ],
+      "max": 0.3749002032802986,
+      "avg": 0.33330145045125575,
+      "top2avg": 0.3616605978944677
+    },
+    {
+      "ticker": "TRGP",
+      "tags": [
+        "energy",
+        "infrastructure",
+        "natural gas processing"
+      ],
+      "max": 0.25109231634693613,
+      "avg": 0.22950700846937955,
+      "top2avg": 0.24417637801362652
+    },
+    {
+      "ticker": "TRV",
+      "tags": [
+        "insurance",
+        "risk management",
+        "financial services",
+        "property and casualty insurance"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.17249862634587038,
+      "top2avg": 0.2012733712956824
+    },
+    {
+      "ticker": "TSLA",
+      "tags": [
+        "technology",
+        "automotive",
+        "renewable energy"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2790710972075388,
+      "top2avg": 0.30868882079597004
+    },
+    {
+      "ticker": "TT",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "cloud computing"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3080912427203396,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "TTWO",
+      "tags": [
+        "technology",
+        "gaming",
+        "digital entertainment"
+      ],
+      "max": 0.3667712258293027,
+      "avg": 0.3379794794613644,
+      "top2avg": 0.3575961091689698
+    },
+    {
+      "ticker": "TWLO",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "customer engagement"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.27498883738936397,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "TXN",
+      "tags": [
+        "technology",
+        "semiconductors",
+        "electronics manufacturing"
+      ],
+      "max": 1.0000000000000002,
+      "avg": 0.6251714447707911,
+      "top2avg": 0.7635466709018682
+    },
+    {
+      "ticker": "UBER",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "logistics"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2803057958853798,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "UNH",
+      "tags": [
+        "health care",
+        "insurance",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.22179943928808288,
+      "top2avg": 0.25652288009611035
+    },
+    {
+      "ticker": "UNP",
+      "tags": [
+        "transportation",
+        "logistics",
+        "freight rail"
+      ],
+      "max": 0.21800249882727818,
+      "avg": 0.18632537576507546,
+      "top2avg": 0.20801249547940875
+    },
+    {
+      "ticker": "UPS",
+      "tags": [
+        "logistics",
+        "transportation",
+        "e-commerce",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2647299716208544,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "URI",
+      "tags": [
+        "construction",
+        "equipment rental",
+        "industrial solutions"
+      ],
+      "max": 0.30639045002612514,
+      "avg": 0.2575154895273764,
+      "top2avg": 0.3048969266889838
+    },
+    {
+      "ticker": "USB",
+      "tags": [
+        "financial services",
+        "banking",
+        "investment management",
+        "payment processing"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.22333022174885706,
+      "top2avg": 0.24193967456339283
+    },
+    {
+      "ticker": "V",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "cloud computing",
+        "financial services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2936169782700889,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "VICI",
+      "tags": [
+        "real estate",
+        "gaming",
+        "hospitality",
+        "entertainment"
+      ],
+      "max": 0.2987462200461538,
+      "avg": 0.21500612971174385,
+      "top2avg": 0.26921724020908117
+    },
+    {
+      "ticker": "VRTX",
+      "tags": [
+        "biotechnology",
+        "pharmaceuticals",
+        "gene therapy",
+        "specialty medicine"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.25243351856876717,
+      "top2avg": 0.2951389478440686
+    },
+    {
+      "ticker": "VTR",
+      "tags": [
+        "real estate",
+        "healthcare",
+        "senior living"
+      ],
+      "max": 0.20612252791886346,
+      "avg": 0.19651115903387373,
+      "top2avg": 0.20026321136595587
+    },
+    {
+      "ticker": "VZ",
+      "tags": [
+        "telecommunications",
+        "technology",
+        "cloud computing"
+      ],
+      "max": 0.3749002032802986,
+      "avg": 0.33490000947511805,
+      "top2avg": 0.3616605978944677
+    },
+    {
+      "ticker": "WAT",
+      "tags": [
+        "analytical instruments",
+        "chromatography",
+        "mass spectrometry",
+        "thermal analysis",
+        "pharmaceutical",
+        "clinical",
+        "biochemical",
+        "industrial",
+        "nutritional safety",
+        "environmental",
+        "academic",
+        "governmental",
+        "life sciences",
+        "diagnostics",
+        "technology",
+        "healthcare",
+        "scientific research"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2382539088093028,
+      "top2avg": 0.3296182347282102
+    },
+    {
+      "ticker": "WBD",
+      "tags": [
+        "media",
+        "entertainment",
+        "streaming",
+        "gaming"
+      ],
+      "max": 0.2987462200461538,
+      "avg": 0.24448985887092417,
+      "top2avg": 0.2720831627658009
+    },
+    {
+      "ticker": "WDAY",
+      "tags": [
+        "technology",
+        "cloud computing",
+        "enterprise software"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.3003424327638395,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "WDC",
+      "tags": [
+        "technology",
+        "data storage",
+        "cloud computing"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.2994158229736708,
+      "top2avg": 0.3148999125725278
+    },
+    {
+      "ticker": "WEC",
+      "tags": [
+        "utilities",
+        "renewable energy",
+        "energy infrastructure"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.27627344798726944,
+      "top2avg": 0.30449234696556593
+    },
+    {
+      "ticker": "WELL",
+      "tags": [
+        "real estate",
+        "healthcare",
+        "senior living"
+      ],
+      "max": 0.20612252791886346,
+      "avg": 0.19651115903387373,
+      "top2avg": 0.20026321136595587
+    },
+    {
+      "ticker": "WFC",
+      "tags": [
+        "banking",
+        "financial services",
+        "investment management",
+        "mortgage lending"
+      ],
+      "max": 0.2501941849193368,
+      "avg": 0.20821704768886157,
+      "top2avg": 0.24193967456339283
+    },
+    {
+      "ticker": "WM",
+      "tags": [
+        "environmental services",
+        "renewable energy",
+        "recycling",
+        "waste management"
+      ],
+      "max": 0.2660276318812942,
+      "avg": 0.21848076342832137,
+      "top2avg": 0.2429316409559853
+    },
+    {
+      "ticker": "WMB",
+      "tags": [
+        "energy",
+        "natural gas",
+        "infrastructure",
+        "clean energy"
+      ],
+      "max": 0.28028343250067445,
+      "avg": 0.24897761075072478,
+      "top2avg": 0.26568787442380526
+    },
+    {
+      "ticker": "WMT",
+      "tags": [
+        "retail",
+        "e-commerce",
+        "technology"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.28728837309770217,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "XEL",
+      "tags": [
+        "utilities",
+        "renewable energy",
+        "clean technology"
+      ],
+      "max": 0.3288389317353149,
+      "avg": 0.28973614630056393,
+      "top2avg": 0.32468639443550773
+    },
+    {
+      "ticker": "XOM",
+      "tags": [
+        "energy",
+        "petrochemicals",
+        "emerging low-carbon technologies"
+      ],
+      "max": 0.3663426412837413,
+      "avg": 0.30895614062093163,
+      "top2avg": 0.3378880527579294
+    },
+    {
+      "ticker": "XYL",
+      "tags": [
+        "technology",
+        "environmental sustainability",
+        "infrastructure"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.25787191757343303,
+      "top2avg": 0.2928407160944768
+    },
+    {
+      "ticker": "XYZ",
+      "tags": [
+        "technology",
+        "e-commerce",
+        "financial services"
+      ],
+      "max": 0.3484209925086368,
+      "avg": 0.29769636014797896,
+      "top2avg": 0.32144744776230005
+    },
+    {
+      "ticker": "YUM",
+      "tags": [
+        "restaurant",
+        "quick-service",
+        "franchising"
+      ],
+      "max": 0.24033033993684233,
+      "avg": 0.17100917560080922,
+      "top2avg": 0.19212413330612726
+    },
+    {
+      "ticker": "ZS",
+      "tags": [
+        "cybersecurity",
+        "cloud computing",
+        "ai security"
+      ],
+      "max": 0.3124334350403608,
+      "avg": 0.27926363846140184,
+      "top2avg": 0.2969061338383898
+    },
+    {
+      "ticker": "ZTS",
+      "tags": [
+        "pharmaceuticals",
+        "biotechnology",
+        "veterinary medicine",
+        "diagnostics"
+      ],
+      "max": 0.3138304133591867,
+      "avg": 0.24584796140202358,
+      "top2avg": 0.2998049349416263
+    }
+  ]
+}

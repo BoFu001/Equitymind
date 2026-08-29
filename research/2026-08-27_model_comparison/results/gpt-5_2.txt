@@ -1,0 +1,13 @@
+model:  gpt-5.2
+run at: 2026-08-27 18:38
+runs:   5 per case
+
+  which stock is the most expensive?           5/5  want valuation_score/ascending
+  which stock is the cheapest?                 5/5  want valuation_score/descending
+  which stocks are the riskiest?               5/5  want risk_beta_score/ascending
+  which stocks have the worst quality?         5/5  want quality_score/ascending
+  which stocks are most heavily shorted?       5/5  want short_interest_pct/descending
+  which stocks have the best analyst rating?   5/5  want consensus_recommendation_mean/ascending
+  which stocks are the largest?                5/5  want market_cap/descending
+
+  35/35

@@ -1,0 +1,20 @@
+{
+  "created": "2026-08-17",
+  "source_table": "stock_universe",
+  "embedding_model": "text-embedding-3-small",
+  "n_tickers": 243,
+  "dim": 1536,
+  "excluded_null_embedding": [
+    "C",
+    "DVN",
+    "FANG",
+    "GE",
+    "KMI",
+    "PSX",
+    "SPCX"
+  ],
+  "rows_with_null_text": [],
+  "npz_sha256": "e063558c9b7d7ba687df8f030664170228d6eb1638fa0e8ab328f10fb67c787e",
+  "texts_sha256": "728006cc58c98f5b281af1842dd5d07312c4660ed80dd76b00946a03e12b92cd",
+  "purpose": "Frozen baseline for Research Logs 03/04/05. Production dropped this column on the same date; this is the only copy."
+}

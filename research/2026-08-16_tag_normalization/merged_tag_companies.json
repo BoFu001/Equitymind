@@ -1,0 +1,2460 @@
+[
+  {
+    "tag": "technology",
+    "count": 113,
+    "tickers": [
+      "A",
+      "AAPL",
+      "ABNB",
+      "ADBE",
+      "ADI",
+      "ADP",
+      "ALL",
+      "AMAT",
+      "AMD",
+      "AME",
+      "AMZN",
+      "ANET",
+      "APP",
+      "AVGO",
+      "AXON",
+      "AXP",
+      "AZO",
+      "BKNG",
+      "CARR",
+      "CDNS",
+      "CMCSA",
+      "CME",
+      "CMI",
+      "COHR",
+      "COIN",
+      "COP",
+      "CPNG",
+      "CRM",
+      "CRWD",
+      "CSCO",
+      "DASH",
+      "DDOG",
+      "DE",
+      "DOV",
+      "EA",
+      "EMR",
+      "EQIX",
+      "ETN",
+      "F",
+      "FDX",
+      "FTNT",
+      "GD",
+      "GEV",
+      "GM",
+      "GOOGL",
+      "HON",
+      "IBM",
+      "ICE",
+      "INTU",
+      "IQV",
+      "ITW",
+      "LMT",
+      "LOW",
+      "LRCX",
+      "MA",
+      "MAR",
+      "MCHP",
+      "MDB",
+      "MELI",
+      "META",
+      "MMM",
+      "MPWR",
+      "MRVL",
+      "MSFT",
+      "MSTR",
+      "MTD",
+      "MU",
+      "NET",
+      "NFLX",
+      "NOC",
+      "NOW",
+      "NVDA",
+      "NXPI",
+      "ON",
+      "OTIS",
+      "PANW",
+      "PAYX",
+      "PGR",
+      "PLD",
+      "PLTR",
+      "PYPL",
+      "QCOM",
+      "RBLX",
+      "RDDT",
+      "ROK",
+      "RTX",
+      "SHOP",
+      "SLB",
+      "SNOW",
+      "SNPS",
+      "STT",
+      "STX",
+      "T",
+      "TEAM",
+      "TER",
+      "TMO",
+      "TMUS",
+      "TSLA",
+      "TT",
+      "TTWO",
+      "TWLO",
+      "TXN",
+      "UBER",
+      "UNH",
+      "UPS",
+      "V",
+      "VZ",
+      "WAT",
+      "WDAY",
+      "WDC",
+      "WMT",
+      "XYL",
+      "XYZ"
+    ]
+  },
+  {
+    "tag": "cloud computing",
+    "count": 41,
+    "tickers": [
+      "AAPL",
+      "ADBE",
+      "ADP",
+      "AMZN",
+      "ANET",
+      "AVGO",
+      "AXON",
+      "COIN",
+      "CRM",
+      "CRWD",
+      "CSCO",
+      "DDOG",
+      "DLR",
+      "EQIX",
+      "FTNT",
+      "GOOGL",
+      "IBM",
+      "INTU",
+      "MDB",
+      "MSFT",
+      "MSTR",
+      "MU",
+      "NET",
+      "NOW",
+      "NVDA",
+      "ORCL",
+      "PANW",
+      "PAYX",
+      "RBLX",
+      "SHOP",
+      "SNOW",
+      "SNPS",
+      "STX",
+      "TEAM",
+      "TT",
+      "TWLO",
+      "V",
+      "VZ",
+      "WDAY",
+      "WDC",
+      "ZS"
+    ]
+  },
+  {
+    "tag": "financial services",
+    "count": 35,
+    "tickers": [
+      "AFL",
+      "AIG",
+      "ALL",
+      "AXP",
+      "BAC",
+      "CB",
+      "CME",
+      "COF",
+      "COIN",
+      "CPNG",
+      "GS",
+      "HIG",
+      "ICE",
+      "INTU",
+      "JPM",
+      "MA",
+      "MET",
+      "MRSH",
+      "MS",
+      "NTRS",
+      "O",
+      "PCAR",
+      "PNC",
+      "PRU",
+      "PYPL",
+      "SCHW",
+      "SNOW",
+      "SPGI",
+      "STT",
+      "TFC",
+      "TRV",
+      "USB",
+      "V",
+      "WFC",
+      "XYZ"
+    ]
+  },
+  {
+    "tag": "e-commerce",
+    "count": 32,
+    "tickers": [
+      "AAPL",
+      "ABNB",
+      "ADBE",
+      "AMZN",
+      "AZO",
+      "BKNG",
+      "COIN",
+      "COST",
+      "CPNG",
+      "DASH",
+      "FDX",
+      "HD",
+      "INTU",
+      "KDP",
+      "KR",
+      "LOW",
+      "MA",
+      "MELI",
+      "MSTR",
+      "ORLY",
+      "PEP",
+      "PYPL",
+      "RBLX",
+      "SHOP",
+      "TGT",
+      "TJX",
+      "TT",
+      "UBER",
+      "UPS",
+      "V",
+      "WMT",
+      "XYZ"
+    ]
+  },
+  {
+    "tag": "healthcare",
+    "count": 24,
+    "tickers": [
+      "ABBV",
+      "AFL",
+      "AMGN",
+      "BDX",
+      "BMY",
+      "BSX",
+      "CI",
+      "CNC",
+      "DXCM",
+      "ELV",
+      "EW",
+      "HUM",
+      "IQV",
+      "JNJ",
+      "KVUE",
+      "LLY",
+      "PFE",
+      "REGN",
+      "SNOW",
+      "SYK",
+      "TMO",
+      "VTR",
+      "WAT",
+      "WELL"
+    ]
+  },
+  {
+    "tag": "energy",
+    "count": 24,
+    "tickers": [
+      "AEE",
+      "AEP",
+      "CAT",
+      "CMI",
+      "COP",
+      "CVX",
+      "DUK",
+      "ED",
+      "EOG",
+      "ETR",
+      "EXC",
+      "FE",
+      "GEV",
+      "MPC",
+      "NEE",
+      "OKE",
+      "OXY",
+      "PEG",
+      "SO",
+      "SPGI",
+      "SRE",
+      "TRGP",
+      "WMB",
+      "XOM"
+    ]
+  },
+  {
+    "tag": "insurance",
+    "count": 17,
+    "tickers": [
+      "AFL",
+      "AIG",
+      "AJG",
+      "ALL",
+      "CB",
+      "CI",
+      "CNC",
+      "CVS",
+      "ELV",
+      "HIG",
+      "HUM",
+      "MET",
+      "MRSH",
+      "PGR",
+      "PRU",
+      "TRV",
+      "UNH"
+    ]
+  },
+  {
+    "tag": "artificial intelligence",
+    "count": 17,
+    "tickers": [
+      "ADI",
+      "AXON",
+      "CDNS",
+      "CSCO",
+      "DDOG",
+      "EMR",
+      "GOOGL",
+      "IBM",
+      "MDB",
+      "META",
+      "MSFT",
+      "NOW",
+      "NVDA",
+      "PANW",
+      "PLTR",
+      "QCOM",
+      "SNOW"
+    ]
+  },
+  {
+    "tag": "retail",
+    "count": 15,
+    "tickers": [
+      "AZO",
+      "COST",
+      "CPNG",
+      "DG",
+      "HD",
+      "KR",
+      "LOW",
+      "ORLY",
+      "PG",
+      "ROST",
+      "SBUX",
+      "SNOW",
+      "SPG",
+      "TGT",
+      "WMT"
+    ]
+  },
+  {
+    "tag": "pharmaceutical",
+    "count": 14,
+    "tickers": [
+      "ABBV",
+      "ABT",
+      "AMGN",
+      "BMY",
+      "GILD",
+      "JNJ",
+      "LLY",
+      "MRK",
+      "PFE",
+      "REGN",
+      "TMO",
+      "VRTX",
+      "WAT",
+      "ZTS"
+    ]
+  },
+  {
+    "tag": "semiconductor",
+    "count": 14,
+    "tickers": [
+      "ADI",
+      "AMAT",
+      "AMD",
+      "AVGO",
+      "CDNS",
+      "KLAC",
+      "MCHP",
+      "MPWR",
+      "MRVL",
+      "MU",
+      "ON",
+      "QCOM",
+      "SNPS",
+      "TXN"
+    ]
+  },
+  {
+    "tag": "utilities",
+    "count": 14,
+    "tickers": [
+      "AEE",
+      "AEP",
+      "DUK",
+      "ED",
+      "ES",
+      "ETR",
+      "EXC",
+      "FE",
+      "NEE",
+      "PEG",
+      "SO",
+      "SRE",
+      "WEC",
+      "XEL"
+    ]
+  },
+  {
+    "tag": "sustainability",
+    "count": 14,
+    "tickers": [
+      "BKR",
+      "CMG",
+      "F",
+      "GEV",
+      "HON",
+      "KHC",
+      "KMB",
+      "KO",
+      "LOW",
+      "MDLZ",
+      "OKE",
+      "PG",
+      "PLD",
+      "SLB"
+    ]
+  },
+  {
+    "tag": "consumer goods",
+    "count": 14,
+    "tickers": [
+      "CL",
+      "DG",
+      "HSY",
+      "KDP",
+      "KHC",
+      "KMB",
+      "KO",
+      "KVUE",
+      "MDLZ",
+      "MMM",
+      "PEP",
+      "PG",
+      "SBUX",
+      "TGT"
+    ]
+  },
+  {
+    "tag": "biotechnology",
+    "count": 13,
+    "tickers": [
+      "ABBV",
+      "AMGN",
+      "BMY",
+      "DHR",
+      "GILD",
+      "LLY",
+      "MDT",
+      "MRK",
+      "PFE",
+      "REGN",
+      "TMO",
+      "VRTX",
+      "ZTS"
+    ]
+  },
+  {
+    "tag": "renewable energy",
+    "count": 13,
+    "tickers": [
+      "AEE",
+      "BKR",
+      "CVX",
+      "DUK",
+      "ES",
+      "ETR",
+      "NEE",
+      "SO",
+      "SRE",
+      "TSLA",
+      "WEC",
+      "WM",
+      "XEL"
+    ]
+  },
+  {
+    "tag": "infrastructure",
+    "count": 13,
+    "tickers": [
+      "AEE",
+      "AEP",
+      "ED",
+      "ES",
+      "FE",
+      "NEE",
+      "NSC",
+      "OKE",
+      "OTIS",
+      "SRE",
+      "TRGP",
+      "WMB",
+      "XYL"
+    ]
+  },
+  {
+    "tag": "logistics",
+    "count": 11,
+    "tickers": [
+      "CPNG",
+      "CSX",
+      "DASH",
+      "FDX",
+      "MPC",
+      "NSC",
+      "PLD",
+      "SYY",
+      "UBER",
+      "UNP",
+      "UPS"
+    ]
+  },
+  {
+    "tag": "real estate",
+    "count": 10,
+    "tickers": [
+      "AMT",
+      "DLR",
+      "MAR",
+      "O",
+      "PLD",
+      "PSA",
+      "SPG",
+      "VICI",
+      "VTR",
+      "WELL"
+    ]
+  },
+  {
+    "tag": "aerospace",
+    "count": 9,
+    "tickers": [
+      "AME",
+      "BA",
+      "ETN",
+      "GD",
+      "HON",
+      "LMT",
+      "NOC",
+      "PH",
+      "RTX"
+    ]
+  },
+  {
+    "tag": "automotive",
+    "count": 9,
+    "tickers": [
+      "AZO",
+      "CMI",
+      "F",
+      "GM",
+      "NXPI",
+      "ON",
+      "ORLY",
+      "PCAR",
+      "TSLA"
+    ]
+  },
+  {
+    "tag": "manufacturing",
+    "count": 8,
+    "tickers": [
+      "AMAT",
+      "DOV",
+      "GD",
+      "ITW",
+      "MMM",
+      "MTD",
+      "OTIS",
+      "PCAR"
+    ]
+  },
+  {
+    "tag": "gaming",
+    "count": 8,
+    "tickers": [
+      "AMD",
+      "EA",
+      "MSFT",
+      "NVDA",
+      "RBLX",
+      "TTWO",
+      "VICI",
+      "WBD"
+    ]
+  },
+  {
+    "tag": "cybersecurity",
+    "count": 8,
+    "tickers": [
+      "AVGO",
+      "CRWD",
+      "CSCO",
+      "FTNT",
+      "LMT",
+      "NET",
+      "PANW",
+      "ZS"
+    ]
+  },
+  {
+    "tag": "life sciences",
+    "count": 7,
+    "tickers": [
+      "A",
+      "BDX",
+      "DHR",
+      "IR",
+      "MTD",
+      "PFE",
+      "WAT"
+    ]
+  },
+  {
+    "tag": "industrial manufacturing",
+    "count": 7,
+    "tickers": [
+      "AME",
+      "CAT",
+      "COHR",
+      "EMR",
+      "ETN",
+      "IR",
+      "PH"
+    ]
+  },
+  {
+    "tag": "banking",
+    "count": 7,
+    "tickers": [
+      "BAC",
+      "COF",
+      "NTRS",
+      "PNC",
+      "TFC",
+      "USB",
+      "WFC"
+    ]
+  },
+  {
+    "tag": "investment management",
+    "count": 7,
+    "tickers": [
+      "BLK",
+      "HIG",
+      "PRU",
+      "SPG",
+      "STT",
+      "USB",
+      "WFC"
+    ]
+  },
+  {
+    "tag": "entertainment",
+    "count": 7,
+    "tickers": [
+      "CMCSA",
+      "DIS",
+      "EA",
+      "FOXA",
+      "NFLX",
+      "VICI",
+      "WBD"
+    ]
+  },
+  {
+    "tag": "hospitality",
+    "count": 6,
+    "tickers": [
+      "ABNB",
+      "CCL",
+      "HLT",
+      "MAR",
+      "RCL",
+      "VICI"
+    ]
+  },
+  {
+    "tag": "medical device",
+    "count": 6,
+    "tickers": [
+      "ABT",
+      "AME",
+      "DXCM",
+      "ISRG",
+      "JNJ",
+      "MDT"
+    ]
+  },
+  {
+    "tag": "telecommunications",
+    "count": 6,
+    "tickers": [
+      "AMT",
+      "CMCSA",
+      "COHR",
+      "T",
+      "TMUS",
+      "VZ"
+    ]
+  },
+  {
+    "tag": "media",
+    "count": 6,
+    "tickers": [
+      "APP",
+      "CMCSA",
+      "DIS",
+      "FOXA",
+      "NFLX",
+      "WBD"
+    ]
+  },
+  {
+    "tag": "wealth management",
+    "count": 6,
+    "tickers": [
+      "BAC",
+      "HOOD",
+      "MS",
+      "NTRS",
+      "SCHW",
+      "TFC"
+    ]
+  },
+  {
+    "tag": "asset management",
+    "count": 6,
+    "tickers": [
+      "GS",
+      "JPM",
+      "MET",
+      "MS",
+      "NTRS",
+      "PNC"
+    ]
+  },
+  {
+    "tag": "data analytics",
+    "count": 6,
+    "tickers": [
+      "ICE",
+      "IQV",
+      "KR",
+      "PLTR",
+      "RDDT",
+      "SPGI"
+    ]
+  },
+  {
+    "tag": "diagnostics",
+    "count": 5,
+    "tickers": [
+      "A",
+      "ABT",
+      "DHR",
+      "WAT",
+      "ZTS"
+    ]
+  },
+  {
+    "tag": "travel",
+    "count": 5,
+    "tickers": [
+      "ABNB",
+      "CCL",
+      "HLT",
+      "MAR",
+      "RCL"
+    ]
+  },
+  {
+    "tag": "risk management",
+    "count": 5,
+    "tickers": [
+      "AIG",
+      "AJG",
+      "AON",
+      "CB",
+      "TRV"
+    ]
+  },
+  {
+    "tag": "defense",
+    "count": 5,
+    "tickers": [
+      "BA",
+      "GD",
+      "LMT",
+      "NOC",
+      "RTX"
+    ]
+  },
+  {
+    "tag": "transportation",
+    "count": 5,
+    "tickers": [
+      "CSX",
+      "FDX",
+      "NSC",
+      "UNP",
+      "UPS"
+    ]
+  },
+  {
+    "tag": "environmental sustainability",
+    "count": 5,
+    "tickers": [
+      "CTAS",
+      "CVX",
+      "ED",
+      "OXY",
+      "XYL"
+    ]
+  },
+  {
+    "tag": "clean energy",
+    "count": 5,
+    "tickers": [
+      "DOV",
+      "ED",
+      "IR",
+      "PEG",
+      "WMB"
+    ]
+  },
+  {
+    "tag": "investment banking",
+    "count": 4,
+    "tickers": [
+      "BAC",
+      "GS",
+      "JPM",
+      "MS"
+    ]
+  },
+  {
+    "tag": "medical technology",
+    "count": 4,
+    "tickers": [
+      "BDX",
+      "BSX",
+      "EW",
+      "SYK"
+    ]
+  },
+  {
+    "tag": "oil and gas",
+    "count": 4,
+    "tickers": [
+      "BKR",
+      "COP",
+      "CVX",
+      "OXY"
+    ]
+  },
+  {
+    "tag": "food and beverage",
+    "count": 4,
+    "tickers": [
+      "KHC",
+      "MDLZ",
+      "PEP",
+      "SBUX"
+    ]
+  },
+  {
+    "tag": "enterprise software",
+    "count": 4,
+    "tickers": [
+      "NOW",
+      "ORCL",
+      "TEAM",
+      "WDAY"
+    ]
+  },
+  {
+    "tag": "construction",
+    "count": 3,
+    "tickers": [
+      "CAT",
+      "DE",
+      "URI"
+    ]
+  },
+  {
+    "tag": "leisure",
+    "count": 3,
+    "tickers": [
+      "CCL",
+      "DIS",
+      "RCL"
+    ]
+  },
+  {
+    "tag": "managed care",
+    "count": 3,
+    "tickers": [
+      "CNC",
+      "ELV",
+      "HUM"
+    ]
+  },
+  {
+    "tag": "healthcare technology",
+    "count": 3,
+    "tickers": [
+      "DHR",
+      "IDXX",
+      "MDT"
+    ]
+  },
+  {
+    "tag": "industrial automation",
+    "count": 3,
+    "tickers": [
+      "HON",
+      "ON",
+      "ROK"
+    ]
+  },
+  {
+    "tag": "robotics",
+    "count": 3,
+    "tickers": [
+      "ISRG",
+      "SYK",
+      "TER"
+    ]
+  },
+  {
+    "tag": "beverages",
+    "count": 3,
+    "tickers": [
+      "KDP",
+      "KO",
+      "MNST"
+    ]
+  },
+  {
+    "tag": "investment",
+    "count": 3,
+    "tickers": [
+      "MET",
+      "O",
+      "TFC"
+    ]
+  },
+  {
+    "tag": "digital media",
+    "count": 2,
+    "tickers": [
+      "ADBE",
+      "AMZN"
+    ]
+  },
+  {
+    "tag": "business services",
+    "count": 2,
+    "tickers": [
+      "ADP",
+      "CTAS"
+    ]
+  },
+  {
+    "tag": "consulting",
+    "count": 2,
+    "tickers": [
+      "AJG",
+      "IBM"
+    ]
+  },
+  {
+    "tag": "oncology",
+    "count": 2,
+    "tickers": [
+      "AMGN",
+      "MRK"
+    ]
+  },
+  {
+    "tag": "data center",
+    "count": 2,
+    "tickers": [
+      "AMT",
+      "DLR"
+    ]
+  },
+  {
+    "tag": "advertising",
+    "count": 2,
+    "tickers": [
+      "APP",
+      "LYV"
+    ]
+  },
+  {
+    "tag": "financial technology",
+    "count": 2,
+    "tickers": [
+      "BLK",
+      "HOOD"
+    ]
+  },
+  {
+    "tag": "reinsurance",
+    "count": 2,
+    "tickers": [
+      "CB",
+      "MRSH"
+    ]
+  },
+  {
+    "tag": "personal care",
+    "count": 2,
+    "tickers": [
+      "CL",
+      "KMB"
+    ]
+  },
+  {
+    "tag": "digital entertainment",
+    "count": 2,
+    "tickers": [
+      "CPNG",
+      "TTWO"
+    ]
+  },
+  {
+    "tag": "health care",
+    "count": 2,
+    "tickers": [
+      "CVS",
+      "UNH"
+    ]
+  },
+  {
+    "tag": "security",
+    "count": 2,
+    "tickers": [
+      "DDOG",
+      "NXPI"
+    ]
+  },
+  {
+    "tag": "industrial solutions",
+    "count": 2,
+    "tickers": [
+      "DOV",
+      "URI"
+    ]
+  },
+  {
+    "tag": "clean technology",
+    "count": 2,
+    "tickers": [
+      "EXC",
+      "XEL"
+    ]
+  },
+  {
+    "tag": "supply chain management",
+    "count": 2,
+    "tickers": [
+      "FAST",
+      "SYY"
+    ]
+  },
+  {
+    "tag": "healthcare innovation",
+    "count": 2,
+    "tickers": [
+      "GILD",
+      "ISRG"
+    ]
+  },
+  {
+    "tag": "digital advertising",
+    "count": 2,
+    "tickers": [
+      "GOOGL",
+      "RDDT"
+    ]
+  },
+  {
+    "tag": "home improvement",
+    "count": 2,
+    "tickers": [
+      "HD",
+      "LOW"
+    ]
+  },
+  {
+    "tag": "tourism",
+    "count": 2,
+    "tickers": [
+      "HLT",
+      "MAR"
+    ]
+  },
+  {
+    "tag": "semiconductor manufacturing",
+    "count": 2,
+    "tickers": [
+      "KLAC",
+      "LRCX"
+    ]
+  },
+  {
+    "tag": "franchising",
+    "count": 2,
+    "tickers": [
+      "MCD",
+      "YUM"
+    ]
+  },
+  {
+    "tag": "fintech",
+    "count": 2,
+    "tickers": [
+      "MELI",
+      "SCHW"
+    ]
+  },
+  {
+    "tag": "social media",
+    "count": 2,
+    "tickers": [
+      "META",
+      "RDDT"
+    ]
+  },
+  {
+    "tag": "iot",
+    "count": 2,
+    "tickers": [
+      "NXPI",
+      "STX"
+    ]
+  },
+  {
+    "tag": "ai integration",
+    "count": 2,
+    "tickers": [
+      "ORCL",
+      "TEAM"
+    ]
+  },
+  {
+    "tag": "digital transformation",
+    "count": 2,
+    "tickers": [
+      "ROK",
+      "SLB"
+    ]
+  },
+  {
+    "tag": "apparel",
+    "count": 2,
+    "tickers": [
+      "ROST",
+      "TJX"
+    ]
+  },
+  {
+    "tag": "home fashion",
+    "count": 2,
+    "tickers": [
+      "ROST",
+      "TJX"
+    ]
+  },
+  {
+    "tag": "environmental services",
+    "count": 2,
+    "tickers": [
+      "RSG",
+      "WM"
+    ]
+  },
+  {
+    "tag": "waste management",
+    "count": 2,
+    "tickers": [
+      "RSG",
+      "WM"
+    ]
+  },
+  {
+    "tag": "recycling",
+    "count": 2,
+    "tickers": [
+      "RSG",
+      "WM"
+    ]
+  },
+  {
+    "tag": "natural gas",
+    "count": 2,
+    "tickers": [
+      "SO",
+      "WMB"
+    ]
+  },
+  {
+    "tag": "data storage",
+    "count": 2,
+    "tickers": [
+      "STX",
+      "WDC"
+    ]
+  },
+  {
+    "tag": "senior living",
+    "count": 2,
+    "tickers": [
+      "VTR",
+      "WELL"
+    ]
+  },
+  {
+    "tag": "laboratory automation",
+    "count": 1,
+    "tickers": [
+      "A"
+    ]
+  },
+  {
+    "tag": "consumer electronics",
+    "count": 1,
+    "tickers": [
+      "AAPL"
+    ]
+  },
+  {
+    "tag": "nutrition",
+    "count": 1,
+    "tickers": [
+      "ABT"
+    ]
+  },
+  {
+    "tag": "global business operations",
+    "count": 1,
+    "tickers": [
+      "AIG"
+    ]
+  },
+  {
+    "tag": "ai computing",
+    "count": 1,
+    "tickers": [
+      "AMD"
+    ]
+  },
+  {
+    "tag": "cardiovascular health",
+    "count": 1,
+    "tickers": [
+      "AMGN"
+    ]
+  },
+  {
+    "tag": "immunology",
+    "count": 1,
+    "tickers": [
+      "AMGN"
+    ]
+  },
+  {
+    "tag": "networking",
+    "count": 1,
+    "tickers": [
+      "ANET"
+    ]
+  },
+  {
+    "tag": "professional services",
+    "count": 1,
+    "tickers": [
+      "AON"
+    ]
+  },
+  {
+    "tag": "insurance brokerage",
+    "count": 1,
+    "tickers": [
+      "AON"
+    ]
+  },
+  {
+    "tag": "human resources consulting",
+    "count": 1,
+    "tickers": [
+      "AON"
+    ]
+  },
+  {
+    "tag": "advertising technology",
+    "count": 1,
+    "tickers": [
+      "APP"
+    ]
+  },
+  {
+    "tag": "public safety",
+    "count": 1,
+    "tickers": [
+      "AXON"
+    ]
+  },
+  {
+    "tag": "lifestyle services",
+    "count": 1,
+    "tickers": [
+      "AXP"
+    ]
+  },
+  {
+    "tag": "aviation",
+    "count": 1,
+    "tickers": [
+      "BA"
+    ]
+  },
+  {
+    "tag": "travel services",
+    "count": 1,
+    "tickers": [
+      "BKNG"
+    ]
+  },
+  {
+    "tag": "energy technology",
+    "count": 1,
+    "tickers": [
+      "BKR"
+    ]
+  },
+  {
+    "tag": "industrial technology",
+    "count": 1,
+    "tickers": [
+      "BKR"
+    ]
+  },
+  {
+    "tag": "global asset management",
+    "count": 1,
+    "tickers": [
+      "BLK"
+    ]
+  },
+  {
+    "tag": "innovation",
+    "count": 1,
+    "tickers": [
+      "BSX"
+    ]
+  },
+  {
+    "tag": "energy solutions",
+    "count": 1,
+    "tickers": [
+      "CARR"
+    ]
+  },
+  {
+    "tag": "hvac",
+    "count": 1,
+    "tickers": [
+      "CARR"
+    ]
+  },
+  {
+    "tag": "digitalization",
+    "count": 1,
+    "tickers": [
+      "CARR"
+    ]
+  },
+  {
+    "tag": "mining",
+    "count": 1,
+    "tickers": [
+      "CAT"
+    ]
+  },
+  {
+    "tag": "eda",
+    "count": 1,
+    "tickers": [
+      "CDNS"
+    ]
+  },
+  {
+    "tag": "pharmacy benefit management",
+    "count": 1,
+    "tickers": [
+      "CI"
+    ]
+  },
+  {
+    "tag": "pet nutrition",
+    "count": 1,
+    "tickers": [
+      "CL"
+    ]
+  },
+  {
+    "tag": "theme parks",
+    "count": 1,
+    "tickers": [
+      "CMCSA"
+    ]
+  },
+  {
+    "tag": "derivatives trading",
+    "count": 1,
+    "tickers": [
+      "CME"
+    ]
+  },
+  {
+    "tag": "market data services",
+    "count": 1,
+    "tickers": [
+      "CME"
+    ]
+  },
+  {
+    "tag": "fast-casual dining",
+    "count": 1,
+    "tickers": [
+      "CMG"
+    ]
+  },
+  {
+    "tag": "digital innovation",
+    "count": 1,
+    "tickers": [
+      "CMG"
+    ]
+  },
+  {
+    "tag": "credit cards",
+    "count": 1,
+    "tickers": [
+      "COF"
+    ]
+  },
+  {
+    "tag": "digital banking",
+    "count": 1,
+    "tickers": [
+      "COF"
+    ]
+  },
+  {
+    "tag": "payments",
+    "count": 1,
+    "tickers": [
+      "COF"
+    ]
+  },
+  {
+    "tag": "semiconductor materials",
+    "count": 1,
+    "tickers": [
+      "COHR"
+    ]
+  },
+  {
+    "tag": "lng",
+    "count": 1,
+    "tickers": [
+      "COP"
+    ]
+  },
+  {
+    "tag": "wholesale",
+    "count": 1,
+    "tickers": [
+      "COST"
+    ]
+  },
+  {
+    "tag": "restaurant delivery",
+    "count": 1,
+    "tickers": [
+      "CPNG"
+    ]
+  },
+  {
+    "tag": "video streaming",
+    "count": 1,
+    "tickers": [
+      "CPNG"
+    ]
+  },
+  {
+    "tag": "fintech services",
+    "count": 1,
+    "tickers": [
+      "CPNG"
+    ]
+  },
+  {
+    "tag": "ai-driven enterprise solutions",
+    "count": 1,
+    "tickers": [
+      "CRM"
+    ]
+  },
+  {
+    "tag": "endpoint security",
+    "count": 1,
+    "tickers": [
+      "CRWD"
+    ]
+  },
+  {
+    "tag": "cloud workload security",
+    "count": 1,
+    "tickers": [
+      "CRWD"
+    ]
+  },
+  {
+    "tag": "managed security services",
+    "count": 1,
+    "tickers": [
+      "CRWD"
+    ]
+  },
+  {
+    "tag": "identity protection",
+    "count": 1,
+    "tickers": [
+      "CRWD"
+    ]
+  },
+  {
+    "tag": "rail freight",
+    "count": 1,
+    "tickers": [
+      "CSX"
+    ]
+  },
+  {
+    "tag": "safety and compliance",
+    "count": 1,
+    "tickers": [
+      "CTAS"
+    ]
+  },
+  {
+    "tag": "retail pharmacy",
+    "count": 1,
+    "tickers": [
+      "CVS"
+    ]
+  },
+  {
+    "tag": "health services",
+    "count": 1,
+    "tickers": [
+      "CVS"
+    ]
+  },
+  {
+    "tag": "chemicals",
+    "count": 1,
+    "tickers": [
+      "CVX"
+    ]
+  },
+  {
+    "tag": "on-demand delivery",
+    "count": 1,
+    "tickers": [
+      "DASH"
+    ]
+  },
+  {
+    "tag": "it operations management",
+    "count": 1,
+    "tickers": [
+      "DDOG"
+    ]
+  },
+  {
+    "tag": "analytics",
+    "count": 1,
+    "tickers": [
+      "DDOG"
+    ]
+  },
+  {
+    "tag": "agriculture",
+    "count": 1,
+    "tickers": [
+      "DE"
+    ]
+  },
+  {
+    "tag": "forestry",
+    "count": 1,
+    "tickers": [
+      "DE"
+    ]
+  },
+  {
+    "tag": "discount retail",
+    "count": 1,
+    "tickers": [
+      "DG"
+    ]
+  },
+  {
+    "tag": "colocation",
+    "count": 1,
+    "tickers": [
+      "DLR"
+    ]
+  },
+  {
+    "tag": "interconnection",
+    "count": 1,
+    "tickers": [
+      "DLR"
+    ]
+  },
+  {
+    "tag": "beauty",
+    "count": 1,
+    "tickers": [
+      "EL"
+    ]
+  },
+  {
+    "tag": "luxury goods",
+    "count": 1,
+    "tickers": [
+      "EL"
+    ]
+  },
+  {
+    "tag": "consumer products",
+    "count": 1,
+    "tickers": [
+      "EL"
+    ]
+  },
+  {
+    "tag": "pharmacy services",
+    "count": 1,
+    "tickers": [
+      "ELV"
+    ]
+  },
+  {
+    "tag": "oil and gas exploration and production",
+    "count": 1,
+    "tickers": [
+      "EOG"
+    ]
+  },
+  {
+    "tag": "technology-driven resource management",
+    "count": 1,
+    "tickers": [
+      "EOG"
+    ]
+  },
+  {
+    "tag": "data center services",
+    "count": 1,
+    "tickers": [
+      "EQIX"
+    ]
+  },
+  {
+    "tag": "energy management",
+    "count": 1,
+    "tickers": [
+      "ETN"
+    ]
+  },
+  {
+    "tag": "cardiovascular disease treatment",
+    "count": 1,
+    "tickers": [
+      "EW"
+    ]
+  },
+  {
+    "tag": "industrial distribution",
+    "count": 1,
+    "tickers": [
+      "FAST"
+    ]
+  },
+  {
+    "tag": "digital solutions",
+    "count": 1,
+    "tickers": [
+      "FAST"
+    ]
+  },
+  {
+    "tag": "digital streaming",
+    "count": 1,
+    "tickers": [
+      "FOXA"
+    ]
+  },
+  {
+    "tag": "consumer finance",
+    "count": 1,
+    "tickers": [
+      "FOXA"
+    ]
+  },
+  {
+    "tag": "electric vehicles",
+    "count": 1,
+    "tickers": [
+      "GM"
+    ]
+  },
+  {
+    "tag": "sustainable finance",
+    "count": 1,
+    "tickers": [
+      "GS"
+    ]
+  },
+  {
+    "tag": "brokerage services",
+    "count": 1,
+    "tickers": [
+      "HOOD"
+    ]
+  },
+  {
+    "tag": "cryptocurrency trading",
+    "count": 1,
+    "tickers": [
+      "HOOD"
+    ]
+  },
+  {
+    "tag": "confectionery",
+    "count": 1,
+    "tickers": [
+      "HSY"
+    ]
+  },
+  {
+    "tag": "snacks",
+    "count": 1,
+    "tickers": [
+      "HSY"
+    ]
+  },
+  {
+    "tag": "veterinary diagnostics",
+    "count": 1,
+    "tickers": [
+      "IDXX"
+    ]
+  },
+  {
+    "tag": "water testing",
+    "count": 1,
+    "tickers": [
+      "IDXX"
+    ]
+  },
+  {
+    "tag": "clinical research",
+    "count": 1,
+    "tickers": [
+      "IQV"
+    ]
+  },
+  {
+    "tag": "industrial equipment",
+    "count": 1,
+    "tickers": [
+      "ITW"
+    ]
+  },
+  {
+    "tag": "commercial banking",
+    "count": 1,
+    "tickers": [
+      "JPM"
+    ]
+  },
+  {
+    "tag": "electronics",
+    "count": 1,
+    "tickers": [
+      "KLAC"
+    ]
+  },
+  {
+    "tag": "semiconductor capital equipment",
+    "count": 1,
+    "tickers": [
+      "KLAC"
+    ]
+  },
+  {
+    "tag": "process control",
+    "count": 1,
+    "tickers": [
+      "KLAC"
+    ]
+  },
+  {
+    "tag": "yield management",
+    "count": 1,
+    "tickers": [
+      "KLAC"
+    ]
+  },
+  {
+    "tag": "ai infrastructure",
+    "count": 1,
+    "tickers": [
+      "KLAC"
+    ]
+  },
+  {
+    "tag": "advanced packaging",
+    "count": 1,
+    "tickers": [
+      "KLAC"
+    ]
+  },
+  {
+    "tag": "digital marketing",
+    "count": 1,
+    "tickers": [
+      "KVUE"
+    ]
+  },
+  {
+    "tag": "advanced materials",
+    "count": 1,
+    "tickers": [
+      "LRCX"
+    ]
+  },
+  {
+    "tag": "live entertainment",
+    "count": 1,
+    "tickers": [
+      "LYV"
+    ]
+  },
+  {
+    "tag": "music events",
+    "count": 1,
+    "tickers": [
+      "LYV"
+    ]
+  },
+  {
+    "tag": "ticketing services",
+    "count": 1,
+    "tickers": [
+      "LYV"
+    ]
+  },
+  {
+    "tag": "fast food",
+    "count": 1,
+    "tickers": [
+      "MCD"
+    ]
+  },
+  {
+    "tag": "global retail",
+    "count": 1,
+    "tickers": [
+      "MCD"
+    ]
+  },
+  {
+    "tag": "food service",
+    "count": 1,
+    "tickers": [
+      "MCD"
+    ]
+  },
+  {
+    "tag": "embedded systems",
+    "count": 1,
+    "tickers": [
+      "MCHP"
+    ]
+  },
+  {
+    "tag": "digital payments",
+    "count": 1,
+    "tickers": [
+      "MELI"
+    ]
+  },
+  {
+    "tag": "virtual reality",
+    "count": 1,
+    "tickers": [
+      "META"
+    ]
+  },
+  {
+    "tag": "augmented reality",
+    "count": 1,
+    "tickers": [
+      "META"
+    ]
+  },
+  {
+    "tag": "industrial safety",
+    "count": 1,
+    "tickers": [
+      "MMM"
+    ]
+  },
+  {
+    "tag": "energy drinks",
+    "count": 1,
+    "tickers": [
+      "MNST"
+    ]
+  },
+  {
+    "tag": "alcohol",
+    "count": 1,
+    "tickers": [
+      "MNST"
+    ]
+  },
+  {
+    "tag": "refining",
+    "count": 1,
+    "tickers": [
+      "MPC"
+    ]
+  },
+  {
+    "tag": "renewable fuels",
+    "count": 1,
+    "tickers": [
+      "MPC"
+    ]
+  },
+  {
+    "tag": "animal health",
+    "count": 1,
+    "tickers": [
+      "MRK"
+    ]
+  },
+  {
+    "tag": "vaccines",
+    "count": 1,
+    "tickers": [
+      "MRK"
+    ]
+  },
+  {
+    "tag": "diabetes care",
+    "count": 1,
+    "tickers": [
+      "MRK"
+    ]
+  },
+  {
+    "tag": "management consulting",
+    "count": 1,
+    "tickers": [
+      "MRSH"
+    ]
+  },
+  {
+    "tag": "data infrastructure",
+    "count": 1,
+    "tickers": [
+      "MRVL"
+    ]
+  },
+  {
+    "tag": "productivity software",
+    "count": 1,
+    "tickers": [
+      "MSFT"
+    ]
+  },
+  {
+    "tag": "digital asset",
+    "count": 1,
+    "tickers": [
+      "MSTR"
+    ]
+  },
+  {
+    "tag": "enterprise analytics",
+    "count": 1,
+    "tickers": [
+      "MSTR"
+    ]
+  },
+  {
+    "tag": "bitcoin",
+    "count": 1,
+    "tickers": [
+      "MSTR"
+    ]
+  },
+  {
+    "tag": "ai-powered enterprise analytics software",
+    "count": 1,
+    "tickers": [
+      "MSTR"
+    ]
+  },
+  {
+    "tag": "digital finance",
+    "count": 1,
+    "tickers": [
+      "MSTR"
+    ]
+  },
+  {
+    "tag": "connectivity cloud",
+    "count": 1,
+    "tickers": [
+      "NET"
+    ]
+  },
+  {
+    "tag": "athletic apparel",
+    "count": 1,
+    "tickers": [
+      "NKE"
+    ]
+  },
+  {
+    "tag": "footwear",
+    "count": 1,
+    "tickers": [
+      "NKE"
+    ]
+  },
+  {
+    "tag": "sports equipment",
+    "count": 1,
+    "tickers": [
+      "NKE"
+    ]
+  },
+  {
+    "tag": "digital commerce",
+    "count": 1,
+    "tickers": [
+      "NKE"
+    ]
+  },
+  {
+    "tag": "hr services",
+    "count": 1,
+    "tickers": [
+      "PAYX"
+    ]
+  },
+  {
+    "tag": "property-casualty insurance",
+    "count": 1,
+    "tickers": [
+      "PGR"
+    ]
+  },
+  {
+    "tag": "engineering solutions",
+    "count": 1,
+    "tickers": [
+      "PH"
+    ]
+  },
+  {
+    "tag": "corporate finance",
+    "count": 1,
+    "tickers": [
+      "PNC"
+    ]
+  },
+  {
+    "tag": "retirement solutions",
+    "count": 1,
+    "tickers": [
+      "PRU"
+    ]
+  },
+  {
+    "tag": "self-storage",
+    "count": 1,
+    "tickers": [
+      "PSA"
+    ]
+  },
+  {
+    "tag": "reit",
+    "count": 1,
+    "tickers": [
+      "PSA"
+    ]
+  },
+  {
+    "tag": "wireless communications",
+    "count": 1,
+    "tickers": [
+      "QCOM"
+    ]
+  },
+  {
+    "tag": "digital content creation",
+    "count": 1,
+    "tickers": [
+      "RBLX"
+    ]
+  },
+  {
+    "tag": "genetic research",
+    "count": 1,
+    "tickers": [
+      "REGN"
+    ]
+  },
+  {
+    "tag": "sustainability innovation",
+    "count": 1,
+    "tickers": [
+      "RSG"
+    ]
+  },
+  {
+    "tag": "engineering",
+    "count": 1,
+    "tickers": [
+      "RTX"
+    ]
+  },
+  {
+    "tag": "energy services",
+    "count": 1,
+    "tickers": [
+      "SLB"
+    ]
+  },
+  {
+    "tag": "data",
+    "count": 1,
+    "tickers": [
+      "SNOW"
+    ]
+  },
+  {
+    "tag": "food distribution",
+    "count": 1,
+    "tickers": [
+      "SYY"
+    ]
+  },
+  {
+    "tag": "broadband services",
+    "count": 1,
+    "tickers": [
+      "T"
+    ]
+  },
+  {
+    "tag": "semiconductor testing",
+    "count": 1,
+    "tickers": [
+      "TER"
+    ]
+  },
+  {
+    "tag": "automation",
+    "count": 1,
+    "tickers": [
+      "TER"
+    ]
+  },
+  {
+    "tag": "discount retailing",
+    "count": 1,
+    "tickers": [
+      "TJX"
+    ]
+  },
+  {
+    "tag": "broadband",
+    "count": 1,
+    "tickers": [
+      "TMUS"
+    ]
+  },
+  {
+    "tag": "natural gas processing",
+    "count": 1,
+    "tickers": [
+      "TRGP"
+    ]
+  },
+  {
+    "tag": "property and casualty insurance",
+    "count": 1,
+    "tickers": [
+      "TRV"
+    ]
+  },
+  {
+    "tag": "customer engagement",
+    "count": 1,
+    "tickers": [
+      "TWLO"
+    ]
+  },
+  {
+    "tag": "electronics manufacturing",
+    "count": 1,
+    "tickers": [
+      "TXN"
+    ]
+  },
+  {
+    "tag": "freight rail",
+    "count": 1,
+    "tickers": [
+      "UNP"
+    ]
+  },
+  {
+    "tag": "equipment rental",
+    "count": 1,
+    "tickers": [
+      "URI"
+    ]
+  },
+  {
+    "tag": "payment processing",
+    "count": 1,
+    "tickers": [
+      "USB"
+    ]
+  },
+  {
+    "tag": "gene therapy",
+    "count": 1,
+    "tickers": [
+      "VRTX"
+    ]
+  },
+  {
+    "tag": "specialty medicine",
+    "count": 1,
+    "tickers": [
+      "VRTX"
+    ]
+  },
+  {
+    "tag": "analytical instruments",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "chromatography",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "mass spectrometry",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "thermal analysis",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "clinical",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "biochemical",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "industrial",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "nutritional safety",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "environmental",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "academic",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "governmental",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "scientific research",
+    "count": 1,
+    "tickers": [
+      "WAT"
+    ]
+  },
+  {
+    "tag": "streaming",
+    "count": 1,
+    "tickers": [
+      "WBD"
+    ]
+  },
+  {
+    "tag": "energy infrastructure",
+    "count": 1,
+    "tickers": [
+      "WEC"
+    ]
+  },
+  {
+    "tag": "mortgage lending",
+    "count": 1,
+    "tickers": [
+      "WFC"
+    ]
+  },
+  {
+    "tag": "petrochemicals",
+    "count": 1,
+    "tickers": [
+      "XOM"
+    ]
+  },
+  {
+    "tag": "emerging low-carbon technologies",
+    "count": 1,
+    "tickers": [
+      "XOM"
+    ]
+  },
+  {
+    "tag": "restaurant",
+    "count": 1,
+    "tickers": [
+      "YUM"
+    ]
+  },
+  {
+    "tag": "quick-service",
+    "count": 1,
+    "tickers": [
+      "YUM"
+    ]
+  },
+  {
+    "tag": "ai security",
+    "count": 1,
+    "tickers": [
+      "ZS"
+    ]
+  },
+  {
+    "tag": "veterinary medicine",
+    "count": 1,
+    "tickers": [
+      "ZTS"
+    ]
+  }
+]

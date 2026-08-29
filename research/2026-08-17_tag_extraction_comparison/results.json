@@ -1,0 +1,583 @@
+[
+  {
+    "ticker": "NVDA",
+    "status": "ok",
+    "filing_date": "2026-02-25",
+    "business_text_chars": 48222,
+    "overview": "NVIDIA Corporation, headquartered in Santa Clara, California, is a pioneering force in accelerated computing, primarily known for its groundbreaking work in graphics processing units (GPUs) and artificial intelligence (AI) infrastructure. The company has evolved from its origins in computer graphics, where it revolutionized the gaming industry with its invention of the GPU in 1999, to become a leader in AI and data center-scale computing. NVIDIA's core business lines are divided into two segments: Compute & Networking, which includes data center and automotive platforms, and Graphics, which encompasses GeForce GPUs for gaming and RTX GPUs for professional visualization.\n\nNVIDIA's technology stack is built on its CUDA development platform, which supports a wide range of computationally intensive applications, including AI model training, data analytics, and scientific computing. The company's data center offerings, introduced with the Blackwell architecture, are designed for extreme performance and scalability, enabling the interconnection of hundreds of thousands of GPUs to function as a single giant computer.\n\nPublic perception of NVIDIA is strongly associated with cutting-edge AI solutions and high-performance gaming graphics. The company is recognized as a leader in the technology industry, particularly in AI, gaming, and professional visualization markets. NVIDIA's products are widely used by major cloud service providers, enterprises, and researchers to accelerate AI applications and complex computational tasks.\n\nNVIDIA operates in several key markets, including Data Center, Gaming, Professional Visualization, and Automotive, leveraging its platform strategy to deliver unique value across these diverse sectors. The company's commitment to innovation is evident in its significant investment in research and development, which has led to numerous technological advancements and a robust ecosystem of developers and partners. Industry tags for NVIDIA include technology, AI, cloud computing, gaming, and automotive.",
+    "two_stage_tags": [
+      "technology",
+      "ai",
+      "cloud computing",
+      "gaming",
+      "automotive"
+    ],
+    "single_stage_tags": [
+      "accelerated computing",
+      "ai infrastructure",
+      "data center",
+      "gpu",
+      "software development",
+      "ai model training",
+      "data analytics",
+      "scientific computing",
+      "robotics",
+      "3d graphics",
+      "healthcare",
+      "telecom",
+      "automotive",
+      "manufacturing",
+      "deep learning",
+      "generative ai",
+      "agentic ai",
+      "autonomous driving",
+      "cloud computing",
+      "gaming",
+      "professional visualization",
+      "networking",
+      "supercomputing",
+      "autonomous vehicles",
+      "electric vehicles"
+    ],
+    "only_single_stage": [
+      "3d graphics",
+      "accelerated computing",
+      "agentic ai",
+      "ai infrastructure",
+      "ai model training",
+      "autonomous driving",
+      "autonomous vehicles",
+      "data analytics",
+      "data center",
+      "deep learning",
+      "electric vehicles",
+      "generative ai",
+      "gpu",
+      "healthcare",
+      "manufacturing",
+      "networking",
+      "professional visualization",
+      "robotics",
+      "scientific computing",
+      "software development",
+      "supercomputing",
+      "telecom"
+    ],
+    "only_two_stage": [
+      "ai",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "AAPL",
+    "status": "ok",
+    "filing_date": "2025-10-31",
+    "business_text_chars": 16054,
+    "overview": "Apple Inc. is a prominent technology company known for designing, manufacturing, and marketing a wide range of consumer electronics and related services. Its core business lines include smartphones, personal computers, tablets, wearables, and accessories, with flagship products such as the iPhone, Mac, iPad, and Apple Watch. Apple also offers a variety of services, including advertising, AppleCare, cloud services, digital content platforms like the App Store, and payment services such as Apple Pay and Apple Card.\n\nApple is often perceived as a leader in innovation and design, with a strong reputation for quality and reliability. The company is widely recognized for its seamless integration of hardware and software, creating a cohesive ecosystem that enhances user experience. Despite facing intense competition from companies with aggressive pricing strategies and large customer bases, Apple maintains a significant presence in the global market.\n\nThe company is classified under several industry themes, including technology, consumer electronics, e-commerce, and cloud computing. Public perception of Apple is largely shaped by its iconic products and its commitment to innovation, which are frequently highlighted in media coverage. Apple continues to focus on expanding its market opportunities and maintaining its competitive edge through ongoing research and development.",
+    "two_stage_tags": [
+      "technology",
+      "consumer electronics",
+      "e-commerce",
+      "cloud computing"
+    ],
+    "single_stage_tags": [
+      "smartphones",
+      "personal computers",
+      "tablets",
+      "wearables",
+      "accessories",
+      "advertising",
+      "cloud services",
+      "digital content",
+      "payment services",
+      "technology",
+      "consumer electronics"
+    ],
+    "only_single_stage": [
+      "accessories",
+      "advertising",
+      "cloud services",
+      "digital content",
+      "payment services",
+      "personal computers",
+      "smartphones",
+      "tablets",
+      "wearables"
+    ],
+    "only_two_stage": [
+      "cloud computing",
+      "e-commerce"
+    ]
+  },
+  {
+    "ticker": "SNOW",
+    "status": "ok",
+    "filing_date": "2026-03-20",
+    "business_text_chars": 56791,
+    "overview": "Snowflake Inc. is a prominent player in the cloud computing industry, specializing in data and artificial intelligence (AI) solutions. The company offers the AI Data Cloud, a platform designed to break down data silos and enable seamless data sharing and analysis. Snowflake's platform allows organizations to consolidate data into a single source of truth, facilitating meaningful insights, AI application development, and data sharing without the need for extensive infrastructure management. The platform supports a wide range of product categories, including data engineering, analytics, AI, transactions, applications, and collaboration, and is delivered as a service across multiple public clouds globally.\n\nSnowflake is recognized as a leader in the cloud data platform space, with a strong focus on innovation and customer-centric solutions. It is widely associated with solving complex data challenges and enabling data-driven decision-making. The company's platform is used by a diverse range of industries, including financial services, healthcare, retail, and technology, and it boasts a significant customer base, including many of the Forbes Global 2000 companies.\n\nPublic perception of Snowflake is largely positive, with the company being seen as a pioneer in cloud data solutions and a key enabler of digital transformation. The media and ordinary people often associate Snowflake with cutting-edge technology and its ability to provide scalable, secure, and efficient data management solutions. The company is classified under several industry themes, including technology, cloud computing, data analytics, and artificial intelligence.",
+    "two_stage_tags": [
+      "technology",
+      "cloud computing",
+      "data analytics",
+      "artificial intelligence"
+    ],
+    "single_stage_tags": [
+      "cloud computing",
+      "artificial intelligence",
+      "data management",
+      "data analytics",
+      "data engineering",
+      "data sharing",
+      "machine learning",
+      "software as a service",
+      "multi-cloud",
+      "data governance",
+      "data collaboration",
+      "observability"
+    ],
+    "only_single_stage": [
+      "data collaboration",
+      "data engineering",
+      "data governance",
+      "data management",
+      "data sharing",
+      "machine learning",
+      "multi-cloud",
+      "observability",
+      "software as a service"
+    ],
+    "only_two_stage": [
+      "technology"
+    ]
+  },
+  {
+    "ticker": "AMZN",
+    "status": "ok",
+    "filing_date": "2026-02-06",
+    "business_text_chars": 13497,
+    "overview": "Amazon.com, Inc. is a global leader in e-commerce and cloud computing, renowned for its customer-centric approach and innovative spirit. The company operates through three main segments: North America, International, and Amazon Web Services (AWS). Amazon's e-commerce platform offers a vast selection of products, both from its own inventory and third-party sellers, accessible via websites, mobile apps, and physical stores. It is widely recognized for its competitive pricing, fast delivery, and the popular Amazon Prime membership, which provides benefits like free shipping and access to streaming content.\n\nAWS serves developers and enterprises with a comprehensive suite of on-demand technology services, including computing, storage, and artificial intelligence. This segment positions Amazon as a formidable player in the cloud computing industry. Additionally, Amazon manufactures and sells electronic devices such as Kindle, Echo, and Fire TV, and produces media content, further diversifying its offerings.\n\nPublic perception of Amazon is often associated with convenience, innovation, and a vast product selection. However, the company also faces scrutiny over labor practices and competitive strategies. Amazon is classified under multiple industry themes, including technology, e-commerce, cloud computing, and digital media. Its commitment to operational excellence and long-term thinking continues to drive its growth and influence across various sectors.",
+    "two_stage_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "digital media"
+    ],
+    "single_stage_tags": [
+      "e-commerce",
+      "cloud computing",
+      "online retail",
+      "physical retail",
+      "consumer electronics",
+      "media production",
+      "subscription services",
+      "advertising services",
+      "technology services",
+      "artificial intelligence",
+      "logistics",
+      "fulfillment services"
+    ],
+    "only_single_stage": [
+      "advertising services",
+      "artificial intelligence",
+      "consumer electronics",
+      "fulfillment services",
+      "logistics",
+      "media production",
+      "online retail",
+      "physical retail",
+      "subscription services",
+      "technology services"
+    ],
+    "only_two_stage": [
+      "digital media",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "GOOGL",
+    "status": "ok",
+    "filing_date": "2026-02-05",
+    "business_text_chars": 23835,
+    "overview": "Alphabet Inc., led by CEO Sundar Pichai, is a diverse conglomerate with Google as its largest entity. Google operates primarily through two segments: Google Services and Google Cloud. Google Services encompasses widely recognized products such as Search, YouTube, Android, and Chrome, which are integral to daily digital experiences worldwide. Google Cloud offers infrastructure, platform, and application services, leveraging AI-optimized solutions to enhance productivity and innovation for businesses.\n\nAlphabet is a pioneer in artificial intelligence, positioning itself as an AI-first company since 2016. Its AI advancements, including the Gemini 3 model, are embedded across its products, enhancing user interactions and enterprise solutions. The company's commitment to AI is evident in its substantial R&D investments, exceeding $200 billion over five years.\n\nPublic perception of Alphabet is largely tied to its innovative spirit and its role in organizing global information, making it accessible and useful. The company is often associated with cutting-edge technology and digital advertising, where it provides robust solutions for advertisers through platforms like Google Ads and YouTube.\n\nAlphabet's Other Bets segment explores frontier technologies, including autonomous driving with Waymo and AI-driven drug discovery with Isomorphic Labs. The company is classified under technology, e-commerce, cloud computing, and AI, maintaining a leadership position in these industries.",
+    "two_stage_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "ai"
+    ],
+    "single_stage_tags": [
+      "technology",
+      "artificial intelligence",
+      "cloud computing",
+      "digital advertising",
+      "search engine",
+      "video streaming",
+      "consumer electronics",
+      "autonomous vehicles",
+      "drug discovery",
+      "cybersecurity",
+      "data analytics"
+    ],
+    "only_single_stage": [
+      "artificial intelligence",
+      "autonomous vehicles",
+      "consumer electronics",
+      "cybersecurity",
+      "data analytics",
+      "digital advertising",
+      "drug discovery",
+      "search engine",
+      "video streaming"
+    ],
+    "only_two_stage": [
+      "ai",
+      "e-commerce"
+    ]
+  },
+  {
+    "ticker": "BRK-B",
+    "status": "ok",
+    "filing_date": "2026-03-02",
+    "business_text_chars": 126911,
+    "overview": "Berkshire Hathaway Inc. is a diversified holding company headquartered in Omaha, Nebraska, with a wide array of subsidiaries engaged in various business activities. Its core business lines include insurance, freight rail transportation, and utility and energy generation and distribution. The company operates through a decentralized management structure, allowing its subsidiaries significant autonomy. In the insurance sector, Berkshire is a major player, offering both primary insurance and reinsurance through subsidiaries like GEICO and Berkshire Hathaway Reinsurance Group. Its insurance companies are known for their financial strength, with high ratings from agencies like Standard & Poor’s and A.M. Best.\n\nBerkshire Hathaway also owns Burlington Northern Santa Fe, one of North America's largest freight rail networks, and Berkshire Hathaway Energy, which has significant investments in renewable energy and utility operations. The company is a leader in these industries, known for its robust financial health and strategic investments.\n\nPublic perception of Berkshire Hathaway is closely tied to its long-time CEO, Warren Buffett, often referred to as the \"Oracle of Omaha,\" who is renowned for his investment acumen and ethical business practices. The company is frequently associated with stability, reliability, and a long-term investment philosophy.\n\nBerkshire Hathaway's diverse operations span multiple industries, including insurance, transportation, energy, manufacturing, retail, and services, making it a significant player in sectors such as finance, transportation, energy, and consumer goods.",
+    "two_stage_tags": [
+      "insurance",
+      "freight rail transportation",
+      "utility and energy generation and distribution",
+      "finance",
+      "transportation",
+      "energy",
+      "consumer goods"
+    ],
+    "single_stage_tags": [
+      "insurance",
+      "reinsurance",
+      "freight rail transportation",
+      "utility",
+      "energy generation",
+      "energy distribution",
+      "manufacturing",
+      "services",
+      "retailing",
+      "aerospace",
+      "chemicals",
+      "construction",
+      "consumer products",
+      "real estate",
+      "automotive",
+      "aviation",
+      "logistics",
+      "foodservice",
+      "electronics",
+      "furniture",
+      "jewelry",
+      "confectionery",
+      "kitchenware",
+      "online retail",
+      "motorcycle equipment"
+    ],
+    "only_single_stage": [
+      "aerospace",
+      "automotive",
+      "aviation",
+      "chemicals",
+      "confectionery",
+      "construction",
+      "consumer products",
+      "electronics",
+      "energy distribution",
+      "energy generation",
+      "foodservice",
+      "furniture",
+      "jewelry",
+      "kitchenware",
+      "logistics",
+      "manufacturing",
+      "motorcycle equipment",
+      "online retail",
+      "real estate",
+      "reinsurance",
+      "retailing",
+      "services",
+      "utility"
+    ],
+    "only_two_stage": [
+      "consumer goods",
+      "energy",
+      "finance",
+      "transportation",
+      "utility and energy generation and distribution"
+    ]
+  },
+  {
+    "ticker": "HON",
+    "status": "ok",
+    "filing_date": "2026-02-17",
+    "business_text_chars": 69681,
+    "overview": "Honeywell International Inc. is a diversified global company with a strong presence in automation and aerospace industries. The company operates through four main business segments: Aerospace Technologies, Industrial Automation, Building Automation, and Energy and Sustainability Solutions. Honeywell is recognized as a leader in aerospace technologies, providing essential products and services for aircraft, including propulsion engines, avionics, and maintenance services. The company is also a significant player in industrial automation, offering solutions that enhance operational efficiency and security across various sectors such as refining, life sciences, and logistics.\n\nHoneywell's Building Automation segment is known for its advanced systems that ensure safety, energy efficiency, and productivity in buildings. Meanwhile, its Energy and Sustainability Solutions segment focuses on providing innovative technologies for energy security and efficiency. The company's Honeywell Forge platform integrates data and software to optimize operations across these segments.\n\nPublic perception of Honeywell is often associated with its long-standing reputation for innovation and reliability, dating back to its founding in 1906. The company is seen as a pioneer in blending physical products with digital solutions to address complex global challenges. Honeywell is classified under several industry themes, including technology, aerospace, industrial automation, and sustainability. As it continues to evolve, Honeywell is focused on portfolio optimization and strategic acquisitions to drive growth and shareholder value.",
+    "two_stage_tags": [
+      "technology",
+      "aerospace",
+      "industrial automation",
+      "sustainability"
+    ],
+    "single_stage_tags": [
+      "aerospace",
+      "defense",
+      "industrial automation",
+      "building automation",
+      "energy",
+      "sustainability",
+      "process technology",
+      "software",
+      "digital transformation",
+      "automation",
+      "industrial internet of things",
+      "data analytics",
+      "environmental solutions",
+      "human capital management"
+    ],
+    "only_single_stage": [
+      "automation",
+      "building automation",
+      "data analytics",
+      "defense",
+      "digital transformation",
+      "energy",
+      "environmental solutions",
+      "human capital management",
+      "industrial internet of things",
+      "process technology",
+      "software"
+    ],
+    "only_two_stage": [
+      "technology"
+    ]
+  },
+  {
+    "ticker": "WAT",
+    "status": "ok",
+    "filing_date": "2026-02-23",
+    "business_text_chars": 64193,
+    "overview": "Waters Corporation is a global leader in the analytical instruments and software industry, with a rich history of over 65 years in pioneering innovations in chromatography, mass spectrometry, and thermal analysis. The company primarily focuses on designing, manufacturing, selling, and servicing high-performance liquid chromatography (HPLC), ultra-performance liquid chromatography (UPLC), and mass spectrometry (MS) systems. These systems are widely used across various sectors, including pharmaceuticals, clinical research, environmental testing, and food safety, to analyze and purify chemical compounds.\n\nWaters Corporation is recognized for its leadership in the life sciences and diagnostics markets, especially following its acquisition of the Biosciences and Diagnostic Solutions businesses from Becton, Dickinson and Company. This acquisition has expanded its capabilities in diagnostics and life sciences, positioning Waters as an innovative leader in these fields.\n\nPublic perception of Waters Corporation is closely tied to its reputation for high-quality, reliable analytical instruments and its commitment to advancing scientific research. The company is often associated with cutting-edge technology and comprehensive service offerings that enhance laboratory productivity and compliance.\n\nWaters operates in the technology, life sciences, and diagnostics industries, with a strong emphasis on innovation and customer support. Its products and services are integral to research and development, quality assurance, and regulatory compliance across multiple industries.",
+    "two_stage_tags": [
+      "analytical instruments and software",
+      "chromatography",
+      "mass spectrometry",
+      "thermal analysis",
+      "pharmaceuticals",
+      "clinical research",
+      "environmental testing",
+      "food safety",
+      "life sciences",
+      "diagnostics",
+      "technology"
+    ],
+    "single_stage_tags": [
+      "analytical instruments",
+      "software",
+      "chromatography",
+      "mass spectrometry",
+      "thermal analysis",
+      "life sciences",
+      "materials sciences",
+      "food sciences",
+      "pharmaceutical",
+      "clinical diagnostics",
+      "environmental testing",
+      "proteomics",
+      "biopharmaceuticals",
+      "gene therapies",
+      "laboratory services",
+      "research and development",
+      "quality assurance",
+      "manufacturing",
+      "consumables",
+      "service plans"
+    ],
+    "only_single_stage": [
+      "analytical instruments",
+      "biopharmaceuticals",
+      "clinical diagnostics",
+      "consumables",
+      "food sciences",
+      "gene therapies",
+      "laboratory services",
+      "manufacturing",
+      "materials sciences",
+      "pharmaceutical",
+      "proteomics",
+      "quality assurance",
+      "research and development",
+      "service plans",
+      "software"
+    ],
+    "only_two_stage": [
+      "analytical instruments and software",
+      "clinical research",
+      "diagnostics",
+      "food safety",
+      "pharmaceuticals",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "ZTS",
+    "status": "ok",
+    "filing_date": "2026-02-12",
+    "business_text_chars": 84095,
+    "overview": "Zoetis Inc. is a global leader in the animal health industry, specializing in the discovery, development, manufacture, and commercialization of a wide range of products including medicines, vaccines, diagnostic products, biodevices, genetic tests, and precision animal health solutions. With a legacy spanning nearly 75 years, Zoetis serves both companion animals—such as dogs, cats, and horses—and livestock, including cattle, swine, poultry, fish, and sheep. The company operates across seven major product categories, including parasiticides, vaccines, dermatology, anti-infectives, pain and sedation, other pharmaceuticals, and animal health diagnostics.\n\nZoetis is widely recognized for its innovative approach to animal health, with flagship products like Simparica Trio® and Apoquel® contributing significantly to its revenue. The company is known for its commitment to advancing animal care through continuous product lifecycle innovation and strategic acquisitions, such as Abaxis and Basepaws, which have enhanced its diagnostic and genetic testing capabilities.\n\nAs a market leader, Zoetis is often associated with high-quality animal health solutions and is perceived as a trusted partner by veterinarians, pet owners, and livestock producers. The company is classified under several industry themes, including biotechnology, pharmaceuticals, diagnostics, and veterinary medicine. Zoetis's commitment to sustainability and innovation positions it as a key player in addressing global challenges related to animal health and food security.",
+    "two_stage_tags": [
+      "biotechnology",
+      "pharmaceuticals",
+      "diagnostics",
+      "veterinary medicine"
+    ],
+    "single_stage_tags": [
+      "animal health",
+      "pharmaceuticals",
+      "vaccines",
+      "diagnostics",
+      "biotechnology",
+      "veterinary medicine",
+      "livestock",
+      "companion animals",
+      "genetic testing",
+      "biodevices",
+      "precision animal health",
+      "research and development",
+      "global operations"
+    ],
+    "only_single_stage": [
+      "animal health",
+      "biodevices",
+      "companion animals",
+      "genetic testing",
+      "global operations",
+      "livestock",
+      "precision animal health",
+      "research and development",
+      "vaccines"
+    ],
+    "only_two_stage": []
+  },
+  {
+    "ticker": "CME",
+    "status": "ok",
+    "filing_date": "2026-02-26",
+    "business_text_chars": 56751,
+    "overview": "CME Group is a leading global marketplace for trading derivatives, offering a wide range of products across various asset classes, including interest rates, equity indices, foreign exchange, agricultural commodities, energy, metals, and cryptocurrencies. The company operates renowned exchanges such as CME, CBOT, NYMEX, and COMEX, providing essential risk management tools for clients worldwide. CME Group is recognized for its deep market liquidity, price transparency, and advanced technological capabilities, making it a prominent player in the financial services industry.\n\nThe company is widely associated with its electronic trading platform, CME Globex, which facilitates efficient and secure trading. CME Group is also a major provider of central counterparty clearing services, ensuring the safety and soundness of derivatives markets by acting as the counterparty to every trade. Its data services business offers real-time and historical market data, enhancing the decision-making capabilities of its global customer base.\n\nCME Group is perceived as a leader in the derivatives market, known for its innovation and comprehensive product offerings. It is actively expanding its global reach and diversifying its business through strategic initiatives, including partnerships and new product launches. The company is classified under several industry themes, including financial services, technology, and data analytics. Public perception often highlights CME Group's role in providing critical infrastructure for financial markets and its commitment to operational excellence and customer efficiency.",
+    "two_stage_tags": [
+      "financial services",
+      "technology",
+      "data analytics"
+    ],
+    "single_stage_tags": [
+      "finance",
+      "derivatives",
+      "trading",
+      "clearing",
+      "market data",
+      "risk management",
+      "financial services",
+      "futures",
+      "options",
+      "commodities",
+      "foreign exchange",
+      "cryptocurrencies",
+      "securities",
+      "cash markets",
+      "data services"
+    ],
+    "only_single_stage": [
+      "cash markets",
+      "clearing",
+      "commodities",
+      "cryptocurrencies",
+      "data services",
+      "derivatives",
+      "finance",
+      "foreign exchange",
+      "futures",
+      "market data",
+      "options",
+      "risk management",
+      "securities",
+      "trading"
+    ],
+    "only_two_stage": [
+      "data analytics",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "AZO",
+    "status": "ok",
+    "filing_date": "2025-10-27",
+    "business_text_chars": 34218,
+    "overview": "AutoZone, Inc. is a prominent retailer and distributor of automotive replacement parts and accessories across the Americas, with a significant presence in the United States, Mexico, and Brazil. Established in 1979, the company operates over 7,600 stores, offering a comprehensive range of products for cars, SUVs, vans, and light trucks. These include new and remanufactured automotive hard parts, maintenance items, accessories, and non-automotive products. AutoZone is recognized as a leader in the automotive parts industry, particularly noted for its extensive commercial sales program that caters to repair garages, dealers, and fleet owners, providing prompt delivery and commercial credit.\n\nThe company is widely associated with its commitment to customer service, encapsulated in its Pledge and Values, which emphasize putting customers first and striving for exceptional performance. AutoZone's public perception is largely tied to its reputation for trustworthy advice and quality service, supported by its proprietary electronic catalog, Z-net, which aids in efficient parts lookup and inventory management.\n\nAutoZone's industry classification spans automotive retail, e-commerce, and technology, given its robust online sales platforms and proprietary software offerings like ALLDATA. The company is also known for its exclusive in-house brands, such as Duralast, which contribute to its competitive edge in pricing and product quality.",
+    "two_stage_tags": [
+      "automotive retail",
+      "e-commerce",
+      "technology"
+    ],
+    "single_stage_tags": [
+      "retail",
+      "distribution",
+      "automotive parts",
+      "e-commerce",
+      "software",
+      "international operations"
+    ],
+    "only_single_stage": [
+      "automotive parts",
+      "distribution",
+      "international operations",
+      "retail",
+      "software"
+    ],
+    "only_two_stage": [
+      "automotive retail",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "SBUX",
+    "status": "ok",
+    "filing_date": "2025-11-14",
+    "business_text_chars": 37895,
+    "overview": "Starbucks Corporation, founded in 1985, is a global leader in the specialty coffee industry, renowned for its high-quality coffee, tea, and food offerings. Operating in 89 markets, Starbucks is recognized as the premier roaster, marketer, and retailer of specialty coffee worldwide. The company’s core business involves purchasing and roasting high-quality coffee beans, which are sold through company-operated and licensed stores, as well as through grocery and foodservice channels via its Global Coffee Alliance with Nestlé. Starbucks also markets products under brands like Teavana, Ethos, and Starbucks Reserve.\n\nStarbucks is widely perceived as a community-centric coffeehouse, known for its welcoming store environments and commitment to customer experience. The company is often associated with innovation in beverages and digital platforms, enhancing its reputation as a forward-thinking brand. Its \"Back to Starbucks\" strategy aims to rejuvenate growth by focusing on customer experience, product development, and brand strength.\n\nIn the competitive landscape, Starbucks maintains a dominant position, leveraging its extensive store network and strong brand recognition. The company is classified under several industry themes, including food and beverage, retail, and consumer goods. Starbucks is also committed to human capital management, offering competitive benefits and fostering an inclusive workplace culture.",
+    "two_stage_tags": [
+      "food and beverage",
+      "retail",
+      "consumer goods"
+    ],
+    "single_stage_tags": [
+      "coffee",
+      "specialty coffee",
+      "retail",
+      "food and beverage",
+      "global brand",
+      "digital platform",
+      "innovation",
+      "human capital management",
+      "licensing",
+      "channel development",
+      "sustainability"
+    ],
+    "only_single_stage": [
+      "channel development",
+      "coffee",
+      "digital platform",
+      "global brand",
+      "human capital management",
+      "innovation",
+      "licensing",
+      "specialty coffee",
+      "sustainability"
+    ],
+    "only_two_stage": [
+      "consumer goods"
+    ]
+  }
+]

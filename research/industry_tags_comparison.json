@@ -1,0 +1,3227 @@
+[
+  {
+    "ticker": "A",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "life sciences",
+      "diagnostics",
+      "laboratory automation"
+    ],
+    "llm_tags": [
+      "technology",
+      "life sciences",
+      "diagnostics",
+      "laboratory automation"
+    ]
+  },
+  {
+    "ticker": "AAPL",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "consumer electronics",
+      "e-commerce",
+      "cloud computing"
+    ],
+    "llm_tags": [
+      "technology",
+      "consumer electronics",
+      "e-commerce",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "ABBV",
+    "regex_tags": [
+      "several industry themes",
+      "including biotechnology",
+      "pharmaceuticals",
+      "healthcare"
+    ],
+    "llm_tags": [
+      "biotechnology",
+      "pharmaceuticals",
+      "healthcare"
+    ]
+  },
+  {
+    "ticker": "ABNB",
+    "regex_tags": [],
+    "llm_tags": [
+      "travel",
+      "hospitality",
+      "technology",
+      "e-commerce"
+    ]
+  },
+  {
+    "ticker": "ABT",
+    "regex_tags": [],
+    "llm_tags": [
+      "pharmaceuticals",
+      "diagnostics",
+      "nutrition",
+      "medical devices"
+    ]
+  },
+  {
+    "ticker": "ADBE",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "digital media"
+    ]
+  },
+  {
+    "ticker": "ADI",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "semiconductors",
+      "artificial intelligence"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "ADP",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "business services"
+    ]
+  },
+  {
+    "ticker": "AEE",
+    "regex_tags": [],
+    "llm_tags": [
+      "utilities",
+      "energy",
+      "renewable energy",
+      "infrastructure"
+    ]
+  },
+  {
+    "ticker": "AEP",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "utilities",
+      "infrastructure"
+    ],
+    "llm_tags": [
+      "energy",
+      "utilities",
+      "infrastructure"
+    ]
+  },
+  {
+    "ticker": "AFL",
+    "regex_tags": [
+      "the insurance industry",
+      "healthcare"
+    ],
+    "llm_tags": [
+      "insurance",
+      "financial services",
+      "healthcare"
+    ]
+  },
+  {
+    "ticker": "AIG",
+    "regex_tags": [],
+    "llm_tags": [
+      "insurance",
+      "risk management",
+      "financial services",
+      "global business operations"
+    ]
+  },
+  {
+    "ticker": "AJG",
+    "regex_tags": [
+      "the insurance",
+      "risk management",
+      "consulting industries"
+    ],
+    "llm_tags": [
+      "insurance",
+      "risk management",
+      "consulting"
+    ]
+  },
+  {
+    "ticker": "ALL",
+    "regex_tags": [
+      "several industry themes",
+      "including insurance",
+      "financial services",
+      "technology",
+      "due to its diverse product offerings",
+      "emphasis on digital transformation"
+    ],
+    "llm_tags": [
+      "insurance",
+      "financial services",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "AMAT",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "semiconductors",
+      "manufacturing"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "manufacturing"
+    ]
+  },
+  {
+    "ticker": "AMD",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "ai computing",
+      "gaming"
+    ]
+  },
+  {
+    "ticker": "AME",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "aerospace",
+      "medical devices",
+      "industrial manufacturing"
+    ],
+    "llm_tags": [
+      "technology",
+      "aerospace",
+      "medical devices",
+      "industrial manufacturing"
+    ]
+  },
+  {
+    "ticker": "AMGN",
+    "regex_tags": [],
+    "llm_tags": [
+      "biotechnology",
+      "pharmaceuticals",
+      "healthcare",
+      "oncology",
+      "cardiovascular health",
+      "immunology"
+    ]
+  },
+  {
+    "ticker": "AMT",
+    "regex_tags": [
+      "several industry themes",
+      "including real estate",
+      "telecommunications",
+      "data centers"
+    ],
+    "llm_tags": [
+      "real estate",
+      "telecommunications",
+      "data centers"
+    ]
+  },
+  {
+    "ticker": "AMZN",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "e-commerce",
+      "cloud computing",
+      "digital media"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "digital media"
+    ]
+  },
+  {
+    "ticker": "ANET",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "networking"
+    ]
+  },
+  {
+    "ticker": "AON",
+    "regex_tags": [
+      "several industry themes",
+      "including professional services",
+      "risk management",
+      "insurance brokerage",
+      "human resources consulting"
+    ],
+    "llm_tags": [
+      "professional services",
+      "risk management",
+      "insurance brokerage",
+      "human resources consulting"
+    ]
+  },
+  {
+    "ticker": "APP",
+    "regex_tags": [],
+    "llm_tags": [
+      "advertising technology",
+      "technology",
+      "advertising",
+      "media"
+    ]
+  },
+  {
+    "ticker": "AVGO",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "semiconductors",
+      "cloud computing",
+      "cybersecurity"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "cloud computing",
+      "cybersecurity"
+    ]
+  },
+  {
+    "ticker": "AXON",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "public safety",
+      "cloud computing",
+      "artificial intelligence"
+    ],
+    "llm_tags": [
+      "technology",
+      "public safety",
+      "cloud computing",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "AXP",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "technology",
+      "lifestyle services"
+    ],
+    "llm_tags": [
+      "financial services",
+      "technology",
+      "lifestyle services"
+    ]
+  },
+  {
+    "ticker": "AZO",
+    "regex_tags": [
+      "several industry themes",
+      "including retail",
+      "automotive",
+      "e-commerce",
+      "technology",
+      "reflecting its diverse business model",
+      "customer engagement"
+    ],
+    "llm_tags": [
+      "retail",
+      "automotive",
+      "e-commerce",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "BA",
+    "regex_tags": [
+      "aerospace",
+      "defense",
+      "aviation industries",
+      "with a significant focus on technology",
+      "engineering"
+    ],
+    "llm_tags": [
+      "aerospace",
+      "defense",
+      "aviation"
+    ]
+  },
+  {
+    "ticker": "BAC",
+    "regex_tags": [
+      "several industry themes",
+      "including banking",
+      "financial services",
+      "wealth management",
+      "investment banking"
+    ],
+    "llm_tags": [
+      "banking",
+      "financial services",
+      "wealth management",
+      "investment banking"
+    ]
+  },
+  {
+    "ticker": "BDX",
+    "regex_tags": [],
+    "llm_tags": [
+      "medical technology",
+      "healthcare",
+      "life sciences"
+    ]
+  },
+  {
+    "ticker": "BKNG",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "e-commerce",
+      "travel services"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "travel services"
+    ]
+  },
+  {
+    "ticker": "BKR",
+    "regex_tags": [],
+    "llm_tags": [
+      "energy technology",
+      "oil and gas",
+      "renewable energy",
+      "industrial technology",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "BLK",
+    "regex_tags": [],
+    "llm_tags": [
+      "investment management",
+      "financial technology",
+      "global asset management"
+    ]
+  },
+  {
+    "ticker": "BMY",
+    "regex_tags": [
+      "several industry themes",
+      "including biotechnology",
+      "pharmaceuticals",
+      "healthcare"
+    ],
+    "llm_tags": [
+      "biotechnology",
+      "pharmaceuticals",
+      "healthcare"
+    ]
+  },
+  {
+    "ticker": "BSX",
+    "regex_tags": [
+      "several industry themes",
+      "including medical technology",
+      "healthcare",
+      "innovation"
+    ],
+    "llm_tags": [
+      "medical technology",
+      "healthcare",
+      "innovation"
+    ]
+  },
+  {
+    "ticker": "CARR",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "energy solutions",
+      "hvac (heating",
+      "ventilation",
+      "air conditioning)",
+      "digitalization"
+    ],
+    "llm_tags": [
+      "technology",
+      "energy solutions",
+      "hvac",
+      "digitalization"
+    ]
+  },
+  {
+    "ticker": "CAT",
+    "regex_tags": [
+      "several industry themes",
+      "including construction",
+      "mining",
+      "energy",
+      "industrial manufacturing"
+    ],
+    "llm_tags": [
+      "construction",
+      "mining",
+      "energy",
+      "industrial manufacturing"
+    ]
+  },
+  {
+    "ticker": "CB",
+    "regex_tags": [
+      "multiple industry themes",
+      "including insurance",
+      "reinsurance",
+      "financial services",
+      "risk management"
+    ],
+    "llm_tags": [
+      "insurance",
+      "reinsurance",
+      "financial services",
+      "risk management"
+    ]
+  },
+  {
+    "ticker": "CCL",
+    "regex_tags": [],
+    "llm_tags": [
+      "travel",
+      "leisure",
+      "hospitality"
+    ]
+  },
+  {
+    "ticker": "CDNS",
+    "regex_tags": [
+      "technology",
+      "eda",
+      "ai",
+      "semiconductor industries"
+    ],
+    "llm_tags": [
+      "technology",
+      "eda",
+      "ai",
+      "semiconductor"
+    ]
+  },
+  {
+    "ticker": "CI",
+    "regex_tags": [],
+    "llm_tags": [
+      "healthcare",
+      "insurance",
+      "pharmacy benefit management"
+    ]
+  },
+  {
+    "ticker": "CL",
+    "regex_tags": [
+      "industries such as consumer goods",
+      "personal care",
+      "pet nutrition"
+    ],
+    "llm_tags": [
+      "consumer goods",
+      "personal care",
+      "pet nutrition"
+    ]
+  },
+  {
+    "ticker": "CMCSA",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "telecommunications",
+      "media",
+      "entertainment",
+      "theme parks"
+    ],
+    "llm_tags": [
+      "technology",
+      "telecommunications",
+      "media",
+      "entertainment",
+      "theme parks"
+    ]
+  },
+  {
+    "ticker": "CME",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "derivatives trading",
+      "market data services",
+      "technology"
+    ],
+    "llm_tags": [
+      "financial services",
+      "derivatives trading",
+      "market data services",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "CMG",
+    "regex_tags": [
+      "several industry themes",
+      "including fast-casual dining",
+      "sustainability",
+      "digital innovation"
+    ],
+    "llm_tags": [
+      "fast-casual dining",
+      "sustainability",
+      "digital innovation"
+    ]
+  },
+  {
+    "ticker": "CMI",
+    "regex_tags": [
+      "industries such as technology",
+      "automotive",
+      "energy",
+      "environmental responsibility"
+    ],
+    "llm_tags": [
+      "technology",
+      "automotive",
+      "energy"
+    ]
+  },
+  {
+    "ticker": "CNC",
+    "regex_tags": [
+      "multiple industry themes",
+      "including healthcare",
+      "managed care",
+      "insurance"
+    ],
+    "llm_tags": [
+      "healthcare",
+      "managed care",
+      "insurance"
+    ]
+  },
+  {
+    "ticker": "COF",
+    "regex_tags": [],
+    "llm_tags": [
+      "financial services",
+      "banking",
+      "credit cards",
+      "digital banking",
+      "payments"
+    ]
+  },
+  {
+    "ticker": "COHR",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "telecommunications",
+      "industrial manufacturing",
+      "semiconductor materials"
+    ],
+    "llm_tags": [
+      "technology",
+      "telecommunications",
+      "industrial manufacturing",
+      "semiconductor materials"
+    ]
+  },
+  {
+    "ticker": "COIN",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "COP",
+    "regex_tags": [],
+    "llm_tags": [
+      "energy",
+      "oil and gas",
+      "lng",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "COST",
+    "regex_tags": [],
+    "llm_tags": [
+      "retail",
+      "e-commerce",
+      "wholesale"
+    ]
+  },
+  {
+    "ticker": "CPNG",
+    "regex_tags": [],
+    "llm_tags": [
+      "retail",
+      "restaurant delivery",
+      "video streaming",
+      "fintech services",
+      "technology",
+      "e-commerce",
+      "logistics",
+      "digital entertainment",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "CRM",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "ai-driven enterprise solutions"
+    ]
+  },
+  {
+    "ticker": "CRWD",
+    "regex_tags": [],
+    "llm_tags": [
+      "cybersecurity",
+      "technology",
+      "cloud computing",
+      "endpoint security",
+      "cloud workload security",
+      "managed security services",
+      "identity protection"
+    ]
+  },
+  {
+    "ticker": "CSCO",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "cloud computing",
+      "cybersecurity",
+      "ai"
+    ],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "cybersecurity",
+      "ai"
+    ]
+  },
+  {
+    "ticker": "CSX",
+    "regex_tags": [
+      "industries such as transportation",
+      "logistics",
+      "rail freight"
+    ],
+    "llm_tags": [
+      "transportation",
+      "logistics",
+      "rail freight"
+    ]
+  },
+  {
+    "ticker": "CTAS",
+    "regex_tags": [
+      "several industry themes",
+      "including business services",
+      "safety",
+      "compliance",
+      "environmental sustainability"
+    ],
+    "llm_tags": [
+      "business services",
+      "safety and compliance",
+      "environmental sustainability"
+    ]
+  },
+  {
+    "ticker": "CVS",
+    "regex_tags": [
+      "several industry themes",
+      "including health care",
+      "retail pharmacy",
+      "insurance",
+      "health services"
+    ],
+    "llm_tags": [
+      "health care",
+      "retail pharmacy",
+      "insurance",
+      "health services"
+    ]
+  },
+  {
+    "ticker": "CVX",
+    "regex_tags": [],
+    "llm_tags": [
+      "energy",
+      "oil and gas",
+      "chemicals",
+      "renewable energy",
+      "environmental sustainability"
+    ]
+  },
+  {
+    "ticker": "DASH",
+    "regex_tags": [],
+    "llm_tags": [
+      "on-demand delivery",
+      "technology",
+      "e-commerce",
+      "logistics"
+    ]
+  },
+  {
+    "ticker": "DDOG",
+    "regex_tags": [],
+    "llm_tags": [
+      "it operations management",
+      "cloud computing",
+      "ai",
+      "security",
+      "analytics",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "DE",
+    "regex_tags": [
+      "multiple industry themes",
+      "including agriculture",
+      "construction",
+      "forestry",
+      "technology"
+    ],
+    "llm_tags": [
+      "agriculture",
+      "construction",
+      "forestry",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "DG",
+    "regex_tags": [
+      "several industry themes",
+      "including retail",
+      "discount retail",
+      "consumer goods"
+    ],
+    "llm_tags": [
+      "retail",
+      "discount retail",
+      "consumer goods"
+    ]
+  },
+  {
+    "ticker": "DHR",
+    "regex_tags": [],
+    "llm_tags": [
+      "biotechnology",
+      "life sciences",
+      "diagnostics",
+      "healthcare technology"
+    ]
+  },
+  {
+    "ticker": "DIS",
+    "regex_tags": [],
+    "llm_tags": [
+      "entertainment",
+      "media",
+      "leisure"
+    ]
+  },
+  {
+    "ticker": "DLR",
+    "regex_tags": [],
+    "llm_tags": [
+      "data center",
+      "colocation",
+      "interconnection",
+      "cloud computing",
+      "real estate"
+    ]
+  },
+  {
+    "ticker": "DOV",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "manufacturing",
+      "clean energy",
+      "industrial solutions"
+    ]
+  },
+  {
+    "ticker": "DUK",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "utilities",
+      "renewable energy"
+    ],
+    "llm_tags": [
+      "energy",
+      "utilities",
+      "renewable energy"
+    ]
+  },
+  {
+    "ticker": "DXCM",
+    "regex_tags": [],
+    "llm_tags": [
+      "healthcare",
+      "medical device"
+    ]
+  },
+  {
+    "ticker": "EA",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "gaming",
+      "entertainment"
+    ]
+  },
+  {
+    "ticker": "ED",
+    "regex_tags": [
+      "several industry themes",
+      "including utilities",
+      "energy",
+      "infrastructure"
+    ],
+    "llm_tags": [
+      "utilities",
+      "energy",
+      "infrastructure",
+      "clean energy",
+      "environmental sustainability"
+    ]
+  },
+  {
+    "ticker": "EL",
+    "regex_tags": [
+      "industries such as beauty",
+      "luxury goods",
+      "consumer products"
+    ],
+    "llm_tags": [
+      "beauty",
+      "luxury goods",
+      "consumer products"
+    ]
+  },
+  {
+    "ticker": "ELV",
+    "regex_tags": [
+      "several industry themes",
+      "including healthcare",
+      "insurance",
+      "pharmacy services",
+      "managed care"
+    ],
+    "llm_tags": [
+      "healthcare",
+      "insurance",
+      "pharmacy services",
+      "managed care"
+    ]
+  },
+  {
+    "ticker": "EMR",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "industrial manufacturing",
+      "artificial intelligence"
+    ],
+    "llm_tags": [
+      "technology",
+      "industrial manufacturing",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "EOG",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "oil",
+      "gas exploration",
+      "production",
+      "technology-driven resource management"
+    ],
+    "llm_tags": [
+      "energy",
+      "oil and gas exploration and production",
+      "technology-driven resource management"
+    ]
+  },
+  {
+    "ticker": "EQIX",
+    "regex_tags": [
+      "industry themes such as technology",
+      "cloud computing",
+      "data center services"
+    ],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "data center services"
+    ]
+  },
+  {
+    "ticker": "ES",
+    "regex_tags": [],
+    "llm_tags": [
+      "utilities",
+      "renewable energy",
+      "infrastructure"
+    ]
+  },
+  {
+    "ticker": "ETN",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "industrial manufacturing",
+      "aerospace",
+      "energy management"
+    ]
+  },
+  {
+    "ticker": "ETR",
+    "regex_tags": [
+      "several industry themes",
+      "including utilities",
+      "energy",
+      "renewable energy"
+    ],
+    "llm_tags": [
+      "utilities",
+      "energy",
+      "renewable energy"
+    ]
+  },
+  {
+    "ticker": "EW",
+    "regex_tags": [
+      "the medical technology",
+      "healthcare sectors"
+    ],
+    "llm_tags": [
+      "medical technology",
+      "healthcare",
+      "cardiovascular disease treatment"
+    ]
+  },
+  {
+    "ticker": "EXC",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "utilities",
+      "clean technology"
+    ],
+    "llm_tags": [
+      "energy",
+      "utilities",
+      "clean technology"
+    ]
+  },
+  {
+    "ticker": "F",
+    "regex_tags": [
+      "multiple industry themes",
+      "including automotive",
+      "technology",
+      "sustainability",
+      "reflecting its diverse operations",
+      "strategic focus on electrification",
+      "digital transformation"
+    ],
+    "llm_tags": [
+      "automotive",
+      "technology",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "FAST",
+    "regex_tags": [
+      "several industry themes",
+      "including industrial distribution",
+      "supply chain management",
+      "digital solutions"
+    ],
+    "llm_tags": [
+      "industrial distribution",
+      "supply chain management",
+      "digital solutions"
+    ]
+  },
+  {
+    "ticker": "FDX",
+    "regex_tags": [],
+    "llm_tags": [
+      "transportation",
+      "logistics",
+      "e-commerce",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "FE",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "utilities",
+      "infrastructure"
+    ],
+    "llm_tags": [
+      "energy",
+      "utilities",
+      "infrastructure"
+    ]
+  },
+  {
+    "ticker": "FOXA",
+    "regex_tags": [
+      "multiple industry themes",
+      "including media",
+      "entertainment",
+      "digital streaming",
+      "consumer finance"
+    ],
+    "llm_tags": [
+      "media",
+      "entertainment",
+      "digital streaming",
+      "consumer finance"
+    ]
+  },
+  {
+    "ticker": "FTNT",
+    "regex_tags": [
+      "cybersecurity",
+      "technology",
+      "cloud computing"
+    ],
+    "llm_tags": [
+      "cybersecurity",
+      "technology",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "GD",
+    "regex_tags": [
+      "several industry themes",
+      "including aerospace",
+      "defense",
+      "technology",
+      "manufacturing"
+    ],
+    "llm_tags": [
+      "aerospace",
+      "defense",
+      "technology",
+      "manufacturing"
+    ]
+  },
+  {
+    "ticker": "GEV",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "energy",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "technology",
+      "energy",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "GILD",
+    "regex_tags": [],
+    "llm_tags": [
+      "biotechnology",
+      "pharmaceuticals",
+      "healthcare innovation"
+    ]
+  },
+  {
+    "ticker": "GM",
+    "regex_tags": [
+      "multiple industry themes",
+      "including automotive",
+      "technology",
+      "electric vehicles"
+    ],
+    "llm_tags": [
+      "automotive",
+      "technology",
+      "electric vehicles"
+    ]
+  },
+  {
+    "ticker": "GOOGL",
+    "regex_tags": [
+      "technology",
+      "cloud computing",
+      "ai",
+      "digital advertising industries"
+    ],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "ai",
+      "digital advertising"
+    ]
+  },
+  {
+    "ticker": "GS",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "investment banking",
+      "asset management",
+      "sustainable finance"
+    ],
+    "llm_tags": [
+      "financial services",
+      "investment banking",
+      "asset management",
+      "sustainable finance"
+    ]
+  },
+  {
+    "ticker": "HD",
+    "regex_tags": [
+      "several industry themes",
+      "including retail",
+      "e-commerce",
+      "home improvement"
+    ],
+    "llm_tags": [
+      "retail",
+      "e-commerce",
+      "home improvement"
+    ]
+  },
+  {
+    "ticker": "HIG",
+    "regex_tags": [],
+    "llm_tags": [
+      "insurance",
+      "financial services",
+      "investment management"
+    ]
+  },
+  {
+    "ticker": "HLT",
+    "regex_tags": [],
+    "llm_tags": [
+      "hospitality",
+      "travel",
+      "tourism"
+    ]
+  },
+  {
+    "ticker": "HON",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "aerospace",
+      "industrial automation",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "technology",
+      "aerospace",
+      "industrial automation",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "HOOD",
+    "regex_tags": [],
+    "llm_tags": [
+      "financial technology",
+      "brokerage services",
+      "cryptocurrency trading",
+      "wealth management"
+    ]
+  },
+  {
+    "ticker": "HSY",
+    "regex_tags": [
+      "several industry themes",
+      "including confectionery",
+      "snacks",
+      "consumer goods"
+    ],
+    "llm_tags": [
+      "confectionery",
+      "snacks",
+      "consumer goods"
+    ]
+  },
+  {
+    "ticker": "HUM",
+    "regex_tags": [
+      "several industry themes",
+      "including healthcare",
+      "insurance",
+      "managed care"
+    ],
+    "llm_tags": [
+      "healthcare",
+      "insurance",
+      "managed care"
+    ]
+  },
+  {
+    "ticker": "IBM",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "ai",
+      "consulting"
+    ]
+  },
+  {
+    "ticker": "ICE",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "financial services",
+      "data analytics"
+    ]
+  },
+  {
+    "ticker": "IDXX",
+    "regex_tags": [
+      "water testing",
+      "healthcare technology"
+    ],
+    "llm_tags": [
+      "veterinary diagnostics",
+      "water testing",
+      "healthcare technology"
+    ]
+  },
+  {
+    "ticker": "INTU",
+    "regex_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "financial services"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "IQV",
+    "regex_tags": [
+      "industries such as healthcare",
+      "technology",
+      "data analytics",
+      "clinical research"
+    ],
+    "llm_tags": [
+      "healthcare",
+      "technology",
+      "data analytics",
+      "clinical research"
+    ]
+  },
+  {
+    "ticker": "IR",
+    "regex_tags": [],
+    "llm_tags": [
+      "industrial manufacturing",
+      "life sciences",
+      "clean energy"
+    ]
+  },
+  {
+    "ticker": "ISRG",
+    "regex_tags": [
+      "themes such as medical devices",
+      "robotics",
+      "healthcare innovation"
+    ],
+    "llm_tags": [
+      "medical devices",
+      "robotics",
+      "healthcare innovation"
+    ]
+  },
+  {
+    "ticker": "ITW",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "manufacturing",
+      "industrial equipment"
+    ]
+  },
+  {
+    "ticker": "JNJ",
+    "regex_tags": [
+      "several industry themes",
+      "including pharmaceuticals",
+      "medical devices",
+      "healthcare"
+    ],
+    "llm_tags": [
+      "pharmaceuticals",
+      "medical devices",
+      "healthcare"
+    ]
+  },
+  {
+    "ticker": "JPM",
+    "regex_tags": [
+      "financial services",
+      "investment banking",
+      "asset management",
+      "commercial banking"
+    ],
+    "llm_tags": [
+      "financial services",
+      "investment banking",
+      "asset management",
+      "commercial banking"
+    ]
+  },
+  {
+    "ticker": "KDP",
+    "regex_tags": [
+      "several industry themes",
+      "including beverages",
+      "consumer goods",
+      "e-commerce"
+    ],
+    "llm_tags": [
+      "beverages",
+      "consumer goods",
+      "e-commerce"
+    ]
+  },
+  {
+    "ticker": "KHC",
+    "regex_tags": [
+      "multiple industry themes",
+      "including food",
+      "beverage",
+      "consumer goods",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "food and beverage",
+      "consumer goods",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "KLAC",
+    "regex_tags": [],
+    "llm_tags": [
+      "electronics",
+      "semiconductor",
+      "semiconductor capital equipment",
+      "semiconductor manufacturing",
+      "process control",
+      "yield management",
+      "ai infrastructure",
+      "advanced packaging"
+    ]
+  },
+  {
+    "ticker": "KMB",
+    "regex_tags": [
+      "industries such as consumer goods",
+      "personal care",
+      "sustainability",
+      "product quality",
+      "environmental responsibility"
+    ],
+    "llm_tags": [
+      "consumer goods",
+      "personal care",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "KO",
+    "regex_tags": [
+      "several industry themes",
+      "including beverages",
+      "consumer goods",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "beverages",
+      "consumer goods",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "KR",
+    "regex_tags": [
+      "multiple industry themes",
+      "including retail",
+      "e-commerce",
+      "data analytics",
+      "reflecting its diverse operations"
+    ],
+    "llm_tags": [
+      "retail",
+      "e-commerce",
+      "data analytics"
+    ]
+  },
+  {
+    "ticker": "KVUE",
+    "regex_tags": [
+      "several industry themes",
+      "including healthcare",
+      "consumer goods",
+      "digital marketing"
+    ],
+    "llm_tags": [
+      "healthcare",
+      "consumer goods",
+      "digital marketing"
+    ]
+  },
+  {
+    "ticker": "LLY",
+    "regex_tags": [
+      "several industry themes",
+      "including pharmaceuticals",
+      "biotechnology",
+      "healthcare"
+    ],
+    "llm_tags": [
+      "pharmaceuticals",
+      "biotechnology",
+      "healthcare"
+    ]
+  },
+  {
+    "ticker": "LMT",
+    "regex_tags": [
+      "aerospace",
+      "defense",
+      "technology",
+      "cybersecurity industries"
+    ],
+    "llm_tags": [
+      "aerospace",
+      "defense",
+      "technology",
+      "cybersecurity"
+    ]
+  },
+  {
+    "ticker": "LOW",
+    "regex_tags": [],
+    "llm_tags": [
+      "home improvement",
+      "retail",
+      "e-commerce",
+      "technology",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "LRCX",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "semiconductor manufacturing",
+      "advanced materials"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductor manufacturing",
+      "advanced materials"
+    ]
+  },
+  {
+    "ticker": "LYV",
+    "regex_tags": [
+      "several industry themes",
+      "including live entertainment",
+      "music events",
+      "ticketing services",
+      "advertising"
+    ],
+    "llm_tags": [
+      "live entertainment",
+      "music events",
+      "ticketing services",
+      "advertising"
+    ]
+  },
+  {
+    "ticker": "MA",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "MAR",
+    "regex_tags": [],
+    "llm_tags": [
+      "hospitality",
+      "travel",
+      "tourism",
+      "real estate",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "MCD",
+    "regex_tags": [
+      "several industry themes",
+      "including fast food",
+      "franchising",
+      "global retail"
+    ],
+    "llm_tags": [
+      "fast food",
+      "franchising",
+      "global retail",
+      "food service"
+    ]
+  },
+  {
+    "ticker": "MCHP",
+    "regex_tags": [
+      "technology",
+      "semiconductors",
+      "embedded systems",
+      "efficient manufacturing practices"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "embedded systems"
+    ]
+  },
+  {
+    "ticker": "MDB",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "cloud computing",
+      "artificial intelligence"
+    ],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "MDLZ",
+    "regex_tags": [
+      "multiple industry themes",
+      "including food",
+      "beverage",
+      "consumer goods",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "food and beverage",
+      "consumer goods",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "MDT",
+    "regex_tags": [],
+    "llm_tags": [
+      "healthcare technology",
+      "medical devices",
+      "biotechnology"
+    ]
+  },
+  {
+    "ticker": "MELI",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "e-commerce",
+      "fintech",
+      "digital payments"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "fintech",
+      "digital payments"
+    ]
+  },
+  {
+    "ticker": "MET",
+    "regex_tags": [],
+    "llm_tags": [
+      "financial services",
+      "insurance",
+      "asset management",
+      "investment"
+    ]
+  },
+  {
+    "ticker": "META",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "social media",
+      "virtual reality",
+      "augmented reality",
+      "artificial intelligence"
+    ],
+    "llm_tags": [
+      "technology",
+      "social media",
+      "virtual reality",
+      "augmented reality",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "MMM",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "manufacturing",
+      "consumer goods",
+      "industrial safety"
+    ],
+    "llm_tags": [
+      "technology",
+      "manufacturing",
+      "consumer goods",
+      "industrial safety"
+    ]
+  },
+  {
+    "ticker": "MNST",
+    "regex_tags": [
+      "several industry themes",
+      "including beverages",
+      "energy drinks",
+      "alcohol"
+    ],
+    "llm_tags": [
+      "beverages",
+      "energy drinks",
+      "alcohol"
+    ]
+  },
+  {
+    "ticker": "MPC",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "refining",
+      "logistics",
+      "renewable fuels"
+    ],
+    "llm_tags": [
+      "energy",
+      "refining",
+      "logistics",
+      "renewable fuels"
+    ]
+  },
+  {
+    "ticker": "MPWR",
+    "regex_tags": [],
+    "llm_tags": [
+      "semiconductor",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "MRK",
+    "regex_tags": [
+      "several industry themes",
+      "including pharmaceuticals",
+      "biotechnology",
+      "animal health"
+    ],
+    "llm_tags": [
+      "pharmaceuticals",
+      "biotechnology",
+      "animal health",
+      "oncology",
+      "vaccines",
+      "diabetes care"
+    ]
+  },
+  {
+    "ticker": "MRSH",
+    "regex_tags": [
+      "industries such as insurance",
+      "reinsurance",
+      "management consulting",
+      "financial services"
+    ],
+    "llm_tags": [
+      "insurance",
+      "reinsurance",
+      "management consulting",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "MRVL",
+    "regex_tags": [
+      "technology",
+      "semiconductors",
+      "data infrastructure"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "data infrastructure"
+    ]
+  },
+  {
+    "ticker": "MS",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "wealth management",
+      "investment banking",
+      "asset management"
+    ],
+    "llm_tags": [
+      "financial services",
+      "wealth management",
+      "investment banking",
+      "asset management"
+    ]
+  },
+  {
+    "ticker": "MSFT",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "ai",
+      "productivity software",
+      "gaming"
+    ]
+  },
+  {
+    "ticker": "MSTR",
+    "regex_tags": [],
+    "llm_tags": [
+      "digital asset",
+      "enterprise analytics",
+      "bitcoin",
+      "ai-powered enterprise analytics software",
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "digital finance"
+    ]
+  },
+  {
+    "ticker": "MTD",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "manufacturing",
+      "life sciences"
+    ],
+    "llm_tags": [
+      "technology",
+      "manufacturing",
+      "life sciences"
+    ]
+  },
+  {
+    "ticker": "MU",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "semiconductors",
+      "cloud computing"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "NEE",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "renewable energy",
+      "utilities",
+      "infrastructure"
+    ],
+    "llm_tags": [
+      "energy",
+      "renewable energy",
+      "utilities",
+      "infrastructure"
+    ]
+  },
+  {
+    "ticker": "NET",
+    "regex_tags": [],
+    "llm_tags": [
+      "connectivity cloud",
+      "technology",
+      "cloud computing",
+      "cybersecurity"
+    ]
+  },
+  {
+    "ticker": "NFLX",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "entertainment",
+      "media"
+    ],
+    "llm_tags": [
+      "technology",
+      "entertainment",
+      "media"
+    ]
+  },
+  {
+    "ticker": "NKE",
+    "regex_tags": [
+      "several industry themes",
+      "including athletic apparel",
+      "footwear",
+      "sports equipment",
+      "digital commerce"
+    ],
+    "llm_tags": [
+      "athletic apparel",
+      "footwear",
+      "sports equipment",
+      "digital commerce"
+    ]
+  },
+  {
+    "ticker": "NOC",
+    "regex_tags": [
+      "aerospace",
+      "defense",
+      "technology industries",
+      "with a strong emphasis on innovation",
+      "digital transformation"
+    ],
+    "llm_tags": [
+      "aerospace",
+      "defense",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "NOW",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "enterprise software",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "NSC",
+    "regex_tags": [
+      "multiple industry themes",
+      "including transportation",
+      "logistics",
+      "infrastructure"
+    ],
+    "llm_tags": [
+      "transportation",
+      "logistics",
+      "infrastructure"
+    ]
+  },
+  {
+    "ticker": "NTRS",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "wealth management",
+      "asset management",
+      "banking"
+    ],
+    "llm_tags": [
+      "financial services",
+      "wealth management",
+      "asset management",
+      "banking"
+    ]
+  },
+  {
+    "ticker": "NVDA",
+    "regex_tags": [
+      "technology",
+      "ai",
+      "cloud computing",
+      "gaming",
+      "digital transformation"
+    ],
+    "llm_tags": [
+      "technology",
+      "ai",
+      "cloud computing",
+      "gaming"
+    ]
+  },
+  {
+    "ticker": "NXPI",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "automotive",
+      "iot",
+      "security"
+    ],
+    "llm_tags": [
+      "technology",
+      "automotive",
+      "iot",
+      "security"
+    ]
+  },
+  {
+    "ticker": "O",
+    "regex_tags": [],
+    "llm_tags": [
+      "real estate",
+      "investment",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "OKE",
+    "regex_tags": [
+      "multiple industry themes",
+      "including energy",
+      "infrastructure",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "energy",
+      "infrastructure",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "ON",
+    "regex_tags": [
+      "technology",
+      "semiconductors",
+      "automotive",
+      "industrial automation industries"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "automotive",
+      "industrial automation"
+    ]
+  },
+  {
+    "ticker": "ORCL",
+    "regex_tags": [],
+    "llm_tags": [
+      "cloud computing",
+      "enterprise software",
+      "ai integration"
+    ]
+  },
+  {
+    "ticker": "ORLY",
+    "regex_tags": [
+      "several industry themes",
+      "including automotive",
+      "retail",
+      "e-commerce"
+    ],
+    "llm_tags": [
+      "automotive",
+      "retail",
+      "e-commerce"
+    ]
+  },
+  {
+    "ticker": "OTIS",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "infrastructure",
+      "manufacturing"
+    ]
+  },
+  {
+    "ticker": "OXY",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "oil",
+      "gas",
+      "environmental sustainability"
+    ],
+    "llm_tags": [
+      "energy",
+      "oil and gas",
+      "environmental sustainability"
+    ]
+  },
+  {
+    "ticker": "PANW",
+    "regex_tags": [],
+    "llm_tags": [
+      "cybersecurity",
+      "technology",
+      "cloud computing",
+      "ai"
+    ]
+  },
+  {
+    "ticker": "PAYX",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "cloud computing",
+      "hr services"
+    ],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "hr services"
+    ]
+  },
+  {
+    "ticker": "PCAR",
+    "regex_tags": [
+      "industries such as automotive",
+      "manufacturing",
+      "financial services"
+    ],
+    "llm_tags": [
+      "automotive",
+      "manufacturing",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "PEG",
+    "regex_tags": [],
+    "llm_tags": [
+      "energy",
+      "utilities",
+      "clean energy"
+    ]
+  },
+  {
+    "ticker": "PEP",
+    "regex_tags": [
+      "multiple industry themes",
+      "including food",
+      "beverage",
+      "consumer goods",
+      "e-commerce"
+    ],
+    "llm_tags": [
+      "food and beverage",
+      "consumer goods",
+      "e-commerce"
+    ]
+  },
+  {
+    "ticker": "PFE",
+    "regex_tags": [
+      "several industry themes",
+      "including pharmaceuticals",
+      "biotechnology",
+      "healthcare",
+      "life sciences"
+    ],
+    "llm_tags": [
+      "pharmaceuticals",
+      "biotechnology",
+      "healthcare",
+      "life sciences"
+    ]
+  },
+  {
+    "ticker": "PG",
+    "regex_tags": [
+      "several industry themes",
+      "including consumer goods",
+      "retail",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "consumer goods",
+      "retail",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "PGR",
+    "regex_tags": [],
+    "llm_tags": [
+      "insurance",
+      "property-casualty insurance",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "PH",
+    "regex_tags": [
+      "several industry themes",
+      "including industrial manufacturing",
+      "aerospace",
+      "engineering solutions"
+    ],
+    "llm_tags": [
+      "industrial manufacturing",
+      "aerospace",
+      "engineering solutions"
+    ]
+  },
+  {
+    "ticker": "PLD",
+    "regex_tags": [
+      "industry themes such as real estate",
+      "logistics",
+      "sustainability",
+      "technology"
+    ],
+    "llm_tags": [
+      "real estate",
+      "logistics",
+      "sustainability",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "PLTR",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "data analytics",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "PNC",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "banking",
+      "asset management",
+      "corporate finance"
+    ],
+    "llm_tags": [
+      "financial services",
+      "banking",
+      "asset management",
+      "corporate finance"
+    ]
+  },
+  {
+    "ticker": "PRU",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "insurance",
+      "investment management",
+      "retirement solutions"
+    ],
+    "llm_tags": [
+      "financial services",
+      "insurance",
+      "investment management",
+      "retirement solutions"
+    ]
+  },
+  {
+    "ticker": "PSA",
+    "regex_tags": [
+      "the real estate",
+      "self-storage",
+      "reit industries"
+    ],
+    "llm_tags": [
+      "real estate",
+      "self-storage",
+      "reit"
+    ]
+  },
+  {
+    "ticker": "PYPL",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "e-commerce",
+      "financial services"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "QCOM",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "semiconductors",
+      "wireless communications",
+      "artificial intelligence"
+    ],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "wireless communications",
+      "artificial intelligence"
+    ]
+  },
+  {
+    "ticker": "RBLX",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "gaming",
+      "e-commerce",
+      "cloud computing",
+      "digital content creation"
+    ]
+  },
+  {
+    "ticker": "RCL",
+    "regex_tags": [
+      "several industry themes",
+      "including travel",
+      "leisure",
+      "hospitality"
+    ],
+    "llm_tags": [
+      "travel",
+      "leisure",
+      "hospitality"
+    ]
+  },
+  {
+    "ticker": "RDDT",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "social media",
+      "digital advertising",
+      "data analytics"
+    ],
+    "llm_tags": [
+      "technology",
+      "social media",
+      "digital advertising",
+      "data analytics"
+    ]
+  },
+  {
+    "ticker": "REGN",
+    "regex_tags": [],
+    "llm_tags": [
+      "biotechnology",
+      "pharmaceuticals",
+      "healthcare",
+      "genetic research"
+    ]
+  },
+  {
+    "ticker": "ROK",
+    "regex_tags": [
+      "industrial automation",
+      "digital transformation",
+      "technology"
+    ],
+    "llm_tags": [
+      "industrial automation",
+      "digital transformation",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "ROST",
+    "regex_tags": [
+      "retail",
+      "apparel",
+      "home fashion industries"
+    ],
+    "llm_tags": [
+      "retail",
+      "apparel",
+      "home fashion"
+    ]
+  },
+  {
+    "ticker": "RSG",
+    "regex_tags": [
+      "several industry themes",
+      "including environmental services",
+      "waste management",
+      "recycling",
+      "sustainability innovation"
+    ],
+    "llm_tags": [
+      "environmental services",
+      "waste management",
+      "recycling",
+      "sustainability innovation"
+    ]
+  },
+  {
+    "ticker": "RTX",
+    "regex_tags": [],
+    "llm_tags": [
+      "aerospace",
+      "defense",
+      "technology",
+      "engineering"
+    ]
+  },
+  {
+    "ticker": "SBUX",
+    "regex_tags": [],
+    "llm_tags": [
+      "food and beverage",
+      "retail",
+      "consumer goods"
+    ]
+  },
+  {
+    "ticker": "SCHW",
+    "regex_tags": [],
+    "llm_tags": [
+      "financial services",
+      "wealth management",
+      "fintech"
+    ]
+  },
+  {
+    "ticker": "SHOP",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "e-commerce",
+      "cloud computing"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "SLB",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "energy services",
+      "digital transformation",
+      "sustainability"
+    ],
+    "llm_tags": [
+      "technology",
+      "energy services",
+      "digital transformation",
+      "sustainability"
+    ]
+  },
+  {
+    "ticker": "SNOW",
+    "regex_tags": [],
+    "llm_tags": [
+      "cloud computing",
+      "data",
+      "artificial intelligence",
+      "ai",
+      "financial services",
+      "healthcare",
+      "retail",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "SNPS",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "semiconductor",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "SO",
+    "regex_tags": [
+      "several industry themes",
+      "including utilities",
+      "energy",
+      "renewable energy",
+      "natural gas"
+    ],
+    "llm_tags": [
+      "utilities",
+      "energy",
+      "renewable energy",
+      "natural gas"
+    ]
+  },
+  {
+    "ticker": "SPG",
+    "regex_tags": [],
+    "llm_tags": [
+      "real estate",
+      "retail",
+      "investment management"
+    ]
+  },
+  {
+    "ticker": "SPGI",
+    "regex_tags": [
+      "industries such as financial services",
+      "data analytics",
+      "energy"
+    ],
+    "llm_tags": [
+      "financial services",
+      "data analytics",
+      "energy"
+    ]
+  },
+  {
+    "ticker": "SRE",
+    "regex_tags": [
+      "energy",
+      "utilities",
+      "infrastructure",
+      "renewable energy"
+    ],
+    "llm_tags": [
+      "energy",
+      "utilities",
+      "infrastructure",
+      "renewable energy"
+    ]
+  },
+  {
+    "ticker": "STT",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "investment management",
+      "technology",
+      "reflecting its diverse offerings"
+    ],
+    "llm_tags": [
+      "financial services",
+      "investment management",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "STX",
+    "regex_tags": [],
+    "llm_tags": [
+      "data storage",
+      "technology",
+      "cloud computing",
+      "iot"
+    ]
+  },
+  {
+    "ticker": "SYK",
+    "regex_tags": [
+      "several industry themes",
+      "including medical technology",
+      "healthcare",
+      "robotics"
+    ],
+    "llm_tags": [
+      "medical technology",
+      "healthcare",
+      "robotics"
+    ]
+  },
+  {
+    "ticker": "SYY",
+    "regex_tags": [
+      "several industry themes",
+      "including food distribution",
+      "logistics",
+      "supply chain management"
+    ],
+    "llm_tags": [
+      "food distribution",
+      "logistics",
+      "supply chain management"
+    ]
+  },
+  {
+    "ticker": "T",
+    "regex_tags": [],
+    "llm_tags": [
+      "telecommunications",
+      "technology",
+      "broadband services"
+    ]
+  },
+  {
+    "ticker": "TEAM",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "ai integration",
+      "enterprise software"
+    ]
+  },
+  {
+    "ticker": "TER",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "robotics",
+      "semiconductor testing",
+      "automation"
+    ],
+    "llm_tags": [
+      "technology",
+      "robotics",
+      "semiconductor testing",
+      "automation"
+    ]
+  },
+  {
+    "ticker": "TFC",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "banking",
+      "investment",
+      "wealth management"
+    ],
+    "llm_tags": [
+      "financial services",
+      "banking",
+      "investment",
+      "wealth management"
+    ]
+  },
+  {
+    "ticker": "TGT",
+    "regex_tags": [
+      "several industry themes",
+      "including retail",
+      "e-commerce",
+      "consumer goods"
+    ],
+    "llm_tags": [
+      "retail",
+      "e-commerce",
+      "consumer goods"
+    ]
+  },
+  {
+    "ticker": "TJX",
+    "regex_tags": [
+      "themes such as apparel",
+      "home fashions",
+      "e-commerce",
+      "discount retailing"
+    ],
+    "llm_tags": [
+      "apparel",
+      "home fashions",
+      "e-commerce",
+      "discount retailing"
+    ]
+  },
+  {
+    "ticker": "TMO",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "healthcare",
+      "biotechnology",
+      "pharmaceuticals"
+    ],
+    "llm_tags": [
+      "technology",
+      "healthcare",
+      "biotechnology",
+      "pharmaceuticals"
+    ]
+  },
+  {
+    "ticker": "TMUS",
+    "regex_tags": [],
+    "llm_tags": [
+      "telecommunications",
+      "technology",
+      "broadband"
+    ]
+  },
+  {
+    "ticker": "TRGP",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "infrastructure",
+      "natural gas processing"
+    ],
+    "llm_tags": [
+      "energy",
+      "infrastructure",
+      "natural gas processing"
+    ]
+  },
+  {
+    "ticker": "TRV",
+    "regex_tags": [
+      "several industry themes",
+      "including insurance",
+      "risk management",
+      "financial services"
+    ],
+    "llm_tags": [
+      "insurance",
+      "risk management",
+      "financial services",
+      "property and casualty insurance"
+    ]
+  },
+  {
+    "ticker": "TSLA",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "automotive",
+      "renewable energy"
+    ]
+  },
+  {
+    "ticker": "TT",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "e-commerce",
+      "cloud computing",
+      "smart services"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "TTWO",
+    "regex_tags": [
+      "multiple industry themes",
+      "including technology",
+      "gaming",
+      "digital entertainment"
+    ],
+    "llm_tags": [
+      "technology",
+      "gaming",
+      "digital entertainment"
+    ]
+  },
+  {
+    "ticker": "TWLO",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "cloud computing",
+      "customer engagement"
+    ],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "customer engagement"
+    ]
+  },
+  {
+    "ticker": "TXN",
+    "regex_tags": [],
+    "llm_tags": [
+      "technology",
+      "semiconductors",
+      "electronics manufacturing"
+    ]
+  },
+  {
+    "ticker": "UBER",
+    "regex_tags": [
+      "technology",
+      "e-commerce",
+      "logistics industries"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "logistics"
+    ]
+  },
+  {
+    "ticker": "UNH",
+    "regex_tags": [
+      "health care",
+      "insurance",
+      "technology sectors",
+      "reflecting its diverse operations"
+    ],
+    "llm_tags": [
+      "health care",
+      "insurance",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "UNP",
+    "regex_tags": [
+      "industries such as transportation",
+      "logistics",
+      "freight rail"
+    ],
+    "llm_tags": [
+      "transportation",
+      "logistics",
+      "freight rail"
+    ]
+  },
+  {
+    "ticker": "UPS",
+    "regex_tags": [],
+    "llm_tags": [
+      "logistics",
+      "transportation",
+      "e-commerce",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "URI",
+    "regex_tags": [],
+    "llm_tags": [
+      "construction",
+      "equipment rental",
+      "industrial solutions"
+    ]
+  },
+  {
+    "ticker": "USB",
+    "regex_tags": [
+      "several industry themes",
+      "including financial services",
+      "banking",
+      "investment management",
+      "payment processing"
+    ],
+    "llm_tags": [
+      "financial services",
+      "banking",
+      "investment management",
+      "payment processing"
+    ]
+  },
+  {
+    "ticker": "V",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "e-commerce",
+      "cloud computing",
+      "financial services"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "cloud computing",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "VICI",
+    "regex_tags": [
+      "several industry themes",
+      "including real estate",
+      "gaming",
+      "hospitality",
+      "entertainment"
+    ],
+    "llm_tags": [
+      "real estate",
+      "gaming",
+      "hospitality",
+      "entertainment"
+    ]
+  },
+  {
+    "ticker": "VRTX",
+    "regex_tags": [
+      "several industry themes",
+      "including biotechnology",
+      "pharmaceuticals",
+      "gene therapy",
+      "specialty medicine"
+    ],
+    "llm_tags": [
+      "biotechnology",
+      "pharmaceuticals",
+      "gene therapy",
+      "specialty medicine"
+    ]
+  },
+  {
+    "ticker": "VTR",
+    "regex_tags": [
+      "real estate",
+      "healthcare",
+      "senior living industries"
+    ],
+    "llm_tags": [
+      "real estate",
+      "healthcare",
+      "senior living"
+    ]
+  },
+  {
+    "ticker": "VZ",
+    "regex_tags": [
+      "several industry themes",
+      "including telecommunications",
+      "technology",
+      "cloud computing"
+    ],
+    "llm_tags": [
+      "telecommunications",
+      "technology",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "WAT",
+    "regex_tags": [],
+    "llm_tags": [
+      "analytical instruments",
+      "chromatography",
+      "mass spectrometry",
+      "thermal analysis",
+      "pharmaceutical",
+      "clinical",
+      "biochemical",
+      "industrial",
+      "nutritional safety",
+      "environmental",
+      "academic",
+      "governmental",
+      "life sciences",
+      "diagnostics",
+      "technology",
+      "healthcare",
+      "scientific research"
+    ]
+  },
+  {
+    "ticker": "WBD",
+    "regex_tags": [
+      "multiple industry themes",
+      "including media",
+      "entertainment",
+      "streaming",
+      "gaming"
+    ],
+    "llm_tags": [
+      "media",
+      "entertainment",
+      "streaming",
+      "gaming"
+    ]
+  },
+  {
+    "ticker": "WDAY",
+    "regex_tags": [
+      "several industry themes",
+      "including technology",
+      "cloud computing",
+      "enterprise software"
+    ],
+    "llm_tags": [
+      "technology",
+      "cloud computing",
+      "enterprise software"
+    ]
+  },
+  {
+    "ticker": "WDC",
+    "regex_tags": [
+      "technology",
+      "data storage",
+      "cloud computing industries"
+    ],
+    "llm_tags": [
+      "technology",
+      "data storage",
+      "cloud computing"
+    ]
+  },
+  {
+    "ticker": "WEC",
+    "regex_tags": [
+      "several industry themes",
+      "including utilities",
+      "renewable energy",
+      "energy infrastructure"
+    ],
+    "llm_tags": [
+      "utilities",
+      "renewable energy",
+      "energy infrastructure"
+    ]
+  },
+  {
+    "ticker": "WELL",
+    "regex_tags": [],
+    "llm_tags": [
+      "real estate",
+      "healthcare",
+      "senior living"
+    ]
+  },
+  {
+    "ticker": "WFC",
+    "regex_tags": [
+      "several industry themes",
+      "including banking",
+      "financial services",
+      "investment management",
+      "mortgage lending"
+    ],
+    "llm_tags": [
+      "banking",
+      "financial services",
+      "investment management",
+      "mortgage lending"
+    ]
+  },
+  {
+    "ticker": "WM",
+    "regex_tags": [
+      "several industry themes",
+      "including environmental services",
+      "renewable energy",
+      "recycling",
+      "waste management"
+    ],
+    "llm_tags": [
+      "environmental services",
+      "renewable energy",
+      "recycling",
+      "waste management"
+    ]
+  },
+  {
+    "ticker": "WMB",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "natural gas",
+      "infrastructure",
+      "clean energy"
+    ],
+    "llm_tags": [
+      "energy",
+      "natural gas",
+      "infrastructure",
+      "clean energy"
+    ]
+  },
+  {
+    "ticker": "WMT",
+    "regex_tags": [
+      "retail",
+      "e-commerce",
+      "technology",
+      "expanding its omnichannel capabilities"
+    ],
+    "llm_tags": [
+      "retail",
+      "e-commerce",
+      "technology"
+    ]
+  },
+  {
+    "ticker": "XEL",
+    "regex_tags": [
+      "utilities",
+      "renewable energy",
+      "clean technology"
+    ],
+    "llm_tags": [
+      "utilities",
+      "renewable energy",
+      "clean technology"
+    ]
+  },
+  {
+    "ticker": "XOM",
+    "regex_tags": [
+      "several industry themes",
+      "including energy",
+      "petrochemicals",
+      "emerging low-carbon technologies"
+    ],
+    "llm_tags": [
+      "energy",
+      "petrochemicals",
+      "emerging low-carbon technologies"
+    ]
+  },
+  {
+    "ticker": "XYL",
+    "regex_tags": [
+      "several themes",
+      "including technology",
+      "environmental sustainability",
+      "infrastructure"
+    ],
+    "llm_tags": [
+      "technology",
+      "environmental sustainability",
+      "infrastructure"
+    ]
+  },
+  {
+    "ticker": "XYZ",
+    "regex_tags": [
+      "technology",
+      "e-commerce",
+      "financial services",
+      "with a strong emphasis on automation",
+      "ai to enhance product usability",
+      "efficiency"
+    ],
+    "llm_tags": [
+      "technology",
+      "e-commerce",
+      "financial services"
+    ]
+  },
+  {
+    "ticker": "YUM",
+    "regex_tags": [
+      "the restaurant",
+      "quick-service",
+      "franchising industries",
+      "global scale"
+    ],
+    "llm_tags": [
+      "restaurant",
+      "quick-service",
+      "franchising"
+    ]
+  },
+  {
+    "ticker": "ZS",
+    "regex_tags": [
+      "cybersecurity",
+      "cloud computing",
+      "ai security"
+    ],
+    "llm_tags": [
+      "cybersecurity",
+      "cloud computing",
+      "ai security"
+    ]
+  },
+  {
+    "ticker": "ZTS",
+    "regex_tags": [
+      "several industry themes",
+      "including pharmaceuticals",
+      "biotechnology",
+      "veterinary medicine",
+      "diagnostics"
+    ],
+    "llm_tags": [
+      "pharmaceuticals",
+      "biotechnology",
+      "veterinary medicine",
+      "diagnostics"
+    ]
+  }
+]

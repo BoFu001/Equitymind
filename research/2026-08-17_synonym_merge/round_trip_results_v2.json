@@ -1,0 +1,1544 @@
+[
+  {
+    "original_tag": "technology",
+    "expected_count": 113,
+    "selected_tag": "technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "cloud computing",
+    "expected_count": 41,
+    "selected_tag": "cloud computing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "financial services",
+    "expected_count": 35,
+    "selected_tag": "financial services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "e-commerce",
+    "expected_count": 32,
+    "selected_tag": "e-commerce",
+    "status": "OK"
+  },
+  {
+    "original_tag": "healthcare",
+    "expected_count": 26,
+    "selected_tag": "healthcare",
+    "status": "OK"
+  },
+  {
+    "original_tag": "energy",
+    "expected_count": 24,
+    "selected_tag": "energy",
+    "status": "OK"
+  },
+  {
+    "original_tag": "insurance",
+    "expected_count": 17,
+    "selected_tag": "insurance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "artificial intelligence",
+    "expected_count": 17,
+    "selected_tag": "artificial intelligence",
+    "status": "OK"
+  },
+  {
+    "original_tag": "retail",
+    "expected_count": 15,
+    "selected_tag": "retail",
+    "status": "OK"
+  },
+  {
+    "original_tag": "pharmaceutical",
+    "expected_count": 14,
+    "selected_tag": "pharmaceutical",
+    "status": "OK"
+  },
+  {
+    "original_tag": "semiconductor",
+    "expected_count": 14,
+    "selected_tag": "semiconductor",
+    "status": "OK"
+  },
+  {
+    "original_tag": "utilities",
+    "expected_count": 14,
+    "selected_tag": "utilities",
+    "status": "OK"
+  },
+  {
+    "original_tag": "sustainability",
+    "expected_count": 14,
+    "selected_tag": "sustainability",
+    "status": "OK"
+  },
+  {
+    "original_tag": "consumer goods",
+    "expected_count": 14,
+    "selected_tag": "consumer goods",
+    "status": "OK"
+  },
+  {
+    "original_tag": "biotechnology",
+    "expected_count": 13,
+    "selected_tag": "biotechnology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "renewable energy",
+    "expected_count": 13,
+    "selected_tag": "renewable energy",
+    "status": "OK"
+  },
+  {
+    "original_tag": "infrastructure",
+    "expected_count": 13,
+    "selected_tag": "infrastructure",
+    "status": "OK"
+  },
+  {
+    "original_tag": "logistics",
+    "expected_count": 11,
+    "selected_tag": "logistics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "real estate",
+    "expected_count": 10,
+    "selected_tag": "real estate",
+    "status": "OK"
+  },
+  {
+    "original_tag": "aerospace",
+    "expected_count": 9,
+    "selected_tag": "aerospace",
+    "status": "OK"
+  },
+  {
+    "original_tag": "automotive",
+    "expected_count": 9,
+    "selected_tag": "automotive",
+    "status": "OK"
+  },
+  {
+    "original_tag": "manufacturing",
+    "expected_count": 8,
+    "selected_tag": "manufacturing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "gaming",
+    "expected_count": 8,
+    "selected_tag": "gaming",
+    "status": "OK"
+  },
+  {
+    "original_tag": "cybersecurity",
+    "expected_count": 8,
+    "selected_tag": "cybersecurity",
+    "status": "OK"
+  },
+  {
+    "original_tag": "life sciences",
+    "expected_count": 7,
+    "selected_tag": "life sciences",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial manufacturing",
+    "expected_count": 7,
+    "selected_tag": "industrial manufacturing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "banking",
+    "expected_count": 7,
+    "selected_tag": "banking",
+    "status": "OK"
+  },
+  {
+    "original_tag": "investment management",
+    "expected_count": 7,
+    "selected_tag": "investment management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "entertainment",
+    "expected_count": 7,
+    "selected_tag": "entertainment",
+    "status": "OK"
+  },
+  {
+    "original_tag": "hospitality",
+    "expected_count": 6,
+    "selected_tag": "hospitality",
+    "status": "OK"
+  },
+  {
+    "original_tag": "medical device",
+    "expected_count": 6,
+    "selected_tag": "medical device",
+    "status": "OK"
+  },
+  {
+    "original_tag": "telecommunications",
+    "expected_count": 6,
+    "selected_tag": "telecommunications",
+    "status": "OK"
+  },
+  {
+    "original_tag": "media",
+    "expected_count": 6,
+    "selected_tag": "media",
+    "status": "OK"
+  },
+  {
+    "original_tag": "wealth management",
+    "expected_count": 6,
+    "selected_tag": "wealth management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "asset management",
+    "expected_count": 6,
+    "selected_tag": "asset management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "data analytics",
+    "expected_count": 6,
+    "selected_tag": "data analytics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "diagnostics",
+    "expected_count": 5,
+    "selected_tag": "diagnostics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "travel",
+    "expected_count": 5,
+    "selected_tag": "travel services",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "risk management",
+    "expected_count": 5,
+    "selected_tag": "risk management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "defense",
+    "expected_count": 5,
+    "selected_tag": "defense",
+    "status": "OK"
+  },
+  {
+    "original_tag": "transportation",
+    "expected_count": 5,
+    "selected_tag": "transportation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "environmental sustainability",
+    "expected_count": 5,
+    "selected_tag": "environmental sustainability",
+    "status": "OK"
+  },
+  {
+    "original_tag": "clean energy",
+    "expected_count": 5,
+    "selected_tag": "clean energy",
+    "status": "OK"
+  },
+  {
+    "original_tag": "investment banking",
+    "expected_count": 4,
+    "selected_tag": "investment banking",
+    "status": "OK"
+  },
+  {
+    "original_tag": "medical technology",
+    "expected_count": 4,
+    "selected_tag": "medical technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "oil and gas",
+    "expected_count": 4,
+    "selected_tag": "oil and gas exploration and production",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "food and beverage",
+    "expected_count": 4,
+    "selected_tag": "food and beverage",
+    "status": "OK"
+  },
+  {
+    "original_tag": "enterprise software",
+    "expected_count": 4,
+    "selected_tag": "enterprise software",
+    "status": "OK"
+  },
+  {
+    "original_tag": "financial technology",
+    "expected_count": 4,
+    "selected_tag": "financial technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "construction",
+    "expected_count": 3,
+    "selected_tag": "construction",
+    "status": "OK"
+  },
+  {
+    "original_tag": "leisure",
+    "expected_count": 3,
+    "selected_tag": "leisure",
+    "status": "OK"
+  },
+  {
+    "original_tag": "managed care",
+    "expected_count": 3,
+    "selected_tag": "managed care",
+    "status": "OK"
+  },
+  {
+    "original_tag": "healthcare technology",
+    "expected_count": 3,
+    "selected_tag": "healthcare technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial automation",
+    "expected_count": 3,
+    "selected_tag": "industrial automation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "robotics",
+    "expected_count": 3,
+    "selected_tag": "robotics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "beverages",
+    "expected_count": 3,
+    "selected_tag": "beverages",
+    "status": "OK"
+  },
+  {
+    "original_tag": "investment",
+    "expected_count": 3,
+    "selected_tag": "investment management",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "data center",
+    "expected_count": 3,
+    "selected_tag": "data center",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital media",
+    "expected_count": 2,
+    "selected_tag": "digital media",
+    "status": "OK"
+  },
+  {
+    "original_tag": "business services",
+    "expected_count": 2,
+    "selected_tag": "business services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "consulting",
+    "expected_count": 2,
+    "selected_tag": "consulting",
+    "status": "OK"
+  },
+  {
+    "original_tag": "oncology",
+    "expected_count": 2,
+    "selected_tag": "oncology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "advertising",
+    "expected_count": 2,
+    "selected_tag": "advertising",
+    "status": "OK"
+  },
+  {
+    "original_tag": "reinsurance",
+    "expected_count": 2,
+    "selected_tag": "reinsurance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "personal care",
+    "expected_count": 2,
+    "selected_tag": "personal care",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital entertainment",
+    "expected_count": 2,
+    "selected_tag": "digital entertainment",
+    "status": "OK"
+  },
+  {
+    "original_tag": "security",
+    "expected_count": 2,
+    "selected_tag": "security",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial solutions",
+    "expected_count": 2,
+    "selected_tag": "industrial solutions",
+    "status": "OK"
+  },
+  {
+    "original_tag": "clean technology",
+    "expected_count": 2,
+    "selected_tag": "clean technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "supply chain management",
+    "expected_count": 2,
+    "selected_tag": "supply chain management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "healthcare innovation",
+    "expected_count": 2,
+    "selected_tag": "healthcare innovation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital advertising",
+    "expected_count": 2,
+    "selected_tag": "digital advertising",
+    "status": "OK"
+  },
+  {
+    "original_tag": "home improvement",
+    "expected_count": 2,
+    "selected_tag": "home improvement",
+    "status": "OK"
+  },
+  {
+    "original_tag": "tourism",
+    "expected_count": 2,
+    "selected_tag": "tourism",
+    "status": "OK"
+  },
+  {
+    "original_tag": "semiconductor manufacturing",
+    "expected_count": 2,
+    "selected_tag": "semiconductor manufacturing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "franchising",
+    "expected_count": 2,
+    "selected_tag": "franchising",
+    "status": "OK"
+  },
+  {
+    "original_tag": "social media",
+    "expected_count": 2,
+    "selected_tag": "social media",
+    "status": "OK"
+  },
+  {
+    "original_tag": "iot",
+    "expected_count": 2,
+    "selected_tag": "iot",
+    "status": "OK"
+  },
+  {
+    "original_tag": "ai integration",
+    "expected_count": 2,
+    "selected_tag": "ai integration",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital transformation",
+    "expected_count": 2,
+    "selected_tag": "digital transformation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "apparel",
+    "expected_count": 2,
+    "selected_tag": "apparel",
+    "status": "OK"
+  },
+  {
+    "original_tag": "home fashion",
+    "expected_count": 2,
+    "selected_tag": "home fashion",
+    "status": "OK"
+  },
+  {
+    "original_tag": "environmental services",
+    "expected_count": 2,
+    "selected_tag": "environmental services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "waste management",
+    "expected_count": 2,
+    "selected_tag": "waste management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "recycling",
+    "expected_count": 2,
+    "selected_tag": "recycling",
+    "status": "OK"
+  },
+  {
+    "original_tag": "natural gas",
+    "expected_count": 2,
+    "selected_tag": "natural gas",
+    "status": "OK"
+  },
+  {
+    "original_tag": "data storage",
+    "expected_count": 2,
+    "selected_tag": "data storage",
+    "status": "OK"
+  },
+  {
+    "original_tag": "senior living",
+    "expected_count": 2,
+    "selected_tag": "senior living",
+    "status": "OK"
+  },
+  {
+    "original_tag": "discount retail",
+    "expected_count": 2,
+    "selected_tag": "discount retail",
+    "status": "OK"
+  },
+  {
+    "original_tag": "property and casualty insurance",
+    "expected_count": 2,
+    "selected_tag": "property and casualty insurance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "laboratory automation",
+    "expected_count": 1,
+    "selected_tag": "laboratory automation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "consumer electronics",
+    "expected_count": 1,
+    "selected_tag": "consumer electronics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "nutrition",
+    "expected_count": 1,
+    "selected_tag": "nutrition",
+    "status": "OK"
+  },
+  {
+    "original_tag": "global business operations",
+    "expected_count": 1,
+    "selected_tag": "global business operations",
+    "status": "OK"
+  },
+  {
+    "original_tag": "ai computing",
+    "expected_count": 1,
+    "selected_tag": "ai computing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "cardiovascular health",
+    "expected_count": 1,
+    "selected_tag": "cardiovascular health",
+    "status": "OK"
+  },
+  {
+    "original_tag": "immunology",
+    "expected_count": 1,
+    "selected_tag": "immunology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "networking",
+    "expected_count": 1,
+    "selected_tag": "networking",
+    "status": "OK"
+  },
+  {
+    "original_tag": "professional services",
+    "expected_count": 1,
+    "selected_tag": "professional services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "insurance brokerage",
+    "expected_count": 1,
+    "selected_tag": "insurance brokerage",
+    "status": "OK"
+  },
+  {
+    "original_tag": "human resources consulting",
+    "expected_count": 1,
+    "selected_tag": "human resources consulting",
+    "status": "OK"
+  },
+  {
+    "original_tag": "advertising technology",
+    "expected_count": 1,
+    "selected_tag": "advertising technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "public safety",
+    "expected_count": 1,
+    "selected_tag": "public safety",
+    "status": "OK"
+  },
+  {
+    "original_tag": "lifestyle services",
+    "expected_count": 1,
+    "selected_tag": "lifestyle services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "aviation",
+    "expected_count": 1,
+    "selected_tag": "aviation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "travel services",
+    "expected_count": 1,
+    "selected_tag": "travel services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "energy technology",
+    "expected_count": 1,
+    "selected_tag": "energy technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial technology",
+    "expected_count": 1,
+    "selected_tag": "industrial technology",
+    "status": "OK"
+  },
+  {
+    "original_tag": "global asset management",
+    "expected_count": 1,
+    "selected_tag": "global asset management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "innovation",
+    "expected_count": 1,
+    "selected_tag": "innovation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "energy solutions",
+    "expected_count": 1,
+    "selected_tag": "energy solutions",
+    "status": "OK"
+  },
+  {
+    "original_tag": "hvac",
+    "expected_count": 1,
+    "selected_tag": "hvac",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digitalization",
+    "expected_count": 1,
+    "selected_tag": "digitalization",
+    "status": "OK"
+  },
+  {
+    "original_tag": "mining",
+    "expected_count": 1,
+    "selected_tag": "mining",
+    "status": "OK"
+  },
+  {
+    "original_tag": "eda",
+    "expected_count": 1,
+    "selected_tag": "eda",
+    "status": "OK"
+  },
+  {
+    "original_tag": "pharmacy benefit management",
+    "expected_count": 1,
+    "selected_tag": "pharmacy benefit management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "pet nutrition",
+    "expected_count": 1,
+    "selected_tag": "pet nutrition",
+    "status": "OK"
+  },
+  {
+    "original_tag": "theme parks",
+    "expected_count": 1,
+    "selected_tag": "theme parks",
+    "status": "OK"
+  },
+  {
+    "original_tag": "derivatives trading",
+    "expected_count": 1,
+    "selected_tag": "derivatives trading",
+    "status": "OK"
+  },
+  {
+    "original_tag": "market data services",
+    "expected_count": 1,
+    "selected_tag": "market data services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "fast-casual dining",
+    "expected_count": 1,
+    "selected_tag": "fast-casual dining",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital innovation",
+    "expected_count": 1,
+    "selected_tag": "digital innovation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "credit cards",
+    "expected_count": 1,
+    "selected_tag": "credit cards",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital banking",
+    "expected_count": 1,
+    "selected_tag": "digital banking",
+    "status": "OK"
+  },
+  {
+    "original_tag": "payments",
+    "expected_count": 1,
+    "selected_tag": "payments",
+    "status": "OK"
+  },
+  {
+    "original_tag": "semiconductor materials",
+    "expected_count": 1,
+    "selected_tag": "semiconductor materials",
+    "status": "OK"
+  },
+  {
+    "original_tag": "lng",
+    "expected_count": 1,
+    "selected_tag": "lng",
+    "status": "OK"
+  },
+  {
+    "original_tag": "wholesale",
+    "expected_count": 1,
+    "selected_tag": "wholesale",
+    "status": "OK"
+  },
+  {
+    "original_tag": "restaurant delivery",
+    "expected_count": 1,
+    "selected_tag": "restaurant delivery",
+    "status": "OK"
+  },
+  {
+    "original_tag": "video streaming",
+    "expected_count": 1,
+    "selected_tag": "video streaming",
+    "status": "OK"
+  },
+  {
+    "original_tag": "fintech services",
+    "expected_count": 1,
+    "selected_tag": "fintech services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "ai-driven enterprise solutions",
+    "expected_count": 1,
+    "selected_tag": "ai-driven enterprise solutions",
+    "status": "OK"
+  },
+  {
+    "original_tag": "endpoint security",
+    "expected_count": 1,
+    "selected_tag": "endpoint security",
+    "status": "OK"
+  },
+  {
+    "original_tag": "cloud workload security",
+    "expected_count": 1,
+    "selected_tag": "cloud workload security",
+    "status": "OK"
+  },
+  {
+    "original_tag": "managed security services",
+    "expected_count": 1,
+    "selected_tag": "managed security services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "identity protection",
+    "expected_count": 1,
+    "selected_tag": "identity protection",
+    "status": "OK"
+  },
+  {
+    "original_tag": "rail freight",
+    "expected_count": 1,
+    "selected_tag": "rail freight",
+    "status": "OK"
+  },
+  {
+    "original_tag": "safety and compliance",
+    "expected_count": 1,
+    "selected_tag": "safety and compliance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "retail pharmacy",
+    "expected_count": 1,
+    "selected_tag": "retail pharmacy",
+    "status": "OK"
+  },
+  {
+    "original_tag": "health services",
+    "expected_count": 1,
+    "selected_tag": "health services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "chemicals",
+    "expected_count": 1,
+    "selected_tag": "chemicals",
+    "status": "OK"
+  },
+  {
+    "original_tag": "on-demand delivery",
+    "expected_count": 1,
+    "selected_tag": "on-demand delivery",
+    "status": "OK"
+  },
+  {
+    "original_tag": "it operations management",
+    "expected_count": 1,
+    "selected_tag": "it operations management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "analytics",
+    "expected_count": 1,
+    "selected_tag": "analytics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "agriculture",
+    "expected_count": 1,
+    "selected_tag": "agriculture",
+    "status": "OK"
+  },
+  {
+    "original_tag": "forestry",
+    "expected_count": 1,
+    "selected_tag": "forestry",
+    "status": "OK"
+  },
+  {
+    "original_tag": "colocation",
+    "expected_count": 1,
+    "selected_tag": "colocation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "interconnection",
+    "expected_count": 1,
+    "selected_tag": "interconnection",
+    "status": "OK"
+  },
+  {
+    "original_tag": "beauty",
+    "expected_count": 1,
+    "selected_tag": "beauty",
+    "status": "OK"
+  },
+  {
+    "original_tag": "luxury goods",
+    "expected_count": 1,
+    "selected_tag": "luxury goods",
+    "status": "OK"
+  },
+  {
+    "original_tag": "consumer products",
+    "expected_count": 1,
+    "selected_tag": "consumer products",
+    "status": "OK"
+  },
+  {
+    "original_tag": "pharmacy services",
+    "expected_count": 1,
+    "selected_tag": "pharmacy services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "oil and gas exploration and production",
+    "expected_count": 1,
+    "selected_tag": "oil and gas exploration and production",
+    "status": "OK"
+  },
+  {
+    "original_tag": "technology-driven resource management",
+    "expected_count": 1,
+    "selected_tag": "technology-driven resource management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "energy management",
+    "expected_count": 1,
+    "selected_tag": "energy management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "cardiovascular disease treatment",
+    "expected_count": 1,
+    "selected_tag": "cardiovascular disease treatment",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial distribution",
+    "expected_count": 1,
+    "selected_tag": "industrial distribution",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital solutions",
+    "expected_count": 1,
+    "selected_tag": "digital solutions",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital streaming",
+    "expected_count": 1,
+    "selected_tag": "digital streaming",
+    "status": "OK"
+  },
+  {
+    "original_tag": "consumer finance",
+    "expected_count": 1,
+    "selected_tag": "consumer finance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "electric vehicles",
+    "expected_count": 1,
+    "selected_tag": "electric vehicles",
+    "status": "OK"
+  },
+  {
+    "original_tag": "sustainable finance",
+    "expected_count": 1,
+    "selected_tag": "sustainable finance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "brokerage services",
+    "expected_count": 1,
+    "selected_tag": "brokerage services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "cryptocurrency trading",
+    "expected_count": 1,
+    "selected_tag": "cryptocurrency trading",
+    "status": "OK"
+  },
+  {
+    "original_tag": "confectionery",
+    "expected_count": 1,
+    "selected_tag": "confectionery",
+    "status": "OK"
+  },
+  {
+    "original_tag": "snacks",
+    "expected_count": 1,
+    "selected_tag": "snacks",
+    "status": "OK"
+  },
+  {
+    "original_tag": "veterinary diagnostics",
+    "expected_count": 1,
+    "selected_tag": "veterinary diagnostics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "water testing",
+    "expected_count": 1,
+    "selected_tag": "water testing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "clinical research",
+    "expected_count": 1,
+    "selected_tag": "clinical research",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial equipment",
+    "expected_count": 1,
+    "selected_tag": "industrial equipment",
+    "status": "OK"
+  },
+  {
+    "original_tag": "commercial banking",
+    "expected_count": 1,
+    "selected_tag": "commercial banking",
+    "status": "OK"
+  },
+  {
+    "original_tag": "electronics",
+    "expected_count": 1,
+    "selected_tag": "electronics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "semiconductor capital equipment",
+    "expected_count": 1,
+    "selected_tag": "semiconductor capital equipment",
+    "status": "OK"
+  },
+  {
+    "original_tag": "process control",
+    "expected_count": 1,
+    "selected_tag": "process control",
+    "status": "OK"
+  },
+  {
+    "original_tag": "yield management",
+    "expected_count": 1,
+    "selected_tag": "yield management",
+    "status": "OK"
+  },
+  {
+    "original_tag": "ai infrastructure",
+    "expected_count": 1,
+    "selected_tag": "ai infrastructure",
+    "status": "OK"
+  },
+  {
+    "original_tag": "advanced packaging",
+    "expected_count": 1,
+    "selected_tag": "advanced packaging",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital marketing",
+    "expected_count": 1,
+    "selected_tag": "digital marketing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "advanced materials",
+    "expected_count": 1,
+    "selected_tag": "advanced materials",
+    "status": "OK"
+  },
+  {
+    "original_tag": "live entertainment",
+    "expected_count": 1,
+    "selected_tag": "live entertainment",
+    "status": "OK"
+  },
+  {
+    "original_tag": "music events",
+    "expected_count": 1,
+    "selected_tag": "live entertainment",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "ticketing services",
+    "expected_count": 1,
+    "selected_tag": "ticketing services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "fast food",
+    "expected_count": 1,
+    "selected_tag": "fast food",
+    "status": "OK"
+  },
+  {
+    "original_tag": "global retail",
+    "expected_count": 1,
+    "selected_tag": "global retail",
+    "status": "OK"
+  },
+  {
+    "original_tag": "food service",
+    "expected_count": 1,
+    "selected_tag": "food service",
+    "status": "OK"
+  },
+  {
+    "original_tag": "embedded systems",
+    "expected_count": 1,
+    "selected_tag": "embedded systems",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital payments",
+    "expected_count": 1,
+    "selected_tag": "digital payments",
+    "status": "OK"
+  },
+  {
+    "original_tag": "virtual reality",
+    "expected_count": 1,
+    "selected_tag": "virtual reality",
+    "status": "OK"
+  },
+  {
+    "original_tag": "augmented reality",
+    "expected_count": 1,
+    "selected_tag": "augmented reality",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial safety",
+    "expected_count": 1,
+    "selected_tag": "industrial safety",
+    "status": "OK"
+  },
+  {
+    "original_tag": "energy drinks",
+    "expected_count": 1,
+    "selected_tag": "beverages",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "alcohol",
+    "expected_count": 1,
+    "selected_tag": "alcohol",
+    "status": "OK"
+  },
+  {
+    "original_tag": "refining",
+    "expected_count": 1,
+    "selected_tag": "refining",
+    "status": "OK"
+  },
+  {
+    "original_tag": "renewable fuels",
+    "expected_count": 1,
+    "selected_tag": "renewable fuels",
+    "status": "OK"
+  },
+  {
+    "original_tag": "animal health",
+    "expected_count": 1,
+    "selected_tag": "animal health",
+    "status": "OK"
+  },
+  {
+    "original_tag": "vaccines",
+    "expected_count": 1,
+    "selected_tag": "vaccines",
+    "status": "OK"
+  },
+  {
+    "original_tag": "diabetes care",
+    "expected_count": 1,
+    "selected_tag": "diabetes care",
+    "status": "OK"
+  },
+  {
+    "original_tag": "management consulting",
+    "expected_count": 1,
+    "selected_tag": "management consulting",
+    "status": "OK"
+  },
+  {
+    "original_tag": "data infrastructure",
+    "expected_count": 1,
+    "selected_tag": "data infrastructure",
+    "status": "OK"
+  },
+  {
+    "original_tag": "productivity software",
+    "expected_count": 1,
+    "selected_tag": "productivity software",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital asset",
+    "expected_count": 1,
+    "selected_tag": "digital asset",
+    "status": "OK"
+  },
+  {
+    "original_tag": "enterprise analytics",
+    "expected_count": 1,
+    "selected_tag": "enterprise analytics",
+    "status": "OK"
+  },
+  {
+    "original_tag": "bitcoin",
+    "expected_count": 1,
+    "selected_tag": "bitcoin",
+    "status": "OK"
+  },
+  {
+    "original_tag": "ai-powered enterprise analytics software",
+    "expected_count": 1,
+    "selected_tag": "ai-powered enterprise analytics software",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital finance",
+    "expected_count": 1,
+    "selected_tag": "digital finance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "connectivity cloud",
+    "expected_count": 1,
+    "selected_tag": "connectivity cloud",
+    "status": "OK"
+  },
+  {
+    "original_tag": "athletic apparel",
+    "expected_count": 1,
+    "selected_tag": "athletic apparel",
+    "status": "OK"
+  },
+  {
+    "original_tag": "footwear",
+    "expected_count": 1,
+    "selected_tag": "footwear",
+    "status": "OK"
+  },
+  {
+    "original_tag": "sports equipment",
+    "expected_count": 1,
+    "selected_tag": "sports equipment",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital commerce",
+    "expected_count": 1,
+    "selected_tag": "digital commerce",
+    "status": "OK"
+  },
+  {
+    "original_tag": "hr services",
+    "expected_count": 1,
+    "selected_tag": "hr services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "engineering solutions",
+    "expected_count": 1,
+    "selected_tag": "engineering solutions",
+    "status": "OK"
+  },
+  {
+    "original_tag": "corporate finance",
+    "expected_count": 1,
+    "selected_tag": "corporate finance",
+    "status": "OK"
+  },
+  {
+    "original_tag": "retirement solutions",
+    "expected_count": 1,
+    "selected_tag": "retirement solutions",
+    "status": "OK"
+  },
+  {
+    "original_tag": "self-storage",
+    "expected_count": 1,
+    "selected_tag": "self-storage",
+    "status": "OK"
+  },
+  {
+    "original_tag": "reit",
+    "expected_count": 1,
+    "selected_tag": "reit",
+    "status": "OK"
+  },
+  {
+    "original_tag": "wireless communications",
+    "expected_count": 1,
+    "selected_tag": "wireless communications",
+    "status": "OK"
+  },
+  {
+    "original_tag": "digital content creation",
+    "expected_count": 1,
+    "selected_tag": "digital content creation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "genetic research",
+    "expected_count": 1,
+    "selected_tag": "genetic research",
+    "status": "OK"
+  },
+  {
+    "original_tag": "sustainability innovation",
+    "expected_count": 1,
+    "selected_tag": "sustainability innovation",
+    "status": "OK"
+  },
+  {
+    "original_tag": "engineering",
+    "expected_count": 1,
+    "selected_tag": "engineering",
+    "status": "OK"
+  },
+  {
+    "original_tag": "energy services",
+    "expected_count": 1,
+    "selected_tag": "energy services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "data",
+    "expected_count": 1,
+    "selected_tag": "data analytics",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "food distribution",
+    "expected_count": 1,
+    "selected_tag": "food distribution",
+    "status": "OK"
+  },
+  {
+    "original_tag": "broadband services",
+    "expected_count": 1,
+    "selected_tag": "broadband services",
+    "status": "OK"
+  },
+  {
+    "original_tag": "semiconductor testing",
+    "expected_count": 1,
+    "selected_tag": "semiconductor testing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "automation",
+    "expected_count": 1,
+    "selected_tag": "industrial automation",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "broadband",
+    "expected_count": 1,
+    "selected_tag": "broadband services",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "natural gas processing",
+    "expected_count": 1,
+    "selected_tag": "natural gas processing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "customer engagement",
+    "expected_count": 1,
+    "selected_tag": "customer engagement",
+    "status": "OK"
+  },
+  {
+    "original_tag": "electronics manufacturing",
+    "expected_count": 1,
+    "selected_tag": "electronics manufacturing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "freight rail",
+    "expected_count": 1,
+    "selected_tag": "rail freight",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "equipment rental",
+    "expected_count": 1,
+    "selected_tag": "equipment rental",
+    "status": "OK"
+  },
+  {
+    "original_tag": "payment processing",
+    "expected_count": 1,
+    "selected_tag": "payment processing",
+    "status": "OK"
+  },
+  {
+    "original_tag": "gene therapy",
+    "expected_count": 1,
+    "selected_tag": "gene therapy",
+    "status": "OK"
+  },
+  {
+    "original_tag": "specialty medicine",
+    "expected_count": 1,
+    "selected_tag": "specialty medicine",
+    "status": "OK"
+  },
+  {
+    "original_tag": "analytical instruments",
+    "expected_count": 1,
+    "selected_tag": "analytical instruments",
+    "status": "OK"
+  },
+  {
+    "original_tag": "chromatography",
+    "expected_count": 1,
+    "selected_tag": "chromatography",
+    "status": "OK"
+  },
+  {
+    "original_tag": "mass spectrometry",
+    "expected_count": 1,
+    "selected_tag": "mass spectrometry",
+    "status": "OK"
+  },
+  {
+    "original_tag": "thermal analysis",
+    "expected_count": 1,
+    "selected_tag": "thermal analysis",
+    "status": "OK"
+  },
+  {
+    "original_tag": "clinical",
+    "expected_count": 1,
+    "selected_tag": "clinical",
+    "status": "OK"
+  },
+  {
+    "original_tag": "biochemical",
+    "expected_count": 1,
+    "selected_tag": "biochemical",
+    "status": "OK"
+  },
+  {
+    "original_tag": "industrial",
+    "expected_count": 1,
+    "selected_tag": "industrial manufacturing",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "nutritional safety",
+    "expected_count": 1,
+    "selected_tag": "nutritional safety",
+    "status": "OK"
+  },
+  {
+    "original_tag": "environmental",
+    "expected_count": 1,
+    "selected_tag": "environmental services",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "academic",
+    "expected_count": 1,
+    "selected_tag": "scientific research",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "governmental",
+    "expected_count": 1,
+    "selected_tag": "governmental",
+    "status": "OK"
+  },
+  {
+    "original_tag": "scientific research",
+    "expected_count": 1,
+    "selected_tag": "scientific research",
+    "status": "OK"
+  },
+  {
+    "original_tag": "streaming",
+    "expected_count": 1,
+    "selected_tag": "digital streaming",
+    "status": "DIFFERENT"
+  },
+  {
+    "original_tag": "energy infrastructure",
+    "expected_count": 1,
+    "selected_tag": "energy infrastructure",
+    "status": "OK"
+  },
+  {
+    "original_tag": "mortgage lending",
+    "expected_count": 1,
+    "selected_tag": "mortgage lending",
+    "status": "OK"
+  },
+  {
+    "original_tag": "petrochemicals",
+    "expected_count": 1,
+    "selected_tag": "petrochemicals",
+    "status": "OK"
+  },
+  {
+    "original_tag": "emerging low-carbon technologies",
+    "expected_count": 1,
+    "selected_tag": "emerging low-carbon technologies",
+    "status": "OK"
+  },
+  {
+    "original_tag": "restaurant",
+    "expected_count": 1,
+    "selected_tag": "restaurant",
+    "status": "OK"
+  },
+  {
+    "original_tag": "quick-service",
+    "expected_count": 1,
+    "selected_tag": "quick-service",
+    "status": "OK"
+  },
+  {
+    "original_tag": "ai security",
+    "expected_count": 1,
+    "selected_tag": "ai security",
+    "status": "OK"
+  },
+  {
+    "original_tag": "veterinary medicine",
+    "expected_count": 1,
+    "selected_tag": "veterinary medicine",
+    "status": "OK"
+  }
+]

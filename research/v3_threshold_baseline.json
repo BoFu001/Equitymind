@@ -1,0 +1,636 @@
+{
+  "prompt_version": "v3",
+  "universe_size": 243,
+  "queries": {
+    "technology": {
+      "top1_score": 0.3717132553435619,
+      "top20": [
+        {
+          "ticker": "TER",
+          "common_name": "Teradyne",
+          "score": 0.3717132553435619
+        },
+        {
+          "ticker": "EMR",
+          "common_name": "Emerson",
+          "score": 0.34849518778394384
+        },
+        {
+          "ticker": "TXN",
+          "common_name": "Texas Instruments",
+          "score": 0.3294069222796013
+        },
+        {
+          "ticker": "MDT",
+          "common_name": "Medtronic",
+          "score": 0.327539784714822
+        },
+        {
+          "ticker": "MTD",
+          "common_name": "Mettler-Toledo",
+          "score": 0.31489412072223705
+        },
+        {
+          "ticker": "MCHP",
+          "common_name": "Microchip Technology",
+          "score": 0.31306154473950676
+        },
+        {
+          "ticker": "PLTR",
+          "common_name": "Palantir",
+          "score": 0.3124731542101191
+        },
+        {
+          "ticker": "AMAT",
+          "common_name": "Applied Materials",
+          "score": 0.3069989942593704
+        },
+        {
+          "ticker": "ADI",
+          "common_name": "Analog Devices",
+          "score": 0.3015938170848729
+        },
+        {
+          "ticker": "QCOM",
+          "common_name": "Qualcomm",
+          "score": 0.2985320670812397
+        },
+        {
+          "ticker": "TT",
+          "common_name": "Trane Technologies",
+          "score": 0.2983382892505898
+        },
+        {
+          "ticker": "ITW",
+          "common_name": "ITW",
+          "score": 0.29367651055498467
+        },
+        {
+          "ticker": "TSLA",
+          "common_name": "Tesla",
+          "score": 0.29284777706916104
+        },
+        {
+          "ticker": "TWLO",
+          "common_name": "Twilio",
+          "score": 0.29192211006897295
+        },
+        {
+          "ticker": "LRCX",
+          "common_name": "Lam Research",
+          "score": 0.2837653089932134
+        },
+        {
+          "ticker": "DDOG",
+          "common_name": "Datadog",
+          "score": 0.28266616330561983
+        },
+        {
+          "ticker": "MSFT",
+          "common_name": "Microsoft",
+          "score": 0.2825132884709299
+        },
+        {
+          "ticker": "AME",
+          "common_name": "AMETEK",
+          "score": 0.28058510834978256
+        },
+        {
+          "ticker": "MU",
+          "common_name": "Micron",
+          "score": 0.27788384312566405
+        },
+        {
+          "ticker": "ORCL",
+          "common_name": "Oracle",
+          "score": 0.27628575195811156
+        }
+      ]
+    },
+    "financial services": {
+      "top1_score": 0.42296502483335313,
+      "top20": [
+        {
+          "ticker": "SCHW",
+          "common_name": "Schwab",
+          "score": 0.42296502483335313
+        },
+        {
+          "ticker": "WFC",
+          "common_name": "Wells Fargo",
+          "score": 0.4160214187493386
+        },
+        {
+          "ticker": "COF",
+          "common_name": "Capital One",
+          "score": 0.4097637362206506
+        },
+        {
+          "ticker": "TFC",
+          "common_name": "Truist",
+          "score": 0.402971724577499
+        },
+        {
+          "ticker": "USB",
+          "common_name": "U.S. Bank",
+          "score": 0.39463366343978895
+        },
+        {
+          "ticker": "MET",
+          "common_name": "MetLife",
+          "score": 0.3927707171979918
+        },
+        {
+          "ticker": "MS",
+          "common_name": "Morgan Stanley",
+          "score": 0.3899763830279133
+        },
+        {
+          "ticker": "BAC",
+          "common_name": "Bank of America",
+          "score": 0.38876562771440054
+        },
+        {
+          "ticker": "GS",
+          "common_name": "Goldman Sachs",
+          "score": 0.3823722687273961
+        },
+        {
+          "ticker": "STT",
+          "common_name": "State Street",
+          "score": 0.3808982884379958
+        },
+        {
+          "ticker": "JPM",
+          "common_name": "JPMorgan",
+          "score": 0.3713054246150239
+        },
+        {
+          "ticker": "PNC",
+          "common_name": "PNC",
+          "score": 0.3697041232657171
+        },
+        {
+          "ticker": "NTRS",
+          "common_name": "Northern Trust",
+          "score": 0.3578520756603602
+        },
+        {
+          "ticker": "PRU",
+          "common_name": "Prudential",
+          "score": 0.33660473932166624
+        },
+        {
+          "ticker": "AXP",
+          "common_name": "American Express",
+          "score": 0.3258750757519947
+        },
+        {
+          "ticker": "INTU",
+          "common_name": "Intuit",
+          "score": 0.32514039037432596
+        },
+        {
+          "ticker": "XYZ",
+          "common_name": "Block",
+          "score": 0.3247709332928756
+        },
+        {
+          "ticker": "V",
+          "common_name": "Visa",
+          "score": 0.3206322180829314
+        },
+        {
+          "ticker": "MA",
+          "common_name": "Mastercard",
+          "score": 0.32011056430588214
+        },
+        {
+          "ticker": "SPGI",
+          "common_name": "S&P Global",
+          "score": 0.31518213109217075
+        }
+      ]
+    },
+    "healthcare": {
+      "top1_score": 0.4154835077925945,
+      "top20": [
+        {
+          "ticker": "HUM",
+          "common_name": "Humana",
+          "score": 0.4154835077925945
+        },
+        {
+          "ticker": "UNH",
+          "common_name": "UnitedHealth Group",
+          "score": 0.4105071278398729
+        },
+        {
+          "ticker": "CVS",
+          "common_name": "CVS",
+          "score": 0.3781609308591618
+        },
+        {
+          "ticker": "JNJ",
+          "common_name": "Johnson & Johnson",
+          "score": 0.3478609088226515
+        },
+        {
+          "ticker": "CI",
+          "common_name": "Cigna",
+          "score": 0.3448769560215766
+        },
+        {
+          "ticker": "CNC",
+          "common_name": "Centene",
+          "score": 0.3104543163559117
+        },
+        {
+          "ticker": "ELV",
+          "common_name": "Elevance Health",
+          "score": 0.30859114185940817
+        },
+        {
+          "ticker": "ABT",
+          "common_name": "Abbott",
+          "score": 0.2880487249603486
+        },
+        {
+          "ticker": "WELL",
+          "common_name": "Welltower",
+          "score": 0.2865109609963342
+        },
+        {
+          "ticker": "MRK",
+          "common_name": "Merck",
+          "score": 0.27967748798632586
+        },
+        {
+          "ticker": "SYK",
+          "common_name": "Stryker",
+          "score": 0.27276746853639927
+        },
+        {
+          "ticker": "DHR",
+          "common_name": "Danaher",
+          "score": 0.2724081019710768
+        },
+        {
+          "ticker": "IQV",
+          "common_name": "IQVIA",
+          "score": 0.27095703209843724
+        },
+        {
+          "ticker": "MDT",
+          "common_name": "Medtronic",
+          "score": 0.2547531176000121
+        },
+        {
+          "ticker": "HIG",
+          "common_name": "Hartford",
+          "score": 0.24890124936187338
+        },
+        {
+          "ticker": "WDAY",
+          "common_name": "Workday",
+          "score": 0.24597157911488476
+        },
+        {
+          "ticker": "VTR",
+          "common_name": "Ventas",
+          "score": 0.24358686907209148
+        },
+        {
+          "ticker": "KVUE",
+          "common_name": "Kenvue",
+          "score": 0.23992174844481615
+        },
+        {
+          "ticker": "EW",
+          "common_name": "Edwards Lifesciences",
+          "score": 0.2390151609716951
+        },
+        {
+          "ticker": "PAYX",
+          "common_name": "Paychex",
+          "score": 0.2336753839157273
+        }
+      ]
+    },
+    "pharmaceuticals": {
+      "top1_score": 0.46055209617363163,
+      "top20": [
+        {
+          "ticker": "PFE",
+          "common_name": "Pfizer",
+          "score": 0.46055209617363163
+        },
+        {
+          "ticker": "LLY",
+          "common_name": "Lilly",
+          "score": 0.4493997122367435
+        },
+        {
+          "ticker": "AMGN",
+          "common_name": "Amgen",
+          "score": 0.42660701669095497
+        },
+        {
+          "ticker": "MRK",
+          "common_name": "Merck",
+          "score": 0.4140372339792365
+        },
+        {
+          "ticker": "BMY",
+          "common_name": "Bristol-Myers Squibb",
+          "score": 0.40460588760249466
+        },
+        {
+          "ticker": "REGN",
+          "common_name": "Regeneron",
+          "score": 0.40405929407447255
+        },
+        {
+          "ticker": "VRTX",
+          "common_name": "Vertex",
+          "score": 0.39862676620264076
+        },
+        {
+          "ticker": "ABT",
+          "common_name": "Abbott",
+          "score": 0.3895083588151477
+        },
+        {
+          "ticker": "ABBV",
+          "common_name": "AbbVie",
+          "score": 0.38451529591517847
+        },
+        {
+          "ticker": "JNJ",
+          "common_name": "Johnson & Johnson",
+          "score": 0.38007678907363895
+        },
+        {
+          "ticker": "ZTS",
+          "common_name": "Zoetis",
+          "score": 0.36551984728325915
+        },
+        {
+          "ticker": "TMO",
+          "common_name": "Thermo Fisher",
+          "score": 0.3603304181731051
+        },
+        {
+          "ticker": "WAT",
+          "common_name": "Waters",
+          "score": 0.3421888570807256
+        },
+        {
+          "ticker": "BDX",
+          "common_name": "BD",
+          "score": 0.33948072372645355
+        },
+        {
+          "ticker": "A",
+          "common_name": "Agilent",
+          "score": 0.33743649083601246
+        },
+        {
+          "ticker": "DHR",
+          "common_name": "Danaher",
+          "score": 0.3359364578710711
+        },
+        {
+          "ticker": "GILD",
+          "common_name": "Gilead",
+          "score": 0.33156500867138167
+        },
+        {
+          "ticker": "PG",
+          "common_name": "P&G",
+          "score": 0.32932458650357355
+        },
+        {
+          "ticker": "CVS",
+          "common_name": "CVS",
+          "score": 0.3261926184038273
+        },
+        {
+          "ticker": "BSX",
+          "common_name": "Boston Scientific",
+          "score": 0.3258314241736719
+        }
+      ]
+    },
+    "semiconductors": {
+      "top1_score": 0.4963422482475178,
+      "top20": [
+        {
+          "ticker": "ON",
+          "common_name": "onsemi",
+          "score": 0.4963422482475178
+        },
+        {
+          "ticker": "AMAT",
+          "common_name": "Applied Materials",
+          "score": 0.3894866814429094
+        },
+        {
+          "ticker": "TXN",
+          "common_name": "Texas Instruments",
+          "score": 0.38700026258459425
+        },
+        {
+          "ticker": "SNPS",
+          "common_name": "Synopsys",
+          "score": 0.37029271036903927
+        },
+        {
+          "ticker": "LRCX",
+          "common_name": "Lam Research",
+          "score": 0.35973552714995805
+        },
+        {
+          "ticker": "MCHP",
+          "common_name": "Microchip Technology",
+          "score": 0.3559188555978139
+        },
+        {
+          "ticker": "ADI",
+          "common_name": "Analog Devices",
+          "score": 0.3542385912317885
+        },
+        {
+          "ticker": "NXPI",
+          "common_name": "NXP",
+          "score": 0.35192808649281027
+        },
+        {
+          "ticker": "MU",
+          "common_name": "Micron",
+          "score": 0.3444950441179626
+        },
+        {
+          "ticker": "MPWR",
+          "common_name": "Monolithic Power Systems",
+          "score": 0.339836768523621
+        },
+        {
+          "ticker": "KLAC",
+          "common_name": "KLA",
+          "score": 0.3382266415105131
+        },
+        {
+          "ticker": "AVGO",
+          "common_name": "Broadcom",
+          "score": 0.3320074209563366
+        },
+        {
+          "ticker": "COHR",
+          "common_name": "Coherent",
+          "score": 0.3304491992703673
+        },
+        {
+          "ticker": "CDNS",
+          "common_name": "Cadence",
+          "score": 0.325764562426428
+        },
+        {
+          "ticker": "MRVL",
+          "common_name": "Marvell",
+          "score": 0.3252772939360051
+        },
+        {
+          "ticker": "QCOM",
+          "common_name": "Qualcomm",
+          "score": 0.31597783931240075
+        },
+        {
+          "ticker": "AMD",
+          "common_name": "AMD",
+          "score": 0.2980511292679204
+        },
+        {
+          "ticker": "TER",
+          "common_name": "Teradyne",
+          "score": 0.2824422478763548
+        },
+        {
+          "ticker": "SRE",
+          "common_name": "Sempra",
+          "score": 0.27073905752151667
+        },
+        {
+          "ticker": "EMR",
+          "common_name": "Emerson",
+          "score": 0.25854341626886784
+        }
+      ]
+    },
+    "robotics": {
+      "top1_score": 0.39398617309123984,
+      "top20": [
+        {
+          "ticker": "ROK",
+          "common_name": "Rockwell Automation",
+          "score": 0.39398617309123984
+        },
+        {
+          "ticker": "ISRG",
+          "common_name": "Intuitive Surgical",
+          "score": 0.34585187140601364
+        },
+        {
+          "ticker": "TER",
+          "common_name": "Teradyne",
+          "score": 0.3307101829663744
+        },
+        {
+          "ticker": "RBLX",
+          "common_name": "Roblox",
+          "score": 0.3227033531317719
+        },
+        {
+          "ticker": "EMR",
+          "common_name": "Emerson",
+          "score": 0.30478294102384784
+        },
+        {
+          "ticker": "RTX",
+          "common_name": "RTX",
+          "score": 0.2993010122751199
+        },
+        {
+          "ticker": "TSLA",
+          "common_name": "Tesla",
+          "score": 0.29039106793386305
+        },
+        {
+          "ticker": "LMT",
+          "common_name": "Lockheed Martin",
+          "score": 0.27694219033601
+        },
+        {
+          "ticker": "SYK",
+          "common_name": "Stryker",
+          "score": 0.26703258228087023
+        },
+        {
+          "ticker": "PH",
+          "common_name": "Parker-Hannifin",
+          "score": 0.24973370183868676
+        },
+        {
+          "ticker": "MDT",
+          "common_name": "Medtronic",
+          "score": 0.24708166016951089
+        },
+        {
+          "ticker": "F",
+          "common_name": "Ford",
+          "score": 0.24576613215833037
+        },
+        {
+          "ticker": "IR",
+          "common_name": "Ingersoll Rand",
+          "score": 0.24552081329088032
+        },
+        {
+          "ticker": "NVDA",
+          "common_name": "NVIDIA",
+          "score": 0.24322578496160663
+        },
+        {
+          "ticker": "HON",
+          "common_name": "Honeywell",
+          "score": 0.2425181452339178
+        },
+        {
+          "ticker": "CDNS",
+          "common_name": "Cadence",
+          "score": 0.2391771984938423
+        },
+        {
+          "ticker": "ON",
+          "common_name": "onsemi",
+          "score": 0.2363865196236275
+        },
+        {
+          "ticker": "META",
+          "common_name": "Meta",
+          "score": 0.2310603309973357
+        },
+        {
+          "ticker": "ADI",
+          "common_name": "Analog Devices",
+          "score": 0.22984575793338896
+        },
+        {
+          "ticker": "UPS",
+          "common_name": "UPS",
+          "score": 0.22951622498713434
+        }
+      ]
+    }
+  }
+}
