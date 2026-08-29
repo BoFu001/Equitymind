@@ -1,0 +1,134 @@
+[
+  {
+    "setting": 0.45,
+    "technology": 150,
+    "financial services": 152,
+    "healthcare": 59,
+    "pharmaceuticals": 89,
+    "semiconductors": 24,
+    "robotics": 69,
+    "spread": "24\u2013152",
+    "fold": "6.3\u00d7"
+  },
+  {
+    "setting": 0.5,
+    "technology": 132,
+    "financial services": 112,
+    "healthcare": 40,
+    "pharmaceuticals": 59,
+    "semiconductors": 21,
+    "robotics": 53,
+    "spread": "21\u2013132",
+    "fold": "6.3\u00d7"
+  },
+  {
+    "setting": 0.55,
+    "technology": 106,
+    "financial services": 73,
+    "healthcare": 22,
+    "pharmaceuticals": 37,
+    "semiconductors": 18,
+    "robotics": 30,
+    "spread": "18\u2013106",
+    "fold": "5.9\u00d7"
+  },
+  {
+    "setting": 0.6,
+    "technology": 80,
+    "financial services": 43,
+    "healthcare": 14,
+    "pharmaceuticals": 27,
+    "semiconductors": 16,
+    "robotics": 16,
+    "spread": "14\u201380",
+    "fold": "5.7\u00d7"
+  },
+  {
+    "setting": 0.65,
+    "technology": 60,
+    "financial services": 30,
+    "healthcare": 13,
+    "pharmaceuticals": 20,
+    "semiconductors": 14,
+    "robotics": 9,
+    "spread": "9\u201360",
+    "fold": "6.7\u00d7"
+  },
+  {
+    "setting": 0.7,
+    "technology": 32,
+    "financial services": 24,
+    "healthcare": 7,
+    "pharmaceuticals": 20,
+    "semiconductors": 8,
+    "robotics": 8,
+    "spread": "7\u201332",
+    "fold": "4.6\u00d7"
+  },
+  {
+    "setting": 0.75,
+    "technology": 18,
+    "financial services": 19,
+    "healthcare": 5,
+    "pharmaceuticals": 12,
+    "semiconductors": 3,
+    "robotics": 6,
+    "spread": "3\u201319",
+    "fold": "6.3\u00d7"
+  },
+  {
+    "setting": 0.8,
+    "technology": 11,
+    "financial services": 13,
+    "healthcare": 5,
+    "pharmaceuticals": 10,
+    "semiconductors": 1,
+    "robotics": 4,
+    "spread": "1\u201313",
+    "fold": "13.0\u00d7"
+  },
+  {
+    "setting": 0.85,
+    "technology": 4,
+    "financial services": 12,
+    "healthcare": 3,
+    "pharmaceuticals": 7,
+    "semiconductors": 1,
+    "robotics": 2,
+    "spread": "1\u201312",
+    "fold": "12.0\u00d7"
+  },
+  {
+    "setting": 0.9,
+    "technology": 2,
+    "financial services": 10,
+    "healthcare": 3,
+    "pharmaceuticals": 3,
+    "semiconductors": 1,
+    "robotics": 1,
+    "spread": "1\u201310",
+    "fold": "10.0\u00d7"
+  },
+  {
+    "setting": 0.95,
+    "technology": 1,
+    "financial services": 4,
+    "healthcare": 2,
+    "pharmaceuticals": 2,
+    "semiconductors": 1,
+    "robotics": 1,
+    "spread": "1\u20134",
+    "fold": "4.0\u00d7"
+  },
+  {
+    "setting": 1.0,
+    "technology": 1,
+    "financial services": 1,
+    "healthcare": 1,
+    "pharmaceuticals": 1,
+    "semiconductors": 1,
+    "robotics": 1,
+    "spread": "1\u20131",
+    "fold": "1.0\u00d7"
+  }
+]

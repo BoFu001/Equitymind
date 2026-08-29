@@ -1,0 +1,73 @@
+{
+  "technology": {
+    "same_set": true,
+    "same_order": true,
+    "first_divergence_rank": null,
+    "baseline_top1": 0.3717132553435619,
+    "recomputed_top1": 0.3717132806777954,
+    "top1_delta": 2.533423348882735e-08,
+    "dropped": [],
+    "added": []
+  },
+  "financial services": {
+    "same_set": true,
+    "same_order": true,
+    "first_divergence_rank": null,
+    "baseline_top1": 0.42296502483335313,
+    "recomputed_top1": 0.42296504974365234,
+    "top1_delta": 2.4910299212255183e-08,
+    "dropped": [],
+    "added": []
+  },
+  "healthcare": {
+    "same_set": true,
+    "same_order": true,
+    "first_divergence_rank": null,
+    "baseline_top1": 0.4154835077925945,
+    "recomputed_top1": 0.4154834449291229,
+    "top1_delta": -6.286347159489836e-08,
+    "dropped": [],
+    "added": []
+  },
+  "pharmaceuticals": {
+    "same_set": true,
+    "same_order": true,
+    "first_divergence_rank": null,
+    "baseline_top1": 0.46055209617363163,
+    "recomputed_top1": 0.4605521261692047,
+    "top1_delta": 2.9995573080920934e-08,
+    "dropped": [],
+    "added": []
+  },
+  "semiconductors": {
+    "same_set": true,
+    "same_order": false,
+    "first_divergence_rank": 13,
+    "baseline_top1": 0.4963422482475178,
+    "recomputed_top1": 0.4963423013687134,
+    "top1_delta": 5.312119555345163e-08,
+    "dropped": [],
+    "added": []
+  },
+  "robotics": {
+    "same_set": false,
+    "same_order": false,
+    "first_divergence_rank": 18,
+    "baseline_top1": 0.39398617309123984,
+    "recomputed_top1": 0.39398616552352905,
+    "top1_delta": -7.567710791356319e-09,
+    "dropped": [
+      {
+        "ticker": "UPS",
+        "baseline_rank": 20
+      }
+    ],
+    "added": [
+      {
+        "ticker": "TEAM",
+        "rank": 18,
+        "score": 0.23202379047870636
+      }
+    ]
+  }
+}
