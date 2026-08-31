@@ -50,7 +50,7 @@ Questions:
   Is Amazon a good buy right now?
   Would you buy Amazon stock for a long-time hold?
   After the AMZN stock split, is it worth buying?
-  Should I continue to hold AMZN and NFLX?                               ##########
+  Should I continue to hold AMZN and NFLX?
   Should I cash out of my MSFT stock?
 
 
@@ -75,10 +75,10 @@ Questions:
   Is NVDA overpriced? Is it worth it to buy in 2020?
   Is NVDA overvalued?
   What are your thoughts on NVIDIA stock long term?
-  Is MSFT a good buy in 2018?                                             ##########
+  Is MSFT a good buy in 2018?
   What are your thoughts on the MSFT stock?
   What is your long-term outlook for Microsoft stock?
-  Would you buy MSFT now?                                                 ##########
+  Would you buy MSFT now?
   Is MSFT overvalued?
   Is Tesla in terminal decline?
 
@@ -98,10 +98,10 @@ Questions:
   Should I just invest in AAPL, or should I diversify?
   Which stock should I buy for a 4yr old, AAPL or DIS?
   If you had to spend $10,000 on AAPL or BAC, which would you pick?
-  Should I buy AMZN or AAPL?                    ##########
+  Should I buy AMZN or AAPL?
   If you had to spend your last 100K on AAPL or TSLA, which would it be and why?
   If you had to spend $10,000 on AAPL or TSLA, which would it be and why?
-  Which is a better 5-year buy, NVDA or MSFT?    ##########
+  Which is a better 5-year buy, NVDA or MSFT?
   Which stock would you rather invest in, Microsoft, Google, Apple, or NVDA?
   Should I invest in AAPL stock or AMZN stock?
   Which stock is better positioned, MSFT or AMZN?
@@ -164,7 +164,7 @@ Questions:
   I would like to know something about SpaceX, particularly the financial and accounting information
   Please introduce me the information about Google
   I would like to know about Ford Motor company
-  Should I buy MSFT stocks now for a 3-year term?    ##########
+  Should I buy MSFT stocks now for a 3-year term?
 
 
 ────────────────────────────────────────────────────────────────────────────────
@@ -201,7 +201,7 @@ Description:
 
 Questions:
   Please let me know the EBITDA of Ford in 2023 fiscal year
-  Which is a better investment for the next 3-5 years, NIKE or MSFT?    ##########
+  Which is a better investment for the next 3-5 years, NIKE or MSFT?
   Can Amazon stock reach $5,000 in the next 2 years?
 
 

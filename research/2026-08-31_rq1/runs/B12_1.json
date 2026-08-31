@@ -1,0 +1,16 @@
+{
+  "id": "B12",
+  "group": "N",
+  "run": 1,
+  "question": "What are some useful tools to follow semiconductor stocks?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:49:13",
+  "top_intent": "GENERAL_KNOWLEDGE",
+  "sub_intent": null,
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "Here are some practical, beginner-friendly tools to follow semiconductor stocks\u2014covering **prices/news**, **fundamentals**, and **industry signals** (which matter a lot in semis because it\u2019s a cyclical, supply-chain-heavy sector).\n\n## 1) Market data + news (fast, \u201cwhat happened today?\u201d)\n- **Yahoo Finance / Google Finance**: Quick quotes, charts, basic financials, earnings dates, and headlines.\n- **TradingView**: Strong charting, alerts, and watchlists (useful even if you\u2019re not \u201ca trader\u201d).\n- **Seeking Alpha / MarketWatch / Bloomberg (paid)**: Deeper commentary and faster news flow (Bloomberg is premium, but very robust).\n\n## 2) Fundamentals + valuation (the \u201cis it expensive?\u201d layer)\n- **Koyfin** (freemium): Great for comparing multiples (P/E, EV/EBITDA), margins, and growth across peers.\n- **Finviz**: Simple stock screener + quick snapshot of valuation and profitability.\n- **Morningstar** (often paid): Helpful business summaries and long-term perspective.\n\n## 3) Earnings + filings (the \u201csource documents\u201d)\n- **Company Investor Relations (IR) pages**: Earnings releases, slide decks, and webcasts\u2014often the cleanest info.\n- **SEC EDGAR** (US): 10-K/10-Q filings for risks, segment detail, and guidance language.\n- **Earnings call transcripts** (e.g., Seeking Alpha, The Motley Fool, or IR sites): Useful for management tone and demand commentary.\n\n## 4) Semiconductor-specific industry signals (often more predictive than headlines)\n- **SEMI** (industry association): Capex and equipment trends (helps for equipment makers).\n- **SIA (Semiconductor Industry Association)**: Industry sales data and policy context.\n- **TSMC / ASML / key suppliers\u2019 updates**: Even if you don\u2019t own them, their guidance often moves the whole ecosystem.\n- **Memory pricing trackers** (for DRAM/NAND cycles): e.g., **TrendForce** (commonly referenced in the industry).\n\n## 5) ETFs + peer baskets (a simple way to track the whole group)\n- Watch semiconductor ETFs like **SOXX** or **SMH** to gauge sector mood.\n- Compare a stock to its peer group quickly (designers vs foundries vs equipment vs memory).\n\nIf you want, tell me a specific semiconductor stock (or a short watchlist), and I can help you set up a clean tracking dashboard and what metrics/news to prioritize for that name."
+}

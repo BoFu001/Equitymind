@@ -1,0 +1,16 @@
+{
+  "id": "B14",
+  "group": "N",
+  "run": 1,
+  "question": "What is the best high-growth semiconductor stock to buy right now?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:49:45",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say **\u201cbest\u201d**, do you mean the stock with the **strongest recent price momentum**, the **cheapest valuation**, or the **highest analyst upside**?"
+}

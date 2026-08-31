@@ -1,0 +1,16 @@
+{
+  "id": "S25",
+  "group": "S",
+  "run": 1,
+  "question": "What is the strongest HVAC stock?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T12:55:30",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say **\u201cstrongest\u201d**, do you mean strongest **recent price momentum**, strongest **overall fundamentals/quality**, or **largest company by revenue/market cap**?"
+}

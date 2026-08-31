@@ -1,0 +1,209 @@
+{
+  "seed": 42,
+  "questions": [
+    {
+      "pool": "A",
+      "pattern": 1,
+      "text": "Is Amazon a good stock to hold for 10/20 years?",
+      "group": "N",
+      "id": "A01"
+    },
+    {
+      "pool": "A",
+      "pattern": 1,
+      "text": "Is AAPL stock a buy yet?",
+      "group": "N",
+      "id": "A02"
+    },
+    {
+      "pool": "A",
+      "pattern": 2,
+      "text": "Is Tesla in terminal decline?",
+      "group": "N",
+      "id": "A03"
+    },
+    {
+      "pool": "A",
+      "pattern": 3,
+      "text": "Which stock is better positioned, MSFT or AMZN?",
+      "group": "N",
+      "id": "A04"
+    },
+    {
+      "pool": "A",
+      "pattern": 3,
+      "text": "Should I buy AMZN or AAPL?",
+      "group": "N",
+      "id": "A05"
+    },
+    {
+      "pool": "A",
+      "pattern": 4,
+      "text": "Is Amazon a risky investment?",
+      "group": "N",
+      "id": "A06"
+    },
+    {
+      "pool": "A",
+      "pattern": 5,
+      "text": "Why is TSLA going down?",
+      "group": "N",
+      "id": "A07"
+    },
+    {
+      "pool": "A",
+      "pattern": 6,
+      "text": "What do you think about Tesla as a stock?",
+      "group": "N",
+      "id": "A08"
+    },
+    {
+      "pool": "A",
+      "pattern": 7,
+      "text": "I'm 27 and have never invested before. I have $1000 to start with. What are some options?",
+      "group": "N",
+      "id": "A09"
+    },
+    {
+      "pool": "A",
+      "pattern": 8,
+      "text": "Which is a better investment for the next 3-5 years, NIKE or MSFT?",
+      "group": "N",
+      "id": "A10"
+    },
+    {
+      "pool": "B",
+      "sector": "semiconductor",
+      "text": "Which are the best semiconductor stocks for the long term?",
+      "group": "N",
+      "id": "B11"
+    },
+    {
+      "pool": "B",
+      "sector": "semiconductor",
+      "text": "What are some useful tools to follow semiconductor stocks?",
+      "group": "N",
+      "id": "B12"
+    },
+    {
+      "pool": "B",
+      "sector": "semiconductor",
+      "text": "Top Semiconductor Stock?",
+      "group": "N",
+      "id": "B13"
+    },
+    {
+      "pool": "B",
+      "sector": "semiconductor",
+      "text": "What is the best high-growth semiconductor stock to buy right now?",
+      "group": "N",
+      "id": "B14"
+    },
+    {
+      "pool": "B",
+      "sector": "semiconductor",
+      "text": "Which is the best semiconductor stock for multibagger profit in next few years?",
+      "group": "N",
+      "id": "B15"
+    },
+    {
+      "pool": "B",
+      "sector": "tech",
+      "text": "What are some of the best technology stocks to invest in and why?",
+      "group": "N",
+      "id": "B16"
+    },
+    {
+      "pool": "B",
+      "sector": "tech",
+      "text": "What are the best TECH Stocks for 2021/2022?",
+      "group": "N",
+      "id": "B17"
+    },
+    {
+      "pool": "B",
+      "sector": "tech",
+      "text": "Which tech stocks are worth buying next month?",
+      "group": "N",
+      "id": "B18"
+    },
+    {
+      "pool": "B",
+      "sector": "tech",
+      "text": "What are tech stock companies?",
+      "group": "N",
+      "id": "B19"
+    },
+    {
+      "pool": "B",
+      "sector": "tech",
+      "text": "Which tech stocks are you buying in this 2022 tech stock fall?",
+      "group": "N",
+      "id": "B20"
+    },
+    {
+      "pool": "B",
+      "sector": "healthcare",
+      "text": "What led to yesterday's \"magnificent\" day for healthcare stocks\u2014rising as much as 2%\u2014and which companies drove that increase?",
+      "group": "N",
+      "id": "B21"
+    },
+    {
+      "pool": "B",
+      "sector": "healthcare",
+      "text": "What is a list of the best stocks to buy now to get rich, tech stocks, and healthcare stocks the best ever?",
+      "group": "N",
+      "id": "B22"
+    },
+    {
+      "pool": "B",
+      "sector": "healthcare",
+      "text": "What are the 3 top healthcare stocks to buy in January?",
+      "group": "N",
+      "id": "B23"
+    },
+    {
+      "pool": "B",
+      "sector": "healthcare",
+      "text": "What is your top pick for healthcare stocks and why? What is your price target for the stock?",
+      "group": "N",
+      "id": "B24"
+    },
+    {
+      "pool": "S",
+      "group": "S",
+      "text": "What is the strongest HVAC stock?",
+      "id": "S25"
+    },
+    {
+      "pool": "S",
+      "group": "S",
+      "text": "Which aviation company has the best momentum?",
+      "id": "S26"
+    },
+    {
+      "pool": "S",
+      "group": "S",
+      "text": "Which healthcare companies have the best valuation?",
+      "id": "S27"
+    },
+    {
+      "pool": "S",
+      "group": "S",
+      "text": "Which semiconductor stocks are the most overvalued?",
+      "id": "S28"
+    },
+    {
+      "pool": "S",
+      "group": "S",
+      "text": "Compare the valuation of AAPL, MSFT and GOOGL.",
+      "id": "S29"
+    },
+    {
+      "pool": "S",
+      "group": "S",
+      "text": "Which is more expensive right now, NVDA, AMD or AVGO?",
+      "id": "S30"
+    }
+  ]
+}

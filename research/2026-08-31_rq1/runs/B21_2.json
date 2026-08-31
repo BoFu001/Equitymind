@@ -1,0 +1,16 @@
+{
+  "id": "B21",
+  "group": "N",
+  "run": 2,
+  "question": "What led to yesterday's \"magnificent\" day for healthcare stocks\u2014rising as much as 2%\u2014and which companies drove that increase?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:51:21",
+  "top_intent": "TASK",
+  "sub_intent": "ANALYZE_INDUSTRY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "I couldn't identify which company or stock you are asking about.\n\nPlease name the company specifically, for example:\n- \"Analyse Apple\"\n- \"What are NVIDIA's risks?\"\n- \"Tell me about Tesla\"\n\nNote: Foreign companies like Airbus, Toyota, ASML, Alibaba are not yet supported (coming soon)."
+}

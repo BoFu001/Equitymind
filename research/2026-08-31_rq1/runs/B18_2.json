@@ -1,0 +1,16 @@
+{
+  "id": "B18",
+  "group": "N",
+  "run": 2,
+  "question": "Which tech stocks are worth buying next month?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:50:42",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say **\u201cworth buying\u201d**, what should I rank tech stocks by\u2014**cheapest valuation**, **strongest recent price momentum**, or **highest analyst upside**?"
+}

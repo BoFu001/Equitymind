@@ -1,0 +1,181 @@
+{
+  "rule4": {
+    "A04_1": {
+      "verdict": "pass",
+      "undecidable": 2,
+      "note": "sentence subject is MSFT; -2.56 is MSFT VaR, confirmed in prompt"
+    },
+    "A04_2": {
+      "verdict": "pass",
+      "undecidable": 3,
+      "note": "every decidable number found in its own company's block"
+    },
+    "A05_1": {
+      "verdict": "pass",
+      "undecidable": 2,
+      "note": "every decidable number found in its own company's block"
+    },
+    "A05_2": {
+      "verdict": "pass",
+      "undecidable": 0,
+      "note": "every decidable number found in its own company's block"
+    },
+    "A10_1": {
+      "verdict": "pass",
+      "undecidable": 2,
+      "note": "every decidable number found in its own company's block"
+    },
+    "A10_2": {
+      "verdict": "pass",
+      "undecidable": 6,
+      "note": "answer states -34.50 for MSFT and -55.10 for NKE explicitly; both confirmed in prompt"
+    },
+    "S27_1": {
+      "verdict": "pass",
+      "undecidable": 1,
+      "note": "every decidable number found in its own company's block"
+    },
+    "S27_2": {
+      "verdict": "pass",
+      "undecidable": 0,
+      "note": "every decidable number found in its own company's block"
+    },
+    "S28_1": {
+      "verdict": "pass",
+      "undecidable": 1,
+      "note": "every decidable number found in its own company's block"
+    },
+    "S28_2": {
+      "verdict": "pass",
+      "undecidable": 1,
+      "note": "every decidable number found in its own company's block"
+    },
+    "S29_1": {
+      "verdict": "pass",
+      "undecidable": 5,
+      "note": "every decidable number found in its own company's block"
+    },
+    "S29_2": {
+      "verdict": "pass",
+      "undecidable": 4,
+      "note": "every decidable number found in its own company's block"
+    },
+    "S30_1": {
+      "verdict": "pass",
+      "undecidable": 0,
+      "note": "every decidable number found in its own company's block"
+    },
+    "S30_2": {
+      "verdict": "pass",
+      "undecidable": 0,
+      "note": "every decidable number found in its own company's block"
+    }
+  },
+  "rule1": {
+    "A01_1": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A01_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A02_1": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A02_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 1,
+      "rewritten": 0,
+      "note": "7.21% below 52w high is derived: (344.57-319.70)/344.57 = 7.22, off by 0.01"
+    },
+    "A03_1": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A04_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A05_1": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A07_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A08_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "A10_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "S27_1": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "S28_1": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "S28_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "S29_2": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    },
+    "S30_1": {
+      "verdict": "pass",
+      "invented": 0,
+      "derived": 0,
+      "rewritten": 0,
+      "note": "every number found"
+    }
+  }
+}

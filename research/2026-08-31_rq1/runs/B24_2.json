@@ -1,0 +1,16 @@
+{
+  "id": "B24",
+  "group": "N",
+  "run": 2,
+  "question": "What is your top pick for healthcare stocks and why? What is your price target for the stock?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:52:01",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say your \u201ctop pick,\u201d what do you want that to mean\u2014**best value (cheapest valuation)**, **strongest recent price momentum**, or **highest analyst upside based on consensus price targets**?"
+}

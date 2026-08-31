@@ -1,0 +1,164 @@
+RULE 4: 14 reports with 2+ companies
+
+=== RULE 4  A04 run 1  companies ['MSFT', 'AMZN'] ===
+
+  - **Risk (past ~2.0 years / 501 trading days):** MSFT is less market-sensitive (**Blume beta 0.98**) than AMZN (**1.26**
+      -2.56 -> AMZN: LOOK, found only in MSFT's block
+
+  - **Short interest (slow-updating; as of Aug 14, 2026):** Both are low and similar — MSFT **0.92%** (1.85 days to cover)
+      0.92 -> MSFT: UNDECIDABLE, number is in blocks of ['MSFT', 'AMZN']
+      0.97 -> AMZN: UNDECIDABLE, number is in blocks of ['MSFT', 'AMZN']
+
+=== RULE 4  A04 run 2  companies ['MSFT', 'AMZN'] ===
+
+  - **Beta:** MSFT **0.97** (Blume **0.98**) vs AMZN **1.39** (Blume **1.26**).
+      0.97 -> MSFT: UNDECIDABLE, number is in blocks of ['MSFT', 'AMZN']
+
+  - **Short interest (slow-updating; as of Aug 14, 2026):** both low and similar — **MSFT 0.92%** (1.85 days) vs **AMZN 0.
+      0.92 -> MSFT: UNDECIDABLE, number is in blocks of ['MSFT', 'AMZN']
+      0.97 -> AMZN: UNDECIDABLE, number is in blocks of ['MSFT', 'AMZN']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  A05 run 1  companies ['AMZN', 'AAPL'] ===
+
+  - **Short interest (slow-moving; as of Aug 14, 2026):** both low—**AMZN 0.97%** of float (2.04 days to cover) vs **AAPL 
+      0.97 -> AMZN: UNDECIDABLE, number is in blocks of ['AMZN', 'AAPL']
+      0.80 -> AAPL: UNDECIDABLE, number is in blocks of ['AMZN', 'AAPL']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  A05 run 2  companies ['AMZN', 'AAPL'] ===
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  A10 run 1  companies ['NKE', 'MSFT'] ===
+
+  - **MSFT dividend yield:** **0.71%**.
+      0.71 -> MSFT: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+
+  - **NKE:** recommendation_mean **2.56** = **Hold**, **34 analysts**; mean target **$50.52** implies **+27.57%** vs **$39
+      2.56 -> NKE: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  A10 run 2  companies ['NKE', 'MSFT'] ===
+
+  **Based on the signals in this snapshot, MSFT looks like the stronger 3–5 year setup than NKE**—it combines **higher pro
+      40.31 -> NKE: LOOK, found only in MSFT's block
+      -34.50 -> NKE: LOOK, found only in MSFT's block
+      -55.10 -> MSFT: LOOK, found only in NKE's block
+
+  **NKE (NIKE)**: Valuation is **“fairly valued”** with **P/E 18.86** vs peer median **16.15** (peers: **AS, DECK, LULU, V
+      2.0 -> NKE: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+      501 -> NKE: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+      2.56 -> NKE: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+
+  **MSFT (Microsoft)**: Valuation is flagged **“undervalued”** with **P/E 28.58** vs peer median **36.62** (peers: **AAPL,
+      2.0 -> MSFT: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+      501 -> MSFT: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+      0.71 -> MSFT: UNDECIDABLE, number is in blocks of ['NKE', 'MSFT']
+
+=== RULE 4  S27 run 1  companies ['CI', 'BSX', 'BMY', 'ELV', 'BDX'] ===
+
+  5) **BDX (Becton, Dickinson)** — **valuation_score 0.17**; **P/E 32.79** vs peer median **38.91** *(peers: A, ALC, ARGX,
+      0.17 -> BDX: UNDECIDABLE, number is in blocks of ['BSX', 'BDX']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  S27 run 2  companies ['CI', 'BSX', 'BMY', 'ELV', 'BDX'] ===
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  S28 run 1  companies ['MRVL', 'AMD', 'AVGO', 'MCHP', 'MPWR'] ===
+
+  2) **AMD** — valuation_score **-1.1009**; **P/E 119.07** vs peer median **39.60** *(peers: AMAT, KLAC, LRCX, MU, QCOM, T
+      39.60 -> AMD: UNDECIDABLE, number is in blocks of ['AMD', 'MCHP']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  S28 run 2  companies ['MRVL', 'AMD', 'AVGO', 'MCHP', 'MPWR'] ===
+
+  2) **AMD** — valuation_score **-1.10**; **P/E 119.07** vs peer median **39.60** (peers: **AMAT, KLAC, LRCX, MU, QCOM, TX
+      39.60 -> AMD: UNDECIDABLE, number is in blocks of ['AMD', 'MCHP']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  S29 run 1  companies ['AAPL', 'MSFT', 'GOOGL'] ===
+
+  | **AAPL** | **Overvalued** (score **-0.5059**) | **36.62x** | **36.62x vs 22.08x** (premium) | **GOOGL, META, MSFT, NVD
+      36.62 -> AAPL: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+      36.62 -> AAPL: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+
+  | **MSFT** | **Undervalued** (score **0.2480**) | **28.58x** | **28.58x vs 36.62x** (discount) | **AAPL, DOCN, FTNT, GDD
+      36.62 -> MSFT: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+
+  - **AAPL** has the **highest P/E (36.62x)** and is flagged **overvalued** relative to peers like **GOOGL, META, MSFT, NV
+      36.62 -> AAPL: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+
+  - **MSFT** trades at **28.58x P/E** and is flagged **undervalued** versus its peer median **36.62x** (peer list includes
+      36.62 -> MSFT: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  S29 run 2  companies ['AAPL', 'MSFT', 'GOOGL'] ===
+
+  | **AAPL** | **Overvalued** (score **-0.5059**) | **36.62x** | **22.08x** | **GOOGL, META, MSFT, NVDA, NXT** |
+      36.62 -> AAPL: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+
+  | **MSFT** | **Undervalued** (score **0.2480**) | **28.58x** | **36.62x** | **AAPL, DOCN, FTNT, GDDY, GOOGL, NVDA, ORCL,
+      36.62 -> MSFT: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+
+  - **AAPL** trades at **36.62x**, which is **above** its peer median **22.08x** (peers: **GOOGL, META, MSFT, NVDA, NXT**)
+      36.62 -> AAPL: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+
+  - **MSFT** trades at **28.58x**, which is **below** its peer median **36.62x** (peers: **AAPL, DOCN, FTNT, GDDY, GOOGL, 
+      36.62 -> MSFT: UNDECIDABLE, number is in blocks of ['AAPL', 'MSFT']
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  S30 run 1  companies ['NVDA', 'AMD', 'AVGO'] ===
+  every decidable number sits under its own company -> pass
+
+=== RULE 4  S30 run 2  companies ['NVDA', 'AMD', 'AVGO'] ===
+  every decidable number sits under its own company -> pass
+
+
+RULE 1: 15 reports drawn with seed 42: ['A01_1', 'A01_2', 'A02_1', 'A02_2', 'A03_1', 'A04_2', 'A05_1', 'A07_2', 'A08_2', 'A10_2', 'S27_1', 'S28_1', 'S28_2', 'S29_2', 'S30_1']
+
+=== RULE 1  A01 run 1 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A01 run 2 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A02 run 1 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A02 run 2 ===
+              7.21  NOT FOUND -> check by eye: invented / derived / rewritten
+
+=== RULE 1  A03 run 1 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A04 run 2 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A05 run 1 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A07 run 2 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A08 run 2 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  A10 run 2 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  S27 run 1 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  S28 run 1 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  S28 run 2 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  S29 run 2 ===
+      every number found in the prompt -> pass
+
+=== RULE 1  S30 run 1 ===
+      every number found in the prompt -> pass
+
+Template written: /Users/bofu/Desktop/Individual project/equitymind-core/research/2026-08-31_rq1/manual_verdicts.json  (fill it in by hand)

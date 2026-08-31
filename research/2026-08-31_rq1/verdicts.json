@@ -1,0 +1,782 @@
+[
+  {
+    "id": "A01",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A01",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A02",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A02",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A03",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A03",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A04",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A04",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A05",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A05",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A06",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A06",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A07",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A07",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A08",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A08",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A09",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A09",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A10",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "A10",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B11",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B11",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B12",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B12",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B13",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B13",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B14",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B14",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B15",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B15",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B16",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B16",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B17",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B17",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B18",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B18",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B19",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B19",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B20",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B20",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B21",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B21",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B22",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B22",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B23",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B23",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B24",
+    "run": 1,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B24",
+    "run": 2,
+    "group": "N",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "S25",
+    "run": 1,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "S25",
+    "run": 2,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "S26",
+    "run": 1,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 1, superlative used but scope stated: 'candidate pool was'"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "fewer than two companies, no order to check"
+    }
+  },
+  {
+    "id": "S26",
+    "run": 2,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 1, superlative used but scope stated: 'candidate pool was'"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "fewer than two companies, no order to check"
+    }
+  },
+  {
+    "id": "S27",
+    "run": 1,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 5 companies"
+    },
+    "rule3_wrong_order": {
+      "verdict": "pass",
+      "evidence": "descending declared; ['CI', 'BSX', 'BMY', 'ELV', 'BDX'] have scores [0.7555, 0.4768, 0.3456, 0.3152, 0.1712]"
+    }
+  },
+  {
+    "id": "S27",
+    "run": 2,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 5 companies"
+    },
+    "rule3_wrong_order": {
+      "verdict": "pass",
+      "evidence": "descending declared; ['CI', 'BSX', 'BMY', 'ELV', 'BDX'] have scores [0.7555, 0.4768, 0.3456, 0.3152, 0.1712]"
+    }
+  },
+  {
+    "id": "S28",
+    "run": 1,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 5 companies"
+    },
+    "rule3_wrong_order": {
+      "verdict": "pass",
+      "evidence": "ascending declared; ['MRVL', 'AMD', 'AVGO', 'MCHP', 'MPWR'] have scores [-1.288, -1.1009, -1.0267, -0.907, -0.8272]"
+    }
+  },
+  {
+    "id": "S28",
+    "run": 2,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 5 companies"
+    },
+    "rule3_wrong_order": {
+      "verdict": "pass",
+      "evidence": "ascending declared; ['MRVL', 'AMD', 'AVGO', 'MCHP', 'MPWR'] have scores [-1.288, -1.1009, -1.0267, -0.907, -0.8272]"
+    }
+  },
+  {
+    "id": "S29",
+    "run": 1,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "S29",
+    "run": 2,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "S30",
+    "run": 1,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "S30",
+    "run": 2,
+    "group": "S",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  }
+]

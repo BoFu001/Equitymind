@@ -1,0 +1,16 @@
+{
+  "id": "B12",
+  "group": "N",
+  "run": 2,
+  "question": "What are some useful tools to follow semiconductor stocks?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:49:27",
+  "top_intent": "GENERAL_KNOWLEDGE",
+  "sub_intent": null,
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "Here are some practical, beginner-friendly tools to follow semiconductor stocks\u2014covering **prices/news**, **fundamentals**, and **industry signals** (which matter a lot in semis because they\u2019re cyclical).\n\n## 1) Market data + news (fast updates)\n- **Google Finance / Yahoo Finance**: simple watchlists, price charts, headline feeds, earnings dates.\n- **TradingView**: excellent charts, alerts, and quick peer comparisons (helpful for tracking NVDA vs AMD vs INTC, etc.).\n- **Seeking Alpha / Benzinga / MarketWatch**: frequent news and earnings coverage (useful, but cross-check sources).\n\n## 2) Fundamentals + valuation (company health)\n- **Koyfin** (free tier available): clean dashboards for financials, valuation multiples, and peer comps.\n- **Finviz**: quick screening (e.g., filter for \u201cSemiconductors,\u201d market cap, margins, growth).\n- **Morningstar / Simply Wall St**: readable business summaries and valuation perspectives (good for learning the \u201cwhy,\u201d not just the price).\n\n## 3) Earnings + transcripts (what management is actually saying)\n- **Company Investor Relations (IR) pages**: the most reliable source for earnings decks, guidance, and filings.\n- **SEC EDGAR**: 10\u2011K/10\u2011Q filings if you want the primary documents.\n- **Quartr / Sentieo (paid) / The Motley Fool transcripts**: easier access to earnings call transcripts.\n\n## 4) Semiconductor-specific \u201cindustry pulse\u201d indicators\n- **SEMI** (industry association): reports and data on equipment and manufacturing trends.\n- **TSMC / ASML / Applied Materials earnings**: even if you don\u2019t own them, their commentary often signals broader demand/supply shifts.\n- **ETF holdings as a map of the space**:  \n  - **SOXX / SMH**: see top holdings to discover key names and track the group\u2019s direction.\n\n## 5) Simple workflow (easy to maintain)\n1) Build a watchlist (Yahoo/Google)  \n2) Set price + news alerts (TradingView)  \n3) Review earnings dates + guidance (IR pages)  \n4) Compare peers on a dashboard (Koyfin/Finviz)\n\nIf you want, tell me a semiconductor stock (or a short watchlist) you\u2019re looking at, and I can help you set up a clean tracking checklist or walk through how to analyze it."
+}

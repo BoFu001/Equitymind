@@ -1,0 +1,16 @@
+{
+  "id": "B23",
+  "group": "N",
+  "run": 2,
+  "question": "What are the 3 top healthcare stocks to buy in January?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:51:46",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say \u201ctop\u201d healthcare stocks, what do you mean by \u201ctop\u201d \u2014 the ones with the strongest recent price momentum, the most attractive valuation, or the highest analyst upside?"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "A09",
+  "group": "N",
+  "run": 1,
+  "question": "I'm 27 and have never invested before. I have $1000 to start with. What are some options?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:47:36",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say \u201csome **options**,\u201d what should I rank companies by\u2014**cheapest valuation**, **strongest recent price momentum**, or **highest analyst upside**?"
+}

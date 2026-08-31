@@ -1,0 +1,16 @@
+{
+  "id": "B13",
+  "group": "N",
+  "run": 1,
+  "question": "Top Semiconductor Stock?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:49:33",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say \u201cTop,\u201d do you mean the semiconductor stock with the strongest recent price momentum, the cheapest valuation, or the highest profitability (net income)?"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "B15",
+  "group": "N",
+  "run": 2,
+  "question": "Which is the best semiconductor stock for multibagger profit in next few years?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:50:03",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say **\u201cbest\u201d**, do you mean the semiconductor stock with the **strongest recent price momentum**, the **most undervalued on valuation**, or the **highest analyst upside**?"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "B19",
+  "group": "N",
+  "run": 1,
+  "question": "What are tech stock companies?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:50:49",
+  "top_intent": "GENERAL_KNOWLEDGE",
+  "sub_intent": null,
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "Tech stock companies are businesses whose main products or services are based on **technology**\u2014like software, computers, internet platforms, chips, or digital services. When you buy a \u201ctech stock,\u201d you\u2019re buying shares in one of these companies.\n\nCommon types of tech companies include:\n- **Software & cloud**: apps, operating systems, cloud computing (e.g., Microsoft, Salesforce)\n- **Internet platforms**: search, social media, e\u2011commerce marketplaces (e.g., Alphabet/Google, Meta, Amazon)\n- **Semiconductors (chips)**: the hardware brains powering devices and AI (e.g., NVIDIA, AMD, TSMC)\n- **Hardware & devices**: phones, computers, networking gear (e.g., Apple, Cisco)\n- **Cybersecurity**: tools that protect data and systems (e.g., Palo Alto Networks, CrowdStrike)\n\nWhy people talk about tech stocks a lot: they can grow quickly because digital products can scale to many users, but they can also be **more volatile** \ud83d\udcc8\ud83d\udcc9 since expectations are high and competition changes fast.\n\nIf you\u2019d like, once you\u2019re ready, tell me a specific stock (or a few) and I can help you understand what the company does and how to analyze it."
+}

@@ -1,0 +1,16 @@
+{
+  "id": "B11",
+  "group": "N",
+  "run": 1,
+  "question": "Which are the best semiconductor stocks for the long term?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:48:53",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say **\u201cbest\u201d**, what do you want that to mean for the ranking\u2014**cheapest valuation**, **highest quality of the business**, or **strongest recent price momentum**?"
+}

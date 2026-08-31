@@ -1,0 +1,16 @@
+{
+  "id": "B17",
+  "group": "N",
+  "run": 1,
+  "question": "What are the best TECH Stocks for 2021/2022?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:50:23",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say \u201cbest\u201d TECH stocks, what do you mean by \u201cbest\u201d\u2014the ones with the strongest recent price momentum, the most attractive valuation, or the highest analyst upside potential?"
+}

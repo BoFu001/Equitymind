@@ -1,0 +1,16 @@
+{
+  "id": "B20",
+  "group": "N",
+  "run": 2,
+  "question": "Which tech stocks are you buying in this 2022 tech stock fall?",
+  "model": "gpt-5.2",
+  "time": "2026-08-31T13:51:11",
+  "top_intent": "TASK",
+  "sub_intent": "DISCOVERY",
+  "tickers": [],
+  "discovery_query": null,
+  "discovery_note": null,
+  "data_scope": [],
+  "report_prompt": null,
+  "answer": "When you say you\u2019re \u201cbuying\u201d in this tech stock \u201cfall,\u201d what should I rank tech stocks by: the **cheapest valuation**, the **highest expected upside from analyst targets**, or the **strongest recent price momentum**?"
+}
