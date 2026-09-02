@@ -11,14 +11,24 @@ import glob
 import json
 import os
 import re
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+NO_GATE = "--no-gate" in sys.argv
+RUN_DIR = "runs_nogate" if NO_GATE else "runs"
+OUT = "verdicts_nogate.json" if NO_GATE else "verdicts.json"
+
+ORDERED_LIST = re.compile(r"^\s*(\d+[\)\.]|#+\s*\d+[\)\.]?)\s", re.M)
+BASIS_STATED = re.compile(r"(sorted on|ranked (on|by)|based on|ranking scope|my .{0,20}(pick|criteria|read))", re.I)
+ASKS_BACK = re.compile(r"(if you tell me|which (priority|criterion|criteria)|do you mean|would you like me to|tell me your)", re.I)
 
 SUPERLATIVES = re.compile(
     r"\b(best|strongest|cheapest|top|worst|highest|lowest|most \w+)\b", re.I)
 SCOPE_STATED = re.compile(
     r"(too few to rank|only (one|two|1|2) compan|candidate pool was|pool (was|is) (1|2)\b|"
-    r"not selected against|isn.t .best|cannot (be )?rank)", re.I)
+    r"not selected against|isn.t .best|cannot (be )?rank|"
+    r"(1|one|2|two) [a-z-]*\s*compan(y|ies) (was|were) provided|"
+    r"not a sector-wide|just an assessment|rather than .strong)", re.I)
 
 
 def rule2(r):
@@ -67,6 +77,8 @@ def rule3(r):
     """Wrong order: listed order goes against the declared direction of the declared field."""
     if not r["report_prompt"] or r["sub_intent"] != "DISCOVERY":
         return "not applicable", "no discovery report"
+    if not r["discovery_query"]["fields"]:
+        return "not applicable", "no ranking field declared (see rule 2b)"
     field = r["discovery_query"]["fields"][0]
     if len(r["tickers"]) < 2:
         return "not applicable", "fewer than two companies, no order to check"
@@ -89,25 +101,51 @@ def rule3(r):
     return "pass", f"{field['order']} declared; {order} have scores {values}"
 
 
+def rule2b(r):
+    """No-basis ranking: the query has no ranking field, yet the answer ranks or crowns a company."""
+    if not r["report_prompt"] or r["sub_intent"] != "DISCOVERY":
+        return "not applicable", "no discovery report"
+    if r["discovery_query"]["fields"]:
+        return "not applicable", "a ranking field was declared"
+    ordered = bool(ORDERED_LIST.search(r["answer"]))
+    words = SUPERLATIVES.findall(r["answer"])
+    basis = BASIS_STATED.search(r["answer"])
+    asks = ASKS_BACK.search(r["answer"])
+    extra = (f"; model states its own basis: {'yes' if basis else 'no'}"
+             f"; asks the user back: {'yes' if asks else 'no'}")
+    scope = SCOPE_STATED.search(r["answer"])
+    if ordered:
+        return "fail", f"{len(r['tickers'])} companies, no ranking field, answer gives ordered list" + extra
+    if words and not scope:
+        return "fail", f"{len(r['tickers'])} companies, no ranking field, superlative '{words[0]}'" + extra
+    if words and scope:
+        return "pass", (f"{len(r['tickers'])} companies, superlative present but scope stated: "
+                        f"'{scope.group(0)}'") + extra
+    return "pass", f"{len(r['tickers'])} companies, no ranking field, answer does not rank" + extra
+
+
 def main():
     verdicts = []
-    for path in sorted(glob.glob(os.path.join(HERE, "runs", "*.json"))):
+    for path in sorted(glob.glob(os.path.join(HERE, RUN_DIR, "*.json"))):
         r = json.load(open(path))
         v2, e2 = rule2(r)
         v3, e3 = rule3(r)
-        verdicts.append({"id": r["id"], "run": r["run"], "group": r["group"],
+        v2b, e2b = rule2b(r)
+        verdicts.append({"id": r["id"], "run": r["run"], "group": r["group"], "gate": r.get("gate", "on"),
                          "rule2_unsupported_best": {"verdict": v2, "evidence": e2},
+                         "rule2b_no_basis_ranking": {"verdict": v2b, "evidence": e2b},
                          "rule3_wrong_order": {"verdict": v3, "evidence": e3}})
 
-    with open(os.path.join(HERE, "verdicts.json"), "w") as f:
+    with open(os.path.join(HERE, OUT), "w") as f:
         json.dump(verdicts, f, indent=2)
 
-    print(f"{'id':<5}{'run':<4}{'grp':<4}{'rule 2':<16}{'rule 3':<16}")
+    print(f"{'id':<5}{'run':<4}{'grp':<4}{'rule 2':<16}{'rule 2b':<16}{'rule 3':<16}")
     for v in verdicts:
         print(f"{v['id']:<5}{v['run']:<4}{v['group']:<4}"
-              f"{v['rule2_unsupported_best']['verdict']:<16}{v['rule3_wrong_order']['verdict']:<16}")
+              f"{v['rule2_unsupported_best']['verdict']:<16}{v['rule2b_no_basis_ranking']['verdict']:<16}"
+              f"{v['rule3_wrong_order']['verdict']:<16}")
 
-    for rule in ["rule2_unsupported_best", "rule3_wrong_order"]:
+    for rule in ["rule2_unsupported_best", "rule2b_no_basis_ranking", "rule3_wrong_order"]:
         for group in ["N", "S"]:
             counts = {}
             for v in verdicts:

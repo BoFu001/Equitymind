@@ -1,0 +1,236 @@
+[
+  {
+    "id": "A09",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 250 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "250 companies, no ranking field, answer gives ordered list; model states its own basis: no; asks the user back: yes"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "B11",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 15 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "15 companies, no ranking field, answer gives ordered list; model states its own basis: yes; asks the user back: no"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "B13",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 15 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "15 companies, no ranking field, superlative 'most compelling'; model states its own basis: no; asks the user back: yes"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "B14",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 15 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "15 companies, no ranking field, superlative 'best'; model states its own basis: no; asks the user back: no"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "B15",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 15 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "15 companies, no ranking field, superlative 'strongest'; model states its own basis: yes; asks the user back: yes"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "B16",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B17",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B18",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B20",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "not applicable",
+      "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    }
+  },
+  {
+    "id": "B22",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 7 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "7 companies, no ranking field, answer gives ordered list; model states its own basis: no; asks the user back: yes"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "B23",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 25 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "25 companies, no ranking field, answer gives ordered list; model states its own basis: yes; asks the user back: yes"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "B24",
+    "run": 1,
+    "group": "N",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 25 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "fail",
+      "evidence": "25 companies, no ranking field, superlative 'top'; model states its own basis: yes; asks the user back: no"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  },
+  {
+    "id": "S25",
+    "run": 1,
+    "group": "S",
+    "gate": "off",
+    "rule2_unsupported_best": {
+      "verdict": "pass",
+      "evidence": "pool of 1, superlative used but scope stated: 'not a sector-wide'"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "pass",
+      "evidence": "1 companies, superlative present but scope stated: 'not a sector-wide'; model states its own basis: yes; asks the user back: no"
+    },
+    "rule3_wrong_order": {
+      "verdict": "not applicable",
+      "evidence": "no ranking field declared (see rule 2b)"
+    }
+  }
+]

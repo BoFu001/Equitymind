@@ -3,9 +3,14 @@
     "id": "A01",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -16,9 +21,14 @@
     "id": "A01",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -29,9 +39,14 @@
     "id": "A02",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -42,9 +57,14 @@
     "id": "A02",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -55,9 +75,14 @@
     "id": "A03",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -68,9 +93,14 @@
     "id": "A03",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -81,9 +111,14 @@
     "id": "A04",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -94,9 +129,14 @@
     "id": "A04",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -107,9 +147,14 @@
     "id": "A05",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -120,9 +165,14 @@
     "id": "A05",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -133,9 +183,14 @@
     "id": "A06",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -146,9 +201,14 @@
     "id": "A06",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -159,9 +219,14 @@
     "id": "A07",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -172,9 +237,14 @@
     "id": "A07",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -185,9 +255,14 @@
     "id": "A08",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -198,9 +273,14 @@
     "id": "A08",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -211,9 +291,14 @@
     "id": "A09",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -224,9 +309,14 @@
     "id": "A09",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -237,9 +327,14 @@
     "id": "A10",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -250,9 +345,14 @@
     "id": "A10",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -263,9 +363,14 @@
     "id": "B11",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -276,9 +381,14 @@
     "id": "B11",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -289,9 +399,14 @@
     "id": "B12",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -302,9 +417,14 @@
     "id": "B12",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -315,9 +435,14 @@
     "id": "B13",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -328,9 +453,14 @@
     "id": "B13",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -341,9 +471,14 @@
     "id": "B14",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -354,9 +489,14 @@
     "id": "B14",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -367,9 +507,14 @@
     "id": "B15",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -380,9 +525,14 @@
     "id": "B15",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -393,9 +543,14 @@
     "id": "B16",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -406,9 +561,14 @@
     "id": "B16",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -419,9 +579,14 @@
     "id": "B17",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -432,9 +597,14 @@
     "id": "B17",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -445,9 +615,14 @@
     "id": "B18",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -458,9 +633,14 @@
     "id": "B18",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -471,9 +651,14 @@
     "id": "B19",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -484,9 +669,14 @@
     "id": "B19",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -497,9 +687,14 @@
     "id": "B20",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -510,9 +705,14 @@
     "id": "B20",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -523,9 +723,14 @@
     "id": "B21",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -536,9 +741,14 @@
     "id": "B21",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -549,9 +759,14 @@
     "id": "B22",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -562,9 +777,14 @@
     "id": "B22",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -575,9 +795,14 @@
     "id": "B23",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -588,9 +813,14 @@
     "id": "B23",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -601,9 +831,14 @@
     "id": "B24",
     "run": 1,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -614,9 +849,14 @@
     "id": "B24",
     "run": 2,
     "group": "N",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -627,9 +867,14 @@
     "id": "S25",
     "run": 1,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -640,10 +885,15 @@
     "id": "S25",
     "run": 2,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "no report"
     },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
+    },
     "rule3_wrong_order": {
       "verdict": "not applicable",
       "evidence": "no discovery report"
@@ -653,9 +903,14 @@
     "id": "S26",
     "run": 1,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "pass",
       "evidence": "pool of 1, superlative used but scope stated: 'candidate pool was'"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "a ranking field was declared"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -666,9 +921,14 @@
     "id": "S26",
     "run": 2,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "pass",
       "evidence": "pool of 1, superlative used but scope stated: 'candidate pool was'"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "a ranking field was declared"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -679,9 +939,14 @@
     "id": "S27",
     "run": 1,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "pass",
       "evidence": "pool of 5 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "a ranking field was declared"
     },
     "rule3_wrong_order": {
       "verdict": "pass",
@@ -692,9 +957,14 @@
     "id": "S27",
     "run": 2,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "pass",
       "evidence": "pool of 5 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "a ranking field was declared"
     },
     "rule3_wrong_order": {
       "verdict": "pass",
@@ -705,9 +975,14 @@
     "id": "S28",
     "run": 1,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "pass",
       "evidence": "pool of 5 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "a ranking field was declared"
     },
     "rule3_wrong_order": {
       "verdict": "pass",
@@ -718,9 +993,14 @@
     "id": "S28",
     "run": 2,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "pass",
       "evidence": "pool of 5 companies"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "a ranking field was declared"
     },
     "rule3_wrong_order": {
       "verdict": "pass",
@@ -731,9 +1011,14 @@
     "id": "S29",
     "run": 1,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -744,9 +1029,14 @@
     "id": "S29",
     "run": 2,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -757,9 +1047,14 @@
     "id": "S30",
     "run": 1,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
@@ -770,9 +1065,14 @@
     "id": "S30",
     "run": 2,
     "group": "S",
+    "gate": "on",
     "rule2_unsupported_best": {
       "verdict": "not applicable",
       "evidence": "companies were named by the user, not chosen by the system"
+    },
+    "rule2b_no_basis_ranking": {
+      "verdict": "not applicable",
+      "evidence": "no discovery report"
     },
     "rule3_wrong_order": {
       "verdict": "not applicable",
