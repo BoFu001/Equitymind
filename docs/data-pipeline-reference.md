@@ -409,6 +409,21 @@ the original three.
 OpenAI, and only for tickers whose overview actually changed — so it adds
 nothing to the yfinance or FMP budgets in section 4.
 
+
+### Kestra memory cap (set 2026-09-04)
+
+Kestra only schedules the eight scripts; the heavy work runs in the
+script processes it launches. Without a cap the JVM grows toward the
+machine's memory share (measured ~2.5 GB resident, ~$25/month on
+Railway). Set on the Railway Kestra service:
+
+    JAVA_OPTS=-Xms256m -Xmx512m
+
+Scheduling is unaffected. If Kestra ever hits the cap and restarts
+overnight, the incremental filters pick up any missed rows the next
+night (the usual self-healing path).
+
+
 ---
 
 ## 4. yfinance and FMP rate limiting
