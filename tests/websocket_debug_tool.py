@@ -9,10 +9,12 @@ Option 1 — Run in terminal (connects directly to core, bypasses proxy):
 
     Terminal 1 — Core agent:
         cd equitymind-core
+        conda activate equitymind-core
         uvicorn api.main:app --reload --port 8000
 
     Terminal 2 — Run this test:
         cd equitymind-core
+        conda activate equitymind-core
         python tests/websocket_debug_tool.py
 
 
@@ -20,10 +22,12 @@ Option 2 — Run in local browser (3 terminals required):
 
     Terminal 1 — Core agent:
         cd equitymind-core
+        conda activate equitymind-core
         uvicorn api.main:app --reload --port 8000
 
     Terminal 2 — Web backend proxy:
         cd equitymind-web-backend
+        conda activate equitymind-web-backend
         uvicorn api.main:app --reload --port 8001
 
     Terminal 3 — Frontend:
